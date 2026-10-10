@@ -1,4 +1,5 @@
 import type { AffinityScale } from "@/types/domain";
+export const NORMALIZATION_VERSION = "affinity-explicit-scale-v1";
 // Explicit scale only: no magnitude guessing, clamping, string coercion, or rounding.
 export function normalizeAffinity(
   value: unknown,

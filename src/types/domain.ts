@@ -17,6 +17,7 @@ export type UnavailableReason =
   | "affinity_scale_unverified"
   | "auth_failed"
   | "rate_limited"
+  | "request_budget_exhausted"
   | "timeout"
   | "provider_error"
   | "invalid_response"
@@ -46,15 +47,24 @@ export interface SignalContribution {
   signalId: string;
   score: number;
 }
+export type ExplainabilityIssue =
+  "malformed_contribution" | "missing_signals" | "provider_warning";
 export type Explainability =
   | {
-      status: "available";
+      status: "complete" | "partial";
       contributions: SignalContribution[];
-      omittedSignalsMayHaveLowImpact: true;
+      missingSignalIds: string[];
+      omittedSignalIds: string[];
+      omission: "none" | "explicit_provider_omission" | "unknown";
+      issues: ExplainabilityIssue[];
     }
   | {
       status: "unavailable";
-      reason: "not_returned" | "provider_warning" | "unsupported_shape";
+      reason:
+        | "not_returned"
+        | "provider_warning"
+        | "unsupported_shape"
+        | "malformed_contribution";
     };
 export interface CulturalEvidence {
   entity: QlooEntity;
@@ -87,6 +97,8 @@ export interface PolicyDecision {
 }
 export interface CulturalReceipt {
   receiptId: string;
+  schemaVersion: "cultural-receipt-v1";
+  normalizationVersion: "affinity-explicit-scale-v1";
   policyVersion: string;
   decision: PolicyDecision;
   action: ProposedAction;

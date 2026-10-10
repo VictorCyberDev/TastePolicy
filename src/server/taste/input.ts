@@ -3,7 +3,7 @@ import {
   type EntityQuery,
   type TargetType,
 } from "@/types/domain";
-import { record, UUID_PATTERN } from "@/server/qloo/types";
+import { record, UUID_PATTERN } from "@/lib/validation";
 export type DemoInput =
   | { operation: "resolve"; signals: EntityQuery[] }
   | { operation: "discover"; signalIds: string[]; targetType: TargetType }

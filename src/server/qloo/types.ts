@@ -1,11 +1,5 @@
 import { ENTITY_TYPES, type QlooEntity, type EntityType } from "@/types/domain";
-export const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export function record(value: unknown): Record<string, unknown> | null {
-  return value !== null && typeof value === "object" && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
-}
+import { record, UUID_PATTERN } from "@/lib/validation";
 export function normalizeEntity(value: unknown): QlooEntity | null {
   const item = record(value);
   if (!item) return null;

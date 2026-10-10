@@ -4,11 +4,16 @@ import { validateDemoInput } from "./input";
 import { discover, evaluateAction } from "./service";
 import { createRequestId } from "@/lib/logging/request-id";
 import { normalizeError } from "@/lib/errors/normalize";
-const MAX_BODY_BYTES = 16384;
+import {
+  readJsonBody,
+  BodyReadFailure,
+  BODY_READ_TIMEOUT_MS,
+} from "./read-body";
 export async function handleDemo(
   request: Request,
   operation: string,
   provider: QlooProvider,
+  bodyTimeoutMs = BODY_READ_TIMEOUT_MS,
 ): Promise<Response> {
   const requestId = createRequestId();
   const send = (body: unknown, status = 200) =>
@@ -39,36 +44,7 @@ export async function handleDemo(
       415,
     );
   try {
-    const reader = request.body?.getReader();
-    if (!reader)
-      return send({ status: "error", code: "INVALID_INPUT", requestId }, 400);
-    const chunks: Uint8Array[] = [];
-    let length = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      length += value.length;
-      if (length > MAX_BODY_BYTES) {
-        await reader.cancel();
-        return send(
-          { status: "error", code: "BODY_TOO_LARGE", requestId },
-          413,
-        );
-      }
-      chunks.push(value);
-    }
-    const bytes = new Uint8Array(length);
-    let offset = 0;
-    for (const c of chunks) {
-      bytes.set(c, offset);
-      offset += c.length;
-    }
-    let raw: unknown;
-    try {
-      raw = JSON.parse(new TextDecoder().decode(bytes));
-    } catch {
-      return send({ status: "error", code: "INVALID_INPUT", requestId }, 400);
-    }
+    const raw = await readJsonBody(request, bodyTimeoutMs);
     const input = validateDemoInput(operation, raw);
     if (!input)
       return send({ status: "error", code: "INVALID_INPUT", requestId }, 400);
@@ -101,7 +77,16 @@ export async function handleDemo(
             : 503,
       );
     return send({ ...result, requestId });
-  } catch {
+  } catch (error) {
+    if (error instanceof BodyReadFailure)
+      return send(
+        { status: "error", code: error.code, requestId },
+        error.code === "BODY_READ_TIMEOUT"
+          ? 408
+          : error.code === "BODY_TOO_LARGE"
+            ? 413
+            : 400,
+      );
     return send(
       { status: "error", ...normalizeError(undefined, requestId) },
       500,

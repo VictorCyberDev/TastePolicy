@@ -7,12 +7,14 @@ export type QlooTransport = (
   parameters: URLSearchParams,
 ) => Promise<ProviderResult<unknown>>;
 export const QLOO_TIMEOUT_MS = 8000;
+export const MAX_PROVIDER_CALLS_PER_REQUEST = 5;
 export const MAX_PROVIDER_BYTES = 1024 * 1024;
 export function createQlooTransport(
   config: { apiKey?: string; host?: QlooHost },
   fetcher: typeof fetch = fetch,
   timeoutMs = QLOO_TIMEOUT_MS,
 ): QlooTransport {
+  let calls = 0;
   return async (path, parameters) => {
     if (!config.apiKey)
       return { status: "unavailable", reason: "not_configured" };
@@ -20,6 +22,9 @@ export function createQlooTransport(
       return { status: "unavailable", reason: "host_not_configured" };
     if (!["/search", "/entities", "/v2/insights"].includes(path))
       return { status: "unavailable", reason: "provider_error" };
+    if (calls >= MAX_PROVIDER_CALLS_PER_REQUEST)
+      return { status: "unavailable", reason: "request_budget_exhausted" };
+    calls++;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -36,7 +41,7 @@ export function createQlooTransport(
         await response.body?.cancel();
         return {
           status: "unavailable",
-          reason: reasonForStatus(response.status),
+          reason: reasonForStatus(response.status, path),
         };
       }
       if (!response.headers.get("content-type")?.includes("application/json")) {

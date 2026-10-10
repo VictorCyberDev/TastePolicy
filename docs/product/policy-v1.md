@@ -26,6 +26,10 @@ Qloo scores are context/query-dependent, not probabilities of individual prefere
 
 ## Explainability
 
-Request feature.explainability=true. Qloo documents normalized per-input contribution scores and possible omitted low-impact inputs/warnings. Preserve only validated known signal IDs and finite 0–1 scores. Do not renormalize them to sum to one; do not invent zeroes for missing signals. Structural readers accept explicitly implemented shapes; unknown shape/missing metadata/provider warning is explainability unavailable. The actual account-specific wire shape is not live-verified. Explanation absence does not fabricate a mismatch or invalidate otherwise successfully scored evidence.
+Request feature.explainability=true. Published guidance describes unit scores and possible provider omissions, but the concrete item structure remains unverified. The conservative provisional reader accepts only entities arrays with entity_id and numeric score. It does not interpret affinity/id aliases or arbitrary ID maps. Values are preserved, never summed or renormalized.
+
+Parsed explanation is complete only when every signal is accounted for, or a verified adapter explicitly identifies omissions. It is partial when signals are unexplained, entries are malformed, or provider warnings exist. Absent, unknown and entirely malformed structures remain explicitly unavailable with distinct reasons. Missing IDs and explicitly omitted IDs are separate fields. Current adapter does not infer an omission-ID wire field; that mapping requires live verification. Per-result and documented top-level warning locations are checked without returning warning text. Explainability quality does not manufacture an affinity or turn a provider failure into REJECT.
+
+Receipts snapshot allowlisted data, validate candidate ID/type, profile, decision and provenance consistency, and carry cultural-receipt-v1 and affinity-explicit-scale-v1 in addition to the unchanged policy version. They are audit snapshots, not signed or tamper-proof records. No provider request identifier is invented because none is present in the currently normalized evidence.
 
 References and documentation revision: [provider review](../architecture/qloo-contract-review.md).

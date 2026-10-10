@@ -7,7 +7,8 @@ import type {
 } from "@/types/domain";
 import type { QlooProvider } from "./contracts";
 import type { QlooTransport } from "./client";
-import { entityList, normalizeEntity, record, UUID_PATTERN } from "./types";
+import { entityList, normalizeEntity } from "./types";
+import { record, UUID_PATTERN } from "@/lib/validation";
 import { normalizeAffinity } from "@/server/policy/normalization";
 import { normalizeExplainability } from "./explainability";
 export function createQlooAdapter(
@@ -131,6 +132,11 @@ export function createQlooAdapter(
           explainability: normalizeExplainability(
             query?.explainability,
             input.signalIds,
+            {
+              warning: record(
+                record(record(result.data)?.query)?.explainability,
+              )?.warning,
+            },
           ),
         });
       }

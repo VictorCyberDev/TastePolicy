@@ -35,9 +35,9 @@ const provenance: InferenceResult["provenance"] = {
 function provider(score = 0.9): QlooProvider {
   return {
     resolve: vi.fn(),
-    entities: vi.fn(async () => ({
+    entities: vi.fn(async (requested: readonly string[]) => ({
       status: "available" as const,
-      data: entities,
+      data: entities.filter((e) => requested.includes(e.id)),
     })),
     infer: vi.fn(async () => ({
       status: "available" as const,

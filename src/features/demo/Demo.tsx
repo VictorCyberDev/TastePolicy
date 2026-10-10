@@ -20,6 +20,8 @@ const reasons: Record<UnavailableReason, string> = {
   auth_failed:
     "Qloo denied access. Check your assigned host, credential and entity-type permissions.",
   rate_limited: "Qloo request budget reached. Please wait before retrying.",
+  request_budget_exhausted:
+    "This request exceeded its provider call budget. No decision was issued.",
   timeout: "Qloo timed out. No policy decision was issued.",
   provider_error: "Qloo is unavailable. No policy decision was issued.",
   invalid_response:
@@ -307,8 +309,12 @@ export default function Demo() {
               {receipt.decision.reasonCode}
             </p>
             <p className="helper mt-4">
-              Experimental policy: ALLOW above 0.80 · ASK 0.50–0.80 · REJECT
-              below 0.50. Provisional; not live-calibrated.
+              Experimental policy: ALLOW above {receipt.policy.allowAbove} · ASK{" "}
+              {receipt.policy.rejectBelow}–{receipt.policy.allowAbove} inclusive
+              · REJECT below {receipt.policy.rejectBelow}.{" "}
+              {receipt.policy.calibration === "provisional_not_live_calibrated"
+                ? "Provisional; not live-calibrated."
+                : ""}
             </p>
           </div>
         ) : (
@@ -324,16 +330,23 @@ export default function Demo() {
               {receipt.policyVersion}
             </p>
             <h3 className="mt-6 font-semibold">Input contributions</h3>
-            {receipt.explainability.status === "available" ? (
-              <ul className="mt-3 space-y-2">
-                {receipt.explainability.contributions.map((c) => (
-                  <li key={c.signalId}>
-                    {receipt.inputSignals.find((s) => s.id === c.signalId)
-                      ?.name ?? c.signalId}
-                    : {c.score.toFixed(3)}
-                  </li>
-                ))}
-              </ul>
+            {receipt.explainability.status !== "unavailable" ? (
+              <div>
+                <p className="helper mt-3">
+                  Explainability {receipt.explainability.status} · omission:{" "}
+                  {receipt.explainability.omission}.{" "}
+                  {receipt.explainability.issues.join(", ")}
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {receipt.explainability.contributions.map((c) => (
+                    <li key={c.signalId}>
+                      {receipt.inputSignals.find((s) => s.id === c.signalId)
+                        ?.name ?? c.signalId}
+                      : {c.score.toFixed(3)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : (
               <p className="helper mt-3">
                 Explainability unavailable: {receipt.explainability.reason}. No
@@ -342,7 +355,8 @@ export default function Demo() {
             )}
             <p className="helper mt-3">
               Contribution scores are not probabilities, additive percentages or
-              causal proof. Low-impact inputs may be omitted by Qloo.
+              causal proof. Missing contributions are not assumed to be
+              low-impact.
             </p>
             <details className="mt-6">
               <summary className="cursor-pointer font-semibold">

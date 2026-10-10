@@ -16,7 +16,7 @@ const transportFor =
   (data: unknown): QlooTransport =>
   async () => ({ status: "available", data });
 describe("entity resolution normalization", () => {
-  it("normalizes real wire fields and discards arbitrary metadata", () => {
+  it("normalizes provisional synthetic wire fields and discards arbitrary metadata", () => {
     expect(normalizeEntity(wireEntities[0])).toEqual({
       id: ids[0],
       name: "Test artist 0",
@@ -253,7 +253,7 @@ describe("Qloo transport and adapter", () => {
   });
 });
 describe("explainability", () => {
-  it("preserves only real per-input unit scores without renormalizing", () => {
+  it("preserves supported per-input scores while reporting malformed and missing contributions", () => {
     expect(
       normalizeExplainability(
         {
@@ -266,18 +266,24 @@ describe("explainability", () => {
         signalIds,
       ),
     ).toEqual({
-      status: "available",
+      status: "partial",
       contributions: [
         { signalId: ids[0], score: 0.31 },
         { signalId: ids[1], score: 0.26 },
       ],
-      omittedSignalsMayHaveLowImpact: true,
+      missingSignalIds: signalIds.slice(2),
+      omittedSignalIds: [],
+      omission: "unknown",
+      issues: ["malformed_contribution", "missing_signals"],
     });
   });
   it.each([
     [undefined, "not_returned"],
     [{ warning: "provider detail" }, "provider_warning"],
-    [{ entities: [{ entity_id: ids[0], score: 20 }] }, "unsupported_shape"],
+    [
+      { entities: [{ entity_id: ids[0], score: 20 }] },
+      "malformed_contribution",
+    ],
   ])("explicitly marks unavailable explanation %#", (raw, reason) => {
     expect(normalizeExplainability(raw, signalIds)).toEqual({
       status: "unavailable",

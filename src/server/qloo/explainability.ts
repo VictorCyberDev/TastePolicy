@@ -1,51 +1,80 @@
-import type { Explainability, SignalContribution } from "@/types/domain";
-import { record } from "./types";
-// These conservative structural readers require live confirmation; unknown structures remain explicit.
+import type {
+  Explainability,
+  ExplainabilityIssue,
+  SignalContribution,
+} from "@/types/domain";
+import { record, uuid } from "@/lib/validation";
+
+// One provisional structural reader only. Not a claim about the live Qloo schema.
+// Omission IDs must be explicitly supplied by a verified adapter contract; gaps
+// alone never imply that Qloo deliberately omitted a low-impact signal.
 export function normalizeExplainability(
   value: unknown,
   signalIds: readonly string[],
+  metadata: { warning?: unknown; omittedSignalIds?: readonly string[] } = {},
 ): Explainability {
-  if (value === undefined || value === null)
-    return { status: "unavailable", reason: "not_returned" };
   const object = record(value);
-  if (!object) return { status: "unavailable", reason: "unsupported_shape" };
-  if (object.warning)
-    return { status: "unavailable", reason: "provider_warning" };
+  const warning = Boolean(metadata.warning || object?.warning);
+  if (value === undefined || value === null)
+    return {
+      status: "unavailable",
+      reason: warning ? "provider_warning" : "not_returned",
+    };
+  if (!object || !Array.isArray(object.entities))
+    return {
+      status: "unavailable",
+      reason: warning ? "provider_warning" : "unsupported_shape",
+    };
   const contributions: SignalContribution[] = [];
   const seen = new Set<string>();
-  const add = (id: unknown, score: unknown) => {
+  let malformed = false;
+  for (const entry of object.entities) {
+    const e = record(entry);
+    const id = uuid(e?.entity_id);
+    const score = e?.score;
     if (
-      typeof id !== "string" ||
+      !id ||
+      !signalIds.includes(id) ||
+      seen.has(id) ||
       typeof score !== "number" ||
       !Number.isFinite(score) ||
       score < 0 ||
       score > 1
-    )
-      return;
-    const normalized = id.toLowerCase();
-    if (signalIds.includes(normalized) && !seen.has(normalized)) {
-      contributions.push({ signalId: normalized, score });
-      seen.add(normalized);
+    ) {
+      malformed = true;
+      continue;
     }
+    contributions.push({ signalId: id, score });
+    seen.add(id);
+  }
+  const missingSignalIds = signalIds.filter((id) => !seen.has(id));
+  const omittedSignalIds: string[] = [];
+  for (const raw of metadata.omittedSignalIds ?? []) {
+    const id = uuid(raw);
+    if (!id || !missingSignalIds.includes(id) || omittedSignalIds.includes(id))
+      malformed = true;
+    else omittedSignalIds.push(id);
+  }
+  const issues: ExplainabilityIssue[] = [];
+  if (malformed) issues.push("malformed_contribution");
+  if (missingSignalIds.some((id) => !omittedSignalIds.includes(id)))
+    issues.push("missing_signals");
+  if (warning) issues.push("provider_warning");
+  if (!contributions.length && (malformed || warning))
+    return {
+      status: "unavailable",
+      reason: warning ? "provider_warning" : "malformed_contribution",
+    };
+  return {
+    status: issues.length ? "partial" : "complete",
+    contributions: contributions.sort((a, b) => b.score - a.score),
+    missingSignalIds: [...missingSignalIds],
+    omittedSignalIds,
+    omission: omittedSignalIds.length
+      ? "explicit_provider_omission"
+      : missingSignalIds.length
+        ? "unknown"
+        : "none",
+    issues,
   };
-  // Allow only known input IDs and numeric 0–1 contribution scores; discard names/free text/raw payloads.
-  const entities = object.entities;
-  if (Array.isArray(entities))
-    for (const entity of entities) {
-      const e = record(entity);
-      if (e) add(e.entity_id ?? e.id, e.score ?? e.affinity);
-    }
-  else if (record(entities))
-    for (const [id, entry] of Object.entries(
-      entities as Record<string, unknown>,
-    ))
-      add(id, typeof entry === "number" ? entry : record(entry)?.score);
-  for (const [id, score] of Object.entries(object)) add(id, score);
-  return contributions.length
-    ? {
-        status: "available",
-        contributions: contributions.sort((a, b) => b.score - a.score),
-        omittedSignalsMayHaveLowImpact: true,
-      }
-    : { status: "unavailable", reason: "unsupported_shape" };
 }
