@@ -1,3 +1,4 @@
+import { isQlooHost } from "@/lib/config/qloo";
 export type EnvironmentInput = Record<string, string | undefined>;
 export function validateEnvironment(input: EnvironmentInput) {
   const nodeEnv = input.NODE_ENV ?? "development";
@@ -21,7 +22,16 @@ export function validateEnvironment(input: EnvironmentInput) {
     }
     return value;
   }
+  const qlooHost = input.QLOO_API_BASE_URL?.trim() || undefined;
+  if (qlooHost && !isQlooHost(qlooHost))
+    throw new Error("Invalid QLOO_API_BASE_URL");
+  const affinityScale = input.QLOO_AFFINITY_SCALE?.trim() || undefined;
+  if (affinityScale && affinityScale !== "unit" && affinityScale !== "percent")
+    throw new Error("Invalid QLOO_AFFINITY_SCALE");
   return Object.freeze({
+    qlooHost: qlooHost as
+      "https://api.qloo.com" | "https://hackathon.api.qloo.com" | undefined,
+    affinityScale: affinityScale as "unit" | "percent" | undefined,
     nodeEnv,
     appUrl: optionalUrl("NEXT_PUBLIC_APP_URL"),
     supabaseUrl: optionalUrl("SUPABASE_URL"),

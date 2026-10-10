@@ -20,3 +20,36 @@ button:focus-visible {
   outline: 3px solid #14b8a6;
   outline-offset: 5px;
 }
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-teal-700 dark:text-teal-300;
+  }
+  .demo-step {
+    @apply border-t border-current/15 py-9;
+  }
+  .demo-step h2 {
+    @apply text-lg font-semibold;
+  }
+  .helper {
+    @apply text-sm leading-relaxed opacity-65;
+  }
+  input,
+  select {
+    @apply mt-2 block w-full rounded-md border border-current/25 bg-transparent px-3 py-2 text-sm;
+  }
+  option {
+    background: var(--background);
+    color: var(--foreground);
+  }
+  .primary,
+  .secondary {
+    @apply rounded-md border border-current/30 px-4 py-3 text-sm font-semibold;
+  }
+  .primary {
+    @apply bg-teal-800 text-white dark:bg-teal-200 dark:text-teal-950;
+  }
+  button:disabled {
+    @apply cursor-not-allowed opacity-40;
+  }
+}

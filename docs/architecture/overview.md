@@ -1,6 +1,14 @@
 # Architecture overview
 
-Phase 0 implements a single Next.js application, status homepage, health route, environment validation, safe error/logging utilities and design contracts. No product evaluation or provider integration exists.
+Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested; live verification is BLOCKED_ON_QLOO_CREDENTIAL. No real-data proof is claimed yet.
+
+## Implemented flow
+
+Client UI submits five queries to /api/demo/resolve. The server-only Qloo adapter searches entities; the user explicitly chooses identities. /api/demo/discover re-verifies five IDs via Qloo /entities, requires multiple domains, then requests cross-domain Insights. /api/demo/evaluate independently verifies the candidate ID and sends a separate candidate-filtered Insights request. Normalized successful evidence feeds the deterministic policy; receipt construction records identity, inputs, provenance, score scale and thresholds. Failures are non-decisions.
+
+Transport (qloo/client.ts) owns fixed-origin HTTP, key header, timeout/body bounds and safe error states. Adapter normalization owns provider schemas. Taste service owns input identity/context orchestration. Policy normalization/thresholds/evaluate owns inspectable decisions. Receipts owns machine-readable evidence. UI only presents normalized server results, never raw HTML or provider credentials. Test doubles stay in tests; no production fallback exists.
+
+See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md) and [live verification](../evaluation/milestone-1-live-verification.md).
 
 ## Future responsibilities
 
@@ -25,4 +33,4 @@ The LLM may assist interpretation/orchestration but must not silently become the
 
 Presentation/HTTP entry points call orchestration, which depends on domain contracts and injected adapters. Domain types do not import framework, provider SDK or persistence models. Vendor payloads terminate at adapters. Missing services return explicit unavailable states, never fabricated success.
 
-The future flow is gateway → context/state → cultural evidence → explicit policy → auditable receipt. This flow is not implemented. Vercel is the hosting target; Supabase/PostgreSQL is future persistence. No database project is connected. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed.
+The larger future flow is gateway → persistent context/state → cultural evidence → explicit policy → auditable receipt. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; Supabase/PostgreSQL is future persistence. No database project is connected. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed.

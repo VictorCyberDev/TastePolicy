@@ -1,1 +1,1 @@
-Future inspectable policy evaluation. No scoring exists yet.
+Experimental inspectable policy; normalization.ts, thresholds.ts, evaluate.ts. Missing evidence is unavailable. Thresholds are provisional pending live canonical-profile calibration. See docs/product/policy-v1.md.

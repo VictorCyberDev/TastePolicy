@@ -1,1 +1,1 @@
-Future server-only Qloo adapter implementing contracts.ts. Credentials stay in lib/env/server.ts. Normalize provider failures into ProviderResult; never expose provider payloads across domains. Tests inject QlooProvider doubles. No production mock exists.
+Server-only Qloo transport, fixed approved hosts and header authentication, strict normalized entity/evidence adapter, explicit unavailable states. See docs/architecture/qloo-contract-review.md. No test fixture is imported by production.
