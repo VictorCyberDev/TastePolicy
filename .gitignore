@@ -13,3 +13,6 @@ test-results/
 .vscode/
 *.pem
 *.key
+next-env.d.ts
+.vercel/
+*.log
