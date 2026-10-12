@@ -70,6 +70,13 @@ test("test-only browser responses exercise the complete decision UI", async ({
     }),
   );
   await page.goto("/");
+  await page.evaluate(() => {
+    const banner = document.createElement("div");
+    banner.textContent = "SYNTHETIC DEVELOPMENT DATA — TEST ONLY";
+    banner.style.cssText =
+      "padding:16px;background:#ffe5a3;color:#172723;font-weight:bold;text-align:center";
+    document.body.prepend(banner);
+  });
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)
     await page

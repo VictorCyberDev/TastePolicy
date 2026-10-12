@@ -78,3 +78,7 @@ TastePolicy Milestone 2 — Persistent Taste State & ContextGraph (not started).
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## M1.5 presentation readiness
+
+The stacked M1.5 branch refines the working demo and Cultural Receipt presentation without changing frozen M1 provider or policy semantics. Live Qloo proof remains pending. See [submission preparation](docs/submission/readiness.md), [unverified seed shortlist](docs/submission/demo-seeds.md), [demo scripts](docs/submission/demo-script.md), [video/screenshot plan](docs/submission/video-storyboard.md) and [operational handoff](docs/submission/live-operations.md). The [blank evidence report](docs/evaluation/live-evidence-report-template.md) contains no claimed live results. Persistent Taste State and ContextGraph remain future work; M2 is not implemented.
