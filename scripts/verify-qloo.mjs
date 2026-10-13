@@ -26,9 +26,18 @@ const signals = [
   { query: "Piranesi", expectedType: "book" },
   { query: "Severance", expectedType: "tv_show" },
 ];
+const VERIFY_INTER_OPERATION_DELAY_MS = 1_100;
 let calls = 0;
 async function call(operation, body) {
   if (++calls > 10) throw Error("CONTRACT_MISMATCH");
+  // Live event credentials are limited to five provider requests per second.
+  // One demo operation can fan out to several bounded provider calls, so the
+  // verifier leaves one full rate-limit window between operations. This is
+  // pacing only: there are still no retries.
+  if (calls > 1)
+    await new Promise((resolve) =>
+      setTimeout(resolve, VERIFY_INTER_OPERATION_DELAY_MS),
+    );
   const response = await fetch(new URL(`/api/demo/${operation}`, base), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
