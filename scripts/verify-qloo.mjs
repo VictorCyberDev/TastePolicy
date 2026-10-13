@@ -1,3 +1,4 @@
+import { DEMO_OPERATION_TIMEOUT_MS } from "../src/lib/config/qloo-budget.ts";
 import { readFile } from "node:fs/promises";
 import {
   TARGET_DOMAINS,
@@ -32,7 +33,7 @@ async function call(operation, body) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(DEMO_OPERATION_TIMEOUT_MS),
     redirect: "error",
   });
   const result = await response.json();

@@ -1,6 +1,7 @@
 import "server-only";
 import type { QlooProvider } from "@/server/qloo/contracts";
 import { validateDemoInput } from "./input";
+import { resolveSignals } from "./resolve";
 import { discover, evaluateAction } from "./service";
 import { createRequestId } from "@/lib/logging/request-id";
 import { normalizeError } from "@/lib/errors/normalize";
@@ -52,9 +53,7 @@ export async function handleDemo(
       input.operation === "resolve"
         ? {
             status: "available" as const,
-            data: await Promise.all(
-              input.signals.map((signal) => provider.resolve(signal)),
-            ),
+            data: await resolveSignals(provider, input.signals),
           }
         : input.operation === "discover"
           ? await discover(provider, input.signalIds, input.targetType)

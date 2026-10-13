@@ -72,3 +72,21 @@ npm run verify:qloo was invoked against that real configured server. It returned
 DEPLOYED_LIVE_PREVIEW_PENDING. No credential was installed into Vercel and no external deployment was changed.
 
 PR #1 remains open/unmerged. PR #2 and M1.5 remain frozen at e6b415dda7233c3875adbb8ae3cf2bcfc8349046; no rebase occurred. Main remains 06b62bc8f12b35f31946381c122a7fde2e2f8a18. Milestone 2 did not start.
+
+## Transport closure attempt — 2026-10-13
+
+Starting SHA: d5f03565338d5b4b9c2a927d1ae5db0f29866d70. Status remains **REPAIR**. This separately authorized run stopped immediately on provider HTTP 429; no verifier or further live retry was attempted.
+
+Prior private timing artifacts were unavailable. Five diagnostic dispatches established: serial Python/proxy search completed HTTP 200 in 8,331 ms; native Node search timed out after 12,003 ms; explicit Node proxy search completed HTTP 200 in 8,578 ms; two concurrent Node searches completed HTTP 200 in 9,296 and 9,274 ms. Public concepts only were used. The measured successful times exceed the previous 8,000 ms timeout. Five-way concurrency was not proven causal; two-way concurrency was demonstrated viable. Network/proxy setup is environment-specific and no proxy URL or credential was committed.
+
+The minimum bounded repair uses a 15,000 ms provider deadline, two-request resolution waves preserving input ordering and individual failure results, and a 55,000 ms verifier operation deadline. Three waves plus the unchanged 3,000 ms body deadline fit within 48,000 ms; discovery/evaluation have two sequential provider calls plus body reading, bounded by 33,000 ms. Both fit below the verifier deadline and unchanged 60-second route execution limit. No retry, score, threshold, provider contract, host, byte ceiling or fixture fallback changed.
+
+An actual production-build application was started locally with the private credential, unit scale and authorized environment proxy. The unmocked Playwright UI resolved all five canonical concepts, verified that each previously reviewed ID was among its actual matches, and explicitly selected those IDs. The first two application searches completed HTTP 200 in 10,707 and 10,636 ms; subsequent searches completed in 132, 166 and 126 ms. The canonical target was set to place. Discovery's first /entities dispatch returned HTTP 429 in 106 ms, so no discovery Insights, evaluation, receipt or repeat was attempted. This supports the timeout repair but does not establish why the initial connection is slower; no five-way counterfactual was run.
+
+**Exact new dispatch count: 11** (5 diagnostics + 5 UI searches + 1 lookup). There were 9 HTTP 200 responses, 1 diagnostic timeout and 1 HTTP 429. No calls followed rate limiting. The 35 ceiling was not exhausted or used to justify retries.
+
+Five-signal application resolution: PASS. Discovery/evaluation/genuine receipt/repeat: NOT COMPLETED due to rate limiting. verify:qloo: NOT RUN, because the mandatory precondition and stop-on-429 rule were not satisfied. Desktop initial/resolve/loading/identity-selection behavior was exercised; mobile, keyboard proposal, decision and receipt review remain pending. No direct browser-to-Qloo requests or client credential path was introduced; full successful browser review remains incomplete.
+
+Two new regressions cover the concurrency maximum, ordering, one individually unavailable timeout, preservation of four other results, no retries, and composite budget ordering. Offline deterministic policy behavior remains unchanged. Final local suite: 136 unit/integration tests; 2 Playwright tests. See the completion report for final CI/audit status.
+
+Remaining action: wait for the event quota/rate-limit window to permit a separately authorized bounded continuation. Do not conceal the 429, increase request volume, run the full verifier on a failed discovery precondition, or mark acceptance passed. DEPLOYED_LIVE_PREVIEW_PENDING; Vercel remains untouched.

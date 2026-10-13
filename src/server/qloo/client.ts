@@ -1,4 +1,5 @@
 import "server-only";
+import { QLOO_TIMEOUT_MS } from "@/lib/config/qloo-budget";
 import { isQlooHost, type QlooHost } from "@/lib/config/qloo";
 import type { ProviderResult } from "@/types/domain";
 import { reasonForStatus } from "./errors";
@@ -6,7 +7,7 @@ export type QlooTransport = (
   path: "/search" | "/entities" | "/v2/insights",
   parameters: URLSearchParams,
 ) => Promise<ProviderResult<unknown>>;
-export const QLOO_TIMEOUT_MS = 8000;
+export { QLOO_TIMEOUT_MS } from "@/lib/config/qloo-budget";
 export const MAX_PROVIDER_CALLS_PER_REQUEST = 5;
 export const MAX_PROVIDER_BYTES = 1024 * 1024;
 export function createQlooTransport(

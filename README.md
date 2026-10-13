@@ -82,3 +82,5 @@ Apache License 2.0. See [LICENSE](LICENSE). Contributions follow [CONTRIBUTING.m
 ## Bounded live investigation
 
 Event-host authentication, five Material & modern identities, three discovery domains and three candidate-specific responses were observed. Lookup/explanation readers were repaired from actual wire data. Application requests timed out, and the live verifier remained PARTIAL_LIVE_PROOF within the 25-attempt ceiling. This is not completed acceptance. Read [actual observations and limits](docs/evaluation/milestone-1-live-verification.md); PRs remain unmerged and M2 is not authorized.
+
+The transport closure run subsequently resolved all five canonical signals through the real application with the bounded 15-second/two-concurrent repair. Discovery then returned provider HTTP 429; live calls stopped immediately. Acceptance remains REPAIR, with discovery/evaluation/receipt/verifier closure pending a permitted rate-limit window. See the live report for the exact 11-dispatch run.
