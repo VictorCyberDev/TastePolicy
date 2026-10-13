@@ -104,8 +104,9 @@ export default function Demo() {
       <section className="demo-step" aria-labelledby="signals">
         <h2 id="signals">01 / Your taste signals</h2>
         <p className="helper">
-          Resolve five concepts, then explicitly choose each identity. For Dune,
-          inspect the release year. Ambiguous matches stay visible.
+          Resolve five concepts, then explicitly choose each identity. For
+          Perfect Days (2023), inspect the release year. Ambiguous matches stay
+          visible.
         </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {signals.map((s, i) => (

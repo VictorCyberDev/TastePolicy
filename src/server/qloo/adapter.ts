@@ -25,7 +25,7 @@ export function createQlooAdapter(
     const list = entityList(result.data);
     if (!list || list.length > 100)
       return { status: "unavailable", reason: "invalid_response" };
-    const entities = list.map(normalizeEntity);
+    const entities = list.map((item) => normalizeEntity(item, "lookup"));
     if (entities.some((x) => !x))
       return { status: "unavailable", reason: "invalid_response" };
     return {
@@ -112,7 +112,7 @@ export function createQlooAdapter(
         return { status: "unavailable", reason: "invalid_response" };
       const candidates: CulturalEvidence[] = [];
       for (const [index, item] of list.entries()) {
-        const entity = normalizeEntity(item);
+        const entity = normalizeEntity(item, "insights");
         const query = record(record(item)?.query);
         const raw = query?.affinity;
         const alignmentScore = normalizeAffinity(raw, config.scale);
@@ -133,9 +133,11 @@ export function createQlooAdapter(
             query?.explainability,
             input.signalIds,
             {
-              warning: record(
-                record(record(result.data)?.query)?.explainability,
-              )?.warning,
+              warning:
+                record(record(record(result.data)?.query)?.explainability)
+                  ?.warning ||
+                (Array.isArray(record(result.data)?.warnings) &&
+                  (record(result.data)?.warnings as unknown[]).length > 0),
             },
           ),
         });

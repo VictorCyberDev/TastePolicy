@@ -14,15 +14,14 @@ export const wireEntities = [
 ].map((type, i) => ({
   entity_id: ids[i],
   name: `Test ${type} ${i}`,
-  type: "urn:entity",
-  subtype: `urn:entity:${type}`,
+  types: [`urn:entity:${type}`],
   properties: { release_year: 2021 },
   private_field: "MUST_NOT_LEAK",
 }));
 export const entities = wireEntities.map((e) => ({
   id: e.entity_id,
   name: e.name,
-  type: e.subtype.replace(
+  type: e.types[0].replace(
     "urn:entity:",
     "",
   ) as import("@/types/domain").EntityType,
@@ -34,10 +33,12 @@ export const wireInsights = (score: unknown = 0.9) => ({
     entities: [
       {
         ...wireEntities[5],
+        type: "urn:entity",
+        subtype: wireEntities[5].types[0],
         query: {
           affinity: score,
           explainability: {
-            entities: [
+            "signal.interests.entities": [
               { entity_id: ids[0], score: 0.6 },
               { entity_id: ids[1], score: 0.3 },
             ],

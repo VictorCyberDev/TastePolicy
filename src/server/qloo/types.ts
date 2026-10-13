@@ -1,11 +1,26 @@
 import { ENTITY_TYPES, type QlooEntity, type EntityType } from "@/types/domain";
 import { record, UUID_PATTERN } from "@/lib/validation";
-export function normalizeEntity(value: unknown): QlooEntity | null {
+export function normalizeEntity(
+  value: unknown,
+  format: "lookup" | "insights" = "lookup",
+): QlooEntity | null {
   const item = record(value);
   if (!item) return null;
-  const rawType = typeof item.subtype === "string" ? item.subtype : item.type;
+  // Verified event-host search/lookup and Insights use different entity shapes.
+  const rawType =
+    format === "lookup"
+      ? Array.isArray(item.types) && item.types.length === 1
+        ? item.types[0]
+        : undefined
+      : item.type === "urn:entity"
+        ? item.subtype
+        : undefined;
   const type =
-    typeof rawType === "string" ? rawType.replace(/^urn:entity:/, "") : "";
+    typeof rawType === "string"
+      ? rawType.startsWith("urn:entity:")
+        ? rawType.slice("urn:entity:".length)
+        : ""
+      : "";
   if (
     typeof item.entity_id !== "string" ||
     !UUID_PATTERN.test(item.entity_id) ||

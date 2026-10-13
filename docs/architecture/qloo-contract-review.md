@@ -39,3 +39,7 @@ Search documentation lists 404 no results and 429 rate limit exceeded. The guide
 - https://github.com/qloo/docs-public/blob/main/docs/interpreting-affinity-scores.md
 
 Do not commit Qloo raw response dumps or private headers. Synthetic fixtures are clearly confined to tests.
+
+## Event-host live observations (2026-10-13)
+
+See [live verification](../evaluation/milestone-1-live-verification.md). Lookup entities use types arrays; Insights entities use scalar type/subtype. Per-candidate contributions use query.explainability[signal.interests.entities]. query.affinity is observed in unit representation; documented percentages must not be confused with this wire scale. Root not_found warnings explain a missing book signal in destination queries. Three candidate scores matched discovery for the same profile, but comparability remains LIMITED and full acceptance remains REPAIR due to unmocked server timeouts and incomplete verifier.

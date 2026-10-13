@@ -257,7 +257,7 @@ describe("explainability", () => {
     expect(
       normalizeExplainability(
         {
-          entities: [
+          "signal.interests.entities": [
             { entity_id: ids[0], score: 0.31 },
             { entity_id: ids[1], score: 0.26 },
             { entity_id: ids[5], score: 0.9 },
@@ -281,7 +281,7 @@ describe("explainability", () => {
     [undefined, "not_returned"],
     [{ warning: "provider detail" }, "provider_warning"],
     [
-      { entities: [{ entity_id: ids[0], score: 20 }] },
+      { "signal.interests.entities": [{ entity_id: ids[0], score: 20 }] },
       "malformed_contribution",
     ],
   ])("explicitly marks unavailable explanation %#", (raw, reason) => {

@@ -1,9 +1,10 @@
 import type { EntityQuery } from "@/types/domain";
-// Unresolved seed concepts, never invented Qloo IDs or affinities.
+// Material & modern: public identities reviewed on the event host, 2026-10-13.
+// Runtime resolution remains mandatory; no provider IDs or affinities are hardcoded.
 export const CANONICAL_SIGNALS: readonly EntityQuery[] = [
-  { query: "Radiohead", expectedType: "artist" },
-  { query: "Dune", expectedType: "movie" },
-  { query: "Aesop", expectedType: "brand" },
-  { query: "The Bear", expectedType: "tv_show" },
-  { query: "Blue Bottle Coffee", expectedType: "brand" },
+  { query: "Nils Frahm", expectedType: "artist" },
+  { query: "Perfect Days", expectedType: "movie" },
+  { query: "Muji", expectedType: "brand" },
+  { query: "Piranesi", expectedType: "book" },
+  { query: "Severance", expectedType: "tv_show" },
 ];

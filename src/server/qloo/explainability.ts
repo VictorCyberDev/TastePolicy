@@ -5,7 +5,7 @@ import type {
 } from "@/types/domain";
 import { record, uuid } from "@/lib/validation";
 
-// One provisional structural reader only. Not a claim about the live Qloo schema.
+// Verified event-host contribution path: query.explainability["signal.interests.entities"].
 // Omission IDs must be explicitly supplied by a verified adapter contract; gaps
 // alone never imply that Qloo deliberately omitted a low-impact signal.
 export function normalizeExplainability(
@@ -20,7 +20,7 @@ export function normalizeExplainability(
       status: "unavailable",
       reason: warning ? "provider_warning" : "not_returned",
     };
-  if (!object || !Array.isArray(object.entities))
+  if (!object || !Array.isArray(object["signal.interests.entities"]))
     return {
       status: "unavailable",
       reason: warning ? "provider_warning" : "unsupported_shape",
@@ -28,7 +28,7 @@ export function normalizeExplainability(
   const contributions: SignalContribution[] = [];
   const seen = new Set<string>();
   let malformed = false;
-  for (const entry of object.entities) {
+  for (const entry of object["signal.interests.entities"] as unknown[]) {
     const e = record(entry);
     const id = uuid(e?.entity_id);
     const score = e?.score;

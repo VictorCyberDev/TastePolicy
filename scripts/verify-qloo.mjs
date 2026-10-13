@@ -19,11 +19,11 @@ if (
 )
   throw Error("Local HTTP app required");
 const signals = [
-  { query: "Radiohead", expectedType: "artist" },
-  { query: "Dune", expectedType: "movie" },
-  { query: "Aesop", expectedType: "brand" },
-  { query: "The Bear", expectedType: "tv_show" },
-  { query: "Blue Bottle Coffee", expectedType: "brand" },
+  { query: "Nils Frahm", expectedType: "artist" },
+  { query: "Perfect Days", expectedType: "movie" },
+  { query: "Muji", expectedType: "brand" },
+  { query: "Piranesi", expectedType: "book" },
+  { query: "Severance", expectedType: "tv_show" },
 ];
 let calls = 0;
 async function call(operation, body) {
@@ -65,7 +65,7 @@ try {
       (e) =>
         e.name.toLowerCase() === signals[i].query.toLowerCase() &&
         e.type === signals[i].expectedType &&
-        (signals[i].query !== "Dune" || e.releaseYear === 2021),
+        (signals[i].query !== "Perfect Days" || e.releaseYear === 2023),
     );
     if (exact.length !== 1) throw Error("PARTIAL_LIVE_PROOF");
     selected.push(exact[0]);

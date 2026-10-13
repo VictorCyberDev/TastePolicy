@@ -6,7 +6,7 @@ Milestone 1 — Qloo Cultural Intelligence Vertical Slice. Public, open-source m
 
 ## Current status
 
-TastePolicy contains an experimental Qloo-backed cultural authorization vertical slice: five explicit signals → entity resolution → cross-domain discovery → specific SELECT_ENTITY evidence → deterministic ALLOW / ASK / REJECT → Cultural Receipt. **Live verification is BLOCKED_ON_QLOO_CREDENTIAL**; implementation/test success is not a real-data proof. No production mock fallback exists. This repository foundation alone does not establish hackathon eligibility; verify official rules before submission.
+TastePolicy contains an experimental Qloo-backed cultural authorization vertical slice: five explicit signals → entity resolution → cross-domain discovery → specific SELECT_ENTITY evidence → deterministic ALLOW / ASK / REJECT → Cultural Receipt. **Live verification is REPAIR — acceptance incomplete**; implementation/test success is not a real-data proof. No production mock fallback exists. This repository foundation alone does not establish hackathon eligibility; verify official rules before submission.
 
 ## Local setup
 
@@ -34,7 +34,7 @@ Request a key through the [current hackathon guide](https://docs.qloo.com/refere
 
 Before Insights/evaluation, inspect actual wire affinity semantics and set QLOO_AFFINITY_SCALE=unit or percent explicitly. Conflicting documentation is described in [provider review](docs/architecture/qloo-contract-review.md). Missing scale fails closed, not guessed. Restart the development server after environment changes.
 
-The canonical concepts are Radiohead (artist), Dune (movie, prefer 2021), Aesop (brand), The Bear (TV show), Blue Bottle Coffee (brand). Their IDs and suitability are **not live-verified yet**. The UI requires explicit selection from real Qloo matches. Default target: destination. Choose a real result to propose SELECT_ENTITY; a second Qloo query supplies candidate-specific affinity. [Policy v1](docs/product/policy-v1.md): ALLOW >0.80, ASK 0.50–0.80, REJECT <0.50; thresholds are provisional, not live-calibrated. Provider failure or missing evidence is unavailable, never REJECT. Explainability uses provisional complete/partial/unavailable parsing states; missing contributions never imply low impact. Actual wire semantics remain unverified.
+The identity-reviewed canonical profile is Nils Frahm (artist), Perfect Days (2023 movie), Muji (brand), Piranesi (book), and Severance (TV show). Place is the selected live demonstration target; the UI also supports destination and brand. The UI requires explicit selection from real Qloo matches. A candidate-specific query supplies affinity for SELECT_ENTITY. [Policy v1](docs/product/policy-v1.md): ALLOW >0.80, ASK 0.50–0.80, REJECT <0.50. These experimental thresholds remain unchanged; the bounded live sample does not scientifically calibrate them. Provider failure or missing required evidence is unavailable, never REJECT. The event-host explainability wire format was observed and repaired, preserving complete/partial/unavailable states. Full unmocked application acceptance remains incomplete; see the live report.
 
 For live verification, start npm run dev and run npm run verify:qloo in another terminal. The runner stops on unavailable/ambiguous identities, probes destination/place/brand, samples high/median/low discovery candidates, evaluates three distinct candidates and repeats one evaluation. It validates receipts and reports PARTIAL_LIVE_PROOF unless the technical checks and a separate sanitized human review record pass. See [live verification](docs/evaluation/milestone-1-live-verification.md). CI uses clearly labeled synthetic test fixtures; production never does.
 
@@ -78,3 +78,7 @@ TastePolicy Milestone 2 — Persistent Taste State & ContextGraph (not started).
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Bounded live investigation
+
+Event-host authentication, five Material & modern identities, three discovery domains and three candidate-specific responses were observed. Lookup/explanation readers were repaired from actual wire data. Application requests timed out, and the live verifier remained PARTIAL_LIVE_PROOF within the 25-attempt ceiling. This is not completed acceptance. Read [actual observations and limits](docs/evaluation/milestone-1-live-verification.md); PRs remain unmerged and M2 is not authorized.

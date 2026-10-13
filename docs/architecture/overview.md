@@ -1,6 +1,6 @@
 # Architecture overview
 
-Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested; live verification is BLOCKED_ON_QLOO_CREDENTIAL. No real-data proof is claimed yet.
+Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested. Bounded event-host calls authenticated and established real entity, discovery, and candidate evidence, but full application verification remains REPAIR because the unmocked UI and verifier timed out. See the live verification report; no full live acceptance is claimed.
 
 ## Implemented flow
 

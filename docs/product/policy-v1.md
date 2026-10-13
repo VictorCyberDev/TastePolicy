@@ -33,3 +33,7 @@ Parsed explanation is complete only when every signal is accounted for, or a ver
 Receipts snapshot allowlisted data, validate candidate ID/type, profile, decision and provenance consistency, and carry cultural-receipt-v1 and affinity-explicit-scale-v1 in addition to the unchanged policy version. They are audit snapshots, not signed or tamper-proof records. No provider request identifier is invented because none is present in the currently normalized evidence.
 
 References and documentation revision: [provider review](../architecture/qloo-contract-review.md).
+
+## Bounded live review (2026-10-13)
+
+Twenty-four top-ranked discovery values were observed in unit representation, with three candidate-specific matches. Threshold verdict KEEP for explicitly experimental diagnostics; no calibration/semantic change. Cross-query comparability remains LIMITED. All three captured examples map to ALLOW; there is no human alignment validation. Actual app transport/verifier acceptance remains incomplete; see the live report.

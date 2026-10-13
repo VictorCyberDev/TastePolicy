@@ -237,7 +237,12 @@ describe("receipt snapshots and consistency", () => {
   it("snapshots explanation contributions and omission arrays", () => {
     const input = receiptInput();
     input.evidence.explainability = normalizeExplainability(
-      { entities: signalIds.map((entity_id) => ({ entity_id, score: 0.2 })) },
+      {
+        "signal.interests.entities": signalIds.map((entity_id) => ({
+          entity_id,
+          score: 0.2,
+        })),
+      },
       signalIds,
     );
     const r = createReceipt(input);
@@ -254,7 +259,7 @@ describe("conservative explainability", () => {
     expect(
       normalizeExplainability(
         {
-          entities: [
+          "signal.interests.entities": [
             { entity_id: ids[0], score: 0.3 },
             { entity_id: ids[1], score: 20 },
           ],
@@ -271,7 +276,7 @@ describe("conservative explainability", () => {
   it("does not interpret affinity as a contribution", () => {
     expect(
       normalizeExplainability(
-        { entities: [{ entity_id: ids[0], affinity: 0.9 }] },
+        { "signal.interests.entities": [{ entity_id: ids[0], affinity: 0.9 }] },
         signalIds,
       ),
     ).toEqual({ status: "unavailable", reason: "malformed_contribution" });
@@ -283,7 +288,9 @@ describe("conservative explainability", () => {
     });
   });
   it("distinguishes explicit omission supplied by an adapter from unexplained gaps", () => {
-    const raw = { entities: [{ entity_id: ids[0], score: 0.3 }] };
+    const raw = {
+      "signal.interests.entities": [{ entity_id: ids[0], score: 0.3 }],
+    };
     expect(normalizeExplainability(raw, signalIds)).toMatchObject({
       status: "partial",
       omission: "unknown",
@@ -301,7 +308,12 @@ describe("conservative explainability", () => {
   });
   it("records top-level warning without returning its raw text", () => {
     const r = normalizeExplainability(
-      { entities: signalIds.map((entity_id) => ({ entity_id, score: 0.2 })) },
+      {
+        "signal.interests.entities": signalIds.map((entity_id) => ({
+          entity_id,
+          score: 0.2,
+        })),
+      },
       signalIds,
       { warning: "private provider detail" },
     );

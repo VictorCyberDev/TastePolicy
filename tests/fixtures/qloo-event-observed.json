@@ -1,0 +1,160 @@
+{
+  "notice": "Sanitized public cultural entity/score observations from hackathon.api.qloo.com on 2026-10-13; no headers or credentials. Not a production fallback.",
+  "lookup": {
+    "results": [
+      {
+        "entity_id": "0D8EAFA4-CEEA-44D5-8E1F-26A8A9F49A77",
+        "name": "Nils Frahm",
+        "types": ["urn:entity:artist"]
+      },
+      {
+        "entity_id": "B30DB61E-707C-421E-A1C4-1A912B7F067D",
+        "name": "Perfect Days",
+        "types": ["urn:entity:movie"],
+        "properties": {
+          "release_year": 2023
+        }
+      },
+      {
+        "entity_id": "E12201A5-CC50-40AF-97AE-C54A2CA303F7",
+        "name": "Muji",
+        "types": ["urn:entity:brand"]
+      },
+      {
+        "entity_id": "55908017-4CFD-4688-9A7E-7B1FF04B171D",
+        "name": "Piranesi",
+        "types": ["urn:entity:book"]
+      },
+      {
+        "entity_id": "569F8294-72DA-4935-B9F2-4FC697AB2A1E",
+        "name": "Severance",
+        "types": ["urn:entity:tv_show"],
+        "properties": {
+          "release_year": 2022
+        }
+      }
+    ]
+  },
+  "place": {
+    "success": true,
+    "results": {
+      "entities": [
+        {
+          "entity_id": "85FDA07D-0245-4445-A495-7D53DF8950FB",
+          "name": "HOUSE OF FINN JUHL HAKUBA",
+          "type": "urn:entity",
+          "subtype": "urn:entity:place",
+          "query": {
+            "affinity": 0.9233086745343598,
+            "explainability": {
+              "signal.interests.entities": [
+                {
+                  "entity_id": "B30DB61E-707C-421E-A1C4-1A912B7F067D",
+                  "score": 0.24247254451055075
+                },
+                {
+                  "entity_id": "E12201A5-CC50-40AF-97AE-C54A2CA303F7",
+                  "score": 0.2316769078799444
+                },
+                {
+                  "entity_id": "55908017-4CFD-4688-9A7E-7B1FF04B171D",
+                  "score": 0.19243708834488626
+                },
+                {
+                  "entity_id": "0D8EAFA4-CEEA-44D5-8E1F-26A8A9F49A77",
+                  "score": 0.17690522839409517
+                },
+                {
+                  "entity_id": "569F8294-72DA-4935-B9F2-4FC697AB2A1E",
+                  "score": 0.15650823087052343
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "brand": {
+    "success": true,
+    "results": {
+      "entities": [
+        {
+          "entity_id": "64DE0A20-BE82-481A-A875-9AEAA941DEB1",
+          "name": "MasterClass",
+          "type": "urn:entity",
+          "subtype": "urn:entity:brand",
+          "query": {
+            "affinity": 0.8886944207813341,
+            "explainability": {
+              "signal.interests.entities": [
+                {
+                  "entity_id": "569F8294-72DA-4935-B9F2-4FC697AB2A1E",
+                  "score": 0.21843308317857016
+                },
+                {
+                  "entity_id": "0D8EAFA4-CEEA-44D5-8E1F-26A8A9F49A77",
+                  "score": 0.20782806689564043
+                },
+                {
+                  "entity_id": "55908017-4CFD-4688-9A7E-7B1FF04B171D",
+                  "score": 0.1981050432869182
+                },
+                {
+                  "entity_id": "B30DB61E-707C-421E-A1C4-1A912B7F067D",
+                  "score": 0.1922097156634267
+                },
+                {
+                  "entity_id": "E12201A5-CC50-40AF-97AE-C54A2CA303F7",
+                  "score": 0.18342409097544454
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "destination": {
+    "success": true,
+    "results": {
+      "entities": [
+        {
+          "entity_id": "A75E2277-6EDF-4E18-831C-096E806E51AE",
+          "name": "Edinburgh",
+          "type": "urn:entity",
+          "subtype": "urn:entity:destination",
+          "query": {
+            "affinity": 0.8362903398323988,
+            "explainability": {
+              "signal.interests.entities": [
+                {
+                  "entity_id": "0D8EAFA4-CEEA-44D5-8E1F-26A8A9F49A77",
+                  "score": 0.3145882518443529
+                },
+                {
+                  "entity_id": "B30DB61E-707C-421E-A1C4-1A912B7F067D",
+                  "score": 0.24729923258471867
+                },
+                {
+                  "entity_id": "569F8294-72DA-4935-B9F2-4FC697AB2A1E",
+                  "score": 0.22440313053073643
+                },
+                {
+                  "entity_id": "E12201A5-CC50-40AF-97AE-C54A2CA303F7",
+                  "score": 0.21370938504019193
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "warnings": [
+      {
+        "type": "not_found",
+        "signal.interests.entities": ["55908017-4CFD-4688-9A7E-7B1FF04B171D"]
+      }
+    ]
+  }
+}
