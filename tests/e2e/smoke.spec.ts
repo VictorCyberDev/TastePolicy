@@ -26,7 +26,11 @@ test("real runtime fails safely without Qloo credentials", async ({
   await expect(
     page.getByRole("button", { name: "Discover with Qloo" }),
   ).toBeDisabled();
-  await expect(page.getByText("No decision issued.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "No decision issued. Missing evidence never becomes REJECT.",
+    ),
+  ).toBeVisible();
   await page.emulateMedia({ colorScheme: "dark" });
   await page.screenshot({
     path: "test-results/milestone-1-mobile-dark.png",

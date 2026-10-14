@@ -73,14 +73,22 @@ No persistent personalization, long-term learning, ContextGraph, counterfactuals
 
 ## Next milestone
 
-After Milestone 1 merges, the next implementation milestone is **M1.5R — Verified Demo Reconciliation**, followed by **M1.6 — Proof & Interoperability**, then **M2 — Persistent Taste State + ContextGraph + scoped feedback**. The authoritative product architecture and milestone sequence live in [Canonical Architecture & Milestone Journey v2](docs/architecture/canonical-architecture-v2.md).
+Milestone 1 is merged. This branch implements **M1.5R — Verified Demo Reconciliation** for independent guide review, followed by **M1.6 — Proof & Interoperability**, then **M2 — Persistent Taste State + ContextGraph + scoped feedback**. The authoritative product architecture and milestone sequence live in [Canonical Architecture & Milestone Journey v2](docs/architecture/canonical-architecture-v2.md).
 
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Bounded live investigation
+## Historical bounded live investigation
 
-Event-host authentication, five Material & modern identities, three discovery domains and three candidate-specific responses were observed. Lookup/explanation readers were repaired from actual wire data. Application requests timed out, and the live verifier remained PARTIAL_LIVE_PROOF within the 25-attempt ceiling. This is not completed acceptance. Read [actual observations and limits](docs/evaluation/milestone-1-live-verification.md); PRs remain unmerged and M2 is not authorized.
+Event-host authentication, five Material & modern identities, three discovery domains and three candidate-specific responses were observed. Lookup/explanation readers were repaired from actual wire data. Application requests timed out, and the live verifier remained PARTIAL_LIVE_PROOF within the 25-attempt ceiling. That initial attempt was not completed acceptance. Read [actual observations and limits](docs/evaluation/milestone-1-live-verification.md); that historical run did not authorize a merge. PR #1 has since merged after acceptance and review; M2 is not authorized by this presentation pass.
 
 The transport closure run subsequently resolved all five canonical signals through the real application with the bounded 15-second/two-concurrent repair. That historical attempt then hit the provider's per-second rate limit and stopped. A later bounded continuation identified the five-requests-per-second event limit, added verifier-only pacing without retries, completed discovery/evaluation/receipt/repeat/browser checks, and reached `LIVE_ACCEPTANCE_PASSED`. See the [historical investigation](docs/evaluation/milestone-1-live-verification.md) and [final acceptance report](docs/evaluation/milestone-1-live-acceptance-2026-10-13.md).
+
+## Verified demo reconciliation and Judge Mode
+
+The working demo now separates cultural signals, Qloo evidence, a specific agent proposal and cultural-policy evaluation. **Load Judge Mode** resets five reviewed concept names and selects place; it does not call Qloo, select entity IDs or precompute a decision. Resolve through the real server and explicitly review each identity before discovery/evaluation. ALLOW concerns experimental cultural policy, never purchasing, booking, spending or legal authority. Affinity remains query/context-relative aggregate evidence, not preference probability.
+
+Successful current server evidence is labeled LIVE QLOO. Historical evidence must be labeled RECORDED LIVE EVIDENCE; intercepted test screenshots say SYNTHETIC TEST DATA; missing required evidence is UNAVAILABLE. Production has no synthetic fallback. Human-readable receipts expose existing evidence, experimental thresholds, provenance and versions alongside unchanged JSON.
+
+See the [18-file reconciliation matrix](docs/reconciliation/m1-5r-matrix.md), [presentation review](docs/submission/m1-5r-ux-review.md), [submission narrative](docs/submission/readiness.md), [demo scripts](docs/submission/demo-script.md), [profile shortlist](docs/submission/demo-seeds.md), [video plan](docs/submission/video-storyboard.md) and [bounded smoke handoff](docs/submission/live-operations.md). M1.6/M2 are not implemented or authorized by this milestone.
