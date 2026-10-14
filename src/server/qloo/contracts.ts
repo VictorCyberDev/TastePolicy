@@ -1,13 +1,17 @@
 import type {
-  CulturalEvidence,
+  EntityQuery,
+  EntityResolution,
+  QlooEntity,
+  EntityType,
+  InferenceResult,
   ProviderResult,
-  TasteContext,
-  TasteSignal,
 } from "@/types/domain";
-// Future dependency-injected server adapter. No network implementation or fabricated results.
 export interface QlooProvider {
+  resolve(query: EntityQuery): Promise<ProviderResult<EntityResolution>>;
+  entities(ids: readonly string[]): Promise<ProviderResult<QlooEntity[]>>;
   infer(input: {
-    signals: readonly TasteSignal[];
-    context: TasteContext;
-  }): Promise<ProviderResult<readonly CulturalEvidence[]>>;
+    signalIds: readonly string[];
+    targetType: EntityType;
+    candidateId?: string;
+  }): Promise<ProviderResult<InferenceResult>>;
 }

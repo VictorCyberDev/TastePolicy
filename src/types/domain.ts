@@ -1,33 +1,122 @@
-// Design contracts only. No evaluation or scoring implementation exists in Phase 0.
+export const ENTITY_TYPES = [
+  "artist",
+  "book",
+  "brand",
+  "destination",
+  "movie",
+  "place",
+  "tv_show",
+] as const;
+export type EntityType = (typeof ENTITY_TYPES)[number];
+export type TargetType = "brand" | "destination" | "place";
+export type AffinityScale = "unit" | "percent";
 export type PolicyDecisionType = "ALLOW" | "ASK" | "REJECT";
-export interface TasteSignal {
+export type UnavailableReason =
+  | "not_configured"
+  | "host_not_configured"
+  | "affinity_scale_unverified"
+  | "auth_failed"
+  | "rate_limited"
+  | "request_budget_exhausted"
+  | "timeout"
+  | "provider_error"
+  | "invalid_response"
+  | "no_evidence"
+  | "unsupported_entity"
+  | "unresolved_profile";
+export type ProviderResult<T> =
+  | { status: "available"; data: T }
+  | { status: "unavailable"; reason: UnavailableReason };
+export interface QlooEntity {
   id: string;
-  source: "explicit" | "inferred";
-  entityId: string;
+  name: string;
+  type: EntityType;
+  releaseYear?: number;
+  address?: string;
 }
-export interface TasteContext {
-  purpose: string;
-  recipientId?: string;
+export interface EntityQuery {
+  query: string;
+  expectedType: EntityType;
+}
+export interface EntityResolution {
+  query: EntityQuery;
+  matches: QlooEntity[];
+  state: "single" | "ambiguous" | "no_match";
+}
+export interface SignalContribution {
+  signalId: string;
+  score: number;
+}
+export type ExplainabilityIssue =
+  "malformed_contribution" | "missing_signals" | "provider_warning";
+export type Explainability =
+  | {
+      status: "complete" | "partial";
+      contributions: SignalContribution[];
+      missingSignalIds: string[];
+      omittedSignalIds: string[];
+      omission: "none" | "explicit_provider_omission" | "unknown";
+      issues: ExplainabilityIssue[];
+    }
+  | {
+      status: "unavailable";
+      reason:
+        | "not_returned"
+        | "provider_warning"
+        | "unsupported_shape"
+        | "malformed_contribution";
+    };
+export interface CulturalEvidence {
+  entity: QlooEntity;
+  rawAffinity: number;
+  alignmentScore: number;
+  scale: AffinityScale;
+  rank: number;
+  explainability: Explainability;
+}
+export interface InferenceResult {
+  candidates: CulturalEvidence[];
+  provenance: {
+    provider: "qloo";
+    endpoint: "/v2/insights";
+    host: string;
+    fetchedAt: string;
+    signalIds: string[];
+    targetType: EntityType;
+    specificCandidateId?: string;
+  };
 }
 export interface ProposedAction {
-  id: string;
-  kind: string;
-  context: TasteContext;
-}
-export interface CulturalEvidence {
-  source: string;
-  description: string;
+  kind: "SELECT_ENTITY";
+  targetEntity: QlooEntity;
+  context?: string;
 }
 export interface PolicyDecision {
   outcome: PolicyDecisionType;
-  reasons: readonly string[];
+  reasonCode: "STRONG_ALIGNMENT" | "UNCERTAIN_ALIGNMENT" | "WEAK_ALIGNMENT";
 }
 export interface CulturalReceipt {
-  id: string;
-  actionId: string;
+  receiptId: string;
+  schemaVersion: "cultural-receipt-v1";
+  normalizationVersion: "affinity-explicit-scale-v1";
+  policyVersion: string;
   decision: PolicyDecision;
-  evidence: readonly CulturalEvidence[];
+  action: ProposedAction;
+  candidate: QlooEntity;
+  inputSignals: QlooEntity[];
+  alignmentScore: number;
+  qlooEvidence: {
+    rawAffinity: number;
+    scale: AffinityScale;
+    provenance: InferenceResult["provenance"];
+  };
+  explainability: Explainability;
+  policy: {
+    allowAbove: number;
+    rejectBelow: number;
+    calibration: "provisional_not_live_calibrated";
+  };
+  requestId: string;
+  evaluatedAt: string;
 }
-export type ProviderResult<T> =
-  | { status: "available"; data: T }
-  | { status: "unavailable"; reason: "not_configured" | "provider_error" };
+export type EvaluationResult = ProviderResult<CulturalReceipt>;
