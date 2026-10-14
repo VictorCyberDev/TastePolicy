@@ -91,7 +91,7 @@ The working demo now separates cultural signals, Qloo evidence, a specific agent
 
 Successful current server evidence is labeled LIVE QLOO. Historical evidence must be labeled RECORDED LIVE EVIDENCE; intercepted test screenshots say SYNTHETIC TEST DATA; missing required evidence is UNAVAILABLE. Production has no synthetic fallback. Human-readable receipts expose existing evidence, experimental thresholds, provenance and versions alongside unchanged JSON.
 
-See the [18-file reconciliation matrix](docs/reconciliation/m1-5r-matrix.md), [presentation review](docs/submission/m1-5r-ux-review.md), [submission narrative](docs/submission/readiness.md), [demo scripts](docs/submission/demo-script.md), [profile shortlist](docs/submission/demo-seeds.md), [video plan](docs/submission/video-storyboard.md) and [bounded smoke handoff](docs/submission/live-operations.md). M1.6/M2 remain future work; each requires separate scope approval and verification.
+See the [18-file reconciliation matrix](docs/reconciliation/m1-5r-matrix.md), [presentation review](docs/submission/m1-5r-ux-review.md), [submission narrative](docs/submission/readiness.md), [demo scripts](docs/submission/demo-script.md), [profile shortlist](docs/submission/demo-seeds.md), [video plan](docs/submission/video-storyboard.md) and [bounded smoke handoff](docs/submission/live-operations.md). M1.5R is complete. M1.6 adds the proof and local interoperability surfaces documented below. M2 remains future work and requires separate scope approval and verification.
 
 ## Proof and local agent interoperability
 
