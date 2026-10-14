@@ -1,3 +1,4 @@
+import { labelSynthetic } from "./synthetic-label";
 import { test, expect } from "@playwright/test";
 import { ids, entities, signalIds } from "../qloo-fixtures";
 import { createReceipt } from "../../src/server/receipts/createReceipt";
@@ -70,11 +71,13 @@ test("test-only browser responses exercise the complete decision UI", async ({
     }),
   );
   await page.goto("/");
+  await labelSynthetic(page);
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)
     await page
       .getByLabel(`Signal ${i + 1} resolved identity`)
       .selectOption(ids[i]);
+  await page.getByLabel("Target domain").selectOption("destination");
   await page.getByRole("button", { name: "Discover with Qloo" }).click();
   await page.getByRole("button", { name: "Propose SELECT_ENTITY" }).click();
   await expect(page.getByTestId("decision")).toHaveText("ASK");
