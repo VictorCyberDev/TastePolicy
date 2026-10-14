@@ -1,0 +1,21 @@
+{
+  "operation": "evaluateTasteAction",
+  "request": {
+    "identitiesReviewed": true,
+    "signalIds": [
+      "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+      "b30db61e-707c-421e-a1c4-1a912b7f067d",
+      "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+      "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+      "569f8294-72da-4935-b9f2-4fc697ab2a1e"
+    ],
+    "action": {
+      "kind": "SELECT_ENTITY",
+      "candidate": {
+        "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+        "type": "place"
+      },
+      "context": "Historically reviewed public example; revalidate current identities before use"
+    }
+  }
+}

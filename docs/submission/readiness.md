@@ -28,7 +28,7 @@ flowchart TD
   D --> R[Cultural Authorization Receipt]
 ```
 
-The UI frames an agent proposal; a public Agent Gateway/SDK/MCP and machine continuation contract are not implemented. [M1 live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) established real identities, unit wire affinity, candidate evidence, receipts, repeat and unmocked browser proof. Those historical observations are not current-session evidence. Every new demo must resolve/select identities and request fresh evidence.
+The UI frames an agent proposal. M1.6 adds architectural Capability Comparison, deterministic replay/boundary Stability-lite and a local semantic JSON adapter; these are not accuracy benchmarks, provider robustness or a public Agent Gateway/SDK/MCP. A machine continuation contract is not implemented. [M1 live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) established real identities, unit wire affinity, candidate evidence, receipts, repeat and unmocked browser proof. Those historical observations are not current-session evidence. Every new demo must resolve/select identities and request fresh evidence.
 
 ## Judge-criteria positioning
 
@@ -50,4 +50,4 @@ The UI frames an agent proposal; a public Agent Gateway/SDK/MCP and machine cont
 
 ## Future, not implemented
 
-Persistent Taste State, ContextGraph, scoped feedback, Stability, Comparison Mode, Clarification Planner, Counterfactual Repair, TasteBench, TasteTrajectory, TasteProxy, Agent Gateway/SDK/MCP, authentication, payments and execution remain future. Qloo affinity is query/context-relative aggregate evidence, not individual preference probability. Thresholds remain >0.80 ALLOW, 0.50–0.80 inclusive ASK, <0.50 REJECT, experimental and not human-calibrated.
+Persistent Taste State, ContextGraph, scoped feedback, full provider-perturbation Stability, Clarification Planner, Counterfactual Repair, TasteBench, TasteTrajectory, TasteProxy, Agent Gateway/SDK/MCP, authentication, payments and execution remain future. Qloo affinity is query/context-relative aggregate evidence, not individual preference probability. Thresholds remain >0.80 ALLOW, 0.50–0.80 inclusive ASK, <0.50 REJECT, experimental and not human-calibrated.

@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
-    "verify:qloo": "node scripts/verify-qloo.mjs"
+    "verify:qloo": "node scripts/verify-qloo.mjs",
+    "agent": "node --experimental-transform-types --conditions=react-server --import ./scripts/source-imports.mjs ./scripts/agent.mjs"
   },
   "dependencies": {
     "next": "16.4.0",

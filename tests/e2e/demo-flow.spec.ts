@@ -82,9 +82,9 @@ test("test-only browser responses exercise the complete decision UI", async ({
   await page.getByRole("button", { name: "Propose SELECT_ENTITY" }).click();
   await expect(page.getByTestId("decision")).toHaveText("ASK");
   await page.getByText("Machine-readable receipt").click();
-  await expect(page.locator("pre")).toContainText(
-    "tastepolicy-v1-experimental",
-  );
+  await expect(
+    page.getByLabel("Machine-readable Cultural Receipt"),
+  ).toContainText("tastepolicy-v1-experimental");
   expect(errors).toEqual([]);
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.screenshot({
