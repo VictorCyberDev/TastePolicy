@@ -1,3 +1,5 @@
+import SignatureReceipt from "./SignatureReceipt";
+import ProofView from "./ProofView";
 import type { CulturalReceipt } from "@/types/domain";
 export default function ReceiptView({
   receipt,
@@ -18,6 +20,7 @@ export default function ReceiptView({
       </p>
       {receipt ? (
         <>
+          <SignatureReceipt receipt={receipt} source={source} />
           <div className="receipt-header">
             <span className="eyebrow" data-evidence-source={source}>
               {source === "live"
@@ -182,6 +185,7 @@ export default function ReceiptView({
               fields remain available below.
             </p>
           </details>
+          <ProofView receipt={receipt} source={source} />
           <details>
             <summary>Machine-readable receipt</summary>
             <pre tabIndex={0} aria-label="Machine-readable Cultural Receipt">

@@ -367,8 +367,77 @@ test("synthetic evidence never displays a live provenance badge", async ({
   await arrange(page);
   await page.getByRole("button", { name: "Propose SELECT_ENTITY" }).click();
   await expect(page.locator('[data-evidence-source="synthetic"]')).toHaveCount(
-    2,
+    4,
   );
   await expect(page.locator('[data-evidence-source="live"]')).toHaveCount(0);
   await expect(page.getByText("SYNTHETIC TEST DATA — TEST ONLY")).toBeVisible();
 });
+
+for (const [score, outcome] of [
+  [0.9, "ALLOW"],
+  [0.7, "ASK"],
+  [0.2, "REJECT"],
+] as const) {
+  test(`M1.6 synthetic ${outcome} proof uses one candidate without another request`, async ({
+    page,
+  }) => {
+    await arrange(page, score);
+    await page.getByRole("button", { name: "Propose SELECT_ENTITY" }).click();
+    await expect(
+      page.getByRole("article", {
+        name: "Signature Cultural Authorization Receipt",
+      }),
+    ).toContainText(outcome);
+    const calls: string[] = [];
+    page.on("request", (r) => {
+      if (r.url().includes("/api/demo/")) calls.push(r.url());
+    });
+    await page
+      .getByText("Why does TastePolicy matter?", { exact: true })
+      .focus();
+    await page.keyboard.press("Enter");
+    await expect(
+      page.getByRole("heading", { name: "Capability Comparison" }),
+    ).toBeVisible();
+    for (const name of [
+      "Agent proposal only",
+      "Qloo cultural evidence",
+      "TastePolicy authorization",
+    ])
+      await expect(page.getByRole("article", { name })).toContainText(ids[5]);
+    await expect(
+      page.getByRole("article", { name: "Agent proposal only" }),
+    ).not.toContainText(score.toFixed(4));
+    await expect(
+      page.getByRole("article", { name: "Qloo cultural evidence" }),
+    ).not.toContainText(`Cultural policy: ${outcome}`);
+    await expect(
+      page.getByRole("article", { name: "TastePolicy authorization" }),
+    ).toContainText(`Cultural policy: ${outcome}`);
+    await expect(page.getByText(/3\/3 identical/)).toBeVisible();
+    await page
+      .getByText("Structured stability output", { exact: true })
+      .click();
+    await expect(page.getByLabel("Structured stability output")).toContainText(
+      '"stable": true',
+    );
+    await expect(page.locator('[data-evidence-source="live"]')).toHaveCount(0);
+    expect(calls).toEqual([]);
+    await page.screenshot({
+      path: `test-results/SYNTHETIC-M16-${outcome}-proof.png`,
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await page.getByText("Machine-readable receipt", { exact: true }).click();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: `test-results/SYNTHETIC-M16-${outcome}-mobile.png`,
+      fullPage: true,
+    });
+  });
+}

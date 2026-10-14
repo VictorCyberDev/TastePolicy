@@ -721,3 +721,57 @@ footer > p {
     justify-self: start;
   }
 }
+
+.signature-receipt {
+  border-top: 6px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  margin: 22px 0;
+  padding: 14px 0 22px;
+}
+.signature-outcome {
+  font:
+    600 42px/1.1 Arial,
+    sans-serif;
+  letter-spacing: -0.04em;
+  margin: 18px 0 10px;
+}
+.signature-receipt h3 {
+  font:
+    24px/1.25 Georgia,
+    serif;
+  overflow-wrap: anywhere;
+}
+.proof-disclosure h3 {
+  font-size: 17px;
+  margin: 18px 0 9px;
+}
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+.comparison-grid article {
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 14px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.comparison-grid h4 {
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+.comparison-grid p + p {
+  margin-top: 9px;
+}
+.stability-panel {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  font-size: 13px;
+}
+@media (max-width: 1000px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}

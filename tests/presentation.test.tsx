@@ -192,5 +192,8 @@ it.each([
   ["synthetic", "SYNTHETIC TEST DATA"],
 ] as const)("labels %s receipt provenance explicitly", (source, label) => {
   render(<ReceiptView receipt={syntheticReceipt()} source={source} />);
-  expect(screen.getByText(label)).toBeVisible();
+  fireEvent.click(screen.getByText("Why does TastePolicy matter?"));
+  expect(screen.getAllByText(label).length).toBeGreaterThanOrEqual(2);
+  for (const element of screen.getAllByText(label))
+    expect(element).toBeVisible();
 });
