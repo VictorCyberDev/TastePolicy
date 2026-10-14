@@ -1,5 +1,7 @@
 # Milestone 1 live Qloo verification
 
+> **Historical investigation record.** This document preserves the earlier REPAIR/partial-proof sequence and must not be read as the current project status. Final acceptance subsequently passed on M1 head `0063e11f98ee51b9106c67a88229eb7844512fde`; see [Milestone 1 live Qloo acceptance — 2026-10-13](milestone-1-live-acceptance-2026-10-13.md).
+
 Status: **REPAIR — ACCEPTANCE NOT COMPLETE**. Credential authentication succeeded. The former credential blocker is resolved; unmocked application/verifier transport acceptance is now the blocker. No merge or M2 authorization is granted.
 
 ## Exact run binding
