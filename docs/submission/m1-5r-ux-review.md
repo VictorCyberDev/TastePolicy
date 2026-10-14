@@ -1,5 +1,7 @@
 # M1.5R presentation review
 
+Historical presentation-review checkpoint — 2026-10-14, reviewed implementation 3d965cb32752ef37c1ab9aaba785911fb7d98bcf. Environment availability, validation counts and workflow statements describe this recorded run, not the current checkout or deployment.
+
 Baseline main: 84636d6e502e0686db6dc9a483f6908cd466ccf9. Historical source e6b415d was compared against original base 895683e and merged main; [matrix](../reconciliation/m1-5r-matrix.md) was written before implementation. Canonical architecture v2 was read in full.
 
 ## Baseline rendered inspection
@@ -23,7 +25,7 @@ Light/dark tokens, visible focus, 44px controls, skip link, error descriptions/a
 - SYNTHETIC TEST DATA: browser interception and unit fixtures only. Test-only banners and provenance labeling remain visible in screenshots; no production demo toggle exists.
 - UNAVAILABLE: real unconfigured runtime and explicitly synthetic failure tests.
 
-Optional new live presentation smoke: **LIVE_PRESENTATION_SMOKE_ENVIRONMENT_BLOCKED**. No private Qloo credential exists in this work environment; none was requested in chat or fetched solely to repeat accepted M1 proof. No new Qloo request was made. Existing accepted M1 evidence remains unchanged.
+Optional new live presentation smoke: **LIVE_PRESENTATION_SMOKE_ENVIRONMENT_BLOCKED**. No private Qloo credential was available in the recorded work environment; none was requested in chat or fetched solely to repeat accepted M1 proof. No new Qloo request was made. Existing accepted M1 evidence remains unchanged.
 
 Post-change rendered review and final validation results are recorded in the completion checkpoint; provider/policy/verifier/domain/environment/dependency files remain unchanged. No M1.6, M2, persistence, Stability, public agent API/MCP or Vercel configuration work occurred.
 

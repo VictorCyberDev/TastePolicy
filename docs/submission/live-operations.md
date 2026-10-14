@@ -10,4 +10,4 @@ M1 provider acceptance is complete; [final report](../evaluation/milestone-1-liv
 6. Record actual timestamp/SHA, candidate/decision/affinity/scale/explainability, browser errors and provenance. No raw headers or provider dumps. No predetermined result.
 7. Keep live, recorded, synthetic and unavailable proof separate. The accepted M1 report is historical evidence, not a new smoke.
 
-The unchanged verifier remains available for separately authorized integration acceptance; its existing pacing is verifier-only. Read scripts/README.md, policy-v1.md and canonical architecture v2. No Vercel secret/configuration changes, merges or later milestones are authorized here.
+The unchanged verifier remains available for separately authorized integration acceptance; its existing pacing is verifier-only. Read scripts/README.md, policy-v1.md and canonical architecture v2. Vercel secret/configuration changes, merges and later milestones require separate explicit authorization.

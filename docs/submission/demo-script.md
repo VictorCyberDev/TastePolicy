@@ -28,4 +28,4 @@ Allow provider latency; use honest cuts/elapsed-time captions rather than fake p
 | 115–135s | Uncertainty / boundaries       | Explain ASK without claiming a Clarification Planner; REJECT without claiming repair; UNAVAILABLE without treating it as dislike. If showing an unconfigured runtime, label it. |
 | 135–150s | Architecture / category        | Qloo cultural intelligence → normalized evidence → deterministic policy → receipt. Persistent state, graph, stability and external agent integration are future.                |
 
-Do not script all three successful decision states as live: the accepted sample naturally produced ALLOW. ASK/REJECT presentation can be rehearsed only as explicitly synthetic test evidence. Current-session final live recording remains an operational task, not completed by these scripts.
+Do not script all three successful decision states as live: the accepted sample naturally produced ALLOW. ASK/REJECT presentation can be rehearsed only as explicitly synthetic test evidence. Final live recording is a separate operational task; these scripts are rehearsal plans, not evidence of a completed recording.

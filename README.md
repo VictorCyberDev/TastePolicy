@@ -71,9 +71,9 @@ Ready for Vercel: import this repository, select Next.js, use Node 24, npm ci an
 
 No persistent personalization, long-term learning, ContextGraph, counterfactuals, TasteTrajectory, TasteProxy, full TasteBench, public SDK/MCP, authentication, payments or autonomous execution are implemented yet. No scientific threshold validation, generalized recommendation superiority or production-scale reliability is claimed. Live identity, unit-scale, candidate evidence and explainability semantics were verified for the bounded event contract; broader empirical calibration remains pending. No demographic identity is used to manufacture taste. Request quotas are process-local only. Request bodies have a total three-second read deadline, real provider instances permit at most five calls per HTTP request, upstream calls use the verified bounded 15-second provider deadline without retries, and the live verifier paces operations across the observed five-requests-per-second event limit. Use platform deployment protection and quota monitoring before exposing a credentialed demo; these limits do not protect the full Qloo account.
 
-## Next milestone
+## Milestone journey
 
-Milestone 1 is merged. This branch implements **M1.5R — Verified Demo Reconciliation** for independent guide review, followed by **M1.6 — Proof & Interoperability**, then **M2 — Persistent Taste State + ContextGraph + scoped feedback**. The authoritative product architecture and milestone sequence live in [Canonical Architecture & Milestone Journey v2](docs/architecture/canonical-architecture-v2.md).
+Milestone 1 is merged. **M1.5R — Verified Demo Reconciliation** adds judge-facing presentation, accessibility and the verified demo experience over the merged M1 foundation. The canonical journey continues with **M1.6 — Proof & Interoperability**, then **M2 — Persistent Taste State + ContextGraph + scoped feedback**. The authoritative product architecture and milestone sequence live in [Canonical Architecture & Milestone Journey v2](docs/architecture/canonical-architecture-v2.md).
 
 ## License
 
@@ -91,4 +91,4 @@ The working demo now separates cultural signals, Qloo evidence, a specific agent
 
 Successful current server evidence is labeled LIVE QLOO. Historical evidence must be labeled RECORDED LIVE EVIDENCE; intercepted test screenshots say SYNTHETIC TEST DATA; missing required evidence is UNAVAILABLE. Production has no synthetic fallback. Human-readable receipts expose existing evidence, experimental thresholds, provenance and versions alongside unchanged JSON.
 
-See the [18-file reconciliation matrix](docs/reconciliation/m1-5r-matrix.md), [presentation review](docs/submission/m1-5r-ux-review.md), [submission narrative](docs/submission/readiness.md), [demo scripts](docs/submission/demo-script.md), [profile shortlist](docs/submission/demo-seeds.md), [video plan](docs/submission/video-storyboard.md) and [bounded smoke handoff](docs/submission/live-operations.md). M1.6/M2 are not implemented or authorized by this milestone.
+See the [18-file reconciliation matrix](docs/reconciliation/m1-5r-matrix.md), [presentation review](docs/submission/m1-5r-ux-review.md), [submission narrative](docs/submission/readiness.md), [demo scripts](docs/submission/demo-script.md), [profile shortlist](docs/submission/demo-seeds.md), [video plan](docs/submission/video-storyboard.md) and [bounded smoke handoff](docs/submission/live-operations.md). M1.6/M2 remain future work; each requires separate scope approval and verification.

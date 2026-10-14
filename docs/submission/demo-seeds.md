@@ -12,4 +12,4 @@ Material & modern: Nils Frahm / artist; Perfect Days (2023) / movie; Muji / bran
 | Craft & discovery      | Khruangbin / artist; The Grand Budapest Hotel / movie; Patagonia / brand; Station Eleven / book; Chef's Table / TV                                | Place-selection narrative; distinguish clothing brand/region and Emily St. John Mandel novel/TV. UNVERIFIED DEMO-SEED CANDIDATE. |
 | Narrative & atmosphere | Massive Attack / artist; Arrival (2016) / movie; Uniqlo / brand; The Left Hand of Darkness / book; Dark / TV                                      | Clear public concepts with disambiguation needs; no predicted relationship or policy state. UNVERIFIED DEMO-SEED CANDIDATE.      |
 
-Alternative resolution/usefulness requires a separate bounded live investigation, not this reconciliation pass. Never choose a profile to force ALLOW or claim that every profile produces all outcomes.
+Alternative resolution/usefulness requires a separate bounded live investigation; alternatives are outside the canonical demo preset. Never choose a profile to force ALLOW or claim that every profile produces all outcomes.

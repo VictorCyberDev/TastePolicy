@@ -1,6 +1,6 @@
 # TastePolicy submission preparation
 
-Status: **DRAFT MATERIALS — verified M1, M1.5R pending guide review**. This is not a Devpost submission or merge authorization. Implementation truth is merged main 84636d6e502e0686db6dc9a483f6908cd466ccf9; product direction is [canonical architecture v2](../architecture/canonical-architecture-v2.md).
+Status: **DRAFT SUBMISSION MATERIALS — M1.5R implementation complete; final submission and recording remain pending**. This is not a Devpost submission or merge authorization. Implementation truth is the latest verified merged main; M1.5R was developed over M1 baseline 84636d6e502e0686db6dc9a483f6908cd466ccf9. Product direction is [canonical architecture v2](../architecture/canonical-architecture-v2.md).
 
 **Project:** TastePolicy. **Category/tagline:** Cultural authorization for AI agents. **Core insight:** Permission is not preference.
 
@@ -35,18 +35,18 @@ The UI frames an agent proposal; a public Agent Gateway/SDK/MCP and machine cont
 | Criterion                    | Evidence-backed story                                                                                                                           | Honest limit                                                                         |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Technological implementation | Server-only integration, contract validation, candidate-specific evidence, deterministic policy, versioned receipts, bounded unavailable states | Experimental thresholds; process-local quotas; no production-scale reliability claim |
-| Design                       | Guided Judge Mode, proposal/control UX, readable evidence/provenance, accessible mobile disclosures                                             | Reconciled UI requires independent guide review                                      |
+| Design                       | Guided Judge Mode, proposal/control UX, readable evidence/provenance, accessible mobile disclosures                                             | Lightweight accessibility checks are not a full accessibility certification          |
 | Potential impact             | Subjective mistakes matter more when an agent acts; cultural authorization may be reusable infrastructure                                       | Adoption, willingness to pay and measurable human alignment are hypotheses           |
 | Quality of idea              | Permissions govern capability; TastePolicy supplies a cultural-policy boundary grounded in Qloo                                                 | No generalized recommendation superiority claim                                      |
 
 ## Submission checklist
 
 - Verify actual event rules/rubric and eligibility separately before submission; this document does not establish eligibility.
-- Obtain independent M1.5R review. Do not merge this Draft or historical PR #2 automatically.
+- Require independent review and explicit approval for repository merges; historical reconciliation records are not merge authorization.
 - Capture fresh real responses for the final recording; keep LIVE QLOO, RECORDED LIVE EVIDENCE, SYNTHETIC TEST DATA and UNAVAILABLE distinct.
 - Include setup, Apache 2.0 license, provider provenance, experimental threshold rationale and limitations.
 - Inspect screenshots for secrets; never remove synthetic labels or force an outcome for narrative convenience.
-- Follow v2 ordering: M1 → M1-T → M1.5R → M1.6 → M2 → M2.5 → M3 → M4 → M5 → M6 → M7. Completion here does not authorize M1.6 or M2.
+- Follow v2 ordering: M1 → M1-T → M1.5R → M1.6 → M2 → M2.5 → M3 → M4 → M5 → M6 → M7. Later milestones require separate scope approval and verification.
 
 ## Future, not implemented
 
