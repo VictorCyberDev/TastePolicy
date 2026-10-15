@@ -775,3 +775,35 @@ footer > p {
     grid-template-columns: 1fr;
   }
 }
+
+.state-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.state-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.state-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.state-form label {
+  display: grid;
+  gap: 0.5rem;
+}
+.state-panel small {
+  display: block;
+  margin-top: 0.5rem;
+}
+.state-panel pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.state-panel button {
+  min-height: 44px;
+  margin-block: 0.5rem;
+}

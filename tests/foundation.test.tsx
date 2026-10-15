@@ -47,7 +47,9 @@ describe("Phase 0 foundation", () => {
   it("renders an honest homepage", () => {
     render(<Home />);
     expect(screen.getByRole("heading", { name: "TastePolicy" })).toBeVisible();
-    expect(screen.getByText("Milestone 1 — Qloo vertical slice")).toBeVisible();
+    expect(
+      screen.getByText("Milestone 2 — Versioned cultural policy"),
+    ).toBeVisible();
     expect(screen.getByText("Resolve with Qloo")).toBeVisible();
   });
   it("expresses unavailable providers and inspectable receipt contracts", () => {

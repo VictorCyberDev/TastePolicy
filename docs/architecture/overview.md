@@ -10,7 +10,7 @@ Transport (qloo/client.ts) owns fixed-origin HTTP, key header, timeout/body boun
 
 See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md), [final live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) and the [canonical architecture journey](canonical-architecture-v2.md).
 
-## Future responsibilities
+## Module responsibilities and later expansion
 
 | Module                | Responsibility                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------- |
@@ -33,4 +33,8 @@ The LLM may assist interpretation/orchestration but must not silently become the
 
 Presentation/HTTP entry points call orchestration, which depends on domain contracts and injected adapters. Domain types do not import framework, provider SDK or persistence models. Vendor payloads terminate at adapters. Missing services return explicit unavailable states, never fabricated success.
 
-The larger canonical flow is agent gateway → evaluation orchestration → persistent Taste State/action context → Qloo cultural evidence → explicit policy + bounded stability analysis → ALLOW / ASK / REJECT / UNAVAILABLE → Cultural Authorization Receipt → Agent Continuation Contract. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; Supabase/PostgreSQL remains future persistence. No database project is connected. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed. See [Canonical Architecture & Milestone Journey v2](canonical-architecture-v2.md).
+The larger canonical flow is agent gateway → evaluation orchestration → persistent Taste State/action context → Qloo cultural evidence → explicit policy + bounded stability analysis → ALLOW / ASK / REJECT / UNAVAILABLE → Cultural Authorization Receipt → Agent Continuation Contract. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; M2 adds a private PostgreSQL persistence adapter behind explicit repository interfaces. No remote database project is connected by this implementation. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed. See [Canonical Architecture & Milestone Journey v2](canonical-architecture-v2.md).
+
+## M2 persistent-state boundary
+
+The bounded state demo wraps the unchanged M1 evaluator and Cultural Receipt v1 inside a state-linked M2 envelope. Session capability binds one temporary subject; logical agents share it only within that authorization boundary. Atomic immutable snapshots, scoped feedback, contextual policy and captured replay live in src/server/state. ContextGraph is a deterministic typed projection with separate current-state and historical-decision views. See [M2 design](../decisions/0006-persistent-state-boundary.md) and [contracts/security](../product/m2-persistent-state.md). Neither the original CLI nor Stability-lite depends on persistence. No M2.5.

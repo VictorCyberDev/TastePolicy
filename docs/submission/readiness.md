@@ -50,4 +50,8 @@ The UI frames an agent proposal. M1.6 adds architectural Capability Comparison, 
 
 ## Future, not implemented
 
-Persistent Taste State, ContextGraph, scoped feedback, full provider-perturbation Stability, Clarification Planner, Counterfactual Repair, TasteBench, TasteTrajectory, TasteProxy, Agent Gateway/SDK/MCP, authentication, payments and execution remain future. Qloo affinity is query/context-relative aggregate evidence, not individual preference probability. Thresholds remain >0.80 ALLOW, 0.50–0.80 inclusive ASK, <0.50 REJECT, experimental and not human-calibrated.
+Full provider-perturbation Stability, Clarification Planner, Counterfactual Repair, TasteBench, TasteTrajectory, TasteProxy, Agent Gateway/SDK/MCP, authentication, payments and execution remain future. Qloo affinity is query/context-relative aggregate evidence, not individual preference probability. Thresholds remain >0.80 ALLOW, 0.50–0.80 inclusive ASK, <0.50 REJECT, experimental and not human-calibrated.
+
+## M2 state foundation
+
+M2 adds separately scoped PostgreSQL-backed state versions, contextual policy, structured feedback and deterministic ContextGraph inspection. Remote deployment and new live smoke require separate environmental proof; this is not a claim of calibrated learning. See [M2 contracts](../product/m2-persistent-state.md). M2.5 remains unimplemented.
