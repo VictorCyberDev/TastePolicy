@@ -770,3 +770,105 @@ it("real filesystem PostgreSQL-compatible state survives close/reopen without a 
     await rm(dir, { recursive: true, force: true });
   }
 }, 30000);
+
+it("SQL rejects a non-genesis version with valid parent but NULL mutation lineage", async () => {
+  const { s, token } = await ready();
+  const { profile } = await s.read(token);
+  await expect(
+    database.db.query(
+      "INSERT INTO tastepolicy.taste_state_versions VALUES($1,2,1,NULL,$2,$3)",
+      [profile.profileId, "a".repeat(64), {}],
+    ),
+  ).rejects.toMatchObject({
+    code: "23514",
+    constraint: "state_version_lineage",
+  });
+  expect(
+    (
+      await database.db.query(
+        "SELECT version FROM tastepolicy.taste_state_versions WHERE profile_id=$1 AND version=2",
+        [profile.profileId],
+      )
+    ).rows,
+  ).toEqual([]);
+});
+it("SQL rejects a genesis version with non-NULL mutation lineage", async () => {
+  const profileId = crypto.randomUUID();
+  await database.db.exec("BEGIN");
+  try {
+    await database.db.query(
+      "INSERT INTO tastepolicy.taste_profiles VALUES($1,0,$2,$3)",
+      [profileId, now, {}],
+    );
+    await expect(
+      database.db.query(
+        "INSERT INTO tastepolicy.taste_state_versions VALUES($1,0,NULL,$2,$3,$4)",
+        [profileId, crypto.randomUUID(), "a".repeat(64), {}],
+      ),
+    ).rejects.toMatchObject({
+      code: "23514",
+      constraint: "state_version_lineage",
+    });
+  } finally {
+    await database.db.exec("ROLLBACK");
+  }
+});
+it("SQL rejects a non-genesis NULL parent rather than accepting an UNKNOWN CHECK", async () => {
+  const { s, token } = await ready();
+  const { profile } = await s.read(token);
+  await expect(
+    database.db.query(
+      "INSERT INTO tastepolicy.taste_state_versions VALUES($1,2,NULL,$2,$3,$4)",
+      [profile.profileId, crypto.randomUUID(), "a".repeat(64), {}],
+    ),
+  ).rejects.toMatchObject({
+    code: "23514",
+    constraint: "state_version_lineage",
+  });
+});
+it("SQL commits a valid deferred version/mutation cycle and rejects a dangling mutation at COMMIT", async () => {
+  const { s, token } = await ready();
+  const { profile } = await s.read(token),
+    mutationId = crypto.randomUUID();
+  await database.db.exec("BEGIN");
+  try {
+    await database.db.query(
+      "INSERT INTO tastepolicy.taste_state_versions VALUES($1,2,1,$2,$3,$4)",
+      [profile.profileId, mutationId, "a".repeat(64), {}],
+    );
+    // The version precedes its mutation record, exercising INITIALLY DEFERRED.
+    expect(
+      (
+        await database.db.query(
+          "SELECT mutation_id FROM tastepolicy.mutation_records WHERE profile_id=$1 AND mutation_id=$2",
+          [profile.profileId, mutationId],
+        )
+      ).rows,
+    ).toEqual([]);
+    await database.db.query(
+      "INSERT INTO tastepolicy.mutation_records VALUES($1,$2,$3,2,$4,$5)",
+      [profile.profileId, "direct-sql-cycle", mutationId, "b".repeat(64), {}],
+    );
+    await database.db.exec("COMMIT");
+  } catch (e) {
+    await database.db.exec("ROLLBACK");
+    throw e;
+  }
+  const linked = await database.db.query(
+    "SELECT v.version,v.mutation_id FROM tastepolicy.taste_state_versions v JOIN tastepolicy.mutation_records m ON (v.profile_id,v.mutation_id,v.version)=(m.profile_id,m.mutation_id,m.version) WHERE v.profile_id=$1 AND v.version=2",
+    [profile.profileId],
+  );
+  expect(linked.rows).toEqual([{ version: 2, mutation_id: mutationId }]);
+  await database.db.exec("BEGIN");
+  try {
+    await database.db.query(
+      "INSERT INTO tastepolicy.taste_state_versions VALUES($1,3,2,$2,$3,$4)",
+      [profile.profileId, crypto.randomUUID(), "c".repeat(64), {}],
+    );
+    await expect(database.db.exec("COMMIT")).rejects.toMatchObject({
+      code: "23503",
+    });
+  } finally {
+    await database.db.exec("ROLLBACK");
+  }
+});

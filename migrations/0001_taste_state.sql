@@ -7,7 +7,12 @@ CREATE TABLE tastepolicy.taste_profiles (
 CREATE TABLE tastepolicy.taste_state_versions (
  profile_id uuid NOT NULL REFERENCES tastepolicy.taste_profiles ON DELETE CASCADE,
  version integer NOT NULL CHECK(version>=0), parent_version integer, mutation_id uuid, state_hash text NOT NULL CHECK(length(state_hash)=64), data jsonb NOT NULL,
- PRIMARY KEY(profile_id,version), CHECK ((version=0 AND parent_version IS NULL) OR parent_version=version-1),
+ PRIMARY KEY(profile_id,version),
+ CONSTRAINT state_version_lineage CHECK (
+  (version=0 AND parent_version IS NULL AND mutation_id IS NULL)
+  OR
+  (version>0 AND parent_version IS NOT NULL AND parent_version=version-1 AND mutation_id IS NOT NULL)
+ ),
  FOREIGN KEY(profile_id,parent_version) REFERENCES tastepolicy.taste_state_versions DEFERRABLE INITIALLY DEFERRED
 );
 ALTER TABLE tastepolicy.taste_profiles ADD FOREIGN KEY(profile_id,current_version) REFERENCES tastepolicy.taste_state_versions DEFERRABLE INITIALLY DEFERRED;
