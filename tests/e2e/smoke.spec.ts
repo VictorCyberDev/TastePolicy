@@ -10,7 +10,7 @@ test("real runtime fails safely without Qloo credentials", async ({
     page.getByRole("heading", { name: "TastePolicy", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText("Milestone 1 — Qloo vertical slice"),
+    page.getByText("Milestone 2 — Versioned cultural policy"),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(

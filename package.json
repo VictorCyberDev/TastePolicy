@@ -15,20 +15,26 @@
     "format:check": "prettier --check .",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
     "verify:qloo": "node scripts/verify-qloo.mjs",
-    "agent": "node --experimental-transform-types --conditions=react-server --import ./scripts/source-imports.mjs ./scripts/agent.mjs"
+    "agent": "node --experimental-transform-types --conditions=react-server --import ./scripts/source-imports.mjs ./scripts/agent.mjs",
+    "test:database": "vitest run tests/state.test.ts",
+    "db:migrate": "node scripts/state-db.mjs migrate",
+    "db:purge": "node scripts/state-db.mjs purge"
   },
   "dependencies": {
     "next": "16.4.0",
+    "pg": "8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
     "@playwright/test": "^1.56.1",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^16",
     "@types/node": "^24",
+    "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CANONICAL_SIGNALS } from "./profile";
 import DecisionView from "./DecisionView";
 import ReceiptView from "./ReceiptView";
+import StatePanel from "@/features/state/StatePanel";
 import { reasons, requestNotice, type Notice } from "./presentation";
 import {
   ENTITY_TYPES,
@@ -131,7 +132,7 @@ export default function Demo() {
           </span>
           TastePolicy
         </a>
-        <span className="badge">Milestone 1 — Qloo vertical slice</span>
+        <span className="badge">Milestone 2 — Versioned cultural policy</span>
       </header>
       <section className="hero" id="top" aria-labelledby="product-name">
         <div>
@@ -195,7 +196,7 @@ export default function Demo() {
         <p className="helper">
           Verified M1 foundation · Experimental policy
           <br />
-          No persistence, LLM or action execution.
+          Optional versioned state; no LLM or action execution.
         </p>
       </div>
       <section className="judge-guide panel" aria-labelledby="judge-heading">
@@ -528,6 +529,7 @@ export default function Demo() {
             busy={operation === "evaluate"}
           />
           <ReceiptView receipt={receipt} />
+          <StatePanel receipt={receipt} />
         </div>
       </div>
       <footer>
@@ -536,8 +538,8 @@ export default function Demo() {
           Qloo supplies cultural evidence. TastePolicy applies cultural policy.
         </p>
         <p className="helper">
-          Apache 2.0 · No persistence, learning, demographic taste assumptions
-          or action execution. Aggregate affinities are not proof of individual
+          Apache 2.0 · Versioned state; no demographic taste assumptions or
+          action execution. Aggregate affinities are not proof of individual
           preferences or future behavior.
         </p>
       </footer>
