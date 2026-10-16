@@ -198,6 +198,15 @@ test("synthetic borderline clarification is explicit, keyboard accessible and re
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
   const operations = await flow(page, "ASK");
   expect(operations).not.toContain("plan");
+  await expect(
+    page.getByRole("region", {
+      name: "Interactive authorization",
+      exact: true,
+    }),
+  ).toHaveCSS("display", "grid");
+  await expect(
+    page.getByRole("button", { name: "Ask one clarification" }),
+  ).toHaveCSS("border-top-width", "1px");
   const button = page.getByRole("button", { name: "Ask one clarification" });
   await button.focus();
   await page.keyboard.press("Enter");

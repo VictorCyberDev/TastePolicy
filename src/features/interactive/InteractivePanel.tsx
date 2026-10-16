@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import styles from "./InteractivePanel.module.css";
+import "./InteractivePanel.css";
 import type { StateEvaluation } from "@/lib/state/types";
 import type {
   Answer,
@@ -99,10 +99,7 @@ export default function InteractivePanel({
     });
   }
   return (
-    <section
-      className={styles.interactiveRoot}
-      aria-labelledby="interactive-heading"
-    >
+    <section className="interactiveRoot" aria-labelledby="interactive-heading">
       <h3 id="interactive-heading">Interactive authorization</h3>
       <p className="helper">
         One explicit question or one bounded candidate substitution. Answers
