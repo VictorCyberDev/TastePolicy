@@ -13,6 +13,7 @@ import {
   proposal,
 } from "./interactive-fixtures";
 import { InteractiveService } from "@/server/interactive/service";
+import { stateDecision } from "@/server/state/policy";
 import { handleInteractive } from "@/server/interactive/http";
 import { interactionInput } from "@/server/interactive/validation";
 import { SESSION_COOKIE } from "@/server/state/http";
@@ -892,4 +893,242 @@ it("repair skips independently excluded alternatives without weakening the rule"
   expect(result.verification!.action.candidate.id).toBe(ALT2.id);
   expect(result.preservedConstraints).toHaveLength(2);
   expect(q.calls).toHaveLength(4);
+});
+
+it("incompatible applicable currencies terminate before any question, Qloo call or state mutation", async () => {
+  const x = await setup(d.store, { score: 0.7, feedback: priceRule });
+  await x.stateService.mutate(
+    x.token,
+    {
+      expectedStateVersion: 2,
+      idempotencyKey: "second-currency",
+      payload: {
+        kind: "FEEDBACK",
+        feedback: { ...priceRule, maxPrice: { amount: 60, currency: "EUR" } },
+      },
+    },
+    reqId,
+  );
+  const q = provider({ score: 0.7 });
+  const e = await x.stateService.evaluate(
+    x.token,
+    proposal(3),
+    () => q.q,
+    reqId,
+  );
+  const before = await x.stateService.read(x.token),
+    calls = [...q.calls];
+  const fetcher = vi.spyOn(globalThis, "fetch");
+  try {
+    const a = await x.interactive.plan(x.token, {
+      evaluationId: e.evaluationId,
+    });
+    expect(a.status).toBe("NO_ACTIONABLE_CLARIFICATION");
+    expect(a.factor).toBeUndefined();
+    expect(
+      await x.interactive.plan(x.token, { evaluationId: e.evaluationId }),
+    ).toEqual(a);
+    expect(e.decision).toMatchObject({
+      outcome: "ASK",
+      basis: "UNRESOLVED_CONTEXT",
+    });
+    expect(await x.stateService.read(x.token)).toEqual(before);
+    expect(q.calls).toEqual(calls);
+    expect(fetcher).not.toHaveBeenCalled();
+  } finally {
+    fetcher.mockRestore();
+  }
+});
+
+it.each(["USD", "EUR"])(
+  "a captured prior %s answer cannot start a USD/EUR ping-pong chain",
+  async (currency) => {
+    const x = await setup(d.store, { feedback: priceRule });
+    const first = await x.interactive.plan(x.token, {
+      evaluationId: x.e.evaluationId,
+    });
+    const previous = await x.interactive.answer(
+      x.token,
+      answerRequest(x, first.planId, {
+        kind: "PRICE",
+        amount: 40,
+        currency: "USD",
+      }),
+      reqId,
+    );
+    await x.stateService.mutate(
+      x.token,
+      {
+        expectedStateVersion: 2,
+        idempotencyKey: "conflicting-price",
+        payload: {
+          kind: "FEEDBACK",
+          feedback: { ...priceRule, maxPrice: { amount: 60, currency: "EUR" } },
+        },
+      },
+      reqId,
+    );
+    const q = provider();
+    const e = await x.stateService.evaluate(
+      x.token,
+      proposal(3),
+      () => q.q,
+      reqId,
+    );
+    const before = await x.stateService.read(x.token),
+      calls = [...q.calls];
+    // A legacy captured answer from before this repair, under the conflicting
+    // snapshot. Persist it to exercise the real parent-loading service path.
+    const context = { ...e.context, price: { amount: 40, currency } };
+    const prior = {
+      ...previous,
+      interactionId: crypto.randomUUID(),
+      originalEvaluation: e,
+      stateVersion: e.stateVersion,
+      stateHash: e.stateHash,
+      context,
+      finalDecision: stateDecision(
+        before.state,
+        e.action.candidate,
+        context,
+        e.cultural,
+        e.evaluatedAt,
+      ),
+      plan: {
+        ...previous.plan,
+        evaluationId: e.evaluationId,
+        stateVersion: e.stateVersion,
+      },
+      answer: { kind: "PRICE" as const, amount: 40, currency },
+    };
+    await d.store.transaction((r) =>
+      r.clarifications.insert({
+        id: prior.interactionId,
+        profileId: e.profileId,
+        evaluationId: e.evaluationId,
+        stateVersion: e.stateVersion,
+        parentId: null,
+        factor: "PRICE_REQUIRED",
+        plan: prior.plan,
+        answer: prior.answer,
+        result: prior,
+        key: "legacy-price",
+        payloadHash: "a".repeat(64),
+        createdAt: NOW,
+      }),
+    );
+    const fetcher = vi.spyOn(globalThis, "fetch");
+    try {
+      const input = {
+        evaluationId: e.evaluationId,
+        parentClarificationId: prior.interactionId,
+      };
+      const stopped = await x.interactive.plan(x.token, input);
+      expect(stopped.status).toBe("NO_ACTIONABLE_CLARIFICATION");
+      expect(stopped.factor).toBeUndefined();
+      expect(await x.interactive.plan(x.token, input)).toEqual(stopped);
+      expect((await x.stateService.read(x.token)).state).toEqual(before.state);
+      expect((await x.stateService.read(x.token)).evaluations).toEqual(
+        before.evaluations,
+      );
+      expect(q.calls).toEqual(calls);
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(prior.finalDecision).toMatchObject({
+        outcome: "ASK",
+        basis: "UNRESOLVED_CONTEXT",
+      });
+    } finally {
+      fetcher.mockRestore();
+    }
+  },
+);
+
+it.each([
+  [40, "ALLOW"],
+  [55, "REJECT"],
+  [65, "REJECT"],
+] as const)(
+  "same-currency maxima remain actionable and price %s checks both (%s)",
+  async (amount, outcome) => {
+    const x = await setup(d.store, { feedback: priceRule });
+    await x.stateService.mutate(
+      x.token,
+      {
+        expectedStateVersion: 2,
+        idempotencyKey: "second-usd",
+        payload: {
+          kind: "FEEDBACK",
+          feedback: { ...priceRule, maxPrice: { amount: 60, currency: "USD" } },
+        },
+      },
+      reqId,
+    );
+    const q = provider();
+    const e = await x.stateService.evaluate(
+      x.token,
+      proposal(3),
+      () => q.q,
+      reqId,
+    );
+    const before = (await x.stateService.read(x.token)).state,
+      calls = [...q.calls];
+    const p = await x.interactive.plan(x.token, {
+      evaluationId: e.evaluationId,
+    });
+    expect(p.factor?.kind).toBe("PRICE_REQUIRED");
+    expect(p.factor?.currency).toBe("USD");
+    const result = await x.interactive.answer(
+      x.token,
+      {
+        evaluationId: e.evaluationId,
+        expectedStateVersion: 3,
+        planId: p.planId,
+        idempotencyKey: crypto.randomUUID(),
+        answer: { kind: "PRICE", amount, currency: "USD" },
+      },
+      reqId,
+    );
+    expect(result.finalDecision.outcome).toBe(outcome);
+    expect(
+      before.entries.filter((s) => s.constraint?.kind === "MAX_PRICE"),
+    ).toHaveLength(2);
+    expect(
+      result.finalDecision.rules.filter((r) =>
+        r.startsWith("MAX_PRICE_VIOLATION:"),
+      ),
+    ).toHaveLength(amount > 60 ? 2 : amount > 50 ? 1 : 0);
+    expect(result.originalEvaluation).toEqual(e);
+    expect((await x.stateService.read(x.token)).state).toEqual(before);
+    expect(q.calls).toEqual(calls);
+  },
+);
+
+it("an inapplicable second currency does not suppress single-currency clarification", async () => {
+  const x = await setup(d.store, { feedback: priceRule });
+  await x.stateService.mutate(
+    x.token,
+    {
+      expectedStateVersion: 2,
+      idempotencyKey: "other-context",
+      payload: {
+        kind: "FEEDBACK",
+        feedback: {
+          ...priceRule,
+          contextKey: "another-trip",
+          maxPrice: { amount: 60, currency: "EUR" },
+        },
+      },
+    },
+    reqId,
+  );
+  const e = await x.stateService.evaluate(
+    x.token,
+    proposal(3),
+    () => provider().q,
+    reqId,
+  );
+  expect(
+    (await x.interactive.plan(x.token, { evaluationId: e.evaluationId })).factor
+      ?.kind,
+  ).toBe("PRICE_REQUIRED");
 });

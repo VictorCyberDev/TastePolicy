@@ -39,13 +39,25 @@ export function planClarification(
           s.constraint?.kind === "MAX_PRICE",
       )
       .sort((a, b) => a.signalId.localeCompare(b.signalId));
+    // Context holds one price only; without FX, distinct required currencies
+    // cannot be satisfied by successive answers. Terminate instead of cycling.
+    const incompatibleCurrencies =
+      new Set(
+        prices.flatMap((s) =>
+          s.constraint?.kind === "MAX_PRICE" ? [s.constraint.currency] : [],
+        ),
+      ).size > 1;
     const unresolved = prices.find(
       (s) =>
         !context.price ||
         (s.constraint?.kind === "MAX_PRICE" &&
           context.price.currency !== s.constraint.currency),
     );
-    if (unresolved && unresolved.constraint?.kind === "MAX_PRICE")
+    if (
+      !incompatibleCurrencies &&
+      unresolved &&
+      unresolved.constraint?.kind === "MAX_PRICE"
+    )
       factor = {
         kind: context.price ? "PRICE_CURRENCY_REQUIRED" : "PRICE_REQUIRED",
         constraintId: unresolved.signalId,
@@ -56,6 +68,7 @@ export function planClarification(
         answerSchema: "MONEY_OR_UNKNOWN",
       };
     else if (
+      !incompatibleCurrencies &&
       e.cultural.status === "available" &&
       e.cultural.data.decision.outcome === "ASK"
     )
