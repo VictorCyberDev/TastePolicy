@@ -16,9 +16,10 @@
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
     "verify:qloo": "node scripts/verify-qloo.mjs",
     "agent": "node --experimental-transform-types --conditions=react-server --import ./scripts/source-imports.mjs ./scripts/agent.mjs",
-    "test:database": "vitest run tests/state.test.ts",
+    "test:database": "vitest run tests/state.test.ts tests/interactive.test.ts",
     "db:migrate": "node scripts/state-db.mjs migrate",
-    "db:purge": "node scripts/state-db.mjs purge"
+    "db:purge": "node scripts/state-db.mjs purge",
+    "db:migrate:interactive": "node scripts/state-db.mjs migrate-interactive"
   },
   "dependencies": {
     "next": "16.4.0",

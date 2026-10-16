@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import InteractivePanel from "@/features/interactive/InteractivePanel";
 import type { CulturalReceipt, TargetType } from "@/types/domain";
 import {
   FEEDBACK_CATEGORIES,
@@ -409,6 +410,20 @@ export default function StatePanel({
               >
                 Replay captured evaluation (no Qloo call)
               </button>
+              <InteractivePanel
+                key={evaluation.evaluationId}
+                evaluation={evaluation}
+                onEvaluateRepair={async (verified) => {
+                  const next = await call("evaluate", {
+                    agentId: verified.agentId,
+                    expectedStateVersion: verified.stateVersion,
+                    candidate: verified.action.candidate,
+                    context: verified.context,
+                  });
+                  setEvaluation(next as StateEvaluation);
+                  await refresh();
+                }}
+              />
               <details>
                 <summary>State-linked receipt envelope</summary>
                 <pre>{JSON.stringify(evaluation, null, 2)}</pre>
