@@ -1,7 +1,8 @@
 import { Pool } from "pg";
 import { readFile } from "node:fs/promises";
 const op = process.argv[2];
-if (!["migrate", "purge"].includes(op)) throw Error("Use migrate or purge");
+if (!["migrate", "migrate-interactive", "purge"].includes(op))
+  throw Error("Use migrate, migrate-interactive or purge");
 if (!process.env.DATABASE_URL) {
   process.stdout.write("M2_REMOTE_PERSISTENCE_ENVIRONMENT_BLOCKED\n");
   process.exitCode = 1;
@@ -13,10 +14,15 @@ if (!process.env.DATABASE_URL) {
     statement_timeout: 10000,
   });
   try {
-    if (op === "migrate")
+    if (op === "migrate" || op === "migrate-interactive")
       await pool.query(
         await readFile(
-          new URL("../migrations/0001_taste_state.sql", import.meta.url),
+          new URL(
+            op === "migrate"
+              ? "../migrations/0001_taste_state.sql"
+              : "../migrations/0002_interactive_authorization.sql",
+            import.meta.url,
+          ),
           "utf8",
         ),
       );
@@ -25,7 +31,7 @@ if (!process.env.DATABASE_URL) {
         "DELETE FROM tastepolicy.taste_profiles WHERE expires_at <= now()",
       );
     process.stdout.write(
-      op === "migrate"
+      op.startsWith("migrate")
         ? "M2_MIGRATION_APPLIED\n"
         : "M2_EXPIRED_PROFILES_PURGED\n",
     );

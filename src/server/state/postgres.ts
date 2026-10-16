@@ -1,3 +1,4 @@
+import { interactiveRepositories } from "@/server/interactive/postgres";
 import "server-only";
 import { Pool, type PoolClient } from "pg";
 import type { Repositories, StateStore } from "./repositories";
@@ -16,6 +17,7 @@ function repositories(c: PoolClient): Repositories {
     await c.query(sql, values);
   };
   return {
+    ...interactiveRepositories(c),
     states: {
       profile: (id, lock = false) =>
         one<Profile>(

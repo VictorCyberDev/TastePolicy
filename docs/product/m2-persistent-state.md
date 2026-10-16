@@ -1,6 +1,6 @@
 # M2 — Persistent Taste State, ContextGraph and scoped feedback
 
-M2 wraps the accepted cultural evaluation without changing its provider contract, five-identity invariant, experimental thresholds or Cultural Receipt v1. It adds immutable state snapshots, structured user correction, context policy, captured replay and inspectable deterministic projections. No M2.5 functionality.
+M2 wraps the accepted cultural evaluation without changing its provider contract, five-identity invariant, experimental thresholds or Cultural Receipt v1. It adds immutable state snapshots, structured user correction, context policy, captured replay and inspectable deterministic projections. The M2 module does not implement interactive authorization; see the separately scoped [M2.5 layer](m2-5-interactive-authorization.md).
 
 ## Setup and persistence
 
@@ -59,4 +59,4 @@ Logical Agent-A and Agent-B in the same session consume the same subject profile
 
 Random 256-bit capability, database hash only, HttpOnly/SameSite=Strict cookie, Secure on HTTPS, /api/state path, mandatory exact same-origin, JSON-only and inherited 16KiB/three-second body reader. No URL/browser profile authority. Session expiry is enforced on reads/writes/replay. Mutations/evaluations share a persistent 100-operation per-session ceiling; process admission limits remain inherited. Session creation is process-limited; use deployment protection/account quotas before exposing it broadly. No full authentication, user consent platform, distributed admission system or long-term multi-user security claim.
 
-Remote database deployment and live Qloo smoke require independently provisioned secure environments. The implementation makes no remote persistence or new live Qloo claim without those checks. M2.5, clarification, counterfactual repair, TasteBench, TasteTrajectory, TasteProxy, SDK/MCP expansion, payment and execution remain excluded.
+Remote database deployment and live Qloo smoke require independently provisioned secure environments. The implementation makes no remote persistence or new live Qloo claim without those checks. M2 excludes interactive clarification/repair, implemented separately in M2.5. TasteBench, TasteTrajectory, TasteProxy, SDK/MCP expansion, payment and execution remain excluded.

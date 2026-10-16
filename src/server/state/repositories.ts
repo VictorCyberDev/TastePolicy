@@ -1,4 +1,8 @@
 import type {
+  ClarificationRepository,
+  RepairRepository,
+} from "@/server/interactive/repositories";
+import type {
   Profile,
   Session,
   StateVersion,
@@ -40,6 +44,8 @@ export interface DemoSessionRepository {
   purge(now: string): Promise<void>;
 }
 export interface Repositories {
+  clarifications: ClarificationRepository;
+  repairs: RepairRepository;
   states: TasteStateRepository;
   mutations: MutationRepository;
   feedback: FeedbackEventRepository;

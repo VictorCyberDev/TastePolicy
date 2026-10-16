@@ -1,0 +1,58 @@
+.interactiveRoot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.interactiveRoot h3,
+.interactiveRoot h4 {
+  font-weight: 700;
+}
+.interactiveRoot h4 {
+  margin: 0;
+}
+.interactiveRoot section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  min-width: 0;
+}
+.interactiveRoot button {
+  border: 1px solid var(--accent);
+  background: var(--accent-bg);
+  color: var(--foreground);
+  padding: 10px 12px;
+  min-height: 44px;
+  text-align: left;
+  cursor: pointer;
+  max-width: 100%;
+}
+.interactiveRoot button:disabled {
+  cursor: not-allowed;
+}
+.interactiveRoot form,
+.interactiveRoot label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+}
+.interactiveRoot input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.interactiveRoot details {
+  min-width: 0;
+}
