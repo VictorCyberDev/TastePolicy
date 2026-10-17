@@ -44,6 +44,7 @@ export interface DemoSessionRepository {
   purge(now: string): Promise<void>;
 }
 export interface Repositories {
+  trajectories: import("@/server/trajectory/repositories").TrajectoryRepository;
   clarifications: ClarificationRepository;
   repairs: RepairRepository;
   states: TasteStateRepository;

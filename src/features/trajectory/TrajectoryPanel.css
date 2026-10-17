@@ -1,0 +1,59 @@
+.trajectoryRoot {
+  margin-block: 2rem;
+  padding-block: 1.5rem;
+  border-block: 1px solid var(--border, #666);
+}
+.trajectoryRoot h4 {
+  margin-top: 1.5rem;
+}
+.trajectoryRoot fieldset {
+  margin-block: 1rem;
+  padding: 1rem;
+  min-width: 0;
+}
+.trajectoryRoot button {
+  min-height: 44px;
+  margin: 0.35rem 0.5rem 0.35rem 0;
+}
+.trajectoryRoot input:not([type="radio"]):not([type="checkbox"]),
+.trajectoryRoot select {
+  max-width: 100%;
+  min-height: 44px;
+}
+.trajectoryRoot pre {
+  max-width: 100%;
+  overflow: auto;
+  max-height: 28rem;
+}
+.trajectoryRoot p,
+.trajectoryRoot li,
+.trajectoryRoot small {
+  overflow-wrap: anywhere;
+}
+.trajectoryIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+.trajectoryIdentity small {
+  display: block;
+}
+.trajectoryCandidates {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+.trajectoryCandidates > li {
+  padding: 1rem;
+  border: 1px solid var(--border, #666);
+}
+@media (max-width: 480px) {
+  .trajectoryRoot .state-controls {
+    align-items: stretch;
+  }
+  .trajectoryRoot button {
+    width: 100%;
+  }
+}

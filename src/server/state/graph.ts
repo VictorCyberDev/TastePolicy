@@ -100,7 +100,9 @@ export function contextGraph(
     "PROFILE",
     "Taste State " + state.stateVersion,
   );
-  for (const e of state.entries) {
+  for (const e of state.entries.filter(
+    (e) => e.kind !== "EXPLORATION_INTENT",
+  )) {
     const id = node(
       "signal:" + e.signalId,
       e.kind === "CONSTRAINT"
