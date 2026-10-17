@@ -48,10 +48,12 @@ export interface StateEntry {
   signalId: string;
   kind:
     | "EXPLICIT_LIKE"
+    | "EXPLORATION_INTENT"
     | "DURABLE_FEEDBACK"
     | "CONTEXTUAL_PREFERENCE"
     | "CONSTRAINT";
   entity?: QlooEntity;
+  exploration?: import("@/lib/trajectory/types").ExplorationIntent;
   scope: Scope;
   persistence: Persistence;
   candidateId?: string;
