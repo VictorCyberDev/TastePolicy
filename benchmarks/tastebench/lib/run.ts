@@ -21,7 +21,7 @@ import {
 } from "./validate";
 import { execute, resultFor } from "./execute";
 import { externalPrediction, semanticPrediction, inputHash } from "./packets";
-import { metrics, semanticMetrics } from "./metrics";
+import { metrics, semanticMetrics, target } from "./metrics";
 const semanticResults = (rs: ScenarioResult[]) =>
   rs.map((r) => ({
     ...r,
@@ -78,7 +78,13 @@ export async function run(
     );
   const m = metrics(d, a, predictions, results),
     blocks = [];
-  if (!a.records.length) blocks.push("TASTEBENCH_HUMAN_EVALUATION_NOT_RUN");
+  const hasScorableHeldOutTarget = d.scenarios.some((s) => {
+    if (s.split !== "EVALUATION") return false;
+    const resolved = target(a, s.id);
+    return resolved !== null && resolved.label !== "UNSCORABLE";
+  });
+  if (!hasScorableHeldOutTarget)
+    blocks.push("TASTEBENCH_HUMAN_EVALUATION_NOT_RUN");
   if (!external.GENERIC_AI)
     blocks.push("TASTEBENCH_GENERIC_LLM_BASELINE_ENVIRONMENT_BLOCKED");
   if (!external.LLM_QLOO)

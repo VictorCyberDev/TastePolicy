@@ -658,3 +658,70 @@ it("mutating an issued calibration packet cannot import held-out cases", () => {
     thresholdSensitivity(p, { allowAbove: 0.8, rejectBelow: 0.5 }),
   ).toThrow("UNISSUED_CALIBRATION");
 });
+
+// HUMAN-shaped inputs below are validator fixtures, never collected human data.
+it.each([
+  "zero labels",
+  "calibration only",
+  "unscorable only",
+  "unadjudicated conflict",
+  "single annotator",
+  "explicit adjudication",
+] as const)("run-level held-out human evaluation status: %s", async (kind) => {
+  const s = human();
+  if (kind === "calibration only") s.split = "CALIBRATION";
+  const records = kind === "zero labels" ? [] : [annotation(s)];
+  if (kind === "unscorable only") records[0].label = "UNSCORABLE";
+  if (kind === "unadjudicated conflict" || kind === "explicit adjudication")
+    records.push(annotation(s, "REJECT", "annotator-2"));
+  const labels: AnnotationSet = {
+    ...a,
+    version: "test-v1",
+    records,
+    adjudications:
+      kind === "explicit adjudication"
+        ? [
+            {
+              scenarioId: s.id,
+              label: "ASK",
+              source: "HUMAN_ADJUDICATION",
+              reviewer: "reviewer-1",
+              annotationHashes: records.map(hash),
+              adjudicatedAt: "2026-10-16T14:00:00.000Z",
+            },
+          ]
+        : [],
+  };
+  const result = await run(
+    { ...d, annotationVersion: labels.version, scenarios: [s] },
+    labels,
+    code,
+  );
+  const scorable =
+    kind === "single annotator" || kind === "explicit adjudication";
+  expect(
+    result.manifest.blocked.includes("TASTEBENCH_HUMAN_EVALUATION_NOT_RUN"),
+  ).toBe(!scorable);
+  const humanMetrics = (
+    result.metrics.bySystem.FULL_TASTEPOLICY as {
+      splits: {
+        EVALUATION: {
+          human: {
+            scorable: number;
+            methods: { singleAnnotator: number; adjudicated: number };
+          };
+        };
+      };
+    }
+  ).splits.EVALUATION.human;
+  expect(humanMetrics.scorable).toBe(scorable ? 1 : 0);
+  if (scorable) {
+    expect(target(labels, s.id)?.method).toBe(
+      kind === "single annotator" ? "SINGLE_ANNOTATOR" : "HUMAN_ADJUDICATION",
+    );
+    expect(humanMetrics.methods).toEqual({
+      singleAnnotator: kind === "single annotator" ? 1 : 0,
+      adjudicated: kind === "explicit adjudication" ? 1 : 0,
+    });
+  }
+});
