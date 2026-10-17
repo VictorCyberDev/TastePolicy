@@ -19,7 +19,14 @@
     "test:database": "vitest run tests/state.test.ts tests/interactive.test.ts",
     "db:migrate": "node scripts/state-db.mjs migrate",
     "db:purge": "node scripts/state-db.mjs purge",
-    "db:migrate:interactive": "node scripts/state-db.mjs migrate-interactive"
+    "db:migrate:interactive": "node scripts/state-db.mjs migrate-interactive",
+    "tastebench:validate": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts validate",
+    "tastebench:contract": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts contract",
+    "tastebench:run": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts run",
+    "tastebench:report": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts report",
+    "tastebench:export": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts export",
+    "tastebench:annotations": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts import-annotations",
+    "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration"
   },
   "dependencies": {
     "next": "16.4.0",

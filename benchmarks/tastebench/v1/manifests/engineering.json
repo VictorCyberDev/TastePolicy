@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "tastebench-manifest-v1",
+  "benchmarkId": "tastebench-v1",
+  "datasetVersion": "engineering-v1",
+  "annotationVersion": "no-human-labels-v1",
+  "annotationHash": "029161f9bb25ec741c6a43986d51bfa093015cc6e54f38b87adef6b7f69ae288",
+  "metricVersion": "tastebench-metrics-v1",
+  "createdAt": "2026-10-16T12:00:00.000Z",
+  "provenance": "SYNTHETIC ENGINEERING CONTRACT CASES. No human or live Qloo data.",
+  "scenarioCount": 24,
+  "splitCounts": {
+    "CALIBRATION": 6,
+    "EVALUATION": 18
+  },
+  "domainCounts": {
+    "brand": 8,
+    "destination": 8,
+    "place": 8
+  },
+  "sourceCounts": {
+    "SYNTHETIC": 24
+  },
+  "scenarios": [
+    {
+      "id": "applicable-feedback-transition",
+      "split": "EVALUATION",
+      "contentHash": "c311c0ad55f5ba1102eb08843fe28ab8c9bd630787554d4c883c536904603f31",
+      "recordHash": "2d479681f6fcbd927d572435248814290c63132e04e654dabb6b478bf7f70172"
+    },
+    {
+      "id": "clarification-acceptable",
+      "split": "CALIBRATION",
+      "contentHash": "989fbe8f0fb0e2c0e7ef6dbeef44100e7bdc27e86698074510f70f45332a5c4b",
+      "recordHash": "fdec7af06b5d4581a839dfce3ce2a22388752693f853408e88ece77865cac2f0"
+    },
+    {
+      "id": "clarification-price-40",
+      "split": "EVALUATION",
+      "contentHash": "0c4fdcc49818209b84b979837cbdf74e1480532f9c34345ffb5fe3cfd832b615",
+      "recordHash": "2871921222b48363affca22028044103d7d8f0d4f6ad95ba32f6d5a3489e1522"
+    },
+    {
+      "id": "clarification-price-70",
+      "split": "CALIBRATION",
+      "contentHash": "ed92fffd0a4b9c708e522fe4e6ada65e75086f3e6ff9ca7e492ac0698db18251",
+      "recordHash": "caf6255b432d9d7a934e977a8d0729fee01c9ac96693d42678e900fb7906912a"
+    },
+    {
+      "id": "clarification-still_unsure",
+      "split": "EVALUATION",
+      "contentHash": "9234a81dba53e2f8b880d99d38cf49a5e0d861a1fa25897274ad1299864bcda4",
+      "recordHash": "dbab66e2e3ce0e096c0b14593b8d0f86ea0eb3ecc0abaaf9d21be962b35574a8"
+    },
+    {
+      "id": "clarification-unacceptable",
+      "split": "EVALUATION",
+      "contentHash": "4636e453fd0a24d03fa00238183e9acff1bdec268a1230aea2461919336f4ab8",
+      "recordHash": "c9a900be61616c4cabbae7e1461913c790f23406d4eda6e9ec4f9e29aad20b55"
+    },
+    {
+      "id": "cultural-allow",
+      "split": "EVALUATION",
+      "contentHash": "58f4f8a725eddab7518ccc0a771c2c4065854dacac34a10361c37ca21cabf4cb",
+      "recordHash": "0ee1d23c7e36572ea5da179de3feb40996f2b7f4dac901a27dc530dd46d99ba5"
+    },
+    {
+      "id": "cultural-ask",
+      "split": "EVALUATION",
+      "contentHash": "47c75d1f088c628dcfcb8c3293a1e40359ba20c976945504a63a707fd7ebd063",
+      "recordHash": "c944a8275ae6e797aad5365f299188a3cf09c17f67505c88f9d5d6a53d6d4158"
+    },
+    {
+      "id": "cultural-reject",
+      "split": "EVALUATION",
+      "contentHash": "7a7e3a48ad52e0f9dd54f67769ea41d128396e43e1f7ebee1901a949e4e76e69",
+      "recordHash": "a106db3b7bba11d6f915d3f918b9a44e09c505f10800ebe5bd44757b27c65312"
+    },
+    {
+      "id": "currency-mismatch",
+      "split": "CALIBRATION",
+      "contentHash": "c1f653a85d78d0a1b0fb51a4d4ff90fd6bee57dc03740bb3d49c42813eff8036",
+      "recordHash": "754fd161b8e0fecb968959f198e36d910f047ce86c60064396f0d935076539f3"
+    },
+    {
+      "id": "exact-exclusion",
+      "split": "EVALUATION",
+      "contentHash": "d36a2291d4faa2f35e49cd76307018199669e7e465df84f087f07e7654e91f0a",
+      "recordHash": "5ade82f57ba1e9414e065db40b08697d1015439a028c7e313e9adb7b95aa5cdb"
+    },
+    {
+      "id": "hard-block-outage",
+      "split": "EVALUATION",
+      "contentHash": "0849150b6024c6d26057fda9a4a3af462bfcea15f00701fa424cb889d3b117c5",
+      "recordHash": "b38880c9bf001872505a04a8cdec68a76c24f2e6a168bad0a2a820f9b6511a6c"
+    },
+    {
+      "id": "missing-evidence",
+      "split": "CALIBRATION",
+      "contentHash": "740b3ea17f6defb8cdb0c3a0405ffa1a5fef35d45645d42df31af009f7627323",
+      "recordHash": "3a4cb357014796b50d48c30b506b72074845aa0eba257f961dbfbe3942d01777"
+    },
+    {
+      "id": "multi-currency-termination",
+      "split": "EVALUATION",
+      "contentHash": "8684a40b948f043176c9839b929480e2fc825a533ef6f302e739811367c7d689",
+      "recordHash": "783d615a8c16e3ec116ac6725c716f4923454ff422cb6ca8f964e925bcd59cbd"
+    },
+    {
+      "id": "not-configured",
+      "split": "EVALUATION",
+      "contentHash": "0569ded2ddee353e44f29d769c5f064b97f16f89edb601a571c8f47924db1a46",
+      "recordHash": "f75ca41dad74d043ca2de8108bb37b60263c84beb2ad2c94e4f07b6e41cf016a"
+    },
+    {
+      "id": "price-boundaries",
+      "split": "CALIBRATION",
+      "contentHash": "e72175366975a99afa36fb4c02b872f5fa6b281a673f21ab821e26a6d142d18e",
+      "recordHash": "d3185c02d462d1f9c63ae68bbf83ad7c79bd66e99f7e3f886a041aba9a852aa9"
+    },
+    {
+      "id": "price-violation",
+      "split": "EVALUATION",
+      "contentHash": "49b304243c6ea2c81ce7bfc11ac24ca5ef802d8fb605a123e091cf32343fed83",
+      "recordHash": "456ee1c8d69d16257198f75dcb057e02307a9dc184fa7bb47d10a36f4edbceaf"
+    },
+    {
+      "id": "repair-allow",
+      "split": "EVALUATION",
+      "contentHash": "101817cd41f2635eb91a7158d04efca81d07a113a21006630b2ea771bb170597",
+      "recordHash": "63b3aa5c34bcdaa50009b02aaaa158a7286d8088c5a9cd7378ffe23e172aedab"
+    },
+    {
+      "id": "repair-ask",
+      "split": "EVALUATION",
+      "contentHash": "5ba76d109b9c4d576c993ba271983dc10dd88ec1d5cba53e3b1c6366c8bc9155",
+      "recordHash": "821a892d8fa2bceaa7c08d852edb20cc186e229ff5c07b187b8d4ec07b67ae58"
+    },
+    {
+      "id": "repair-miss",
+      "split": "EVALUATION",
+      "contentHash": "8285b8a5fb68f9b62b98f48e3969f82ebf00869d5e093ba37094e6717bcaba26",
+      "recordHash": "b1364938c7c02b9179c4a845f8fcec25217614d424cddb90dbf2915fe22eeea7"
+    },
+    {
+      "id": "repair-unavailable",
+      "split": "EVALUATION",
+      "contentHash": "c9e6a036a0c1d11c19b5ab20ffd8456b72df1db8c137b59329b0224ad85bcfe8",
+      "recordHash": "91d8d1124dea8435340985e8182492514ab7f6ae808b181dc39d14b6f2c678c0"
+    },
+    {
+      "id": "repair-unverifiable_price",
+      "split": "CALIBRATION",
+      "contentHash": "f8a18d0f79c045f44539e506de0be14c7992a7bb0481d514f80a1f28c440bdeb",
+      "recordHash": "557c78142b01015627306981b6e9bda90026865ceb372ec9707ce0cc0cec9aa9"
+    },
+    {
+      "id": "score-boundaries",
+      "split": "EVALUATION",
+      "contentHash": "b746c151dcfe8aa91d1912d37b0d6de060ffe7710e9d674d1c9881ddf3b9b192",
+      "recordHash": "262a4877fdc4e375560280dc5331834bb917459f8d5a849af2e06eeceebcafc9"
+    },
+    {
+      "id": "unknown-price",
+      "split": "EVALUATION",
+      "contentHash": "63791f9d48532320f28acabb2d911c934ae33ffa6dbd89b97fd19e68b34c757a",
+      "recordHash": "449fb6b541e9bd0616f83f3e671c0e0c5748dfaadd71bd8ad73f0f951633483d"
+    }
+  ],
+  "datasetHash": "0d30276bce61ba67158f305bf5340acc51f53ec58cc041159db6b774970bc11d"
+}
