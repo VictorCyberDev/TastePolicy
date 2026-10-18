@@ -45,6 +45,22 @@ export function trajectoryRepository(c: PoolClient): TrajectoryRepository {
     return { ...g, candidates };
   }
   return {
+    async hasActiveIntent(profile, currentIntentSignalIds) {
+      const result = await c.query<{ active: boolean }>(
+        `SELECT EXISTS (
+          SELECT 1 FROM tastepolicy.trajectory_intents AS intent
+          WHERE intent.profile_id=$1 AND intent.signal_id=ANY($2::uuid[])
+          AND NOT EXISTS (
+            SELECT 1 FROM tastepolicy.trajectory_events AS event
+            WHERE event.profile_id=intent.profile_id
+              AND event.trajectory_id=intent.trajectory_id
+              AND event.kind IN ('TRAJECTORY_STOPPED','TARGET_SELECTED')
+          )
+        ) AS active`,
+        [profile, [...currentIntentSignalIds]],
+      );
+      return result.rows[0].active;
+    },
     intent,
     intentByKey: (p, k) =>
       rows<TrajectoryIntent>("trajectory_intents", "profile_id=$1 AND key=$2", [

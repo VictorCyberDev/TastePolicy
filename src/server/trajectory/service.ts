@@ -41,6 +41,7 @@ import {
 export class TrajectoryFailure extends Error {
   constructor(
     readonly code:
+      | "ACTIVE_TRAJECTORY_EXISTS"
       | "STALE"
       | "STOPPED"
       | "COMPLETE"
@@ -90,12 +91,7 @@ export class TrajectoryService {
   ) {
     if (events.some((e) => e.kind === "TRAJECTORY_STOPPED"))
       throw new TrajectoryFailure("STOPPED");
-    if (
-      events.some(
-        (e) =>
-          e.kind === "TARGET_SELECTED" && e.stateVersion === state.stateVersion,
-      )
-    )
+    if (events.some((e) => e.kind === "TARGET_SELECTED"))
       throw new TrajectoryFailure("COMPLETE");
     const entry = state.entries.find(
       (e) => e.signalId === t.signalId && e.kind === "EXPLORATION_INTENT",
@@ -155,11 +151,22 @@ export class TrajectoryService {
           throw new StateFailure("IDEMPOTENCY_KEY_CONFLICT");
         return old;
       }
-      if (state.stateVersion !== m.expectedStateVersion)
-        throw new StateFailure("STATE_VERSION_CONFLICT");
       const anchors = anchorsFor(state);
       if (anchors.some((e) => e.id === targetId))
         throw new StateFailure("INVALID_INPUT");
+      // auth() holds the session and profile locks. Replay above precedes this
+      // guard; no provider construction, quota write or state mutation precedes it.
+      if (
+        await r.trajectories.hasActiveIntent(
+          profile.profileId,
+          state.entries
+            .filter((e) => e.kind === "EXPLORATION_INTENT")
+            .map((e) => e.signalId),
+        )
+      )
+        throw new TrajectoryFailure("ACTIVE_TRAJECTORY_EXISTS");
+      if (state.stateVersion !== m.expectedStateVersion)
+        throw new StateFailure("STATE_VERSION_CONFLICT");
       await this.consume(r, session);
       const lookup = await factory().entities([targetId]);
       if (lookup.status === "unavailable")
@@ -285,11 +292,7 @@ export class TrajectoryService {
       const status =
         events.some((e) => e.kind === "TRAJECTORY_STOPPED") || !activeIntent
           ? "STOPPED"
-          : events.some(
-                (e) =>
-                  e.kind === "TARGET_SELECTED" &&
-                  e.stateVersion === state.stateVersion,
-              )
+          : events.some((e) => e.kind === "TARGET_SELECTED")
             ? "COMPLETE"
             : (g?.stateVersion ?? t.intentStateVersion) !== state.stateVersion
               ? "STALE"

@@ -33,3 +33,9 @@ A state advance makes the generation STALE. Explicit refresh plans against a new
 ## Scope and privacy
 
 Trajectory-local feedback is separate from accepted explicit persistent feedback. No hidden durable learning, target promotion, constraint removal, affinity aggregation, graph-v1 changes or benchmark dataset changes. Existing 24-hour profile expiry/purge covers all trajectory records. No new production dependency, authentication, MCP, SDK or autonomous action. M5 TasteProxy, another person's taste and group aggregation remain out of scope.
+
+## Single active trajectory lifecycle
+
+Each demo profile has at most one active exploration direction. Under the existing session/profile transaction locks, creation first replays a successful original idempotency key, then rejects ACTIVE_TRAJECTORY_EXISTS if any owned trajectory's exploration-intent signal remains in current state without a TRAJECTORY_STOPPED or TARGET_SELECTED event. This guard precedes provider construction, target lookup, quota consumption and state writes. A stale trajectory still occupies the slot. Explicit intent REMOVE releases it without requiring STOP as well.
+
+STOP and completed TARGET_SELECTED are permanent terminal events for active-slot purposes. A later unrelated state version cannot resurrect a completed trajectory; historical authorization remains bound to its recorded state/context. A new trajectory requires a distinct explicit creation request. No mutable active flag or migration change is introduced.

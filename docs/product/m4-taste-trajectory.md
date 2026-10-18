@@ -42,3 +42,9 @@ Historical replay reconstructs support, order, breadth, semantic hash and captur
 ## Honest limits
 
 Five-view support is a bounded heuristic, not a validated measure of cultural movement or recommendation superiority. No preference manipulation, durable learning from trajectory feedback, automatic execution, M5/TasteProxy/group taste, authentication or platform expansion. Development-only PGlite tests execute production SQL; they do not prove hosted/native multi-client PostgreSQL behavior. Vercel build success does not prove persistence or live Qloo trajectory behavior. See the implementation review for actual verification/environment status.
+
+## Single active trajectory lifecycle
+
+Each demo profile has at most one active exploration direction. Under the existing session/profile transaction locks, creation first replays a successful original idempotency key, then rejects ACTIVE_TRAJECTORY_EXISTS if any owned trajectory's exploration-intent signal remains in current state without a TRAJECTORY_STOPPED or TARGET_SELECTED event. This guard precedes provider construction, target lookup, quota consumption and state writes. A stale trajectory still occupies the slot. Explicit intent REMOVE releases it without requiring STOP as well.
+
+STOP and completed TARGET_SELECTED are permanent terminal events for active-slot purposes. A later unrelated state version cannot resurrect a completed trajectory; historical authorization remains bound to its recorded state/context. A new trajectory requires a distinct explicit creation request. No mutable active flag or migration change is introduced.

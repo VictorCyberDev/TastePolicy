@@ -23,6 +23,8 @@ const permittedBreadths: Record<Tolerance, number> = {
   OPEN: 2,
 };
 const messages: Record<string, string> = {
+  ACTIVE_TRAJECTORY_EXISTS:
+    "An exploration is already active. Stop or complete the current trajectory before starting another.",
   persistence_not_configured:
     "TasteTrajectory requires configured PostgreSQL persistence. No substitute evidence is used.",
   TRAJECTORY_UNAVAILABLE:

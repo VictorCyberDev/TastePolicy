@@ -4,6 +4,10 @@ import type {
   TrajectoryEvent,
 } from "@/lib/trajectory/types";
 export interface TrajectoryRepository {
+  hasActiveIntent(
+    profile: string,
+    currentIntentSignalIds: readonly string[],
+  ): Promise<boolean>;
   intent(profile: string, id: string): Promise<TrajectoryIntent | null>;
   intentByKey(profile: string, key: string): Promise<TrajectoryIntent | null>;
   insertIntent(value: TrajectoryIntent): Promise<void>;

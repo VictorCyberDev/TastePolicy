@@ -876,3 +876,311 @@ it("new generations honor feedback chronology even with identical timestamps", a
       .breadth,
   ).toBe("STRICT");
 });
+
+it("rejects a second active trajectory before provider/quota/state/intent writes", async () => {
+  const x = await fresh(),
+    factory = vi.fn();
+  const before = (await x.stateService.read(x.token)).state;
+  const quota = await d.db.query(
+    "SELECT mutations FROM tastepolicy.demo_mutation_sessions WHERE profile_id=$1",
+    [x.intent.profileId],
+  );
+  await expect(
+    x.service.create(
+      x.token,
+      creation(x.version, { targetId: ALT.id }),
+      factory,
+      reqId,
+    ),
+  ).rejects.toThrow("ACTIVE_TRAJECTORY_EXISTS");
+  expect(factory).not.toHaveBeenCalled();
+  expect((await x.stateService.read(x.token)).state).toEqual(before);
+  expect(
+    await d.db.query(
+      "SELECT mutations FROM tastepolicy.demo_mutation_sessions WHERE profile_id=$1",
+      [x.intent.profileId],
+    ),
+  ).toEqual(quota);
+  expect(
+    (
+      await d.db.query<{ count: number }>(
+        "SELECT count(*)::integer AS count FROM tastepolicy.trajectory_intents WHERE profile_id=$1",
+        [x.intent.profileId],
+      )
+    ).rows[0].count,
+  ).toBe(1);
+});
+it("STOP_EXPLORING releases the active trajectory slot", async () => {
+  const x = await fresh();
+  await x.service.event(
+    x.token,
+    request(x.version, {
+      trajectoryId: x.intent.trajectoryId,
+      feedback: "STOP_EXPLORING",
+    }),
+    reqId,
+  );
+  const next = await x.service.create(
+    x.token,
+    creation(x.version, { targetId: ALT.id }),
+    () => provider().q,
+    reqId,
+  );
+  expect(next.trajectoryId).not.toBe(x.intent.trajectoryId);
+  expect(next.intentStateVersion).toBe(x.version + 1);
+  expect(
+    (await x.service.read(x.token, { trajectoryId: x.intent.trajectoryId }))
+      .status,
+  ).toBe("STOPPED");
+});
+it("explicit intent REMOVE releases the slot without requiring STOP", async () => {
+  const x = await fresh();
+  await x.stateService.mutate(
+    x.token,
+    request(x.version, {
+      payload: { kind: "REMOVE", signalId: x.intent.signalId },
+    }),
+    reqId,
+  );
+  const next = await x.service.create(
+    x.token,
+    creation(x.version + 1, { targetId: ALT.id }),
+    () => provider().q,
+    reqId,
+  );
+  expect(next.intentStateVersion).toBe(x.version + 2);
+  expect(
+    (await x.service.read(x.token, { trajectoryId: x.intent.trajectoryId }))
+      .status,
+  ).toBe("STOPPED");
+});
+it("concurrent same-profile creates serialize under session/profile locks with exactly one winner", async () => {
+  const x = await setup(d.store),
+    lockOrder: string[] = [],
+    p = provider();
+  const checked: StateStore = {
+    transaction: (fn) =>
+      d.store.transaction((r) => {
+        let sessionLocked = false,
+          profileLocked = false;
+        return fn({
+          ...r,
+          sessions: {
+            ...r.sessions,
+            async find(token, lock) {
+              sessionLocked = lock === true;
+              lockOrder.push("session");
+              return r.sessions.find(token, lock);
+            },
+          },
+          states: {
+            ...r.states,
+            async profile(id, lock) {
+              expect(sessionLocked).toBe(true);
+              profileLocked = lock === true;
+              lockOrder.push("profile");
+              return r.states.profile(id, lock);
+            },
+          },
+          trajectories: {
+            ...r.trajectories,
+            async hasActiveIntent(profile, ids) {
+              expect(sessionLocked && profileLocked).toBe(true);
+              lockOrder.push("guard");
+              return r.trajectories.hasActiveIntent(profile, ids);
+            },
+          },
+        });
+      }),
+  };
+  const s = new TrajectoryService(checked, () => NOW),
+    factory = vi.fn(() => p.q);
+  const results = await Promise.allSettled([
+    s.create(x.token, creation(1), factory, reqId),
+    s.create(x.token, creation(1, { targetId: ALT.id }), factory, reqId),
+  ]);
+  expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+  const rejected = results.find(
+    (r) => r.status === "rejected",
+  ) as PromiseRejectedResult;
+  expect(rejected.reason.code).toBe("ACTIVE_TRAJECTORY_EXISTS");
+  expect(factory).toHaveBeenCalledTimes(1);
+  expect(p.calls).toEqual(["entities"]);
+  expect(lockOrder.filter((x) => x === "guard")).toHaveLength(2);
+  expect((await x.stateService.read(x.token)).state.stateVersion).toBe(2);
+  expect(
+    (
+      await d.db.query<{ count: number }>(
+        "SELECT count(*)::integer AS count FROM tastepolicy.trajectory_intents WHERE profile_id=$1",
+        [x.state.profileId],
+      )
+    ).rows[0].count,
+  ).toBe(1);
+});
+it("an active trajectory in one profile does not block another profile", async () => {
+  const x = await fresh(),
+    y = await setup(d.store),
+    p = provider();
+  const next = await new TrajectoryService(d.store, () => NOW).create(
+    y.token,
+    creation(1),
+    () => p.q,
+    reqId,
+  );
+  expect(next.profileId).not.toBe(x.intent.profileId);
+  expect(next.intentStateVersion).toBe(2);
+  expect(p.calls).toEqual(["entities"]);
+});
+it("original successful create replays before the active guard and provider construction", async () => {
+  const x = await fresh(),
+    factory = vi.fn(),
+    guard = vi.fn();
+  const replayStore: StateStore = {
+    transaction: (fn) =>
+      d.store.transaction((r) =>
+        fn({
+          ...r,
+          trajectories: { ...r.trajectories, hasActiveIntent: guard },
+        }),
+      ),
+  };
+  expect(
+    await new TrajectoryService(replayStore, () => NOW).create(
+      x.token,
+      x.raw,
+      factory,
+      reqId,
+    ),
+  ).toEqual(x.intent);
+  expect(guard).not.toHaveBeenCalled();
+  expect(factory).not.toHaveBeenCalled();
+});
+it("a stale trajectory retains its active slot until explicitly terminated", async () => {
+  const x = await fresh();
+  await plan(x);
+  await x.stateService.mutate(
+    x.token,
+    request(x.version, {
+      payload: {
+        kind: "FEEDBACK",
+        feedback: { ...exclusion, candidateId: ALT2.id },
+      },
+    }),
+    reqId,
+  );
+  expect(
+    (await x.service.read(x.token, { trajectoryId: x.intent.trajectoryId }))
+      .status,
+  ).toBe("STALE");
+  const factory = vi.fn();
+  await expect(
+    x.service.create(
+      x.token,
+      creation(x.version + 1, { targetId: ALT.id }),
+      factory,
+      reqId,
+    ),
+  ).rejects.toThrow("ACTIVE_TRAJECTORY_EXISTS");
+  expect(factory).not.toHaveBeenCalled();
+});
+it("TARGET_SELECTED permanently releases the slot and unrelated state advancement cannot resurrect completion", async () => {
+  const x = await fresh(),
+    p = provider();
+  const e = await x.service.evaluate(
+    x.token,
+    {
+      trajectoryId: x.intent.trajectoryId,
+      candidateId: x.intent.target.id,
+      expectedStateVersion: x.version,
+    },
+    () => p.q,
+    reqId,
+  );
+  await x.service.event(
+    x.token,
+    request(x.version, {
+      trajectoryId: x.intent.trajectoryId,
+      evaluationId: e.evaluationId,
+    }),
+    reqId,
+  );
+  expect(
+    (await x.service.read(x.token, { trajectoryId: x.intent.trajectoryId }))
+      .status,
+  ).toBe("COMPLETE");
+  const second = await x.service.create(
+    x.token,
+    creation(x.version, { targetId: ALT.id }),
+    () => provider().q,
+    reqId,
+  );
+  expect(second.intentStateVersion).toBe(x.version + 1);
+  await x.stateService.mutate(
+    x.token,
+    request(x.version + 1, {
+      payload: {
+        kind: "FEEDBACK",
+        feedback: { ...exclusion, candidateId: ALT2.id },
+      },
+    }),
+    reqId,
+  );
+  expect(
+    (await x.service.read(x.token, { trajectoryId: x.intent.trajectoryId }))
+      .status,
+  ).toBe("COMPLETE");
+  const factory = vi.fn();
+  await expect(
+    x.service.plan(
+      x.token,
+      request(x.version + 2, {
+        trajectoryId: x.intent.trajectoryId,
+        breadth: "STRICT",
+        refresh: true,
+      }),
+      factory,
+      reqId,
+    ),
+  ).rejects.toThrow("COMPLETE");
+  expect(factory).not.toHaveBeenCalled();
+  await x.service.event(
+    x.token,
+    request(x.version + 2, {
+      trajectoryId: second.trajectoryId,
+      feedback: "STOP_EXPLORING",
+    }),
+    reqId,
+  );
+  await expect(
+    x.service.create(
+      x.token,
+      creation(x.version + 2),
+      () => provider().q,
+      reqId,
+    ),
+  ).resolves.toBeTruthy();
+});
+it("HTTP exposes the active-slot conflict safely as 409 without internal identities", async () => {
+  const x = await fresh(),
+    factory = vi.fn();
+  const response = await handleTrajectory(
+    new Request("https://taste.test/api/state/trajectory/create", {
+      method: "POST",
+      headers: {
+        origin: "https://taste.test",
+        "content-type": "application/json",
+        cookie: "tastepolicy_demo=" + x.token,
+      },
+      body: JSON.stringify(creation(x.version, { targetId: ALT.id })),
+    }),
+    "create",
+    x.service,
+    factory,
+  );
+  expect(response.status).toBe(409);
+  const body = await response.json();
+  expect(body.code).toBe("ACTIVE_TRAJECTORY_EXISTS");
+  expect(JSON.stringify(body)).not.toContain(x.intent.profileId);
+  expect(JSON.stringify(body)).not.toContain(x.intent.trajectoryId);
+  expect(factory).not.toHaveBeenCalled();
+});
