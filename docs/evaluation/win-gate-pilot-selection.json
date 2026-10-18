@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "win-gate-pilot-selection-v1",
+  "status": "PREDECLARED_NOT_RUN",
+  "sourceVersion": "engineering-v1",
+  "datasetHash": "0d30276bce61ba67158f305bf5340acc51f53ec58cc041159db6b774970bc11d",
+  "packetHash": "9930ee948ccb9b75ceb9b61086f9aa1287e3523ec6e45f85ed59afe685af1eeb",
+  "selection": [
+    {
+      "caseId": "case-01",
+      "sourceScenarioId": "multi-currency-termination",
+      "contentHash": "8684a40b948f043176c9839b929480e2fc825a533ef6f302e739811367c7d689",
+      "domain": "brand"
+    },
+    {
+      "caseId": "case-02",
+      "sourceScenarioId": "not-configured",
+      "contentHash": "0569ded2ddee353e44f29d769c5f064b97f16f89edb601a571c8f47924db1a46",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-03",
+      "sourceScenarioId": "price-violation",
+      "contentHash": "49b304243c6ea2c81ce7bfc11ac24ca5ef802d8fb605a123e091cf32343fed83",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-04",
+      "sourceScenarioId": "clarification-still_unsure",
+      "contentHash": "9234a81dba53e2f8b880d99d38cf49a5e0d861a1fa25897274ad1299864bcda4",
+      "domain": "brand"
+    },
+    {
+      "caseId": "case-05",
+      "sourceScenarioId": "clarification-price-40",
+      "contentHash": "0c4fdcc49818209b84b979837cbdf74e1480532f9c34345ffb5fe3cfd832b615",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-06",
+      "sourceScenarioId": "cultural-ask",
+      "contentHash": "47c75d1f088c628dcfcb8c3293a1e40359ba20c976945504a63a707fd7ebd063",
+      "domain": "brand"
+    },
+    {
+      "caseId": "case-07",
+      "sourceScenarioId": "exact-exclusion",
+      "contentHash": "d36a2291d4faa2f35e49cd76307018199669e7e465df84f087f07e7654e91f0a",
+      "domain": "brand"
+    },
+    {
+      "caseId": "case-08",
+      "sourceScenarioId": "cultural-reject",
+      "contentHash": "7a7e3a48ad52e0f9dd54f67769ea41d128396e43e1f7ebee1901a949e4e76e69",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-09",
+      "sourceScenarioId": "repair-unavailable",
+      "contentHash": "c9e6a036a0c1d11c19b5ab20ffd8456b72df1db8c137b59329b0224ad85bcfe8",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-10",
+      "sourceScenarioId": "hard-block-outage",
+      "contentHash": "0849150b6024c6d26057fda9a4a3af462bfcea15f00701fa424cb889d3b117c5",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-11",
+      "sourceScenarioId": "unknown-price",
+      "contentHash": "63791f9d48532320f28acabb2d911c934ae33ffa6dbd89b97fd19e68b34c757a",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-12",
+      "sourceScenarioId": "clarification-unacceptable",
+      "contentHash": "4636e453fd0a24d03fa00238183e9acff1bdec268a1230aea2461919336f4ab8",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-13",
+      "sourceScenarioId": "applicable-feedback-transition",
+      "contentHash": "c311c0ad55f5ba1102eb08843fe28ab8c9bd630787554d4c883c536904603f31",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-14",
+      "sourceScenarioId": "repair-allow",
+      "contentHash": "101817cd41f2635eb91a7158d04efca81d07a113a21006630b2ea771bb170597",
+      "domain": "brand"
+    },
+    {
+      "caseId": "case-15",
+      "sourceScenarioId": "cultural-allow",
+      "contentHash": "58f4f8a725eddab7518ccc0a771c2c4065854dacac34a10361c37ca21cabf4cb",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-16",
+      "sourceScenarioId": "repair-ask",
+      "contentHash": "5ba76d109b9c4d576c993ba271983dc10dd88ec1d5cba53e3b1c6366c8bc9155",
+      "domain": "place"
+    },
+    {
+      "caseId": "case-17",
+      "sourceScenarioId": "repair-miss",
+      "contentHash": "8285b8a5fb68f9b62b98f48e3969f82ebf00869d5e093ba37094e6717bcaba26",
+      "domain": "destination"
+    },
+    {
+      "caseId": "case-18",
+      "sourceScenarioId": "score-boundaries",
+      "contentHash": "b746c151dcfe8aa91d1912d37b0d6de060ffe7710e9d674d1c9881ddf3b9b192",
+      "domain": "brand"
+    }
+  ],
+  "rationale": "All held-out EVALUATION scenarios, six per domain. No post-result selection. Cultural-fit cases may be unscorable without numeric/system evidence; do not infer labels."
+}

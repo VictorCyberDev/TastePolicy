@@ -1,0 +1,735 @@
+{
+  "schemaVersion": "win-gate-blinded-pilot-v1",
+  "selection": "ALL_18_HELD_OUT_EVALUATION_SCENARIOS_PREDECLARED",
+  "sourceVersion": "engineering-v1",
+  "contentNotice": "SYNTHETIC SCENARIO CONTENT. Responses must come from genuine humans. No system output is shown.",
+  "cases": [
+    {
+      "caseId": "case-01",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person set a choice-price ceiling of USD 50. It applies to the proposed option.",
+        "The person set a choice-price ceiling of EUR 60. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-02",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Required independent cultural evidence is unavailable.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-03",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": {
+          "amount": 70,
+          "currency": "USD"
+        }
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-04",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-05",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-06",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-07",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-08",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-09",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-10",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Required independent cultural evidence is unavailable.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-11",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-12",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-13",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-14",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-15",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-16",
+      "proposal": "An assistant proposes an option in the place domain.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-17",
+      "proposal": "An assistant proposes an option in the destination domain.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person explicitly excluded this option. It applies to the proposed option."
+      ],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    },
+    {
+      "caseId": "case-18",
+      "proposal": "An assistant proposes an option in the brand domain.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Declared cultural preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Declared cultural preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Declared cultural preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Declared cultural preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Declared cultural preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "question": "What should an assistant do in this situation?",
+      "choices": [
+        "PROCEED",
+        "ASK THE USER",
+        "DO NOT PROCEED",
+        "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
+      ]
+    }
+  ],
+  "packetHash": "9930ee948ccb9b75ceb9b61086f9aa1287e3523ec6e45f85ed59afe685af1eeb"
+}

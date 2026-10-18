@@ -1,3 +1,4 @@
+import { boundedContinuation } from "@/lib/agent/continuation";
 import { Readable } from "node:stream";
 import { readJsonBody, BodyReadFailure } from "@/server/taste/read-body";
 import { record } from "@/lib/validation";
@@ -23,10 +24,18 @@ export async function runAgentStdio(
     );
     if (
       !raw ||
+      (raw.includeContinuation !== undefined &&
+        typeof raw.includeContinuation !== "boolean") ||
       typeof raw.operation !== "string" ||
       Object.keys(raw).some(
         (k) =>
-          !["operation", "request", "receipt", "evidenceSource"].includes(k),
+          ![
+            "operation",
+            "request",
+            "receipt",
+            "evidenceSource",
+            "includeContinuation",
+          ].includes(k),
       )
     )
       result = { status: "error", code: "INVALID_INPUT" };
@@ -34,13 +43,24 @@ export async function runAgentStdio(
       const gateway = createAgentGateway(providerFactory);
       if (
         raw.operation === "evaluateTasteAction" &&
-        Object.keys(raw).every((k) => ["operation", "request"].includes(k))
+        Object.keys(raw).every((k) =>
+          ["operation", "request", "includeContinuation"].includes(k),
+        )
       ) {
         const evaluation = await gateway.evaluateTasteAction(raw.request);
         result =
           evaluation.status === "available"
             ? { ...evaluation, evidenceSource: evaluationSource }
             : evaluation;
+        if (raw.includeContinuation === true && evaluation.status !== "error")
+          result = {
+            ...(result as object),
+            continuation: boundedContinuation(
+              evaluation.status === "available"
+                ? evaluation.data.decision.outcome
+                : "UNAVAILABLE",
+            ),
+          };
       } else if (
         ["explainTasteDecision", "checkDecisionStability"].includes(
           raw.operation,

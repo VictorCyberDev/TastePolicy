@@ -132,3 +132,11 @@ TasteProxy models a separately identified pseudonymous subject with its own immu
 Groups reference 2–5 unique subjects under `UNANIMOUS_NO_VETO_V1`: any REJECT → REJECT; else UNAVAILABLE → UNAVAILABLE; else ASK → ASK; all ALLOW → ALLOW. Each subject is evaluated separately. Aggregation uses completed decisions, makes zero Qloo calls and never averages affinities. Membership is versioned; current state/candidate/context and permission are checked. Historical wrappers replay without provider calls.
 
 See [M5 semantics and operations](docs/product/m5-taste-proxy-group-authorization.md), [ADR 0010](docs/decisions/0010-taste-proxy-group-authorization.md) and [review evidence boundaries](docs/evaluation/m5-implementation-review.md). Apply migration 0004 with `npm run db:migrate:subjects` after migrations 0001–0003 on a dedicated database. M6 real authentication, external consent and sharing remain future work. Cultural authorization grants no execution authority.
+
+## Judge path — Decision Arena
+
+Open `/arena`: one agent proposal → Qloo cultural evidence → TastePolicy preference authorization → bounded next action. Resolve/review five identities, discover a real place and evaluate explicitly. Current provider output is never replaced with mock success. Historical acceptance is labeled RECORDED LIVE ACCEPTANCE; unavailable rehearsal is labeled DEMO FAULT INJECTION. Existing M2/M2.5 state/clarification/repair operations require PostgreSQL.
+
+“Qloo gives agents taste. TastePolicy gives that taste authority boundaries.” Preference ALLOW never grants purchase, payment, booking or private-information authority. See [Arena scope](docs/product/win-gate-decision-arena.md), [human pilot](docs/evaluation/win-gate-human-pilot.md), [independent agent](docs/evaluation/win-gate-external-agent-proof.md), [investment hypothesis](docs/strategy/investment-thesis.md) and [freeze checklist](docs/submission/win-gate-checklist.md). The pilot at `/annotate` is PREPARED_NOT_RUN, genuine N=0. No Win Gate PASS or final submission is claimed.
+
+Run `node examples/win-gate/agent.mjs <private-reviewed-proposal.json>` for the separate retry-free caller through M1.6. `node scripts/win-gate-pilot.mjs prepare` regenerates the blinded packet; no answers are uploaded automatically. PR #10/M6 remains separate and is not included in this branch. No A2A or M7.
