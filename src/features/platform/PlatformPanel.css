@@ -1,0 +1,58 @@
+.platform-panel {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.platform-panel fieldset,
+.platform-panel article,
+.platform-panel aside {
+  border: 1px solid #8888;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-block: 1.5rem;
+  min-width: 0;
+}
+.platform-panel label {
+  display: grid;
+  gap: 0.4rem;
+  margin-block: 0.75rem;
+}
+.platform-panel .check {
+  display: flex;
+  gap: 0.65rem;
+  align-items: start;
+}
+.platform-panel input:not([type="checkbox"]),
+.platform-panel select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+.platform-panel button,
+.platform-panel summary,
+.platform-panel a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin: 0.25rem;
+}
+.platform-panel pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  font-size: 0.8rem;
+}
+.platform-panel dd {
+  margin-left: 0;
+  margin-bottom: 0.75rem;
+}
+.platform-panel :focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.platform-panel aside {
+  border-width: 3px;
+}

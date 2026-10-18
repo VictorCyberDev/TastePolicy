@@ -1,5 +1,7 @@
 # Architecture overview
 
+The flow and module-status table below record the historical M1 checkpoint. Current milestone boundaries are documented in the canonical journey, README and [M6 platformization](../product/m6-platformization.md); later implemented surfaces do not rewrite the original M1 provider boundary.
+
 Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested and **live Qloo acceptance passed** on the exact reviewed M1 head. The bounded event contract established real entity resolution, cross-domain discovery, candidate-specific evidence, unit affinity scale, explainability handling, deterministic repeat behavior, Cultural Receipts and an unmocked production-build browser flow. Thresholds remain experimental rather than human-calibrated. See the [historical live investigation](../evaluation/milestone-1-live-verification.md) and [final acceptance report](../evaluation/milestone-1-live-acceptance-2026-10-13.md).
 
 ## Implemented flow
@@ -10,7 +12,7 @@ Transport (qloo/client.ts) owns fixed-origin HTTP, key header, timeout/body boun
 
 See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md), [final live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) and the [canonical architecture journey](canonical-architecture-v2.md).
 
-## Module responsibilities and later expansion
+## Module responsibilities and later expansion — M1 checkpoint
 
 | Module                | Responsibility                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------- |

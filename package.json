@@ -16,10 +16,13 @@
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
     "verify:qloo": "node scripts/verify-qloo.mjs",
     "agent": "node --experimental-transform-types --conditions=react-server --import ./scripts/source-imports.mjs ./scripts/agent.mjs",
-    "test:database": "vitest run tests/state.test.ts tests/interactive.test.ts tests/trajectory.test.ts tests/subjects.test.ts",
+    "test:database": "vitest run tests/state.test.ts tests/interactive.test.ts tests/trajectory.test.ts tests/subjects.test.ts tests/platform.test.ts",
     "db:migrate": "node scripts/state-db.mjs migrate",
     "db:migrate:trajectory": "node scripts/state-db.mjs migrate-trajectory",
     "db:migrate:subjects": "node scripts/state-db.mjs migrate-subjects",
+    "db:migrate:platform": "node scripts/state-db.mjs migrate-platform",
+    "mcp:platform": "node --experimental-transform-types scripts/platform-mcp.mjs",
+    "db:purge:platform": "node scripts/state-db.mjs purge-platform",
     "db:purge": "node scripts/state-db.mjs purge",
     "db:migrate:interactive": "node scripts/state-db.mjs migrate-interactive",
     "tastebench:validate": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts validate",
@@ -31,6 +34,7 @@
     "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration"
   },
   "dependencies": {
+    "better-auth": "1.7.10",
     "next": "16.4.0",
     "pg": "8.23.1",
     "react": "19.3.0",
