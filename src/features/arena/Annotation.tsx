@@ -13,7 +13,7 @@ type Packet = {
     };
     signals: { label: string; domain: string }[];
     facts: string[];
-    evidenceAvailability: string;
+    evidence: { text: string };
     question: string;
     choices: string[];
   }[];
@@ -28,15 +28,19 @@ export default function Annotation() {
     <main className="arena">
       <h1>Assistant decision study</h1>
       <p>
-        Judge the situation, not a product. No name, email, demographic
-        information or system score is requested. Participation is optional; you
-        may stop without downloading responses. These are synthetic scenarios,
-        not real people. If information is insufficient, choose CANNOT JUDGE.
+        These are synthetic scenarios, not real people. Judge what the assistant
+        should do; no system answer is shown. Cultural relationship evidence is
+        not confidence or probability. Higher affinity means stronger cultural
+        relationship evidence, but does not automatically mean proceed. Explicit
+        user constraints may override cultural evidence. Unavailable evidence is
+        not negative preference. You may choose CANNOT JUDGE when information is
+        insufficient.
       </p>
       <p>
-        No answers are sent to a server. After completion, download and share
-        the file privately with the study coordinator only if you agree. Do not
-        inspect benchmark answers or coordinate responses.
+        Participation is optional. No name, email or demographic information is
+        requested. No answers are sent to a server. Download and share privately
+        with the coordinator only if you agree; you may stop at any time. Do not
+        coordinate responses.
       </p>
       <label className="arenaCheck">
         <input
@@ -68,9 +72,8 @@ export default function Annotation() {
             <fieldset className="arenaCard" key={c.caseId}>
               <legend>Situation {c.caseId}</legend>
               <p>{c.proposal}</p>
-              <p>{c.evidenceAvailability}</p>
-              <details open>
-                <summary>Information supplied to the assistant</summary>
+              <p>{c.evidence.text}</p>
+              <section aria-label="Information supplied to the assistant">
                 <p>
                   Domain: {c.context.domain}. Price:{" "}
                   {typeof c.context.price === "string"
@@ -80,9 +83,8 @@ export default function Annotation() {
                 </p>
                 <p>
                   Known preferences span{" "}
-                  {c.signals.map((s) => s.domain).join(", ")}. Specific
-                  identity/affinity is not supplied; you may choose CANNOT
-                  JUDGE.
+                  {c.signals.map((s) => s.domain).join(", ")}. Preference
+                  identities are neutral aliases in these synthetic scenarios.
                 </p>
                 <ul>
                   {c.facts.length ? (
@@ -91,7 +93,7 @@ export default function Annotation() {
                     <li>No additional explicit constraint is supplied.</li>
                   )}
                 </ul>
-              </details>
+              </section>
               <p>{c.question}</p>
               {c.choices.map((choice) => (
                 <label className="arenaCheck" key={choice}>
@@ -118,7 +120,7 @@ export default function Annotation() {
             onClick={() => {
               const participantId = crypto.randomUUID();
               const response = {
-                schemaVersion: "win-gate-human-response-v1",
+                schemaVersion: "win-gate-human-response-v2",
                 packetHash: packet.packetHash,
                 participantId,
                 answeredAt: new Date().toISOString(),

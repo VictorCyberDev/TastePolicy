@@ -290,3 +290,39 @@ test("annotation packet is optional, local-only and blinded", async ({
   ).toHaveCount(0);
   expect(posts).toBe(0);
 });
+
+test("v2 annotation exposes material evidence before five choices on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/annotate");
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Open independent annotation packet" })
+    .click();
+  const cases = page.getByRole("group", { name: /^Situation/ });
+  await expect(cases).toHaveCount(18);
+  for (const c of await cases.all()) {
+    await expect(c.getByRole("radio")).toHaveCount(5);
+    await expect(
+      c.getByText(
+        /Independent cultural relationship evidence for this proposed option:|Required independent cultural relationship evidence is unavailable/,
+      ),
+    ).toBeVisible();
+    await expect(c.locator("details")).toHaveCount(0);
+  }
+  await expect(
+    page.getByText(/0.65 on a 0–1 affinity scale/).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/0.2 on a 0–1 affinity scale/).first(),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth > innerWidth,
+    ),
+  ).toBe(false);
+  expect(errors).toEqual([]);
+});

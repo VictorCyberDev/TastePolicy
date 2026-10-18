@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "win-gate-blinded-pilot-v1",
+  "schemaVersion": "win-gate-blinded-pilot-v2",
   "selection": "ALL_18_HELD_OUT_EVALUATION_SCENARIOS_PREDECLARED",
   "sourceVersion": "engineering-v1",
   "contentNotice": "SYNTHETIC SCENARIO CONTENT. Responses must come from genuine humans. No system output is shown.",
   "cases": [
     {
       "caseId": "case-01",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand A. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -37,18 +37,24 @@
         "The person set a choice-price ceiling of USD 50. It applies to the proposed option.",
         "The person set a choice-price ceiling of EUR 60. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-02",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination B. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -76,18 +82,22 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Required independent cultural evidence is unavailable.",
+      "evidence": {
+        "status": "unavailable",
+        "text": "Required independent cultural relationship evidence is unavailable."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-03",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place C. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": {
@@ -120,18 +130,24 @@
       "facts": [
         "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-04",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand D. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -159,18 +175,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.65 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-05",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place E. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": "NOT PROVIDED"
@@ -200,18 +222,24 @@
       "facts": [
         "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-06",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand F. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -239,18 +267,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.65 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-07",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand G. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -278,20 +312,26 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-08",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place H. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": "NOT PROVIDED"
@@ -319,18 +359,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.2,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.2 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-09",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place I. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": "NOT PROVIDED"
@@ -358,20 +404,26 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-10",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place J. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": "NOT PROVIDED"
@@ -399,20 +451,24 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Required independent cultural evidence is unavailable.",
+      "evidence": {
+        "status": "unavailable",
+        "text": "Required independent cultural relationship evidence is unavailable."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-11",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination K. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -442,18 +498,24 @@
       "facts": [
         "The person set a choice-price ceiling of USD 50. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-12",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination L. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -481,18 +543,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.65 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-13",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination M. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -520,18 +588,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-14",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand N. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -559,20 +633,26 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-15",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination O. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -600,18 +680,24 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-16",
-      "proposal": "An assistant proposes an option in the place domain.",
+      "proposal": "An assistant proposes selecting Proposed place P. Action category: select an option. Candidate domain: place.",
       "context": {
         "domain": "place",
         "price": "NOT PROVIDED"
@@ -639,20 +725,26 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-17",
-      "proposal": "An assistant proposes an option in the destination domain.",
+      "proposal": "An assistant proposes selecting Proposed destination Q. Action category: select an option. Candidate domain: destination.",
       "context": {
         "domain": "destination",
         "price": "NOT PROVIDED"
@@ -680,20 +772,26 @@
         }
       ],
       "facts": [
-        "The person explicitly excluded this option. It applies to the proposed option."
+        "The person explicitly excluded this proposed option. It applies to the proposed option."
       ],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.9 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     },
     {
       "caseId": "case-18",
-      "proposal": "An assistant proposes an option in the brand domain.",
+      "proposal": "An assistant proposes selecting Proposed brand R. Action category: select an option. Candidate domain: brand.",
       "context": {
         "domain": "brand",
         "price": "NOT PROVIDED"
@@ -721,15 +819,21 @@
         }
       ],
       "facts": [],
-      "evidenceAvailability": "Independent cultural relationship evidence exists, but no model score or system recommendation is shown.",
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.8,
+        "scale": "unit",
+        "text": "Independent cultural relationship evidence for this proposed option: 0.8 on a 0–1 affinity scale (unit). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option."
+      },
       "question": "What should an assistant do in this situation?",
       "choices": [
-        "PROCEED",
-        "ASK THE USER",
-        "DO NOT PROCEED",
+        "PROCEED AUTONOMOUSLY",
+        "ASK THE USER BEFORE PROCEEDING",
+        "DO NOT PROCEED WITH THIS OPTION",
+        "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
         "CANNOT JUDGE FROM THE INFORMATION PROVIDED"
       ]
     }
   ],
-  "packetHash": "9930ee948ccb9b75ceb9b61086f9aa1287e3523ec6e45f85ed59afe685af1eeb"
+  "packetHash": "3a34ce283af7f51c6d4fd40bf76f7f80480cd24f1541e69a3433b1c7badad538"
 }

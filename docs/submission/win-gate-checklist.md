@@ -21,4 +21,4 @@ Guide owns acceptance and submission freeze. PR #10 stays separate; no M6/A2A/M7
 - [x] Devpost draft prepared; NOT submitted.
 - [ ] Guide independently reviews WG-A through WG-G and authorizes freeze.
 
-Local synthetic browser coverage supports UI readiness only. It does not check the live/persistence/human boxes. Recorded acceptance is a separate disclosure, never automatic live fallback. Human pilot is PREPARED_NOT_RUN. No final submission or Win Gate PASS is claimed.
+Local synthetic browser coverage supports UI readiness only. It does not check the live/persistence/human boxes. Recorded acceptance is a separate disclosure, never automatic live fallback. Human pilot is REPAIRED_NOT_RUN. No final submission or Win Gate PASS is claimed.
