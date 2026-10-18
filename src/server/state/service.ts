@@ -11,8 +11,10 @@ import {
 import { mutationInput, evaluationInput } from "./validation";
 import { stateDecision } from "./policy";
 import type { QlooProvider } from "@/server/qloo/contracts";
-import { evaluateAction } from "@/server/taste/service";
-import { isResolvedProfile } from "@/server/taste/invariants";
+import {
+  evaluateStateSnapshot,
+  persistStateEvaluation,
+} from "./evaluate-profile";
 import { readCapturedReceipt } from "@/lib/proof/receipt";
 const TTL = 24 * 60 * 60 * 1000;
 export function stateHash(entries: StateEntry[]) {
@@ -224,110 +226,20 @@ export class TasteStateService {
     const { state } = await this.read(token);
     if (state.stateVersion !== input.expectedStateVersion)
       throw new StateFailure("STATE_VERSION_CONFLICT");
-    const signals = state.entries
-      .filter((e) => e.kind === "EXPLICIT_LIKE")
-      .map((e) => e.entity);
-    if (
-      !isResolvedProfile(signals) ||
-      signals.some((e) => e.id === input.candidate.id)
-    )
-      throw new StateFailure("INVALID_INPUT");
-    const now = this.clock();
-    let cultural: StateEvaluation["cultural"] = {
-      status: "unavailable",
-      reason: "no_evidence",
-    };
-    const independent = stateDecision(
+    const evaluation = await evaluateStateSnapshot(
       state,
-      input.candidate,
-      input.context,
-      cultural,
-      now,
-    );
-    if (independent.outcome !== "REJECT") {
-      try {
-        const provider = providerFactory();
-        const checked: QlooProvider = {
-          resolve: (q) => provider.resolve(q),
-          infer: (q) => provider.infer(q),
-          async entities(ids) {
-            const result = await provider.entities(ids);
-            if (result.status === "available" && !Array.isArray(result.data))
-              return { status: "unavailable", reason: "invalid_response" };
-            if (
-              result.status === "available" &&
-              result.data.find((e) => e.id === input.candidate.id)?.type !==
-                input.candidate.type
-            )
-              return { status: "unavailable", reason: "unsupported_entity" };
-            return result;
-          },
-        };
-        cultural = await evaluateAction(
-          checked,
-          signals.map((e) => e.id),
-          input.candidate.id,
-          requestId,
-          input.context.key,
-        );
-      } catch {
-        cultural = { status: "unavailable", reason: "provider_error" };
-      }
-    }
-    const evaluation: StateEvaluation = {
-      schemaVersion: "taste-state-evaluation-v1",
-      evaluationId: randomUUID(),
-      profileId: state.profileId,
-      stateVersion: state.stateVersion,
-      stateHash: state.stateHash,
-      agentId: input.agentId,
-      action: {
-        kind: "SELECT_ENTITY",
-        candidate:
-          cultural.status === "available"
-            ? cultural.data.candidate
-            : input.candidate,
-      },
-      context: input.context,
-      decision: stateDecision(
-        state,
-        input.candidate,
-        input.context,
-        cultural,
-        now,
-      ),
-      cultural,
-      culturalRequest:
-        independent.outcome === "REJECT"
-          ? "SKIPPED_INDEPENDENT_BLOCK"
-          : "REQUESTED",
+      input,
+      providerFactory,
       requestId,
-      evaluatedAt: now,
-      source: "live",
-    };
+      this.clock(),
+    );
     await this.store.transaction(async (r) => {
       const { profile, session } = await this.authorize(r, token, true);
       if (session.mutations >= 100) throw new StateFailure("RATE_LIMITED");
       await r.sessions.consume(session.tokenHash);
       if (profile.profileId !== state.profileId)
         throw new StateFailure("NOT_FOUND");
-      await r.proposals.insert(evaluation);
-      if (cultural.status === "available")
-        await r.evidence.insert({
-          bundleId: evaluation.evaluationId,
-          profileId: state.profileId,
-          stateVersion: state.stateVersion,
-          contractVersion: "qloo-event-m1",
-          requestedAt: now,
-          receivedAt: cultural.data.qlooEvidence.provenance.fetchedAt,
-          completeness: cultural.data.explainability.status,
-          stateSignalIds: state.entries
-            .filter((e) => e.kind === "EXPLICIT_LIKE")
-            .map((e) => e.signalId)
-            .sort(),
-          receipt: cultural.data,
-        });
-      await r.receipts.insert(evaluation);
+      await persistStateEvaluation(r, state, evaluation);
     });
     return evaluation;
   }

@@ -2,11 +2,17 @@ import { Pool } from "pg";
 import { readFile } from "node:fs/promises";
 const op = process.argv[2];
 if (
-  !["migrate", "migrate-interactive", "migrate-trajectory", "purge"].includes(
-    op,
-  )
+  ![
+    "migrate",
+    "migrate-interactive",
+    "migrate-trajectory",
+    "migrate-subjects",
+    "purge",
+  ].includes(op)
 )
-  throw Error("Use migrate, migrate-interactive, migrate-trajectory or purge");
+  throw Error(
+    "Use migrate, migrate-interactive, migrate-trajectory, migrate-subjects or purge",
+  );
 if (!process.env.DATABASE_URL) {
   process.stdout.write("M2_REMOTE_PERSISTENCE_ENVIRONMENT_BLOCKED\n");
   process.exitCode = 1;
@@ -26,7 +32,9 @@ if (!process.env.DATABASE_URL) {
               ? "../migrations/0001_taste_state.sql"
               : op === "migrate-interactive"
                 ? "../migrations/0002_interactive_authorization.sql"
-                : "../migrations/0003_taste_trajectory.sql",
+                : op === "migrate-trajectory"
+                  ? "../migrations/0003_taste_trajectory.sql"
+                  : "../migrations/0004_taste_proxy_group.sql",
             import.meta.url,
           ),
           "utf8",

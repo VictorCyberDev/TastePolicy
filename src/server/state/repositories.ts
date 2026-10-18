@@ -44,6 +44,9 @@ export interface DemoSessionRepository {
   purge(now: string): Promise<void>;
 }
 export interface Repositories {
+  subjects: import("@/server/subjects/repositories").SubjectRepository;
+  groups: import("@/server/subjects/repositories").GroupRepository;
+  subjectOperations: import("@/server/subjects/repositories").SubjectOperationRepository;
   trajectories: import("@/server/trajectory/repositories").TrajectoryRepository;
   clarifications: ClarificationRepository;
   repairs: RepairRepository;

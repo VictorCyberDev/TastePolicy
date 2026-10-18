@@ -1,0 +1,35 @@
+# ADR 0010 — TasteProxy and group authorization v1
+
+Recorded before implementation against dd294c6ebe26803d290132fe794efb84707e7438. Canonical architecture v2 and accepted M2–M4 contracts remain authoritative. No M6 work.
+
+## Identity and state
+
+SELF subject ID and state profile ID equal the existing capability-owned profile ID. Lazy registration adds a mapping, never another SELF profile. Each PROXY has a random subject ID and a different independent state profile; no ordinary session token is issued. Only owner-authorized M5 services access proxy profiles. Extract the existing state evaluator into internal snapshot evaluation/persistence functions; SELF keeps its accepted validation/session/transaction boundaries. No duplicated policy, threshold or receipt logic.
+
+Creation requires a pseudonymous label (1–60 characters), explicit identity review of five distinct selected IDs spanning multiple domains and server lookup of all IDs. No browser name/type/metadata is accepted as authority. State entries remain engine-compatible EXPLICIT_LIKE with a separate immutable DELEGATE_ATTESTED provenance record linking signal IDs, state version and permission attestation. The owner is supplying a model, not claiming subject confirmation. Update replaces exactly one reviewed anchor and creates N+1; no feedback learning, proxy clarification/repair or proxy/group trajectory.
+
+## Permission assurance and lifetime
+
+USER_ATTESTED_PERMISSION means permission attested by the current demo user, not independently verified. MODEL_MANAGEMENT and TASTE_EVALUATION are mandatory; GROUP_EVALUATION is optional and mandatory for group inclusion/new aggregation. No verified identity, signature, external-subject consent or relationship claim. Grants are immutable and expire within the owner's existing 24-hour profile retention; explicit expiry may be shorter. Immutable PERMISSION_REVOKED events deny new work, but historical replay remains available and reports permission status now separately from the original attestation. Every new operation rechecks scope/expiry/revocation after ownership checks. Completed same-key retries remain historical replay, not new authority.
+
+## Evaluation and idempotency
+
+Proxy evaluation uses only its own current immutable state and original five modeled likes through the accepted evaluator, separately bounded to ordinary entities + candidate Insights (two calls maximum, existing transport ceiling unchanged). No fallback to SELF. Insufficient models fail PROXY_MODEL_INSUFFICIENT. Hold owner/session and proxy profile locks; check operation-scoped persisted idempotency before provider construction. Same payload/key returns the completed result, changed payload conflicts. Evaluation, existing state receipt/evidence, proxy wrapper, normalized member reference and operation result commit atomically. Crash/rollback before commit may repeat external work on explicit retry; no exactly-once provider guarantee.
+
+proxy-authorization-v1 wraps the unchanged state evaluation/Cultural Receipt v1 with subject/state/attestation references, USER_ATTESTED_PERMISSION assurance, DELEGATE_ATTESTED provenance, cultural-only authority boundary and semantic hash. ASK remains ASK; the delegate cannot supply a proxy clarification. REJECT cannot be overridden; provider failure remains UNAVAILABLE. No spending, booking, legal, account, communication or physical-consent authority.
+
+## Groups and fairness
+
+A group is a versioned policy object referencing 2–5 unique owned SELF/PROXY subjects. It has no taste profile, signals or embeddings. Membership changes create immutable N+1; expectedGroupVersion rejects stale writes. Only UNANIMOUS_NO_VETO_V1 exists. Each member has equal decision rights: any REJECT → REJECT; else any UNAVAILABLE → UNAVAILABLE; else any ASK → ASK; else all ALLOW → ALLOW. No averaging, weights, creator privilege, majority override, compatibility score or empirical fairness claim.
+
+Stage A evaluates each subject in a separate bounded request (SELF via existing routes; PROXY via M5). Stage B accepts explicit evaluation references only. Group service has no provider-factory argument. Validate exact member coverage/uniqueness, current group version, current per-subject state version/hash, same candidate ID/type and canonical context hash. Missing execution is GROUP_EVALUATION_INCOMPLETE, not provider UNAVAILABLE. New aggregation rechecks every proxy permission including GROUP_EVALUATION. Sort member snapshots by subject ID; aggregate decision/hash never depend on raw affinities. Record all member categories, including unavailable members when a known rejection determines REJECT.
+
+## Persistence, deletion and replay
+
+Migration 0004 composes separate SubjectRepository and GroupRepository into the existing transaction store, plus operation idempotency records. Immutable subjects/grants/provenance/events, state-backed subject authorization references, proxy wrappers, immutable group versions/membership and group receipts/member links use composite owner/subject/state/version/candidate/context keys. Deferred coverage constraints reject incomplete groups/receipts. New tables enable RLS/revoke PUBLIC. Proxy profiles have no public session and cannot be substituted into SELF routes.
+
+Proxy delete is an explicit tombstone, not a hard-erasure claim: it immediately denies model access/new evaluations/permissions, versions every affected active group to remove that member, or closes groups with fewer than two remaining members. Historical immutable model/state/evidence remains private audit data only until owner expiry/purge so receipts and FKs remain valid. UI redacts the deleted display label and omits anchors from normal inspection. No resurrection or regrant in v1. Group delete is an immutable close event and never deletes subject state. BEFORE owner purge deletes all owned proxy state profiles as well as cascading all M5 objects; no orphan proxy state remains. No uploaded consent documents/PII/scraping.
+
+Historical proxy replay validates owned attestation, state hash, signal provenance, original captured receipt and wrapper hash, with zero Qloo calls. Group replay reads each captured authorization reference and recomputes canonical member snapshots, categories, decision and hash without freshness or active-permission requirements; current permission status is reported separately. Tampering fails INTEGRITY_ERROR. Current-state freshness applies to new group decisions, not historical replay. SELF ContextGraph and M4 remain unchanged. No cross-subject graph merging or benchmark dataset change.
+
+Existing capability cookie, exact origin/JSON/body limits, owner/session lock order, quota and expiry are reused. Browser supplies opaque subject/group/evaluation IDs, never authoritative owner/state profile IDs. All read/write/replay operations validate ownership; cross-owner requests return NOT_FOUND. Native hosted concurrency/live Qloo require separate environmental proof. No new dependencies, real authentication, external consent/sharing, Passport, SDK/MCP or M6.

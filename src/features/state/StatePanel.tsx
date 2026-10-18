@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import SubjectsPanel from "@/features/subjects/SubjectsPanel";
 import TrajectoryPanel from "@/features/trajectory/TrajectoryPanel";
 import InteractivePanel from "@/features/interactive/InteractivePanel";
 import type { CulturalReceipt, TargetType } from "@/types/domain";
@@ -437,6 +438,14 @@ export default function StatePanel({
           {snapshot.state.entries.filter((e) => e.kind === "EXPLICIT_LIKE")
             .length === 5 && (
             <TrajectoryPanel state={snapshot.state} onRefresh={refresh} />
+          )}
+          {snapshot.state.entries.filter((e) => e.kind === "EXPLICIT_LIKE")
+            .length === 5 && (
+            <SubjectsPanel
+              state={snapshot.state}
+              evaluations={snapshot.evaluations}
+              receipt={receipt}
+            />
           )}
           <details>
             <summary>ContextGraph · deterministic provenance</summary>

@@ -1,3 +1,4 @@
+import { subjectRepositories } from "@/server/subjects/postgres";
 import { trajectoryRepository } from "@/server/trajectory/postgres";
 import { interactiveRepositories } from "@/server/interactive/postgres";
 import "server-only";
@@ -19,6 +20,7 @@ function repositories(c: PoolClient): Repositories {
   };
   return {
     ...interactiveRepositories(c),
+    ...subjectRepositories(c),
     trajectories: trajectoryRepository(c),
     states: {
       profile: (id, lock = false) =>
