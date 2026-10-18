@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import TrajectoryPanel from "@/features/trajectory/TrajectoryPanel";
 import InteractivePanel from "@/features/interactive/InteractivePanel";
 import type { CulturalReceipt, TargetType } from "@/types/domain";
 import {
@@ -171,8 +172,11 @@ export default function StatePanel({
             {snapshot.state.entries.map((e) => (
               <li key={e.signalId}>
                 <span>
-                  {e.entity?.name ?? e.constraint?.kind ?? e.category} ·{" "}
-                  {e.scope} · {e.persistence}
+                  {e.entity?.name ??
+                    e.exploration?.target.name ??
+                    e.constraint?.kind ??
+                    e.category}{" "}
+                  · {e.scope} · {e.persistence}
                   <small className="mono">
                     {e.source} · {e.sourceEventId}
                   </small>
@@ -429,6 +433,10 @@ export default function StatePanel({
                 <pre>{JSON.stringify(evaluation, null, 2)}</pre>
               </details>
             </section>
+          )}
+          {snapshot.state.entries.filter((e) => e.kind === "EXPLICIT_LIKE")
+            .length === 5 && (
+            <TrajectoryPanel state={snapshot.state} onRefresh={refresh} />
           )}
           <details>
             <summary>ContextGraph · deterministic provenance</summary>

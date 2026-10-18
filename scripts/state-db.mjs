@@ -1,8 +1,12 @@
 import { Pool } from "pg";
 import { readFile } from "node:fs/promises";
 const op = process.argv[2];
-if (!["migrate", "migrate-interactive", "purge"].includes(op))
-  throw Error("Use migrate, migrate-interactive or purge");
+if (
+  !["migrate", "migrate-interactive", "migrate-trajectory", "purge"].includes(
+    op,
+  )
+)
+  throw Error("Use migrate, migrate-interactive, migrate-trajectory or purge");
 if (!process.env.DATABASE_URL) {
   process.stdout.write("M2_REMOTE_PERSISTENCE_ENVIRONMENT_BLOCKED\n");
   process.exitCode = 1;
@@ -14,13 +18,15 @@ if (!process.env.DATABASE_URL) {
     statement_timeout: 10000,
   });
   try {
-    if (op === "migrate" || op === "migrate-interactive")
+    if (op.startsWith("migrate"))
       await pool.query(
         await readFile(
           new URL(
             op === "migrate"
               ? "../migrations/0001_taste_state.sql"
-              : "../migrations/0002_interactive_authorization.sql",
+              : op === "migrate-interactive"
+                ? "../migrations/0002_interactive_authorization.sql"
+                : "../migrations/0003_taste_trajectory.sql",
             import.meta.url,
           ),
           "utf8",
