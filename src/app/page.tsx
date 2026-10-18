@@ -5,7 +5,9 @@ export default function Home() {
     <>
       <Demo />
       <nav aria-label="Platform account">
-        <Link href="/account">Account · Taste Passport · Developer access</Link>
+        <Link href="/account">
+          Account · TastePolicy Passport · Developer access
+        </Link>
       </nav>
     </>
   );

@@ -140,16 +140,28 @@ it("thin SDK uses versioned API and a real database-hashed credential", async ()
     });
   try {
     const client = new TastePolicyClient("https://tastepolicy.test", k.secret!);
-    expect(
-      (await client.passport({ passportRef: passport.passportRef })).stateHash,
-    ).toBe(passport.stateHash);
+    const summary = await client.passport({
+      passportRef: passport.passportRef,
+    });
+    const internal = await d.store.transaction((r) =>
+      r.platform.passport(passport.passportRef),
+    );
+    expect(summary.stateHash).toBe(passport.stateHash);
+    expect(summary.subjectRef).toBe(passport.subjectRef);
+    expect(JSON.stringify(summary)).not.toContain(internal!.profileId);
+    expect(summary).not.toHaveProperty("subjectId");
     const e = await client.evaluate({
       passportRef: passport.passportRef,
       idempotencyKey: "e",
       proposal: proposal(1),
     });
     expect(e.decision).toBe("ALLOW");
-    expect((await client.receipt(e.receiptRef)).source).toBe("recorded");
+    const receipt = await client.receipt(e.receiptRef);
+    expect(receipt.source).toBe("recorded");
+    expect(receipt.subjectRef).toBe(summary.subjectRef);
+    expect(receipt.receiptSchemaVersion).toBe("taste-platform-receipt-v1");
+    expect(JSON.stringify(receipt)).not.toContain(internal!.profileId);
+    expect(receipt).not.toHaveProperty("baseEvaluation");
     expect(
       fetcher.mock.calls.every(
         ([, o]) => o?.redirect === "error" && o.signal instanceof AbortSignal,
@@ -280,6 +292,18 @@ it("MCP tools use the same versioned API credential, never raw subject IDs", asy
     expect(JSON.parse(results[2].result.content[0].text).passportRef).toBe(
       passport.passportRef,
     );
+    const summary = JSON.parse(results[2].result.content[0].text);
+    const internal = await d.store.transaction((r) =>
+      r.platform.passport(passport.passportRef),
+    );
+    expect(summary.subjectRef).toBe(passport.subjectRef);
+    expect(summary.supportedCapabilities).toEqual([
+      "PREFERENCE_AUTHORIZATION",
+      "CAPTURED_REPLAY",
+    ]);
+    expect(summary.supportedActions).toEqual(["SELECT_ENTITY"]);
+    expect(output).not.toContain(internal!.profileId);
+    expect(summary).not.toHaveProperty("subjectId");
     expect(output).not.toContain(k.secret);
     expect(factory).not.toHaveBeenCalled();
   } finally {

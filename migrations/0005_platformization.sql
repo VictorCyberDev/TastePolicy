@@ -13,10 +13,12 @@ CREATE TABLE tastepolicy.platform_ownership (
 CREATE TABLE tastepolicy.taste_passports (
  passport_ref text PRIMARY KEY, user_id text NOT NULL REFERENCES tastepolicy.platform_auth_user(id) ON DELETE CASCADE,
  profile_id uuid NOT NULL UNIQUE, current_version integer NOT NULL CHECK(current_version>0), expires_at timestamptz NOT NULL, data jsonb NOT NULL,
+ subject_ref text NOT NULL UNIQUE CHECK(subject_ref ~ '^tps_[a-f0-9]{48}$' AND subject_ref<>profile_id::text),
+ UNIQUE(user_id,passport_ref,profile_id,subject_ref),
  UNIQUE(user_id,passport_ref,profile_id), FOREIGN KEY(user_id,profile_id) REFERENCES tastepolicy.platform_ownership(user_id,profile_id) ON DELETE CASCADE
 );
 CREATE TABLE tastepolicy.passport_versions (
- passport_ref text NOT NULL REFERENCES tastepolicy.taste_passports ON DELETE CASCADE, version integer NOT NULL CHECK(version>0), user_id text NOT NULL, profile_id uuid NOT NULL,state_version integer NOT NULL,state_hash text NOT NULL, data jsonb NOT NULL, PRIMARY KEY(passport_ref,version), FOREIGN KEY(user_id,passport_ref,profile_id) REFERENCES tastepolicy.taste_passports(user_id,passport_ref,profile_id) ON DELETE CASCADE,FOREIGN KEY(profile_id,state_version,state_hash) REFERENCES tastepolicy.taste_state_versions(profile_id,version,state_hash) ON DELETE CASCADE
+ passport_ref text NOT NULL REFERENCES tastepolicy.taste_passports ON DELETE CASCADE, version integer NOT NULL CHECK(version>0), user_id text NOT NULL, profile_id uuid NOT NULL,state_version integer NOT NULL,state_hash text NOT NULL, data jsonb NOT NULL, subject_ref text NOT NULL, PRIMARY KEY(passport_ref,version), FOREIGN KEY(user_id,passport_ref,profile_id,subject_ref) REFERENCES tastepolicy.taste_passports(user_id,passport_ref,profile_id,subject_ref) ON DELETE CASCADE, FOREIGN KEY(user_id,passport_ref,profile_id) REFERENCES tastepolicy.taste_passports(user_id,passport_ref,profile_id) ON DELETE CASCADE,FOREIGN KEY(profile_id,state_version,state_hash) REFERENCES tastepolicy.taste_state_versions(profile_id,version,state_hash) ON DELETE CASCADE
 );
 ALTER TABLE tastepolicy.taste_passports ADD FOREIGN KEY(passport_ref,current_version) REFERENCES tastepolicy.passport_versions DEFERRABLE INITIALLY DEFERRED;
 CREATE TABLE tastepolicy.passport_access_grants (
@@ -63,11 +65,15 @@ CREATE TABLE tastepolicy.account_deletion_records (
  digest text PRIMARY KEY CHECK(length(digest)=64), completed_at timestamptz NOT NULL, expires_at timestamptz NOT NULL
 );
 -- JSON envelopes must agree with authoritative relational ownership fields.
-ALTER TABLE tastepolicy.taste_passports ADD CHECK(data @> jsonb_build_object('passportRef',passport_ref,'userId',user_id,'profileId',profile_id::text,'version',current_version) AND data->>'expiresAt' IS NOT NULL AND (data->>'expiresAt')::timestamptz=expires_at);
-ALTER TABLE tastepolicy.passport_versions ADD CHECK(data @> jsonb_build_object('passportRef',passport_ref,'userId',user_id,'profileId',profile_id::text,'version',version,'stateVersion',state_version,'stateHash',state_hash));
+ALTER TABLE tastepolicy.taste_passports ADD CHECK(data @> jsonb_build_object('passportRef',passport_ref,'userId',user_id,'profileId',profile_id::text,'version',current_version,'subjectRef',subject_ref) AND data->>'expiresAt' IS NOT NULL AND (data->>'expiresAt')::timestamptz=expires_at);
+ALTER TABLE tastepolicy.passport_versions ADD CHECK(data @> jsonb_build_object('passportRef',passport_ref,'userId',user_id,'profileId',profile_id::text,'version',version,'stateVersion',state_version,'stateHash',state_hash,'subjectRef',subject_ref));
 ALTER TABLE tastepolicy.passport_access_grants ADD CHECK(data @> jsonb_build_object('grantId',grant_id::text,'grantorUserId',user_id,'granteeUserId',grantee_id,'passportRef',passport_ref,'profileId',profile_id::text,'scopes',to_jsonb(scopes),'assurance','AUTHENTICATED_GRANTOR_CONSENT') AND data->'scopes'=to_jsonb(scopes) AND data->>'expiresAt' IS NOT NULL AND (data->>'expiresAt')::timestamptz=expires_at);
 ALTER TABLE tastepolicy.developer_credentials ADD CHECK(data @> jsonb_build_object('credentialId',credential_id::text,'userId',user_id,'scopes',to_jsonb(scopes)) AND data->'scopes'=to_jsonb(scopes) AND data->>'expiresAt' IS NOT NULL AND (data->>'expiresAt')::timestamptz=expires_at AND NOT(data ?| ARRAY['secret','apiKey','token']));
 ALTER TABLE tastepolicy.platform_evaluations ADD CHECK(data @> jsonb_build_object('evaluationRef',evaluation_ref,'userId',user_id,'actorId',actor_id,'passportRef',passport_ref,'stateProfileId',profile_id::text,'stateVersion',version,'stateHash',state_hash,'grantId',to_jsonb(grant_id),'evaluation',jsonb_build_object('evaluationId',evaluation_id::text,'profileId',profile_id::text,'stateVersion',version,'stateHash',state_hash)));
+-- Public identity cannot be rebound by updating the current pointer/envelope.
+CREATE FUNCTION tastepolicy.guard_passport_identity() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+ IF ROW(NEW.passport_ref,NEW.user_id,NEW.profile_id,NEW.subject_ref) IS DISTINCT FROM ROW(OLD.passport_ref,OLD.user_id,OLD.profile_id,OLD.subject_ref) THEN RAISE EXCEPTION 'Immutable Passport subject mapping'; END IF; RETURN NEW; END $$;
+CREATE TRIGGER immutable_passport_identity BEFORE UPDATE ON tastepolicy.taste_passports FOR EACH ROW EXECUTE FUNCTION tastepolicy.guard_passport_identity();
 CREATE FUNCTION tastepolicy.purge_account_state() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
  DELETE FROM tastepolicy.taste_profiles WHERE profile_id IN (SELECT profile_id FROM tastepolicy.platform_ownership WHERE user_id=OLD.id); RETURN OLD;
 END $$;

@@ -19,7 +19,10 @@ async function fixture() {
   const a = await account(d),
     q = subjectProvider();
   const passport = await d.service.initialize(a.principal, init(), () => q.q);
-  return { ...a, q, passport };
+  const internal = await d.store.transaction((r) =>
+    r.platform.passport(passport.passportRef),
+  );
+  return { ...a, q, passport, profileId: internal!.profileId };
 }
 it("real password signup creates stable identity and private isolated Passport without demo session", async () => {
   const f = await fixture();
@@ -30,7 +33,7 @@ it("real password signup creates stable identity and private isolated Passport w
     (
       await d.db.query(
         "SELECT 1 FROM tastepolicy.demo_mutation_sessions WHERE profile_id=$1",
-        [f.passport.subjectId],
+        [f.profileId],
       )
     ).rows,
   ).toHaveLength(0);
@@ -208,7 +211,7 @@ it("shared evaluation reuses ordinary policy, captures receipt and has no execut
   const replay = await d.service.receipt(b.principal, {
     evaluationRef: result.receiptRef,
   });
-  expect(replay).toHaveProperty("baseEvaluation");
+  expect(replay).toHaveProperty("authorizationEvidence");
   await d.service.revokeGrant(f.principal, {
     idempotencyKey: "r",
     grantId: g.grantId,
@@ -218,7 +221,7 @@ it("shared evaluation reuses ordinary policy, captures receipt and has no execut
   ).rejects.toMatchObject({ code: "GRANT_REVOKED" });
   expect(
     await d.service.receipt(f.principal, { evaluationRef: result.receiptRef }),
-  ).toHaveProperty("baseEvaluation");
+  ).toHaveProperty("authorizationEvidence");
 });
 it("developer key stores only hash, shows secret once, and revokes immediately", async () => {
   const f = await fixture(),
@@ -351,7 +354,7 @@ it("delete Passport purges state, revokes developer access and denies historical
     (
       await d.db.query(
         "SELECT 1 FROM tastepolicy.taste_profiles WHERE profile_id=$1",
-        [f.passport.subjectId],
+        [f.profileId],
       )
     ).rows,
   ).toHaveLength(0);
@@ -380,7 +383,7 @@ it("delete account invalidates auth and cascades owned persistent state", async 
     (
       await d.db.query(
         "SELECT 1 FROM tastepolicy.taste_profiles WHERE profile_id=$1",
-        [f.passport.subjectId],
+        [f.profileId],
       )
     ).rows,
   ).toHaveLength(0);
@@ -747,7 +750,7 @@ it("provider-backed evaluation rollback leaves no partial state receipt", async 
     (
       await d.db.query(
         "SELECT 1 FROM tastepolicy.cultural_receipts WHERE profile_id=$1",
-        [f.passport.subjectId],
+        [f.profileId],
       )
     ).rows,
   ).toHaveLength(0);
@@ -877,7 +880,7 @@ it("filesystem reopen preserves authentication, grants, Passport and captured re
     ).toBe(p.stateHash);
     expect(
       await local.service.receipt(a.principal, { evaluationRef: e.receiptRef }),
-    ).toHaveProperty("baseEvaluation");
+    ).toHaveProperty("authorizationEvidence");
   } finally {
     await local.db.close();
     await rm(dir, { recursive: true, force: true });
@@ -983,7 +986,7 @@ it("account Passport purge removes attached isolated M5 proxy lineages without o
     proxyId = randomUUID(),
     subjectId = randomUUID();
   await d.store.transaction(async (r) => {
-    const p = (await r.states.profile(f.passport.subjectId))!;
+    const p = (await r.states.profile(f.profileId))!;
     await self(r, p);
     await r.states.create({ ...p, profileId: proxyId, currentStateVersion: 0 });
     await r.states.insertVersion({
@@ -1051,7 +1054,7 @@ it("account Passport purge removes attached isolated M5 proxy lineages without o
     (
       await d.db.query(
         "SELECT 1 FROM tastepolicy.taste_groups WHERE owner_profile_id=$1",
-        [f.passport.subjectId],
+        [f.profileId],
       )
     ).rows,
   ).toHaveLength(0);
@@ -1089,7 +1092,7 @@ it("SQL rejects credential and consent JSON that contradict relational ownership
         gid,
         a.principal.userId,
         a.passport.passportRef,
-        a.passport.subjectId,
+        a.profileId,
         b.principal.userId,
         ["READ_PASSPORT_SUMMARY"],
         expiresAt,
@@ -1099,7 +1102,7 @@ it("SQL rejects credential and consent JSON that contradict relational ownership
           grantorUserId: b.principal.userId,
           granteeUserId: b.principal.userId,
           passportRef: a.passport.passportRef,
-          profileId: a.passport.subjectId,
+          profileId: a.profileId,
           scopes: ["READ_PASSPORT_SUMMARY"],
           expiresAt,
           assurance: "AUTHENTICATED_GRANTOR_CONSENT",
@@ -1107,4 +1110,226 @@ it("SQL rejects credential and consent JSON that contradict relational ownership
       ],
     ),
   ).rejects.toMatchObject({ code: "23514" });
+});
+it("V3 opaque subject mapping is distinct, stable and exposes preference capabilities", async () => {
+  const f = await fixture();
+  expect(f.passport.subjectRef).toMatch(/^tps_[a-f0-9]{48}$/);
+  expect(f.passport.subjectRef).not.toContain(f.profileId);
+  expect(f.passport).not.toHaveProperty("subjectId");
+  expect(f.passport).not.toHaveProperty("profileId");
+  expect(f.passport.supportedCapabilities).toEqual([
+    "PREFERENCE_AUTHORIZATION",
+    "CAPTURED_REPLAY",
+  ]);
+  expect(f.passport.supportedActions).toEqual(["SELECT_ENTITY"]);
+  expect(f.passport.supportedCandidateDomains).toEqual([
+    "brand",
+    "place",
+    "destination",
+  ]);
+  const updated = await d.service.update(f.principal, {
+    idempotencyKey: "rename",
+    passportRef: f.passport.passportRef,
+    expectedPassportVersion: 1,
+    displayLabel: "Renamed",
+  });
+  expect(updated.subjectRef).toBe(f.passport.subjectRef);
+  const version = await d.store.transaction((r) =>
+    r.platform.version(f.passport.passportRef, 1),
+  );
+  expect(version?.profileId).toBe(f.profileId);
+  expect(version?.subjectRef).toBe(f.passport.subjectRef);
+});
+it("V3 SQL subject identity cannot be rebound to another subject or owner", async () => {
+  const a = await fixture(),
+    b = await fixture();
+  await expect(
+    d.db.query(
+      "UPDATE tastepolicy.taste_passports SET subject_ref=$2,data=jsonb_set(data,'{subjectRef}',to_jsonb($2::text)) WHERE passport_ref=$1",
+      [a.passport.passportRef, b.passport.subjectRef],
+    ),
+  ).rejects.toMatchObject({ code: "P0001" });
+  await expect(
+    d.db.query(
+      "UPDATE tastepolicy.taste_passports SET user_id=$2::text,profile_id=$3::uuid,data=data || jsonb_build_object('userId',$2::text,'profileId',($3::uuid)::text) WHERE passport_ref=$1",
+      [a.passport.passportRef, b.principal.userId, b.profileId],
+    ),
+  ).rejects.toMatchObject({ code: "P0001" });
+  const unchanged = await d.store.transaction((r) =>
+    r.platform.passport(a.passport.passportRef),
+  );
+  expect(unchanged?.profileId).toBe(a.profileId);
+  await expect(
+    d.service.read(b.principal, { passportRef: a.passport.passportRef }),
+  ).rejects.toMatchObject({ code: "GRANT_REQUIRED" });
+  await expect(
+    d.db.query(
+      "INSERT INTO tastepolicy.passport_versions VALUES($1,2,$2,$3,1,$4,$5,$6)",
+      [
+        a.passport.passportRef,
+        a.principal.userId,
+        a.profileId,
+        a.passport.stateHash,
+        { ...unchanged, version: 2, subjectRef: b.passport.subjectRef },
+        b.passport.subjectRef,
+      ],
+    ),
+  ).rejects.toMatchObject({ code: "23503" });
+});
+it("V3 SQL requires a unique non-null subject reference matching the Passport JSON", async () => {
+  const f = await fixture(),
+    a = await account(d),
+    { randomUUID } = await import("node:crypto");
+  const profileId = randomUUID();
+  await d.store.transaction(async (r) => {
+    await r.states.create({
+      profileId,
+      currentStateVersion: 0,
+      status: "TEMPORARY",
+      createdAt: new Date().toISOString(),
+      expiresAt: future(),
+    });
+    const { stateHash } = await import("@/server/state/service");
+    await r.states.insertVersion({
+      profileId,
+      stateVersion: 0,
+      parentVersion: null,
+      mutationId: null,
+      entries: [],
+      stateHash: stateHash([]),
+      createdAt: new Date().toISOString(),
+    });
+    await d.db.query(
+      "INSERT INTO tastepolicy.platform_ownership VALUES($1,$2)",
+      [a.principal.userId, profileId],
+    );
+  });
+  const ref = "tp_" + "f".repeat(48),
+    expiresAt = future();
+  const data = {
+    passportRef: ref,
+    userId: a.principal.userId,
+    profileId,
+    version: 1,
+    expiresAt,
+    subjectRef: f.passport.subjectRef,
+  };
+  await expect(
+    d.db.query(
+      "INSERT INTO tastepolicy.taste_passports VALUES($1,$2,$3,1,$4,$5,$6)",
+      [ref, a.principal.userId, profileId, expiresAt, data, null],
+    ),
+  ).rejects.toMatchObject({ code: "23502" });
+  await expect(
+    d.db.query(
+      "INSERT INTO tastepolicy.taste_passports VALUES($1,$2,$3,1,$4,$5,$6)",
+      [
+        ref,
+        a.principal.userId,
+        profileId,
+        expiresAt,
+        data,
+        f.passport.subjectRef,
+      ],
+    ),
+  ).rejects.toMatchObject({
+    code: "23505",
+    constraint: "taste_passports_subject_ref_key",
+  });
+  await expect(
+    d.db.query(
+      "INSERT INTO tastepolicy.taste_passports VALUES($1,$2,$3,1,$4,$5,$6)",
+      [
+        ref,
+        a.principal.userId,
+        profileId,
+        expiresAt,
+        data,
+        "tps_" + "f".repeat(48),
+      ],
+    ),
+  ).rejects.toMatchObject({ code: "23514" });
+});
+it("V3 public receipt projection hides profile identity while stored StateEvaluation stays intact", async () => {
+  const f = await fixture();
+  const e = await d.service.evaluate(
+    f.principal,
+    {
+      idempotencyKey: "e",
+      passportRef: f.passport.passportRef,
+      proposal: proposal(1),
+    },
+    () => f.q.q,
+    entities[0].id,
+  );
+  const evaluationRef = (e as { evaluationRef: string }).evaluationRef;
+  const before = await d.store.transaction((r) =>
+    r.platform.getEvaluation(evaluationRef),
+  );
+  const receipt = await d.service.receipt(f.principal, {
+    evaluationRef: evaluationRef,
+  });
+  expect(receipt).toHaveProperty("subjectRef", f.passport.subjectRef);
+  expect(receipt).toHaveProperty(
+    "receiptSchemaVersion",
+    "taste-platform-receipt-v1",
+  );
+  expect(receipt).not.toHaveProperty("baseEvaluation");
+  expect(JSON.stringify(receipt)).not.toContain(f.profileId);
+  expect(JSON.stringify(receipt)).not.toContain('"profileId"');
+  expect(before?.evaluation.profileId).toBe(f.profileId);
+  const after = await d.store.transaction((r) =>
+    r.platform.getEvaluation(evaluationRef),
+  );
+  expect(after).toEqual(before);
+  expect(receipt).toHaveProperty(
+    "authorizationEvidence.cultural",
+    before?.evaluation.cultural,
+  );
+});
+it("V3 export uses originSubjectRef without raw ownership/profile identity", async () => {
+  const f = await fixture();
+  const e = await d.service.export(f.principal, {
+    idempotencyKey: "x",
+    passportRef: f.passport.passportRef,
+  });
+  expect(e.passport.originSubjectRef).toBe(f.passport.subjectRef);
+  expect(e.passport).not.toHaveProperty("originSubjectId");
+  expect(JSON.stringify(e)).not.toContain(f.profileId);
+  expect(JSON.stringify(e)).not.toContain('"profileId"');
+  expect(e.explicitUserState.at(-1)?.entries).toHaveLength(5);
+});
+it("V3 caller-supplied subject identity cannot redirect a Passport operation", async () => {
+  const a = await fixture(),
+    b = await fixture(),
+    factory = vi.fn();
+  await expect(
+    d.service.evaluate(
+      a.principal,
+      {
+        idempotencyKey: "e",
+        passportRef: a.passport.passportRef,
+        subjectRef: b.passport.subjectRef,
+        proposal: proposal(1),
+      },
+      factory,
+      entities[0].id,
+    ),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  expect(factory).not.toHaveBeenCalled();
+  const internal = await d.store.transaction((r) =>
+    r.platform.passport(a.passport.passportRef),
+  );
+  expect(internal?.profileId).toBe(a.profileId);
+});
+it("V3 SDK public types exclude persistence identity and raw StateEvaluation envelopes", async () => {
+  type Summary = import("@/sdk/types").PassportSummary;
+  type Receipt = import("@/sdk/types").ReceiptResponse;
+  const excluded: Extract<
+    keyof Summary | keyof Receipt | keyof Receipt["authorizationEvidence"],
+    "profileId" | "subjectId" | "baseEvaluation"
+  > extends never
+    ? true
+    : false = true;
+  expect(excluded).toBe(true);
 });

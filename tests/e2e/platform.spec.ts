@@ -16,6 +16,7 @@ async function fixture(page: Page, initialPassport = true) {
     errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const p = () => ({
+    subjectRef: "tps_" + "e".repeat(48),
     passportRef,
     displayLabel: "SYNTHETIC TEST DATA " + "Long-Label-".repeat(8),
     passportVersion: 1,
@@ -104,7 +105,7 @@ async function fixture(page: Page, initialPassport = true) {
         ...(op === "receipt"
           ? {
               source: "recorded",
-              baseEvaluation: { cultural: { status: "unavailable" } },
+              authorizationEvidence: { cultural: { status: "unavailable" } },
             }
           : {}),
       };
@@ -164,6 +165,9 @@ test("synthetic authenticated sign-in and private Passport summary leak no raw s
   await expect(
     page.getByText("PRIVATE · never publicly discoverable"),
   ).toBeVisible();
+  await expect(
+    page.getByText("tps_" + "e".repeat(48), { exact: true }),
+  ).toBeVisible();
   expect(f.calls.filter((c) => c.op === "evaluate")).toHaveLength(0);
   expect(f.errors).toEqual([]);
 });
@@ -181,7 +185,7 @@ test("synthetic explicit five-anchor Passport creation is separate from demo cla
       .fill(entities[i].id);
   await page.getByRole("checkbox", { name: "I explicitly selected" }).check();
   await page
-    .getByRole("button", { name: "Create private Taste Passport" })
+    .getByRole("button", { name: "Create private TastePolicy Passport" })
     .click();
   expect(f.calls.find((c) => c.op === "create")?.body).toMatchObject({
     identitiesReviewed: true,

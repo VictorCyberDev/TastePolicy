@@ -1,4 +1,4 @@
-# TastePolicy developer API v1
+# TastePolicy Preference Authority API v1
 
 All operations are cultural authorization only. No API key, share or ALLOW grants purchase, payment, booking, messaging, legal/account access or private-data execution authority.
 
@@ -17,7 +17,7 @@ API credentials identify an account. They cannot create grants, issue keys, expo
 | GET or POST `/api/v1/passport`                 | PASSPORT_READ      | READ_PASSPORT_SUMMARY | passportRef, optional grantId → taste-passport-v1 summary |
 | POST `/api/v1/passport` with stateSummary=true | PASSPORT_READ      | READ_STATE_SUMMARY    | counts only; no raw anchors/constraints                   |
 | POST `/api/v1/evaluate`                        | TASTE_EVALUATE     | EVALUATE_TASTE_ACTION | current state + action → structured response              |
-| GET or POST `/api/v1/receipt`                  | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → captured state/base Cultural Receipt      |
+| GET or POST `/api/v1/receipt`                  | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → sanitized captured preference evidence    |
 | GET or POST `/api/v1/status`                   | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → completed decision/status                 |
 
 GET parameters are query parameters; POST bodies are JSON. There is no raw Qloo endpoint or arbitrary-profile endpoint. Own access needs no grantId. Shared receipt/status requires the original grantee and relevant active grant; summary access does not imply receipt access.
@@ -101,3 +101,15 @@ MCP 2025-06-18 stdio supports initialize, ping, tools/list and tools/call. Six t
 Tool calls execute under the explicit developer credential and grant scopes. There is no remote MCP listener, raw Qloo tool, arbitrary host/profile argument, list-accessible-Passports tool or extra stability capability. Input buffer/messages are bounded to 16 KiB and processed serially; HTTP requests retain server validation/rates/timeouts. Discovery metadata is not private authority. Errors are sanitized; stdout contains only JSON-RPC messages.
 
 Official contracts consulted: [Better Auth installation](https://better-auth.com/docs/installation), [session management](https://better-auth.com/docs/concepts/session-management), [MCP stdio](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) and [tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools).
+
+## V3 public subject contract
+
+`/evaluate` is the Preference Authority primitive. Conceptually evaluate(subject, action, context); the current stable request uses passportRef plus proposal.candidate/context and expectedStateVersion. No route redesign or direct subjectRef input is introduced. The output returns subjectRef, decision, decisionBasis, unresolvedFactors, receiptRef, continuation and stateVersion. A reference is not access authority.
+
+TastePolicy Passport is a user-controlled preference authority reference, distinct from agent identity/passport systems. PassportSummary exposes subjectRef (`tps_` plus 48 random hex characters), never an internal profile ID. supportedCapabilities = PREFERENCE_AUTHORIZATION/CAPTURED_REPLAY; supportedActions = SELECT_ENTITY; supportedCandidateDomains = brand/place/destination. Do not infer arbitrary action support.
+
+ReceiptResponse adds source=recorded, receiptSchemaVersion=taste-platform-receipt-v1 and authorizationEvidence: an explicit captured-evidence projection with action, context, decision, cultural evidence, state version/hash and provenance, without internal profileId. It does not return baseEvaluation. The stored StateEvaluation and Cultural Receipt v1 stay unchanged. This is an access/privacy wrapper, not a signature or M9 verifiable receipt. Export uses originSubjectRef; internal ownership mappings stay server-side.
+
+MCP returns the same public contracts, including passportRef and subjectRef; no state-profile identity is semantic subject authority. Continuation and automaticRetry=false are unchanged.
+
+A2A is remaining M6G work after the guide-owned WIN GATE under the then-current official A2A specification. WIN GATE is not completed, A2A runtime is not implemented and this PR is not merge-ready. See [Canonical Architecture v3](../architecture/canonical-architecture-v3.md).

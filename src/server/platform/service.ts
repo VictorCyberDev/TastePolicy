@@ -256,6 +256,7 @@ export class PlatformService {
         });
         await r.states.advance(profileId, 1);
         const passport: PassportRecord = {
+          subjectRef: `tps_${randomBytes(24).toString("hex")}`,
           passportRef: ref(),
           userId: p.userId,
           profileId,
@@ -284,14 +285,16 @@ export class PlatformService {
       schemaVersion: "taste-passport-v1",
       status: p.expiresAt <= this.clock() ? "EXPIRED" : "ACTIVE",
       expiresAt: p.expiresAt,
-      subjectId: p.profileId,
+      subjectRef: p.subjectRef,
       passportVersion: p.version,
       displayLabel: p.displayLabel,
       visibility: p.visibility,
       stateVersion: state.stateVersion,
       stateHash: state.stateHash,
       provenance: "EXPLICIT_USER_REVIEWED",
-      supportedCapabilities: ["SELECT_ENTITY", "CAPTURED_REPLAY"],
+      supportedCapabilities: ["PREFERENCE_AUTHORIZATION", "CAPTURED_REPLAY"],
+      supportedActions: ["SELECT_ENTITY"],
+      supportedCandidateDomains: ["brand", "place", "destination"],
     };
     return {
       ...material,
@@ -553,9 +556,10 @@ export class PlatformService {
       return { credentialId: cid, revoked: true };
     });
   }
-  private response(e: PlatformEvaluation) {
+  private response(e: PlatformEvaluation, subjectRef: string) {
     return {
       schemaVersion: "taste-authorization-response-v1",
+      subjectRef,
       evaluationRef: e.evaluationRef,
       passportRef: e.passportRef,
       stateVersion: e.stateVersion,
@@ -641,7 +645,7 @@ export class PlatformService {
         evaluation,
       };
       await r.platform.evaluation(e);
-      const response = this.response(e);
+      const response = this.response(e, passport.subjectRef);
       await r.platform.saveOp(p.userId, "evaluate", k, h, response);
       return response;
     });
@@ -652,7 +656,7 @@ export class PlatformService {
     return this.store.transaction(async (r) => {
       const e = await r.platform.getEvaluation(er);
       if (!e) fail("PASSPORT_NOT_FOUND");
-      await this.access(
+      const { passport } = await this.access(
         r,
         p,
         e.passportRef,
@@ -677,11 +681,26 @@ export class PlatformService {
       );
       if (hash(replay) !== hash(e.evaluation)) fail("INTEGRITY_ERROR");
       return statusOnly
-        ? this.response(e)
+        ? this.response(e, passport.subjectRef)
         : {
-            ...this.response(e),
+            ...this.response(e, passport.subjectRef),
             source: "recorded",
-            baseEvaluation: e.evaluation,
+            receiptSchemaVersion: "taste-platform-receipt-v1",
+            authorizationEvidence: {
+              sourceEvaluationSchemaVersion: e.evaluation.schemaVersion,
+              evaluationId: e.evaluation.evaluationId,
+              stateVersion: e.evaluation.stateVersion,
+              stateHash: e.evaluation.stateHash,
+              agentId: e.evaluation.agentId,
+              action: e.evaluation.action,
+              context: e.evaluation.context,
+              decision: e.evaluation.decision,
+              cultural: e.evaluation.cultural,
+              culturalRequest: e.evaluation.culturalRequest,
+              requestId: e.evaluation.requestId,
+              evaluatedAt: e.evaluation.evaluatedAt,
+              source: "recorded" as const,
+            },
           };
     });
   }
@@ -729,7 +748,7 @@ export class PlatformService {
         passport: {
           schemaVersion: "taste-passport-v1",
           originPassportRef: pr,
-          originSubjectId: passport.profileId,
+          originSubjectRef: passport.subjectRef,
           displayLabel: snapshot.displayLabel,
           passportVersion: snapshot.version,
           snapshotStateVersion: snapshot.stateVersion,

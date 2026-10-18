@@ -26,6 +26,12 @@ Demo claiming, import, public Passport discovery, permanent-state renewal, exter
 
 Exact command results/counts/head/CI/deployment are reported in the completion report. This document does not infer success from a test name or a planned check.
 
-## Local validation
+## Historical V2 local validation
 
-The final local unit/integration run passes 526 tests, including 253 database tests. Migration 0005 applies from an empty database through the full chain. Format, lint (one unchanged M5 warning), strict TypeScript, production build and production audit pass; audit reports zero vulnerabilities. TasteBench contract/report reconcile with unchanged prediction, result and metric hashes. Browser and exact-head remote results are recorded in the PR/completion report after execution.
+At the V2 reviewed head e5ad384db863fa5bd38260f241b3bc418e8f08f2, the local unit/integration run passed 526 tests, including 253 database tests. Migration 0005 applies from an empty database through the full chain. Format, lint (one unchanged M5 warning), strict TypeScript, production build and production audit pass; audit reports zero vulnerabilities. TasteBench contract/report reconcile with unchanged prediction, result and metric hashes. Browser and exact-head remote results are recorded in the PR/completion report after execution.
+
+## V3 reconciliation scope
+
+V3 reconciles positioning, separate opaque subjectRef, database mapping integrity, public receipt projection, export identity and capability/action distinction. V2 implementation decisions and captured evaluation persistence remain accepted. Exact reconciliation validation is reported on the new head in PR #10 and the guide handoff. WIN GATE NOT IMPLEMENTED; A2A RUNTIME NOT IMPLEMENTED; M7 NOT STARTED. M6 foundation is held at Win Gate, not complete or merge-ready.
+
+V3 reconciliation local validation: 533 unit/integration tests (including 260 database tests), 54 Playwright cases, and 9 focused public-contract regressions pass. Format/lint/strict TypeScript/build/verify pass with one unchanged M5 lint warning. Production audit: zero vulnerabilities. TasteBench validate/contract/report reconcile with unchanged semantic artifact hashes. Secret/client-bundle scans and final remote exact-head CI are separately checked in the guide handoff; no hosted auth/database/share-delivery proof is inferred.

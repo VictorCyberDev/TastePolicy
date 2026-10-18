@@ -7,7 +7,7 @@ import type { QlooEntity } from "@/types/domain";
 export interface PassportSummary {
   schemaVersion: "taste-passport-v1";
   passportRef: string;
-  subjectId: string;
+  subjectRef: string;
   passportVersion: number;
   stateVersion: number;
   stateHash: string;
@@ -17,7 +17,9 @@ export interface PassportSummary {
   expiresAt: string;
   createdAt: string;
   provenance: "EXPLICIT_USER_REVIEWED";
-  supportedCapabilities: ("SELECT_ENTITY" | "CAPTURED_REPLAY")[];
+  supportedCapabilities: ("PREFERENCE_AUTHORIZATION" | "CAPTURED_REPLAY")[];
+  supportedActions: "SELECT_ENTITY"[];
+  supportedCandidateDomains: ("brand" | "place" | "destination")[];
   stateSummary?: { entryCounts: Record<string, number> };
   semanticHash: string;
 }
@@ -33,6 +35,7 @@ export interface EvaluationRequest {
   };
 }
 export interface AuthorizationResponse {
+  subjectRef: string;
   schemaVersion: "taste-authorization-response-v1";
   evaluationRef: string;
   passportRef: string;
@@ -53,5 +56,22 @@ export interface AuthorizationResponse {
 }
 export type ReceiptResponse = AuthorizationResponse & {
   source: "recorded";
-  baseEvaluation: StateEvaluation;
+  receiptSchemaVersion: "taste-platform-receipt-v1";
+  authorizationEvidence: {
+    sourceEvaluationSchemaVersion: StateEvaluation["schemaVersion"];
+  } & Pick<
+    StateEvaluation,
+    | "evaluationId"
+    | "stateVersion"
+    | "stateHash"
+    | "agentId"
+    | "action"
+    | "context"
+    | "decision"
+    | "cultural"
+    | "culturalRequest"
+    | "requestId"
+    | "evaluatedAt"
+    | "source"
+  >;
 };

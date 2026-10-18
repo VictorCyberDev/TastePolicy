@@ -5,6 +5,7 @@ import type { Credential, Grant } from "@/lib/platform/types";
 import { KEY_SCOPES, SHARE_SCOPES } from "@/lib/platform/types";
 import "./PlatformPanel.css";
 type Passport = {
+  subjectRef: string;
   passportRef: string;
   displayLabel: string;
   passportVersion: number;
@@ -142,8 +143,8 @@ export default function PlatformPanel() {
       <nav>
         <Link href="/">TastePolicy · Judge Mode</Link>
       </nav>
-      <p className="eyebrow">M6 · Platformization</p>
-      <h1 id="platform-title">Your Taste Passport</h1>
+      <p className="eyebrow">M6 · Interoperable Preference Authority</p>
+      <h1 id="platform-title">Your TastePolicy Passport</h1>
       <p>
         Private state references, explicit sharing and bounded developer access.
         Cultural authorization never grants purchase, payment, booking,
@@ -288,16 +289,20 @@ export default function PlatformPanel() {
                   })
                 }
               >
-                Create private Taste Passport
+                Create private TastePolicy Passport
               </button>
             </fieldset>
           ) : (
             <article>
-              <h2>Taste Passport · {passport.displayLabel}</h2>
+              <h2>TastePolicy Passport · {passport.displayLabel}</h2>
               <dl>
                 <dt>Reference</dt>
                 <dd>
                   <code>{passport.passportRef}</code>
+                </dd>
+                <dt>Subject reference</dt>
+                <dd>
+                  <code>{passport.subjectRef}</code>
                 </dd>
                 <dt>Privacy</dt>
                 <dd>{passport.visibility} · never publicly discoverable</dd>
@@ -311,8 +316,10 @@ export default function PlatformPanel() {
                 <dd>{passport.expiresAt}</dd>
               </dl>
               <p>
-                A reference does not expose anchors, constraints, feedback,
-                proxies, group membership or receipts.
+                A user-controlled preference authority reference, separate from
+                agent identity or capability credentials. A reference does not
+                expose anchors, constraints, feedback, proxies, group membership
+                or receipts.
               </p>
               <label>
                 New Passport label

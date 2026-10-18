@@ -1,6 +1,8 @@
 # TastePolicy
 
-**Cultural intelligence and authorization for autonomous agents.**
+**The preference authorization layer for autonomous agents.**
+
+“Qloo gives agents taste. TastePolicy gives that taste authority boundaries.”
 
 Public, open-source modular monolith for cultural authorization, built for the Qloo Agentic Hackathon and potential startup development.
 
@@ -75,7 +77,7 @@ Long-term taste learning, population-validated TasteBench findings, calibrated s
 
 ## Milestone journey
 
-Milestone 1 is merged. **M1.5R — Verified Demo Reconciliation** adds judge-facing presentation, accessibility and the verified demo experience over the merged M1 foundation. **M1.6 — Proof & Interoperability**, **M2 — Persistent Taste State + ContextGraph + scoped feedback** and **M2.5 — Interactive Authorization** provide the implemented surfaces documented below. M3 adds isolated evaluation infrastructure; M4 adds intentional, user-controlled TasteTrajectory exploration as documented below; M5 adds TasteProxy and explicit group authorization as documented below; M6 adds private Taste Passports, authenticated sharing and developer surfaces as documented below; M7 remains future work requiring separate authorization. The authoritative product architecture and milestone sequence live in [Canonical Architecture & Milestone Journey v2](docs/architecture/canonical-architecture-v2.md).
+Milestone 1 is merged. **M1.5R — Verified Demo Reconciliation** adds judge-facing presentation, accessibility and the verified demo experience over the merged M1 foundation. **M1.6 — Proof & Interoperability**, **M2 — Persistent Taste State + ContextGraph + scoped feedback** and **M2.5 — Interactive Authorization** provide the implemented surfaces documented below. M3 adds isolated evaluation infrastructure; M4 adds intentional, user-controlled TasteTrajectory exploration as documented below; M5 adds TasteProxy and explicit group authorization as documented below; M6 foundations add private TastePolicy Passports, authenticated sharing and developer surfaces as documented below. The authoritative future sequence is M5 complete → WIN GATE → M6 Interoperable Preference Authority → M7 Subjective Policy Control Plane → M8 Runtime Preference Authority → M9 Interoperable Preference Authorization Network → M10 NOT AUTHORIZED. See [Canonical Architecture v3](docs/architecture/canonical-architecture-v3.md); [V2](docs/architecture/canonical-architecture-v2.md) remains historical.
 
 ## License
 
@@ -133,10 +135,12 @@ Groups reference 2–5 unique subjects under `UNANIMOUS_NO_VETO_V1`: any REJECT 
 
 See [M5 semantics and operations](docs/product/m5-taste-proxy-group-authorization.md), [ADR 0010](docs/decisions/0010-taste-proxy-group-authorization.md) and [review evidence boundaries](docs/evaluation/m5-implementation-review.md). Apply migration 0004 with `npm run db:migrate:subjects` after migrations 0001–0003 on a dedicated database. M6 adds authenticated account/sharing boundaries as documented below; M5 proxy permission remains user-attested and historically unchanged. Cultural authorization grants no execution authority.
 
-## M6 — Taste Passport and platformization
+## M6 — Interoperable Preference Authority
 
 `/account` (Account / Passport) is separate from Judge Mode. Better Auth provides database-backed email/password authentication; control of account credentials does not verify legal identity or email ownership. Passports default PRIVATE, hold separate explicitly initialized SELF state and expose opaque references. Explicit, expiring grants record AUTHENTICATED_GRANTOR_CONSENT; they never relabel old proxy attestations.
 
 Scoped, hashed, expiring developer keys authorize `/api/v1` Passport/evaluate/receipt/status operations. The repository TypeScript SDK and local MCP reuse these contracts and existing cultural policy. No raw Qloo or execution authority is exposed. Export-only portability distinguishes explicit SELF state from provider references and excluded proxy/group material; fresh-auth deletion physically purges owned state. No silent demo claim or import exists.
 
-Apply `npm run db:migrate:platform` after 0001–0004 on a dedicated database. Configure private BETTER_AUTH_SECRET, explicit BETTER_AUTH_URL and DATABASE_URL; no defaults or live proof are fabricated when missing. Run `npm run db:purge:platform` periodically for retention cleanup. See [M6 semantics](docs/product/m6-platformization.md), [ADR 0011](docs/decisions/0011-platformization.md), [developer API/SDK/MCP](docs/developer/api-v1.md) and [review evidence](docs/evaluation/m6-implementation-review.md). M7 enterprise/control-plane work remains unimplemented.
+Apply `npm run db:migrate:platform` after 0001–0004 on a dedicated database. Configure private BETTER_AUTH_SECRET, explicit BETTER_AUTH_URL and DATABASE_URL; no defaults or live proof are fabricated when missing. Run `npm run db:purge:platform` periodically for retention cleanup. See [M6 semantics](docs/product/m6-interoperable-preference-authority.md), [ADR 0011](docs/decisions/0011-interoperable-preference-authority.md), [developer API/SDK/MCP](docs/developer/api-v1.md) and [review evidence](docs/evaluation/m6-implementation-review.md). WIN GATE is not completed. A2A discovery/interoperation is remaining M6G work after Win Gate under the then-current official specification. This foundation is held at the Win Gate, is not merge-ready and does not complete M6. No A2A runtime, M7 or later work is implemented.
+
+TastePolicy Passport is a user-controlled preference authority reference, not an agent identity credential. Public subjectRef is independent of the internal state profile. Product capabilities are PREFERENCE_AUTHORIZATION and CAPTURED_REPLAY; the current action remains SELECT_ENTITY for brand/place/destination. `/api/v1/evaluate` is the Preference Authority primitive, returning a decision, basis, unresolved factors, receipt reference and bounded continuation, never transaction authority.

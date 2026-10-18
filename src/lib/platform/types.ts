@@ -22,6 +22,7 @@ export interface Principal {
   scopes?: KeyScope[];
 }
 export interface PassportRecord {
+  subjectRef: string;
   passportRef: string;
   userId: string;
   profileId: string;

@@ -1,4 +1,4 @@
-# M6 — Taste Passport and platformization
+# M6 — Interoperable Preference Authority
 
 M6 exposes the existing deterministic cultural authorization engine through authenticated, private state references. It does not create a second policy or grant execution authority. The temporary Judge Mode capability remains separate from an AUTHENTICATED ACCOUNT; no demo claim, silent conversion or state merging exists.
 
@@ -12,9 +12,9 @@ Unclaimed temporary demo resources retain their separate capability/expiry; acco
 
 ## Passport v1
 
-`taste-passport-v1` exposes a high-entropy passportRef, SELF subject reference, immutable Passport metadata version, current state version/hash, bounded label, privacy, status/expiry, explicit input provenance and supported capabilities. Owner/user/profile linkage stays server-side. PRIVATE is the default. SHARED_BY_GRANT describes grant-based visibility, not public discovery or a promise that any grant is currently active. Every read rechecks scopes, expiry and revocation.
+`taste-passport-v1` exposes a high-entropy passportRef, opaque subjectRef, immutable Passport metadata version, current state version/hash, bounded label, privacy, status/expiry, explicit input provenance and supported capabilities. Owner/user/profile linkage stays server-side. PRIVATE is the default. SHARED_BY_GRANT describes grant-based visibility, not public discovery or a promise that any grant is currently active. Every read rechecks scopes, expiry and revocation.
 
-Metadata changes create immutable Passport versions containing the state references observed at that checkpoint. Current state references are read from the existing state engine without rewriting historical versions. The semantic hash includes schema, subject/state references, Passport version, label, privacy, expiry/status, provenance and capabilities; it excludes transport reference and issuance timestamp. Hashes are consistency checks, not signatures or tamper-proof claims.
+Metadata changes create immutable Passport versions containing the state references observed at that checkpoint. Current state references are read from the existing state engine without rewriting historical versions. The semantic hash includes schema, subjectRef/state references, Passport version, label, privacy, expiry/status, provenance and capabilities; it excludes transport reference and issuance timestamp. Hashes are consistency checks, not signatures or tamper-proof claims.
 
 Core account state and Passports expire after 30 days in v1. Renewal/permanent storage is not implemented. Active expiry denies new evaluation/read access; the owner may export retained expired state before physical purge. Run the documented purge command to enforce physical retention.
 
@@ -55,3 +55,15 @@ Migration 0005 follows unchanged 0001–0004. Composite account/Passport/profile
 Local tests execute Better Auth signup/sign-in/logout and real migration/repository SQL through PGlite, including concurrency/rollback/filesystem reopen. This is not hosted/native multi-client PostgreSQL proof. Live authentication, remote persistence and external sharing delivery are separately reported; no production user/consent/provider success is fabricated. All synthetic browser transport evidence is labeled SYNTHETIC TEST DATA.
 
 M1–M5 thresholds, provider semantics, Cultural Receipt v1, ContextGraph hashing, TasteTrajectory and TasteBench remain unchanged. M7 enterprise administration, billing, fleet controls and commercial analytics are absent.
+
+## V3 identity and public privacy contract
+
+[Canonical Architecture v3](../architecture/canonical-architecture-v3.md) governs future direction. TastePolicy owns preference authority: “Is this subjective choice sufficiently justified for this subject?” TastePolicy Passport is a user-controlled preference authority reference, not an agent-identity or operational-capability credential. Generic IAM, enterprise governance, generic memory, payment/booking/tool authorization and Qloo's cultural graph remain external boundaries.
+
+Each account Passport receives independent random `tps_` + 48 lowercase hexadecimal characters (192 random bits), stable for its lifetime. Relational subject_ref is NOT NULL/UNIQUE, bound to owner/Passport/internal profile; version rows carry a composite mapping FK. JSON envelopes must agree; an identity-update trigger forbids rebinding. Internal profile_id continues to back all state/evaluation ownership FKs. Public references are lookup identities, never bearer authority or caller-selected ownership.
+
+Public summaries expose subjectRef, supportedCapabilities PREFERENCE_AUTHORIZATION/CAPTURED_REPLAY, supportedActions SELECT_ENTITY and supportedCandidateDomains brand/place/destination. Ordinary evaluation/status responses also identify subjectRef. Receipt responses expose receiptSchemaVersion taste-platform-receipt-v1 and an explicit authorizationEvidence projection without internal profileId; this access/privacy wrapper is not signed or cryptographically verifiable. Captured StateEvaluation and Cultural Receipt v1 persistence remain untouched. Export uses originSubjectRef, not the internal profile identity; all existing provenance/exclusion boundaries remain.
+
+The Preference Authority primitive remains `/api/v1/evaluate`, addressed by passportRef with the existing action/context contract. There is no new subjectRef-based write or evaluation route. ALLOW/ASK/REJECT/UNAVAILABLE and continuation are unchanged, automaticRetry=false.
+
+WIN GATE is not implemented or completed. Remaining M6G A2A discovery/interoperation requires separate authorization after Win Gate and the then-current official A2A specification: standard Agent Card, Preference Authorization skill, authenticated interface and same evaluator. No A2A runtime, custom protocol, second policy, new agent identity or payment authority exists here. This foundation does not complete M6 and remains not merge-ready. M7 is not started.

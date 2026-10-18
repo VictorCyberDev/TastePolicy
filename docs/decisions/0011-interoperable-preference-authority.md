@@ -1,6 +1,6 @@
-# ADR 0011 — Platformization v1
+# ADR 0011 — Interoperable Preference Authority
 
-Authoritative base: 35ceed937ef0bebb88b200af6f21bcc362210cb8. Recorded before runtime implementation. Canonical architecture v2 remains unchanged; no M7.
+Authoritative base: 35ceed937ef0bebb88b200af6f21bcc362210cb8. Recorded before runtime implementation. The original implementation decisions were recorded under V2. [Canonical Architecture v3](../architecture/canonical-architecture-v3.md) now supersedes conflicting future direction: preference authority, not generic platform/IAM authority. V2 remains historical; no M7.
 
 ## Identity and account ownership
 
@@ -39,3 +39,7 @@ Migration 0005 owns account mappings, Passports/versions, grants/events, develop
 Completed idempotency is checked before provider work; same canonical key/payload returns the durable result, changed payload conflicts. Key issuance's durable result is metadata only: a replay cannot reveal the one-time secret again or mint another secret. The secret is an ephemeral initial-response addition and is never stored in the operation ledger. Terminal account deletion invalidates authentication, so subsequent unauthenticated retries cannot recover private results. Provider work and persistence are not exactly-once delivery: a crash before durable commit may cause work on explicit retry. Rollback, concurrency, revocation, freshness, cross-account, actual SQL and filesystem durability tests are required. Hosted/native concurrency, external live auth and delivery remain separately reported environmental proof.
 
 No enterprise hierarchies, billing, fleets, commercial IAM, sensitive inference or other M7 implementation.
+
+## V3 reconciliation
+
+TastePolicy Passport is a user-controlled preference authority reference, distinct from agent identity/passport systems. A random stable subjectRef maps to the existing internal profileId under immutable relational ownership. Public summaries, SDK/MCP, export identity and the platform receipt wrapper use subjectRef. Stored StateEvaluation and Cultural Receipt v1 remain unchanged. Capabilities are PREFERENCE_AUTHORIZATION and CAPTURED_REPLAY; SELECT_ENTITY is the current supported action, for brand/place/destination. A2A remains M6G work after the guide-owned Win Gate; neither is implemented or completed here. M6 is held at the Win Gate and is not merge-ready.

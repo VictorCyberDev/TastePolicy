@@ -11,7 +11,7 @@ export function platformRepository(c: PoolClient): PlatformRepository {
   };
   const version = async (p: import("@/lib/platform/types").PassportRecord) =>
     write(
-      "INSERT INTO tastepolicy.passport_versions VALUES($1,$2,$3,$4,$5,$6,$7)",
+      "INSERT INTO tastepolicy.passport_versions VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
       [
         p.passportRef,
         p.version,
@@ -20,6 +20,7 @@ export function platformRepository(c: PoolClient): PlatformRepository {
         p.stateVersion,
         p.stateHash,
         p,
+        p.subjectRef,
       ],
     );
   return {
@@ -51,8 +52,16 @@ export function platformRepository(c: PoolClient): PlatformRepository {
         p.profileId,
       ]);
       await write(
-        "INSERT INTO tastepolicy.taste_passports VALUES($1,$2,$3,$4,$5,$6)",
-        [p.passportRef, p.userId, p.profileId, p.version, p.expiresAt, p],
+        "INSERT INTO tastepolicy.taste_passports VALUES($1,$2,$3,$4,$5,$6,$7)",
+        [
+          p.passportRef,
+          p.userId,
+          p.profileId,
+          p.version,
+          p.expiresAt,
+          p,
+          p.subjectRef,
+        ],
       );
       await version(p);
     },
