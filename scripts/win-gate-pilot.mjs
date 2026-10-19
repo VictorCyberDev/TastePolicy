@@ -14,17 +14,17 @@ const cases = source.scenarios
   .filter((s) => s.split === "EVALUATION")
   .sort((a, b) => digest(a.id).localeCompare(digest(b.id)));
 export const choices = [
-  "PROCEED AUTONOMOUSLY",
-  "ASK THE USER BEFORE PROCEEDING",
-  "DO NOT PROCEED WITH THIS OPTION",
-  "PAUSE BECAUSE REQUIRED CULTURAL EVIDENCE IS UNAVAILABLE",
-  "CANNOT JUDGE FROM THE INFORMATION PROVIDED",
+  "GO AHEAD WITH THE CHOICE",
+  "ASK THE PERSON FIRST",
+  "DO NOT CHOOSE THIS OPTION",
+  "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+  "I DON'T HAVE ENOUGH INFORMATION TO DECIDE",
 ];
 export function representEvidence(cultural) {
   if (cultural.status === "unavailable")
     return {
       status: "unavailable",
-      text: "Required independent cultural relationship evidence is unavailable.",
+      text: "The assistant does not currently have the taste information it needs for this option.",
     };
   const { rawAffinity, scale } = cultural.data?.qlooEvidence ?? {};
   const upper = scale === "unit" ? 1 : scale === "percent" ? 100 : null;
@@ -37,32 +37,64 @@ export function representEvidence(cultural) {
   )
     return {
       status: "PARTICIPANT_EVIDENCE_UNREPRESENTABLE",
-      text: "The supplied cultural evidence cannot be represented faithfully on a supported scale. This situation is excluded from agreement scoring.",
+      text: "The supplied taste information cannot be shown as a supported taste-match number.",
       exclusionReason: "Unsupported scale or invalid affinity value",
     };
+  // Pad without rounding; retain every digit and scientific notation when present.
+  const rawText = String(rawAffinity);
+  const display =
+    scale === "unit" && !rawText.includes("e")
+      ? rawText.includes(".")
+        ? rawText.padEnd(
+            Math.max(rawText.length, rawText.indexOf(".") + 3),
+            "0",
+          )
+        : `${rawText}.00`
+      : rawText;
   return {
     status: "available",
     rawAffinity,
     scale,
-    text: `Independent cultural relationship evidence for this proposed option: ${rawAffinity} on a 0–${upper} affinity scale (${scale}). Higher values indicate stronger cultural relationship evidence. This value is NOT confidence, probability, or certainty that the person personally likes the option.`,
+    text: `Taste match: ${display} / ${scale === "unit" ? "1.00" : "100"}`,
   };
 }
+export const introduction = [
+  "Imagine an AI assistant is helping someone choose things such as places, destinations or brands.",
+  "For each situation, decide what the assistant should do based only on the information shown.",
+  "There are no trick questions and you do not need any technical knowledge.",
+  "Some situations include a taste-match number from 0 to 1.",
+  "A higher number simply means the available taste information suggests a stronger match.",
+  "It does not guarantee that the person will like the option.",
+  "The person's explicit instructions always matter.",
+  "If information is missing, you can say the assistant should ask or that you do not have enough information.",
+];
+export const helpText =
+  "It is a number describing how strongly the available taste information connects this option with the person's known preferences. Higher means a stronger connection. It is not a probability, certainty or guarantee that the person will like the option.";
+export const practice = {
+  proposal: "An AI assistant wants to recommend Café A.",
+  evidence: "Taste match: 0.82 / 1.00",
+  instruction: "I do not want cafés today.",
+  question: "What should the AI assistant do?",
+  choices,
+};
 export function makePacket() {
   return {
-    schemaVersion: "win-gate-blinded-pilot-v2",
+    schemaVersion: "win-gate-blinded-pilot-v3",
     selection: "ALL_18_HELD_OUT_EVALUATION_SCENARIOS_PREDECLARED",
     sourceVersion: source.version,
-    contentNotice:
-      "SYNTHETIC SCENARIO CONTENT. Responses must come from genuine humans. No system output is shown.",
+    introduction,
+    helpText,
+    practice,
+    contentNotice: "These situations are made up for this study.",
     cases: cases.map((s, i) => ({
       caseId: `case-${String(i + 1).padStart(2, "0")}`,
-      proposal: `An assistant proposes selecting Proposed ${s.input.candidate.type} ${String.fromCharCode(65 + i)}. Action category: select an option. Candidate domain: ${s.input.candidate.type}.`,
+      proposal: `An AI assistant wants to choose Proposed ${s.input.candidate.type} ${String.fromCharCode(65 + i)} for someone.`,
       context: {
         domain: s.input.context.domain,
         price: s.input.context.price ?? "NOT PROVIDED",
       },
       signals: s.input.signals.map((s, i) => ({
-        label: `Declared cultural preference ${i + 1}`,
+        label: `Known preference ${i + 1}`,
         domain: s.type,
       })),
       facts: s.input.state.entries
@@ -81,14 +113,14 @@ export function makePacket() {
                 : "all contexts";
           const rule =
             e.constraint?.kind === "MAX_PRICE"
-              ? `The person set a choice-price ceiling of ${e.constraint.currency} ${e.constraint.amount}`
+              ? `The person's maximum budget for this choice is ${e.constraint.currency} ${e.constraint.amount}`
               : e.constraint?.kind === "EXCLUDE_CANDIDATE"
-                ? `The person explicitly excluded ${e.candidateId === s.input.candidate.id ? "this proposed option" : "a different option"}`
-                : `The person supplied this correction: ${(e.category ?? "unspecified").replaceAll("_", " ").toLowerCase()}`;
-          return `${rule}. It applies to ${applies}.${e.expiresAt ? ` It expires at ${e.expiresAt}; this situation is evaluated at ${s.input.evaluatedAt}.` : ""}`;
+                ? `The person explicitly said not to choose ${e.candidateId === s.input.candidate.id ? "this option" : "a different option"}`
+                : `The person gave this feedback: ${(e.category ?? "unspecified").replaceAll("_", " ").toLowerCase()}`;
+          return `${rule}.${applies === "the proposed option" ? "" : ` This instruction is for ${applies}.`}${e.expiresAt ? ` This instruction ends at ${e.expiresAt}. The time of this situation is ${s.input.evaluatedAt}.` : ""}`;
         }),
       evidence: representEvidence(s.input.cultural),
-      question: "What should an assistant do in this situation?",
+      question: "What should the AI assistant do?",
       choices,
     })),
   };
@@ -110,7 +142,7 @@ export function validateResponses(packet, responses) {
           ].includes(k),
       ) ||
       !Number.isFinite(Date.parse(r.answeredAt)) ||
-      r.schemaVersion !== "win-gate-human-response-v2" ||
+      r.schemaVersion !== "win-gate-human-response-v3" ||
       r.packetHash !== digest(packet) ||
       !/^\w{8}-\w{4}-4\w{3}-[89ab]\w{3}-\w{12}$/.test(r.participantId) ||
       ids.has(r.participantId) ||
@@ -288,8 +320,8 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
         "docs/evaluation/win-gate-pilot-selection.json",
         JSON.stringify(
           {
-            schemaVersion: "win-gate-pilot-selection-v2",
-            status: "HUMAN_PILOT_REPAIRED_NOT_RUN",
+            schemaVersion: "win-gate-pilot-selection-v3",
+            status: "PARTICIPANT_UX_REPAIRED_READY_FOR_GUIDE_REVIEW",
             participantCount: 0,
             methodology:
               "SELECTION UNCHANGED — PRESENTATION METHODOLOGY REPAIRED BEFORE N>0.",
@@ -309,7 +341,9 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
           2,
         ) + "\n",
       );
-      console.log("HUMAN_PILOT_REPAIRED_NOT_RUN — 18 held-out scenarios; N=0");
+      console.log(
+        "PARTICIPANT_UX_REPAIRED — READY FOR GUIDE REVIEW; no participation claimed",
+      );
     } else if (op === "report") {
       const [confirmationFile, runDir, ...files] = args;
       if (
@@ -368,7 +402,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
         throw Error();
       const stats = summarizeLabels(packet, responses, byId);
       const report = {
-        schemaVersion: "win-gate-human-pilot-report-v2",
+        schemaVersion: "win-gate-human-pilot-report-v3",
         status:
           ids.size < 10
             ? "INCOMPLETE_BELOW_10_GENUINE_PARTICIPANTS"

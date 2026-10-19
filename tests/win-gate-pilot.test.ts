@@ -156,7 +156,7 @@ const previous = {
     "All held-out EVALUATION scenarios, six per domain. No post-result selection. Cultural-fit cases may be unscorable without numeric/system evidence; do not infer labels.",
 };
 const response = () => ({
-  schemaVersion: "win-gate-human-response-v2",
+  schemaVersion: "win-gate-human-response-v3",
   packetHash: pub.packetHash,
   participantId: randomUUID(),
   answeredAt: new Date().toISOString(),
@@ -166,13 +166,18 @@ it("retains all 18 held-out source cases and dataset hash, invalidates unrun v1"
   expect(selection.selection).toEqual(previous.selection);
   expect(selection.datasetHash).toBe(previous.datasetHash);
   expect(packet.cases).toHaveLength(18);
-  expect(packet.schemaVersion).toBe("win-gate-blinded-pilot-v2");
+  expect(packet.schemaVersion).toBe("win-gate-blinded-pilot-v3");
   expect(pub.packetHash).not.toBe(previous.packetHash);
+  expect(pub.packetHash).not.toBe(
+    "3a34ce283af7f51c6d4fd40bf76f7f80480cd24f1541e69a3433b1c7badad538",
+  );
   expect(pub.packetHash).toBe(
     createHash("sha256").update(JSON.stringify(packet)).digest("hex"),
   );
   expect(selection.participantCount).toBe(0);
-  expect(selection.status).toBe("HUMAN_PILOT_REPAIRED_NOT_RUN");
+  expect(selection.status).toBe(
+    "PARTICIPANT_UX_REPAIRED_READY_FOR_GUIDE_REVIEW",
+  );
 });
 for (const [i, c] of packet.cases.entries())
   it(`evidence and material input coverage ${c.caseId}`, () => {
@@ -197,8 +202,8 @@ for (const [i, c] of packet.cases.entries())
       if (e.constraint?.kind === "EXCLUDE_CANDIDATE")
         expect(c.facts.join(" ")).toContain(
           e.candidateId === s.input.candidate.id
-            ? "excluded this proposed option"
-            : "excluded a different option",
+            ? "said not to choose this option"
+            : "said not to choose a different option",
         );
       if (e.expiresAt) expect(c.facts.join(" ")).toContain(e.expiresAt);
     }
@@ -207,10 +212,13 @@ for (const [i, c] of packet.cases.entries())
       expect(c.evidence.rawAffinity).toBe(e.rawAffinity);
       expect(c.evidence.scale).toBe(e.scale);
       expect(c.evidence.text).toContain(String(e.rawAffinity));
-      expect(c.evidence.text).toContain("0–1 affinity scale");
+      expect(Number(c.evidence.text.split(": ")[1].split(" / ")[0])).toBe(
+        e.rawAffinity,
+      );
+      expect(c.evidence.text).toContain(" / 1.00");
     } else
       expect(c.evidence.text).toBe(
-        "Required independent cultural relationship evidence is unavailable.",
+        "The assistant does not currently have the taste information it needs for this option.",
       );
     expect(c.choices).toEqual(choices);
     expect(c.choices).toHaveLength(5);
@@ -234,7 +242,7 @@ it("participant material contains evidence but no outcome interpretation or inte
 });
 it("preserves exact exclusions and all currency ceilings without interpreting them", () => {
   const text = packet.cases.flatMap((c) => c.facts).join(" ");
-  expect(text).toContain("explicitly excluded this proposed option");
+  expect(text).toContain("explicitly said not to choose this option");
   expect(text).toContain("USD 50");
   expect(text).toContain("EUR");
 });
@@ -249,7 +257,7 @@ it("supports declared percent scale and excludes unknown/invalid evidence explic
     });
     expect(e.rawAffinity).toBe(rawAffinity);
     expect(e.scale).toBe(scale);
-    expect(e.text).toContain(scale === "percent" ? "0–100" : "0–1");
+    expect(e.text).toContain(scale === "percent" ? "90 / 100" : "0.90 / 1.00");
   }
   for (const [rawAffinity, scale] of [
     [9, "unknown"],
@@ -269,6 +277,13 @@ it("rejects v1, wrong hashes, duplicates and permits only five behavioral labels
   expect(validateResponses(packet, [r]).size).toBe(1);
   for (const invalid of [
     { ...r, schemaVersion: "win-gate-human-response-v1" },
+    {
+      ...r,
+      schemaVersion: "win-gate-human-response-v2",
+      packetHash:
+        "3a34ce283af7f51c6d4fd40bf76f7f80480cd24f1541e69a3433b1c7badad538",
+    },
+    { ...r, schemaVersion: "win-gate-human-response-v2" },
     { ...r, packetHash: previous.packetHash },
     { ...r, answers: r.answers.map((a) => ({ ...a, choice: "ALLOW" })) },
   ])
@@ -363,4 +378,38 @@ it("keeps CANNOT JUDGE unscored, including on unavailable cases, and has no inve
   const empty = summarizeLabels(packet, [], predictions);
   expect(empty.cannotJudge.rate).toBeNull();
   expect(empty.exactDecisionAgreement.denominator).toBe(0);
+});
+
+it("keeps the worked example out of the 18 cases and every response", () => {
+  expect(pub.practice.proposal).toBe(
+    "An AI assistant wants to recommend Café A.",
+  );
+  expect(pub.practice).not.toHaveProperty("answer");
+  expect(
+    pub.cases.some((c: { proposal: string }) => c.proposal.includes("Café A")),
+  ).toBe(false);
+  const r = response();
+  expect(r.answers).toHaveLength(18);
+  expect(() =>
+    validateResponses(packet, [
+      {
+        ...r,
+        answers: [...r.answers, { caseId: "practice", choice: choices[0] }],
+      },
+    ]),
+  ).toThrow();
+});
+it("never rounds source affinity, including close boundary numbers", () => {
+  for (const rawAffinity of [0.80000001, 0.49999999, 0.1, 0.0000001, 0, 1]) {
+    const e = representEvidence({
+      status: "available",
+      data: { qlooEvidence: { rawAffinity, scale: "unit" } },
+    });
+    expect(Number(e.text.split(": ")[1].split(" / ")[0])).toBe(rawAffinity);
+  }
+});
+it("does not fabricate participation from a packet or practice example", () => {
+  expect(selection.participantCount).toBe(0);
+  expect(pub).not.toHaveProperty("participantCount");
+  expect(validateResponses(packet, []).size).toBe(0);
 });

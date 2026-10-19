@@ -269,60 +269,151 @@ for (const colorScheme of ["light", "dark"] as const)
       fullPage: true,
     });
   });
-test("annotation packet is optional, local-only and blinded", async ({
-  page,
-}) => {
+test("v3 annotation is optional and local-only", async ({ page }) => {
   let posts = 0;
   page.on("request", (r) => {
     if (r.method() === "POST") posts++;
   });
   await page.goto("/annotate");
-  await page.getByRole("checkbox").check();
-  await page
-    .getByRole("button", { name: "Open independent annotation packet" })
-    .click();
-  await expect(page.getByRole("group", { name: /^Situation/ })).toHaveCount(18);
+  await page.getByRole("button", { name: "Read about the study" }).click();
   await expect(
-    page.getByRole("button", { name: "Download anonymous responses" }),
+    page.getByRole("button", { name: "See how this works" }),
   ).toBeDisabled();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "See how this works" }).click();
   await expect(
-    page.getByText(/Qloo score|allowAbove|FULL_TASTEPOLICY/),
+    page.getByRole("heading", { name: "How this works" }),
+  ).toBeVisible();
+  await expect(page.getByRole("radio")).toHaveCount(5);
+  await expect(
+    page.getByText(
+      /Qloo score|allowAbove|FULL_TASTEPOLICY|TastePolicy|rawAffinity/,
+    ),
   ).toHaveCount(0);
   expect(posts).toBe(0);
 });
-
-test("v2 annotation exposes material evidence before five choices on mobile", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/annotate");
-  await page.getByRole("checkbox").check();
-  await page
-    .getByRole("button", { name: "Open independent annotation packet" })
-    .click();
-  const cases = page.getByRole("group", { name: /^Situation/ });
-  await expect(cases).toHaveCount(18);
-  for (const c of await cases.all()) {
-    await expect(c.getByRole("radio")).toHaveCount(5);
+for (const colorScheme of ["light", "dark"] as const)
+  test(`v3 ${colorScheme} mobile navigation, keyboard, review and complete download`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ colorScheme });
+    const errors: string[] = [];
+    let posts = 0;
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("request", (r) => {
+      if (r.method() === "POST") posts++;
+    });
+    const { readFile } = await import("node:fs/promises");
+    const packet = JSON.parse(
+      await readFile("public/win-gate/pilot.json", "utf8"),
+    );
+    await page.goto("/annotate");
+    await page.getByRole("button", { name: "Read about the study" }).click();
+    await page.getByRole("checkbox").check();
+    await page.getByRole("button", { name: "See how this works" }).click();
+    // Keyboard-only selection in practice; never exported or scored.
+    await page.getByRole("radio").first().focus();
+    await page.keyboard.press("Space");
+    await page.getByRole("button", { name: "Start the 18 questions" }).focus();
+    await page.keyboard.press("Enter");
+    for (let i = 0; i < 18; i++) {
+      await expect(
+        page.getByText(`Question ${i + 1} of 18`, { exact: true }),
+      ).toBeVisible();
+      await expect(page.getByRole("progressbar")).toHaveAttribute(
+        "value",
+        String(i + 1),
+      );
+      await expect(
+        page.getByRole("heading", { name: "The situation" }),
+      ).toBeFocused();
+      await expect(page.getByRole("radio")).toHaveCount(5);
+      await expect(
+        page.getByText(packet.cases[i].evidence.text, { exact: true }),
+      ).toBeVisible();
+      for (const fact of packet.cases[i].facts)
+        await expect(page.getByText(fact, { exact: true })).toBeVisible();
+      if (i === 0) {
+        await expect(
+          page.getByText("This option's price is not known.", { exact: true }),
+        ).toBeVisible();
+        await page
+          .getByText("What does taste match mean?", { exact: true })
+          .click();
+        await expect(
+          page.getByText(packet.helpText, { exact: true }),
+        ).toBeVisible();
+        await page.screenshot({
+          path: `test-results/WG-C-v3-first-${colorScheme}-390x844.png`,
+          fullPage: true,
+        });
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth > innerWidth,
+        ),
+      ).toBe(false);
+      await page
+        .getByRole("radio")
+        .nth(i % 5)
+        .focus();
+      await page.keyboard.press("Space");
+      if (i === 1) {
+        await page
+          .getByRole("button", { name: "Previous", exact: true })
+          .click();
+        await expect(page.getByRole("radio").first()).toBeChecked();
+        await page.getByRole("button", { name: "Next", exact: true }).click();
+        await expect(page.getByRole("radio").nth(1)).toBeChecked();
+      }
+      await page
+        .getByRole("button", {
+          name: i === 17 ? "Review answers" : "Next",
+          exact: true,
+        })
+        .click();
+    }
     await expect(
-      c.getByText(
-        /Independent cultural relationship evidence for this proposed option:|Required independent cultural relationship evidence is unavailable/,
-      ),
-    ).toBeVisible();
-    await expect(c.locator("details")).toHaveCount(0);
-  }
-  await expect(
-    page.getByText(/0.65 on a 0–1 affinity scale/).first(),
-  ).toBeVisible();
-  await expect(
-    page.getByText(/0.2 on a 0–1 affinity scale/).first(),
-  ).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth > innerWidth,
-    ),
-  ).toBe(false);
-  expect(errors).toEqual([]);
-});
+      page.getByRole("heading", { name: "Review your answers" }),
+    ).toBeFocused();
+    await expect(page.getByRole("progressbar")).toHaveAttribute("value", "18");
+    await page
+      .getByRole("button", { name: "Change answer to question 1", exact: true })
+      .click();
+    await expect(page.getByRole("radio").first()).toBeChecked();
+    await page.getByRole("radio").nth(4).check();
+    for (let i = 0; i < 17; i++)
+      await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Review answers", exact: true })
+      .click();
+    const ready = page.waitForEvent("download");
+    await page
+      .getByRole("button", { name: "Download Responses", exact: true })
+      .click();
+    const download = await ready;
+    const response = JSON.parse(
+      await readFile((await download.path())!, "utf8"),
+    );
+    expect(response.schemaVersion).toBe("win-gate-human-response-v3");
+    expect(response.packetHash).toBe(packet.packetHash);
+    expect(response.answers).toHaveLength(18);
+    expect(response.answers[0]).toEqual({
+      caseId: packet.cases[0].caseId,
+      choice: packet.cases[0].choices[4],
+    });
+    for (let i = 1; i < 18; i++)
+      expect(response.answers[i]).toEqual({
+        caseId: packet.cases[i].caseId,
+        choice: packet.cases[i].choices[i % 5],
+      });
+    expect(
+      response.answers.some((a: { caseId: string }) => a.caseId === "practice"),
+    ).toBe(false);
+    await expect(
+      page.getByRole("button", { name: "Download Responses", exact: true }),
+    ).toBeDisabled();
+    expect(posts).toBe(0);
+    expect(errors).toEqual([]);
+  });

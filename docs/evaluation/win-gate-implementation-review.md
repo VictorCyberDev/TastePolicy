@@ -29,3 +29,7 @@ No merge, PR-ready transition, M6/A2A/M7 implementation or external submission. 
 The participant packet is now `win-gate-blinded-pilot-v2`: exact source affinity/scale, explicit rules and supplied prices are visible; system outputs, thresholds, reason codes and outcome-bearing identities remain blinded. All 18 selected scenarios and the source dataset remain unchanged. Five behavioral choices preserve the unavailable-evidence distinction. Reporting retains unfavorable responses, counts uncertainty separately and exposes the requested safety/agreement denominators and descriptive subgroups.
 
 HUMAN_PILOT_REPAIRED_NOT_RUN, genuine N=0, no recruitment. Selection unchanged; presentation methodology repaired before N>0. Repair validation and exact-head CI/deployment evidence are recorded in PR #11. The checkpoint above is historical, not a new live/human proof. No unrelated Win Gate has advanced.
+
+## Participant UX v3 repair
+
+The current packet is `win-gate-blinded-pilot-v3`, with one question at a time, a separate unscored practice example, plain-language taste information and five choices with the same private outcome mapping. Evidence values/scales, all 18 source scenarios/order/content hashes, constraints, context prices and reporting formulas remain unchanged. Prior v2 evidence above is historical. V2 responses cannot enter the v3 reporter. No new human responses were collected. GUIDE review is required before recruitment; this is not human pilot PASS.

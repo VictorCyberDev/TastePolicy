@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "win-gate-pilot-selection-v2",
-  "status": "HUMAN_PILOT_REPAIRED_NOT_RUN",
+  "schemaVersion": "win-gate-pilot-selection-v3",
+  "status": "PARTICIPANT_UX_REPAIRED_READY_FOR_GUIDE_REVIEW",
   "participantCount": 0,
   "methodology": "SELECTION UNCHANGED — PRESENTATION METHODOLOGY REPAIRED BEFORE N>0.",
   "sourceVersion": "engineering-v1",
   "datasetHash": "0d30276bce61ba67158f305bf5340acc51f53ec58cc041159db6b774970bc11d",
-  "packetHash": "3a34ce283af7f51c6d4fd40bf76f7f80480cd24f1541e69a3433b1c7badad538",
+  "packetHash": "e198ff3bd1f17f9ac21ddad843cbc5cb1a2d798048a9b5e2196246474596865d",
   "selection": [
     {
       "caseId": "case-01",
