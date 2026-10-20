@@ -27,8 +27,21 @@ type Ratio = { numerator: number; denominator: number };
 export function summarizeLabels(
   packet: unknown,
   responses: unknown[],
-  predictions: Map<string, { decision: string }>,
+  predictions: unknown,
 ): {
+  predictionBindingHash: string;
+  totalJudgments: number;
+  scorableJudgments: number;
+  systemDecisionDistribution: Record<string, number>;
+  humanDecisionDistribution: Record<string, number>;
+  perCase: (import("./win-gate-bindings.mjs").Binding & {
+    predictionSemanticHash: string;
+    decision: string;
+    decisionBasis?: string;
+    humanLabels: Record<string, number>;
+    disagreements: number;
+    scorableJudgments: number;
+  })[];
   rawLabels: Record<string, number>;
   labelsByCase: Record<string, Record<string, number>>;
   cannotJudge: { count: number; denominator: number; rate: number | null };

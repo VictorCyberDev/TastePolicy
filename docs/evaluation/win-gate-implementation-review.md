@@ -1,5 +1,7 @@
 # Win Gate implementation handoff
 
+Historical implementation checkpoints follow. Current WG-C evidence: [N=10 bound-state report](wg-c-human-pilot-report.md), REPAIR pending GUIDE review; the N=0 statements below describe pre-collection checkpoints. No unrelated gate status has advanced.
+
 Base: 35ceed937ef0bebb88b200af6f21bcc362210cb8. Branch: win-gate-hackathon-hardening, independently based on main; no M6 commits/code copied. PR #10 remains separate. Guide alone owns Win Gate acceptance and freeze/merge/progression.
 
 ## Reviewed-head evidence checkpoint (94b775)

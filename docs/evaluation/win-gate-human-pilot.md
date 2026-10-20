@@ -1,6 +1,6 @@
 # Win Gate human pilot
 
-Status: **PARTICIPANT_UX_REPAIRED — READY FOR GUIDE REVIEW**. Human pilot NOT RUN. The previous reviewed repository checkpoint records genuine participant N=0; completed annotations=0. This repair collected no responses and performed no recruitment. Private coordinator-held v2 responses, if any exist outside the repository, have not been inspected and must be counted separately before recruitment. GUIDE approval is required before recruitment. Target at least 10 distinct genuine humans; any smaller sample requires explicit guide acceptance. All human metrics are NOT RUN, not zero-error findings.
+Status: **REPAIR — corrected N=10 report awaiting GUIDE review**. Ten distinct response UUIDs, 18 answers each, 180 judgments validated. Genuine/distinct-human assurance is supplied by the user’s GUIDE handoff, not independently verified identity. Two identical uploaded copies are excluded, originals preserved privately. See the [bound-state descriptive report](wg-c-human-pilot-report.md) and [aggregate JSON](wg-c-human-pilot-report.json). This repair recruited nobody and performed no policy/threshold tuning. No merge or Win Gate PASS is claimed. The selection file’s N=0 is the frozen pre-collection checkpoint, not the current analysis count.
 
 ## Evidence-equivalent blinding
 
@@ -34,12 +34,12 @@ Reporting maps them respectively to ALLOW, ASK, REJECT, UNAVAILABLE, UNSCORABLE.
 
 `/annotate` loads only the static packet. No answers are uploaded. Optional anonymous downloads use random UUIDs; software uniqueness does not prove a genuine/distinct human. The coordinator must independently attest that each response came from one genuine distinct person. No names, contact details or demographics are collected. Do not inspect source answers or coordinate responses. Blinding is workflow separation, not protection against deliberate repository inspection.
 
-Keep responses/confirmation privately under ignored `.tastebench/win-gate-human/`, never source control. One UUID cannot be submitted twice. Withdrawal removes that response and its confirmation entry. Delete raw data within 30 days or sooner on request; aggregate publication requires guide review. No people have been simulated or recruited.
+Keep responses/confirmation privately under ignored `.tastebench/win-gate-human/`, never source control. One UUID cannot be submitted twice. Withdrawal removes that response and its confirmation entry. Delete raw data within 30 days or sooner on request; aggregate publication requires guide review. This repair did not simulate or recruit people. The submitted N=10 collection is operator-attested; no additional recruitment is authorized here.
 
-## Commands after GUIDE approval
+## Reproducing the submitted collection
 
-1. `node scripts/win-gate-pilot.mjs prepare` deterministically regenerates v3 (run Prettier on the generated JSON before committing).
-2. After approval, open `/annotate` and collect genuine voluntary downloads.
+1. Keep the frozen v3 packet, wording and hash unchanged; do not run `prepare` during analysis.
+2. Use the ten original private v3 downloads, with one canonical file per participant. Preserve duplicate copies but do not count them. Do not mix v2 responses or recruit additional people.
 3. `npm run tastebench:contract -- .tastebench/win-gate-human-run`, then `npm run tastebench:report -- .tastebench/win-gate-human-run`.
 4. Prepare private confirmation JSON: assurance `OPERATOR_CONFIRMED_GENUINE_DISTINCT_HUMANS` and exact `participantIds`.
 5. `node scripts/win-gate-pilot.mjs report <confirmation.json> <validated-run-dir> <response-files...>`.
@@ -72,3 +72,11 @@ GENERIC_LLM_BASELINE_ENVIRONMENT_BLOCKED. LLM_QLOO_BASELINE_ENVIRONMENT_BLOCKED.
 The introduction and help text are packet-bound fields. The practice example is clearly labeled, offers no answer or feedback, and is never scored. The participant consents, tries the interface, then answers 18 questions with Previous/Next, a progress bar, large radio targets and a selected state. A final review allows changes before Download Responses. Downloads contain all 18 answers and no practice response. No account, tracking, identity fields or automatic submission were added. Unit evidence is padded without rounding; percent evidence keeps its declared scale. All material evidence stays visible without opening the optional help.
 
 GUIDE must approve this exact v3 interface before additional human recruitment. No human pilot PASS, merge approval or later-milestone progression is claimed.
+
+## Reporting repair and evidence-state binding
+
+The reviewed-head CLI already filtered `FULL_TASTEPOLICY` before building its scenario map; the claimed `AFTER_FEEDBACK` substitution was not reproduced in that CLI. The exported summary helper accepted a scenario-only map without system/state validation, and map construction could silently overwrite duplicate identities. The repaired path accepts raw validated prediction rows and resolves explicit case/scenario/system/initial-phase bindings. Missing/duplicate predictions, wrong input/candidate/state, changed packet/selection/dataset or altered declarations fail closed.
+
+[Bindings](win-gate-pilot-bindings.json) preserve the exact frozen packet and original selection. Full canonical input hashes include the initial state and captured cultural evidence; per-case presentation hashes bind material participants saw. Case-13 uses pre-feedback `FULL_TASTEPOLICY ALLOW`; later `AFTER_FEEDBACK REJECT` is never substituted. Clarification, repair, perturbation and feedback outputs are separate from the initial participant-visible state. Existing TasteBench artifact/semantic-hash validation remains mandatory before analysis. All locked metrics match the previous checked-in CLI on these actual responses; the new report makes identity/freshness/provenance explicit rather than claiming a metric improvement.
+
+**No policy or threshold was tuned using the WG-C held-out human responses.** The N=10 sample may inform diagnosis or hypotheses; a changed policy/wording/scenario requires fresh held-out validation. Underlying TasteBench annotations/contracts remain unchanged: this WG-C pilot is a separate derived evaluation, not a new benchmark gold-label import. GUIDE retains methodology/result acceptance and progression authority.

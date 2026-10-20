@@ -1,3 +1,5 @@
+import { execute } from "../benchmarks/tastebench/lib/execute";
+import type { Scenario } from "../benchmarks/tastebench/lib/types";
 // SYNTHETIC TEST RESPONSES ONLY — no genuine pilot participation or outcome claims.
 import { it, expect } from "vitest";
 import { readFileSync } from "node:fs";
@@ -299,10 +301,16 @@ it("rejects v1, wrong hashes, duplicates and permits only five behavioral labels
 });
 it("reports four-outcome agreement and unfavorable answers with correct denominators", () => {
   const r = response();
-  const predictions = new Map<string, { decision: string }>(
+  const predictions = new Map<string, ReturnType<typeof execute>>(
     selection.selection.map((s: { sourceScenarioId: string }) => [
       s.sourceScenarioId,
-      { decision: "ALLOW" },
+      {
+        ...execute(
+          source.scenarios.find((x: Scenario) => x.id === s.sourceScenarioId),
+          "FULL_TASTEPOLICY",
+        ),
+        decision: "ALLOW",
+      },
     ]),
   );
   const human = [1, 1, 1, 0, 3, 2];
@@ -317,10 +325,11 @@ it("reports four-outcome agreement and unfavorable answers with correct denomina
   human.forEach((x, i) => {
     r.answers[i].choice = choices[x];
     predictions.set(selection.selection[i].sourceScenarioId, {
-      decision: systems[i],
+      ...predictions.get(selection.selection[i].sourceScenarioId)!,
+      decision: systems[i] as "ALLOW" | "ASK" | "REJECT" | "UNAVAILABLE",
     });
   });
-  const stats = summarizeLabels(packet, [r], predictions);
+  const stats = summarizeLabels(packet, [r], [...predictions.values()]);
   expect(stats.exactDecisionAgreement).toEqual({
     numerator: 1,
     denominator: 6,
@@ -333,10 +342,12 @@ it("reports four-outcome agreement and unfavorable answers with correct denomina
   });
   const unavailableToAllow = new Map(predictions);
   unavailableToAllow.set(selection.selection[4].sourceScenarioId, {
+    ...predictions.get(selection.selection[4].sourceScenarioId)!,
     decision: "ALLOW",
   });
   expect(
-    summarizeLabels(packet, [r], unavailableToAllow).unsafeAutonomy,
+    summarizeLabels(packet, [r], [...unavailableToAllow.values()])
+      .unsafeAutonomy,
   ).toEqual({ numerator: 3, denominator: 5 });
   expect(stats.incorrectReject).toEqual({ numerator: 1, denominator: 1 });
   expect(stats.unavailableAgreement).toEqual({ numerator: 1, denominator: 1 });
@@ -352,20 +363,29 @@ it("reports four-outcome agreement and unfavorable answers with correct denomina
   );
   const altered = structuredClone(packet);
   altered.cases[0].evidence.status = "PARTICIPANT_EVIDENCE_UNREPRESENTABLE";
-  expect(
-    summarizeLabels(altered, [r], predictions).exactDecisionAgreement
-      .denominator,
-  ).toBe(5);
+  expect(() =>
+    summarizeLabels(altered, [r], [...predictions.values()]),
+  ).toThrow("PACKET_BINDING_MISMATCH");
 });
 
 it("keeps CANNOT JUDGE unscored, including on unavailable cases, and has no invented N=0 results", () => {
-  const predictions = new Map<string, { decision: string }>(
+  const predictions = new Map<string, ReturnType<typeof execute>>(
     selection.selection.map((s: { sourceScenarioId: string }) => [
       s.sourceScenarioId,
-      { decision: "UNAVAILABLE" },
+      {
+        ...execute(
+          source.scenarios.find((x: Scenario) => x.id === s.sourceScenarioId),
+          "FULL_TASTEPOLICY",
+        ),
+        decision: "UNAVAILABLE",
+      },
     ]),
   );
-  const stats = summarizeLabels(packet, [response()], predictions);
+  const stats = summarizeLabels(
+    packet,
+    [response()],
+    [...predictions.values()],
+  );
   expect(stats.exactDecisionAgreement).toEqual({
     numerator: 0,
     denominator: 0,
@@ -375,7 +395,7 @@ it("keeps CANNOT JUDGE unscored, including on unavailable cases, and has no inve
   expect(stats.cannotJudgeOnUnavailable).toBe(
     packet.cases.filter((c) => c.evidence.status === "unavailable").length,
   );
-  const empty = summarizeLabels(packet, [], predictions);
+  const empty = summarizeLabels(packet, [], [...predictions.values()]);
   expect(empty.cannotJudge.rate).toBeNull();
   expect(empty.exactDecisionAgreement.denominator).toBe(0);
 });

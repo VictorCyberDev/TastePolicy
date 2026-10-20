@@ -2,6 +2,7 @@
 import { readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
+import { resolvePilotPredictions, makeBindings } from "./win-gate-bindings.mjs";
 const digest = (x) =>
   createHash("sha256").update(JSON.stringify(x)).digest("hex");
 const reference = JSON.parse(
@@ -167,9 +168,16 @@ export const labelMap = Object.fromEntries(
     ["ALLOW", "ASK", "REJECT", "UNAVAILABLE", "UNSCORABLE"][i],
   ]),
 );
-export function summarizeLabels(packet, responses, byId) {
+export function summarizeLabels(packet, responses, predictions) {
+  const resolved = resolvePilotPredictions(packet, predictions);
   const ratio = () => ({ numerator: 0, denominator: 0 });
   const result = {
+    predictionBindingHash: makeBindings(packet).bindingHash,
+    totalJudgments: responses.reduce((n, r) => n + r.answers.length, 0),
+    scorableJudgments: 0,
+    systemDecisionDistribution: {},
+    humanDecisionDistribution: {},
+    perCase: [],
     rawLabels: Object.fromEntries(choices.map((c) => [c, 0])),
     labelsByCase: {},
     cannotJudge: { count: 0, denominator: 0, rate: null },
@@ -193,8 +201,19 @@ export function summarizeLabels(packet, responses, byId) {
   };
   for (const [i, c] of packet.cases.entries()) {
     const s = cases[i],
-      pred = byId.get(s.id);
-    if (!pred) throw Error("MISSING_PREDICTION");
+      pred = resolved[i].prediction;
+    result.systemDecisionDistribution[pred.decision] =
+      (result.systemDecisionDistribution[pred.decision] ?? 0) + 1;
+    result.perCase.push({
+      ...resolved[i].identity,
+      predictionSemanticHash: pred.semanticHash,
+      decision: pred.decision,
+      decisionBasis: pred.basis,
+      humanLabels: {},
+      disagreements: 0,
+      scorableJudgments: 0,
+    });
+    const row = result.perCase[i];
     if (c.evidence.status === "PARTICIPANT_EVIDENCE_UNREPRESENTABLE")
       result.evidenceUnrepresentable.push({
         caseId: c.caseId,
@@ -249,6 +268,9 @@ export function summarizeLabels(packet, responses, byId) {
       const a = r.answers.find((a) => a.caseId === c.caseId);
       if (!a || !labelMap[a.choice]) throw Error("INVALID_PILOT_RESPONSE");
       const human = labelMap[a.choice];
+      result.humanDecisionDistribution[human] =
+        (result.humanDecisionDistribution[human] ?? 0) + 1;
+      row.humanLabels[human] = (row.humanLabels[human] ?? 0) + 1;
       result.rawLabels[a.choice] = (result.rawLabels[a.choice] ?? 0) + 1;
       result.labelsByCase[c.caseId] ??= {};
       result.labelsByCase[c.caseId][a.choice] =
@@ -265,6 +287,9 @@ export function summarizeLabels(packet, responses, byId) {
       if (c.evidence.status === "PARTICIPANT_EVIDENCE_UNREPRESENTABLE")
         continue;
       result.exactDecisionAgreement.denominator++;
+      result.scorableJudgments++;
+      row.scorableJudgments++;
+      if (human !== pred.decision) row.disagreements++;
       for (const g of groups)
         result.subgroups[g].exactDecisionAgreement.denominator++;
       if (human === pred.decision) {
@@ -390,17 +415,13 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
       )
         .trim()
         .split("\n")
-        .map(JSON.parse)
-        .filter((p) => p.systemId === "FULL_TASTEPOLICY");
+        .map(JSON.parse);
       const runManifest = JSON.parse(
         await readFile(resolve(runDir, "manifest.json"), "utf8"),
       );
       if (runManifest.dataset.datasetHash !== reference.datasetHash)
         throw Error();
-      const byId = new Map(predictions.map((p) => [p.scenarioId, p]));
-      if (cases.some((s) => !byId.has(s.id) || byId.get(s.id).status !== "OK"))
-        throw Error();
-      const stats = summarizeLabels(packet, responses, byId);
+      const stats = summarizeLabels(packet, responses, predictions);
       const report = {
         schemaVersion: "win-gate-human-pilot-report-v3",
         status:
