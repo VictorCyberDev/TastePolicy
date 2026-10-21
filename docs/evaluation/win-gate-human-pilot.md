@@ -1,6 +1,6 @@
 # Win Gate human pilot
 
-Status: **REPAIR — corrected N=10 report awaiting GUIDE review**. Ten distinct response UUIDs, 18 answers each, 180 judgments validated. Genuine/distinct-human assurance is supplied by the user’s GUIDE handoff, not independently verified identity. Two identical uploaded copies are excluded, originals preserved privately. See the [bound-state descriptive report](wg-c-human-pilot-report.md) and [aggregate JSON](wg-c-human-pilot-report.json). This repair recruited nobody and performed no policy/threshold tuning. No merge or Win Gate PASS is claimed. The selection file’s N=0 is the frozen pre-collection checkpoint, not the current analysis count.
+Status: **PASS — N=10 corrected bound-state descriptive human pilot accepted by GUIDE.** Ten distinct response UUIDs, 18 answers each, 180 judgments validated. Genuine/distinct-human assurance is supplied by the user’s GUIDE handoff, not independently verified identity. Two identical uploaded copies are excluded, originals preserved privately. See the [bound-state descriptive report](wg-c-human-pilot-report.md) and [aggregate JSON](wg-c-human-pilot-report.json). No policy/threshold tuning was performed. No additional WG-C recruitment is authorized. No merge or overall Win Gate PASS is claimed.
 
 ## Evidence-equivalent blinding
 
@@ -8,7 +8,7 @@ Status: **REPAIR — corrected N=10 report awaiting GUIDE review**. Ten distinct
 
 Blind participants to the system answer, thresholds and policy interpretation — not to material evidence the assistant had. The v3 participant packet uses plain language and one scenario at a time. It shows the proposed choice and its domain, known preference domains, price when supplied, every explicit correction/constraint with its applicability and expiry, and taste-information availability. Available evidence includes the exact source raw affinity and declared scale. Higher values mean stronger cultural relationship evidence, not confidence, probability or certainty of personal liking. No qualitative score bins or policy thresholds are supplied. Unit and percent scales retain their original values; no invented probability conversion occurs. Unsupported scales/invalid values receive PARTICIPANT_EVIDENCE_UNREPRESENTABLE with a reason and are excluded from agreement scoring, not silently dropped from the selection. All current selected evidence is representable.
 
-The new `win-gate-blinded-pilot-v3` packet rejects v1/v2 responses. `public/win-gate/pilot.json` and `win-gate-pilot-selection.json` bind the new packet hash. Only `win-gate-human-response-v3` with that exact hash is accepted. Do not migrate or pool v2 responses. Preserve any genuine v2 responses privately in a separate version-specific directory and report their exact genuine N separately. The primary pilot must use only the reviewed v3 packet. Material evidence is visible before choices without a closed disclosure. Source scenario IDs, source candidate names, system results, reason codes and policy metadata remain absent. Numeric boundary-case evidence is legitimate material input, not disclosure of a threshold rule.
+The new `win-gate-blinded-pilot-v3` packet rejects v1/v2 responses. `public/win-gate/pilot.json` and `win-gate-pilot-selection.json` bind the new packet hash. Only `win-gate-human-response-v3` with that exact hash is accepted. Do not migrate or pool v2 responses. Preserve any genuine v2 responses privately in a separate version-specific directory and report their exact genuine N separately. The primary pilot uses only the reviewed v3 packet. Material evidence is visible before choices without a closed disclosure. Source scenario IDs, source candidate names, system results, reason codes and policy metadata remain absent. Numeric boundary-case evidence is legitimate material input, not disclosure of a threshold rule.
 
 ## Packet replacement checkpoint
 
@@ -34,7 +34,7 @@ Reporting maps them respectively to ALLOW, ASK, REJECT, UNAVAILABLE, UNSCORABLE.
 
 `/annotate` loads only the static packet. No answers are uploaded. Optional anonymous downloads use random UUIDs; software uniqueness does not prove a genuine/distinct human. The coordinator must independently attest that each response came from one genuine distinct person. No names, contact details or demographics are collected. Do not inspect source answers or coordinate responses. Blinding is workflow separation, not protection against deliberate repository inspection.
 
-Keep responses/confirmation privately under ignored `.tastebench/win-gate-human/`, never source control. One UUID cannot be submitted twice. Withdrawal removes that response and its confirmation entry. Delete raw data within 30 days or sooner on request; aggregate publication requires guide review. This repair did not simulate or recruit people. The submitted N=10 collection is operator-attested; no additional recruitment is authorized here.
+Keep responses/confirmation privately under ignored `.tastebench/win-gate-human/`, never source control. One UUID cannot be submitted twice. Withdrawal removes that response and its confirmation entry. Delete raw data within 30 days or sooner on request; aggregate publication requires guide review. The submitted N=10 collection is operator-attested; no additional WG-C recruitment is authorized.
 
 ## Reproducing the submitted collection
 
@@ -65,13 +65,15 @@ This human pilot evaluates human agreement with the assistant’s autonomy/autho
 
 It does not establish real-world recommendation accuracy, personal taste prediction accuracy, Qloo accuracy, population-level safety, scientific calibration or market demand. Receipt completeness is engineering evidence, not human accuracy.
 
+WG-C PASS means the human-evaluation gate was completed honestly under the predeclared descriptive methodology. It does not convert the observed agreement rates into a population-level validation claim.
+
 GENERIC_LLM_BASELINE_ENVIRONMENT_BLOCKED. LLM_QLOO_BASELINE_ENVIRONMENT_BLOCKED. No external model execution or baseline performance is fabricated.
 
 ## Participant interface
 
 The introduction and help text are packet-bound fields. The practice example is clearly labeled, offers no answer or feedback, and is never scored. The participant consents, tries the interface, then answers 18 questions with Previous/Next, a progress bar, large radio targets and a selected state. A final review allows changes before Download Responses. Downloads contain all 18 answers and no practice response. No account, tracking, identity fields or automatic submission were added. Unit evidence is padded without rounding; percent evidence keeps its declared scale. All material evidence stays visible without opening the optional help.
 
-GUIDE must approve this exact v3 interface before additional human recruitment. No human pilot PASS, merge approval or later-milestone progression is claimed.
+No additional WG-C human recruitment is authorized. GUIDE retains overall Win Gate acceptance, merge approval and later-milestone progression authority.
 
 ## Reporting repair and evidence-state binding
 
@@ -79,4 +81,4 @@ The reviewed-head CLI already filtered `FULL_TASTEPOLICY` before building its sc
 
 [Bindings](win-gate-pilot-bindings.json) preserve the exact frozen packet and original selection. Full canonical input hashes include the initial state and captured cultural evidence; per-case presentation hashes bind material participants saw. Case-13 uses pre-feedback `FULL_TASTEPOLICY ALLOW`; later `AFTER_FEEDBACK REJECT` is never substituted. Clarification, repair, perturbation and feedback outputs are separate from the initial participant-visible state. Existing TasteBench artifact/semantic-hash validation remains mandatory before analysis. All locked metrics match the previous checked-in CLI on these actual responses; the new report makes identity/freshness/provenance explicit rather than claiming a metric improvement.
 
-**No policy or threshold was tuned using the WG-C held-out human responses.** The N=10 sample may inform diagnosis or hypotheses; a changed policy/wording/scenario requires fresh held-out validation. Underlying TasteBench annotations/contracts remain unchanged: this WG-C pilot is a separate derived evaluation, not a new benchmark gold-label import. GUIDE retains methodology/result acceptance and progression authority.
+**No policy or threshold was tuned using the WG-C held-out human responses.** The N=10 sample may inform diagnosis or hypotheses; a changed policy/wording/scenario requires fresh held-out validation. Underlying TasteBench annotations/contracts remain unchanged: this WG-C pilot is a separate derived evaluation, not a new benchmark gold-label import. GUIDE has accepted WG-C PASS under the existing methodology and retains overall Win Gate merge/progression authority.
