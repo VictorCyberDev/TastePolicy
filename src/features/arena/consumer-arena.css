@@ -246,7 +246,7 @@
       circle at 74% 20%,
       color-mix(in srgb, white 42%, transparent),
       transparent 23%
-   ),
+    ),
     linear-gradient(145deg, #d8dac7 0%, #697d77 45%, #29353b 100%);
 }
 
@@ -266,7 +266,7 @@
       circle at 70% 18%,
       color-mix(in srgb, white 44%, transparent),
       transparent 22%
-   ),
+    ),
     linear-gradient(145deg, #ccd8de 0%, #667b8e 48%, #252e3a 100%);
 }
 
