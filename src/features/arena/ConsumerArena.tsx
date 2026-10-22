@@ -45,10 +45,13 @@ function defaultIdentity(
   const exact = result.data.matches.find(
     (match) =>
       match.type === expectedType &&
-      match.name.trim().toLocaleLowerCase() === query.trim().toLocaleLowerCase(),
+      match.name.trim().toLocaleLowerCase() ===
+        query.trim().toLocaleLowerCase(),
   );
   if (exact) return exact.id;
-  return result.data.state === "single" ? (result.data.matches[0]?.id ?? "") : "";
+  return result.data.state === "single"
+    ? (result.data.matches[0]?.id ?? "")
+    : "";
 }
 
 export default function ConsumerArena() {
@@ -102,7 +105,9 @@ export default function ConsumerArena() {
       await operation();
       setNotice("");
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Operation unavailable.");
+      setNotice(
+        error instanceof Error ? error.message : "Operation unavailable.",
+      );
     } finally {
       setBusy(false);
     }
@@ -144,14 +149,18 @@ export default function ConsumerArena() {
 
   async function checkChoice() {
     if (!candidate) return;
-    await run("Checking what your agent is actually allowed to do…", async () => {
-      const result = await call<CulturalReceipt>("/api/demo/evaluate", {
-        signalIds: selected,
-        candidateId: candidate.id,
-        context: "Dinner or stay recommendation; no booking or payment authority.",
-      });
-      setReceipt(result);
-    });
+    await run(
+      "Checking what your agent is actually allowed to do…",
+      async () => {
+        const result = await call<CulturalReceipt>("/api/demo/evaluate", {
+          signalIds: selected,
+          candidateId: candidate.id,
+          context:
+            "Dinner or stay recommendation; no booking or payment authority.",
+        });
+        setReceipt(result);
+      },
+    );
   }
 
   function nextCandidate() {
@@ -182,8 +191,13 @@ export default function ConsumerArena() {
       </header>
 
       <section className="consumerHero">
-        <p className="consumerEyebrow">Preference authority, without the policy jargon</p>
-        <h1>Your AI concierge found something for you. Should it use your taste to recommend it?</h1>
+        <p className="consumerEyebrow">
+          Preference authority, without the policy jargon
+        </p>
+        <h1>
+          Your AI concierge found something for you. Should it use your taste to
+          recommend it?
+        </h1>
         <p>
           Qloo helps the agent understand cultural fit. TastePolicy decides what
           the agent may actually do with that understanding.
@@ -199,7 +213,11 @@ export default function ConsumerArena() {
               <span key={signal.query}>{signal.query}</span>
             ))}
           </div>
-          <button className="primaryAction" disabled={busy} onClick={() => void resolveTaste()}>
+          <button
+            className="primaryAction"
+            disabled={busy}
+            onClick={() => void resolveTaste()}
+          >
             Use my reviewed taste
           </button>
         </section>
@@ -211,11 +229,16 @@ export default function ConsumerArena() {
           <h2>Are these the five things you meant?</h2>
           <div className="resolvedGrid">
             {CANONICAL_SIGNALS.map((signal, index) => {
-              const entity = selectedEntity(resolutions[index], selected[index]);
+              const entity = selectedEntity(
+                resolutions[index],
+                selected[index],
+              );
               return (
                 <article key={signal.query} className="resolvedItem">
                   <span>{signal.query}</span>
-                  <strong>{entity ? entity.name : "Choose the exact match"}</strong>
+                  <strong>
+                    {entity ? entity.name : "Choose the exact match"}
+                  </strong>
                   <small>
                     {entity
                       ? `${entity.type}${entity.releaseYear ? ` · ${entity.releaseYear}` : ""}`
@@ -227,7 +250,9 @@ export default function ConsumerArena() {
           </div>
 
           <details className="identityDetails">
-            <summary>Something looks wrong? Review the exact identities</summary>
+            <summary>
+              Something looks wrong? Review the exact identities
+            </summary>
             {resolutions.map((result, index) => (
               <label key={CANONICAL_SIGNALS[index].query}>
                 {CANONICAL_SIGNALS[index].query}
@@ -283,7 +308,10 @@ export default function ConsumerArena() {
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
           >
-            <div className="placePortrait" aria-label={`Visual mood portrait for ${candidate.name}`}>
+            <div
+              className="placePortrait"
+              aria-label={`Visual mood portrait for ${candidate.name}`}
+            >
               <span className="portraitGlow" />
               <span className="portraitHorizon" />
               <span className="portraitFrame" />
@@ -308,51 +336,80 @@ export default function ConsumerArena() {
                 boundary before the agent continues.
               </p>
 
-              <div className="tasteChips compact" aria-label="Based on your taste">
+              <div
+                className="tasteChips compact"
+                aria-label="Based on your taste"
+              >
                 {reviewedEntities.map((entity) => (
                   <span key={entity.id}>{entity.name}</span>
                 ))}
               </div>
 
               {decision ? (
-                <section className="humanDecision" data-decision={receipt!.decision.outcome} aria-live="polite">
+                <section
+                  className="humanDecision"
+                  data-decision={receipt!.decision.outcome}
+                  aria-live="polite"
+                >
                   <p className="consumerEyebrow">TastePolicy says</p>
                   <h4>{decision.title}</h4>
                   <p>{decision.body}</p>
-                  <span className="machineOutcome">Internal policy: {receipt!.decision.outcome}</span>
+                  <span className="machineOutcome">
+                    Internal policy: {receipt!.decision.outcome}
+                  </span>
                 </section>
               ) : (
-                <p className="swipeHint">Swipe right to check this choice · Swipe left for another</p>
+                <p className="swipeHint">
+                  Swipe right to check this choice · Swipe left for another
+                </p>
               )}
 
               <div className="cardActions">
-                <button disabled={busy} onClick={nextCandidate} aria-label="Show another place">
+                <button
+                  disabled={busy}
+                  onClick={nextCandidate}
+                  aria-label="Show another place"
+                >
                   ← Another one
                 </button>
                 <details>
                   <summary>Why this?</summary>
                   {receipt ? (
                     <div className="whyPanel">
-                      <p><strong>LIVE QLOO</strong> candidate-specific cultural evidence.</p>
                       <p>
-                        Affinity {receipt.alignmentScore.toFixed(4)} · {receipt.qlooEvidence.scale}.
-                        This is not confidence or preference probability.
+                        <strong>LIVE QLOO</strong> candidate-specific cultural
+                        evidence.
+                      </p>
+                      <p>
+                        Affinity {receipt.alignmentScore.toFixed(4)} ·{" "}
+                        {receipt.qlooEvidence.scale}. This is not confidence or
+                        preference probability.
                       </p>
                       {receipt.explainability.status !== "unavailable" && (
                         <ul>
-                          {receipt.explainability.contributions.slice(0, 3).map((item) => (
-                            <li key={item.signalId}>
-                              {receipt.inputSignals.find((signal) => signal.id === item.signalId)?.name ?? "Reviewed signal"}: {item.score.toFixed(3)}
-                            </li>
-                          ))}
+                          {receipt.explainability.contributions
+                            .slice(0, 3)
+                            .map((item) => (
+                              <li key={item.signalId}>
+                                {receipt.inputSignals.find(
+                                  (signal) => signal.id === item.signalId,
+                                )?.name ?? "Reviewed signal"}
+                                : {item.score.toFixed(3)}
+                              </li>
+                            ))}
                         </ul>
                       )}
                       <p className="technicalNote">
-                        Provider: Qloo · {receipt.qlooEvidence.provenance.endpoint} · receipt {receipt.receiptId}
+                        Provider: Qloo ·{" "}
+                        {receipt.qlooEvidence.provenance.endpoint} · receipt{" "}
+                        {receipt.receiptId}
                       </p>
                     </div>
                   ) : (
-                    <p>Check this choice to capture candidate-specific Qloo evidence and the TastePolicy decision.</p>
+                    <p>
+                      Check this choice to capture candidate-specific Qloo
+                      evidence and the TastePolicy decision.
+                    </p>
                   )}
                 </details>
                 <button
@@ -368,13 +425,18 @@ export default function ConsumerArena() {
           </div>
 
           <p className="gestureBoundary">
-            Swipes express what you want to inspect or skip. They do not grant booking,
-            payment, purchase, private-data, account, legal, or execution authority.
+            Swipes express what you want to inspect or skip. They do not grant
+            booking, payment, purchase, private-data, account, legal, or
+            execution authority.
           </p>
         </section>
       )}
 
-      {notice && <p className="consumerNotice" role="status">{notice}</p>}
+      {notice && (
+        <p className="consumerNotice" role="status">
+          {notice}
+        </p>
+      )}
 
       <section className="consumerExplainer">
         <article>
@@ -394,7 +456,10 @@ export default function ConsumerArena() {
       </section>
 
       <footer className="consumerFooter">
-        <p>Want the receipts, state versions, fault rehearsal and repair mechanics?</p>
+        <p>
+          Want the receipts, state versions, fault rehearsal and repair
+          mechanics?
+        </p>
         <Link href="/arena">Open the full engineering Decision Arena →</Link>
       </footer>
     </main>

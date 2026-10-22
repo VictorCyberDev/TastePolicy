@@ -212,37 +212,61 @@
   min-height: 450px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 70% 24%, color-mix(in srgb, white 42%, transparent), transparent 25%),
+    radial-gradient(
+      circle at 70% 24%,
+      color-mix(in srgb, white 42%, transparent),
+      transparent 25%
+    ),
     linear-gradient(145deg, #d9d0c1 0%, #6a7e89 46%, #273039 100%);
 }
 
 .placeCard[data-portrait="1"] .placePortrait {
   background:
-    radial-gradient(circle at 72% 20%, color-mix(in srgb, white 48%, transparent), transparent 24%),
+    radial-gradient(
+      circle at 72% 20%,
+      color-mix(in srgb, white 48%, transparent),
+      transparent 24%
+    ),
     linear-gradient(145deg, #c6d7d0 0%, #52716f 45%, #1e2d35 100%);
 }
 
 .placeCard[data-portrait="2"] .placePortrait {
   background:
-    radial-gradient(circle at 68% 22%, color-mix(in srgb, white 42%, transparent), transparent 22%),
+    radial-gradient(
+      circle at 68% 22%,
+      color-mix(in srgb, white 42%, transparent),
+      transparent 22%
+    ),
     linear-gradient(145deg, #d9c6ae 0%, #8d6658 46%, #342c31 100%);
 }
 
 .placeCard[data-portrait="3"] .placePortrait {
   background:
-    radial-gradient(circle at 74% 20%, color-mix(in srgb, white 42%, transparent), transparent 23%),
+    radial-gradient(
+      circle at 74% 20%,
+      color-mix(in srgb, white 42%, transparent),
+      transparent 23%
+   ),
     linear-gradient(145deg, #d8dac7 0%, #697d77 45%, #29353b 100%);
 }
 
 .placeCard[data-portrait="4"] .placePortrait {
   background:
-    radial-gradient(circle at 66% 18%, color-mix(in srgb, white 44%, transparent), transparent 22%),
+    radial-gradient(
+      circle at 66% 18%,
+      color-mix(in srgb, white 44%, transparent),
+      transparent 22%
+    ),
     linear-gradient(145deg, #d6c2b0 0%, #8b7062 47%, #302c35 100%);
 }
 
 .placeCard[data-portrait="5"] .placePortrait {
   background:
-    radial-gradient(circle at 70% 18%, color-mix(in srgb, white 44%, transparent), transparent 22%),
+    radial-gradient(
+      circle at 70% 18%,
+      color-mix(in srgb, white 44%, transparent),
+      transparent 22%
+   ),
     linear-gradient(145deg, #ccd8de 0%, #667b8e 48%, #252e3a 100%);
 }
 
@@ -368,7 +392,6 @@
   border-radius: 14px;
   cursor: pointer;
 }
-
 .whyPanel {
   position: absolute;
   z-index: 5;
