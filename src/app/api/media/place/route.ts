@@ -67,27 +67,64 @@ function relevance(page: CommonsPage, name: string, address: string) {
   const haystack = searchableText(page);
   const nameWords = words(name);
   const addressWords = words(address).slice(-5);
-  const distinctive = nameWords.filter((word) =>
-    haystack.includes(word),
-  ).length;
-  const location = addressWords.filter((word) =>
-    haystack.includes(word),
-  ).length;
-  const required = Math.min(2, Math.max(1, nameWords.length));
-  if (distinctive < required) return -1;
+  const tokens = new Set(words(haystack));
+  const distinctive = nameWords.filter((word) => tokens.has(word)).length;
+  const location = addressWords.filter((word) => tokens.has(word)).length;
+  // All distinctive name tokens must match; one common word is not identity.
+  if (!nameWords.length || distinctive !== nameWords.length) return -1;
+  if (
+    nameWords.length < 2 &&
+    (nameWords[0].length < 5 ||
+      location === 0 ||
+      !haystack.includes(name.toLocaleLowerCase().normalize("NFKD")))
+  )
+    return -1;
   return distinctive * 3 + location;
 }
 
 function acceptedLicense(page: CommonsPage) {
   const license = plainText(metadata(page, "LicenseShortName"));
   const licenseUrl = text(metadata(page, "LicenseUrl"));
-  const normalized = license.toLocaleLowerCase();
-  const accepted =
-    normalized.startsWith("cc by") ||
-    normalized === "cc0" ||
-    normalized.includes("public domain");
-  return accepted && licenseUrl ? { license, licenseUrl } : null;
+  const match = /^(CC BY(?:-SA)?) (1\.0|2\.0|2\.5|3\.0|4\.0)$/i.exec(license);
+  const expected = match
+    ? `https://creativecommons.org/licenses/${match[1].toLowerCase().replace("cc ", "")}/${match[2]}/`
+    : /^(CC0|CC0 1\.0)$/i.test(license)
+      ? "https://creativecommons.org/publicdomain/zero/1.0/"
+      : /^Public domain$/i.test(license)
+        ? "https://creativecommons.org/publicdomain/mark/1.0/"
+        : null;
+  if (
+    !expected ||
+    licenseUrl.replace(/\/$/, "") !== expected.replace(/\/$/, "")
+  )
+    return null;
+  return { license, licenseUrl: expected };
 }
+
+function safeUrl(value: string, host: string, prefix: string) {
+  try {
+    const url = new URL(value);
+    return (
+      url.protocol === "https:" &&
+      url.hostname === host &&
+      !url.username &&
+      !url.password &&
+      !url.port &&
+      !url.search &&
+      !url.hash &&
+      url.pathname.startsWith(prefix)
+    );
+  } catch {
+    return false;
+  }
+}
+
+const unavailable = {
+  status: "unavailable",
+  source: "wikimedia-commons",
+  presentationOnly: true,
+  classification: "UNAVAILABLE",
+} as const;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -95,7 +132,7 @@ export async function GET(request: Request) {
   const address = (searchParams.get("address") ?? "").trim();
 
   if (!name || name.length > 250 || address.length > 300) {
-    return Response.json({ status: "unavailable" }, { status: 400 });
+    return Response.json(unavailable, { status: 400 });
   }
 
   const endpoint = new URL("https://commons.wikimedia.org/w/api.php");
@@ -120,13 +157,16 @@ export async function GET(request: Request) {
     const response = await fetch(endpoint, {
       headers: { "User-Agent": "TastePolicy/1.0 (candidate presentation)" },
       signal: AbortSignal.timeout(4500),
+      redirect: "error",
       next: { revalidate: 86400 },
     });
     if (!response.ok) throw new Error("commons_unavailable");
     const payload = (await response.json()) as {
       query?: { pages?: Record<string, CommonsPage> };
     };
-    const pages = Object.values(payload.query?.pages ?? {});
+    const pages = Object.values(payload.query?.pages ?? {})
+      .slice(0, 8)
+      .filter((page) => page && typeof page === "object");
     const candidates = pages
       .map((page) => ({
         page,
@@ -137,11 +177,31 @@ export async function GET(request: Request) {
       .sort((a, b) => b.score - a.score);
     const selected = candidates[0];
     const info = selected?.page.imageinfo?.[0];
-    const imageUrl = info ? text(info.thumburl) || text(info.url) : "";
+    const rawImageUrl = info ? text(info.thumburl) || text(info.url) : "";
+    // Commons currently adds first-party tracking parameters to thumbnail URLs.
+    // Strip only known tracking keys; reject all other queries below.
+    let imageUrl = rawImageUrl;
+    try {
+      const url = new URL(rawImageUrl);
+      for (const key of ["utm_source", "utm_campaign", "utm_content"])
+        url.searchParams.delete(key);
+      imageUrl = url.href;
+    } catch {
+      /* The URL validator below fails closed. */
+    }
     const landingUrl = info ? text(info.descriptionurl) : "";
-    if (!selected || !selected.license || !imageUrl || !landingUrl) {
+    if (
+      !selected ||
+      !selected.license ||
+      !(
+        safeUrl(imageUrl, "upload.wikimedia.org", "/wikipedia/commons/") ||
+        safeUrl(imageUrl, "thumb.wikimedia.org", "/wikipedia/commons/")
+      ) ||
+      !safeUrl(landingUrl, "commons.wikimedia.org", "/wiki/File:") ||
+      !plainText(metadata(selected.page, "Artist"))
+    ) {
       return Response.json(
-        { status: "unavailable", source: "wikimedia-commons" },
+        { ...unavailable, searchQuery: query },
         { headers: { "Cache-Control": "public, s-maxage=3600" } },
       );
     }
@@ -150,6 +210,10 @@ export async function GET(request: Request) {
       {
         status: "available",
         source: "wikimedia-commons",
+        presentationOnly: true,
+        classification: "LOCATION_CONTEXT",
+        searchQuery: query,
+        caption: "Licensed visual context — exact property not verified",
         image: {
           url: imageUrl,
           title:
@@ -172,7 +236,7 @@ export async function GET(request: Request) {
     );
   } catch {
     return Response.json(
-      { status: "unavailable", source: "wikimedia-commons" },
+      { ...unavailable, searchQuery: query },
       { headers: { "Cache-Control": "public, s-maxage=900" } },
     );
   }

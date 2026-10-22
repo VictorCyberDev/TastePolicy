@@ -76,3 +76,24 @@
     left: auto;
   }
 }
+
+/* Keep credits readable and separate from the card's consumer headline. */
+.licensedPhotoCredit {
+  top: auto;
+  bottom: 14px;
+  left: 18px;
+  right: auto;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+.licensedPhotoCredit a {
+  color: inherit;
+  text-decoration: underline;
+}
+.licensedPhotoLabel {
+  max-width: calc(100% - 36px);
+  border-radius: 10px;
+}
+.placePortrait.hasLicensedPhoto .portraitCopy > span {
+  visibility: hidden;
+}

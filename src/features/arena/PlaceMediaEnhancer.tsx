@@ -7,6 +7,10 @@ import "./place-media.css";
 type PlaceMedia = {
   status: "available";
   source: "wikimedia-commons";
+  presentationOnly: true;
+  classification: "LOCATION_CONTEXT";
+  searchQuery: string;
+  caption: string;
   image: {
     url: string;
     title: string;
@@ -37,7 +41,13 @@ function currentTarget(): Target | null {
 
 export default function PlaceMediaEnhancer() {
   const [target, setTarget] = useState<Target | null>(null);
-  const [media, setMedia] = useState<PlaceMedia | null>(null);
+  const [resolved, setResolved] = useState<{
+    target: Target;
+    media: PlaceMedia;
+  } | null>(null);
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const media = resolved?.target === target ? resolved.media : null;
+  const loaded = Boolean(media && loadedUrl === media.image.url);
 
   useEffect(() => {
     let frame = 0;
@@ -81,10 +91,16 @@ export default function PlaceMediaEnhancer() {
         const response = await fetch(`/api/media/place?${params.toString()}`);
         const result = response.ok ? await response.json() : null;
         if (!cancelled) {
-          setMedia(result?.status === "available" ? result : null);
+          setResolved(
+            result?.status === "available" &&
+              result.presentationOnly === true &&
+              result.classification === "LOCATION_CONTEXT"
+              ? { target: current, media: result }
+              : null,
+          );
         }
       } catch {
-        if (!cancelled) setMedia(null);
+        if (!cancelled) setResolved(null);
       }
     })();
     return () => {
@@ -95,9 +111,9 @@ export default function PlaceMediaEnhancer() {
   useEffect(() => {
     const portrait = target?.portrait;
     if (!portrait) return;
-    portrait.classList.toggle("hasLicensedPhoto", Boolean(media));
+    portrait.classList.toggle("hasLicensedPhoto", loaded);
     return () => portrait.classList.remove("hasLicensedPhoto");
-  }, [target, media]);
+  }, [target, loaded]);
 
   if (!target || !media) return null;
 
@@ -105,27 +121,39 @@ export default function PlaceMediaEnhancer() {
     <>
       {/* Wikimedia Commons media is presentation only; it is never Qloo evidence. */}
       <img
+        key={media.image.url}
         className="licensedPlacePhoto"
+        style={{ visibility: loaded ? "visible" : "hidden" }}
+        onLoad={() => setLoadedUrl(media.image.url)}
         src={media.image.url}
-        alt={media.image.title || target.name}
+        alt={`Visual context: ${media.image.title}. Exact property not verified.`}
         referrerPolicy="no-referrer"
-        onError={() => setMedia(null)}
+        onError={() => {
+          setResolved(null);
+          setLoadedUrl(null);
+        }}
       />
-      <span className="licensedPhotoShade" aria-hidden="true" />
-      <a
-        className="licensedPhotoCredit"
-        href={media.image.landingUrl}
-        target="_blank"
-        rel="noreferrer"
-        onPointerDown={(event) => event.stopPropagation()}
-        onPointerUp={(event) => event.stopPropagation()}
-      >
-        Photo: {media.image.creator} · {media.image.license} · via Wikimedia
-        Commons
-      </a>
-      <span className="licensedPhotoLabel">
-        Openly licensed presentation photo · not Qloo evidence
-      </span>
+      {loaded && <span className="licensedPhotoShade" aria-hidden="true" />}
+      {loaded && (
+        <>
+          <div
+            className="licensedPhotoCredit"
+            onPointerDown={(event) => event.stopPropagation()}
+            onPointerUp={(event) => event.stopPropagation()}
+          >
+            <a href={media.image.landingUrl} target="_blank" rel="noreferrer">
+              Photo: {media.image.creator} · Wikimedia Commons
+            </a>
+            {" · displayed cropped · "}
+            <a href={media.image.licenseUrl} target="_blank" rel="noreferrer">
+              {media.image.license}
+            </a>
+          </div>
+          <span className="licensedPhotoLabel">
+            {media.caption} · presentation only, not Qloo evidence
+          </span>
+        </>
+      )}
     </>,
     target.portrait,
   );

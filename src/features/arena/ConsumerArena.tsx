@@ -318,10 +318,7 @@ export default function ConsumerArena() {
               <div className="portraitCopy">
                 <p>Your version of</p>
                 <h2>{candidate.name}</h2>
-                <span>
-                  A visual mood card shaped around your reviewed taste. This
-                  artwork is presentation, not Qloo evidence.
-                </span>
+                <span>Visual mood artwork — presentation only.</span>
               </div>
             </div>
 
