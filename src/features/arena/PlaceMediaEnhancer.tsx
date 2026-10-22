@@ -6,13 +6,13 @@ import "./place-media.css";
 
 type PlaceMedia = {
   status: "available";
-  source: "openverse";
+  source: "wikimedia-commons";
   image: {
     url: string;
     title: string;
     creator: string;
     license: string;
-    licenseVersion: string;
+    licenseUrl: string;
     landingUrl: string;
   };
 };
@@ -103,7 +103,7 @@ export default function PlaceMediaEnhancer() {
 
   return createPortal(
     <>
-      {/* Openverse media is presentation only; it is never Qloo evidence. */}
+      {/* Wikimedia Commons media is presentation only; it is never Qloo evidence. */}
       <img
         className="licensedPlacePhoto"
         src={media.image.url}
@@ -120,9 +120,8 @@ export default function PlaceMediaEnhancer() {
         onPointerDown={(event) => event.stopPropagation()}
         onPointerUp={(event) => event.stopPropagation()}
       >
-        Photo: {media.image.creator} · {media.image.license}
-        {media.image.licenseVersion ? ` ${media.image.licenseVersion}` : ""} ·
-        via Openverse
+        Photo: {media.image.creator} · {media.image.license} · via Wikimedia
+        Commons
       </a>
       <span className="licensedPhotoLabel">
         Openly licensed presentation photo · not Qloo evidence
