@@ -66,7 +66,9 @@ function searchableText(page: CommonsPage) {
 function relevance(page: CommonsPage, name: string, address: string) {
   const haystack = searchableText(page);
   const nameWords = words(name);
-  const addressWords = words(address).slice(-5);
+  const addressWords = words(address)
+    .filter((word) => /\p{L}/u.test(word))
+    .slice(-5);
   const tokens = new Set(words(haystack));
   const distinctive = nameWords.filter((word) => tokens.has(word)).length;
   const location = addressWords.filter((word) => tokens.has(word)).length;
@@ -136,7 +138,9 @@ export async function GET(request: Request) {
   }
 
   const endpoint = new URL("https://commons.wikimedia.org/w/api.php");
-  const query = [name, address].filter(Boolean).join(" ");
+  // Search the candidate as a phrase, not every street/postcode token.
+  // The supplied address is still required to disambiguate single-token names.
+  const query = `"${name.replace(/["\\]/g, " ").trim()}"`;
   const params = {
     action: "query",
     generator: "search",

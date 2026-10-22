@@ -39,7 +39,7 @@ describe("presentation-only Wikimedia adapter", () => {
       source: "wikimedia-commons",
       presentationOnly: true,
       classification: "LOCATION_CONTEXT",
-      searchQuery: "HOTEL CYCLE Onomichi Japan",
+      searchQuery: '"HOTEL CYCLE"',
       image: {
         creator: "Photographer",
         license: "CC BY-SA 4.0",
@@ -67,6 +67,23 @@ describe("presentation-only Wikimedia adapter", () => {
     expect(result.image.licenseUrl).toBe(
       "https://creativecommons.org/licenses/by-sa/4.0/",
     );
+  });
+  it("searches the candidate phrase and uses the full postal address for local disambiguation", async () => {
+    mock(page());
+    const result = await (
+      await GET(
+        request(
+          "HOTEL CYCLE",
+          "5-11 Nishigoshocho Onomichi Hiroshima 722-0037 Japan",
+        ),
+      )
+    ).json();
+    expect(result.status).toBe("available");
+    expect(
+      new URL(String(vi.mocked(fetch).mock.calls[0][0])).searchParams.get(
+        "gsrsearch",
+      ),
+    ).toBe('"HOTEL CYCLE"');
   });
   it.each([
     {},
