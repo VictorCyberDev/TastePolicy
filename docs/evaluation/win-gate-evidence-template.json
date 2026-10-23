@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "win-gate-evidence-v1",
+  "status": "NOT_CURRENT_LIVE_PROOF",
+  "commitSha": null,
+  "deploymentUrl": null,
+  "capturedAt": null,
+  "providerMode": "NOT_CONFIGURED",
+  "realVsRecorded": "NOT_RUN",
+  "candidate": null,
+  "decision": null,
+  "stateVersion": null,
+  "receiptRef": null,
+  "qlooEvidenceSource": null,
+  "externalAgentResult": null,
+  "humanParticipantCount": 0,
+  "historicalAcceptance": {
+    "label": "RECORDED LIVE ACCEPTANCE",
+    "timestamp": "2026-10-13T15:41:38.396Z",
+    "sourceDocument": "docs/evaluation/milestone-1-live-acceptance-2026-10-13.md"
+  },
+  "blockers": [
+    "WIN_GATE_QLOO_CREDENTIAL_BLOCKED",
+    "WIN_GATE_REMOTE_PERSISTENCE_BLOCKED",
+    "HUMAN_PILOT_REPAIRED_NOT_RUN"
+  ],
+  "note": "Copy to ignored .tastebench evidence directory and populate only observed values; never relabel historical/synthetic evidence live."
+}
