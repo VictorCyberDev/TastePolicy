@@ -98,3 +98,7 @@
 .placePortrait.hasLicensedPhoto .portraitCopy > span {
   visibility: hidden;
 }
+/* A licensed photo carries its own credit and provenance; the local portrait copy would collide with the credit chip. */
+.placePortrait.hasLicensedPhoto .portraitCopy {
+  display: none;
+}

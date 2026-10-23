@@ -107,6 +107,9 @@ test("licensed context, keyboard controls and photo-independent evaluation on mo
   await expect(
     page.getByText(/presentation only, not Qloo evidence/),
   ).toBeVisible();
+  // Attribution stays visible; the local portrait kicker no longer collides with it.
+  await expect(page.locator(".licensedPhotoCredit")).toBeVisible();
+  await expect(page.locator(".portraitCopy")).toBeHidden();
   const check = page.getByRole("button", {
     name: /^Looks good/,
   });
@@ -142,6 +145,7 @@ for (const mode of ["none", "broken"] as const)
       await expect(
         page.getByText("Taste portrait · presentation only"),
       ).toBeVisible();
+      await expect(page.locator(".portraitCopy p")).toHaveText("TastePolicy");
       await expect(page.locator(".portraitMonogram")).toHaveText("S");
       const portrait = await page.locator(".placePortrait").boundingBox();
       expect(portrait!.height).toBeGreaterThan(300);
