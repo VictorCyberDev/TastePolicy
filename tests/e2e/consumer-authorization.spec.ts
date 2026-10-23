@@ -88,6 +88,8 @@ const checkButton = (page: Page) =>
 test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → non-executing HANDOFF", async ({
   page,
 }) => {
+  const requested: string[] = [];
+  page.on("request", (r) => requested.push(r.url()));
   const api = await setup(page, { evaluateDelayMs: 1500 });
 
   // TASTE: one moment, one action, no candidate yet.
@@ -96,7 +98,7 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
     "Step 1 of 4: Taste",
   );
   await expect(
-    page.getByRole("heading", { name: /Start with five things/ }),
+    page.getByRole("heading", { name: /Taste is plural/ }),
   ).toBeVisible();
   await expect(page.locator(".placeCard")).toHaveCount(0);
   await page.getByRole("button", { name: "Use my reviewed taste" }).click();
@@ -114,6 +116,23 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
     .click();
 
   // DISCOVER: one dominant candidate card, taste setup is gone.
+  await expect(page.locator(".boundary")).toHaveAttribute(
+    "data-boundary",
+    "discover",
+  );
+  await expect(page.locator(".consumerArena")).toHaveAttribute(
+    "data-mode",
+    "discovery",
+  );
+  expect(
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      return [
+        document.fonts.check('16px "Instrument Serif"'),
+        document.fonts.check('600 16px "Inter"'),
+      ];
+    }),
+  ).toEqual([true, true]);
   await expect(page.locator(".placeContent h3")).toContainText("original");
   await expect(progress(page)).toHaveAttribute(
     "aria-label",
@@ -140,6 +159,10 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
     "aria-label",
     "Step 3 of 4: Check",
   );
+  await expect(page.locator(".boundary")).toHaveAttribute(
+    "data-boundary",
+    "checking",
+  );
   expect(api.evaluations).toHaveLength(0);
 
   // DECISION → ALLOW has its own screen; nothing of the deck remains.
@@ -152,6 +175,14 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
     "Booking and payment still need separate authority.",
   );
   await expect(page.getByText("Internal policy: ALLOW")).toBeVisible();
+  await expect(page.locator(".boundary")).toHaveAttribute(
+    "data-boundary",
+    "allow",
+  );
+  await expect(page.locator(".consumerArena")).toHaveAttribute(
+    "data-mode",
+    "authorization",
+  );
   await expect(progress(page)).toHaveAttribute(
     "aria-label",
     "Step 4 of 4: Decision",
@@ -171,6 +202,10 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
   await expect(
     page.getByRole("heading", { name: "Preference check complete." }),
   ).toBeVisible();
+  await expect(page.locator(".boundary")).toHaveAttribute(
+    "data-boundary",
+    "handoff",
+  );
   await expect(
     page.getByText("Your agent may continue with this choice."),
   ).toBeVisible();
@@ -189,6 +224,15 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
   expect(api.evaluations).toHaveLength(1);
   expect(JSON.stringify(api.state)).toBe(stateBefore);
   expect(requests.filter((url) => /\/api\//.test(url))).toEqual([]);
+  // Fonts are self-hosted: none requested from a third party.
+  expect(
+    requested.filter((u) => /fonts\.(googleapis|gstatic)\.com/.test(u)),
+  ).toEqual([]);
+  expect(
+    requested.some((u) =>
+      u.includes("/fonts/instrument-serif-latin-400-normal.woff2"),
+    ),
+  ).toBe(true);
   expect(api.errors).toEqual([]);
 });
 
@@ -281,7 +325,7 @@ test("synthetic consumer explicit exclusion → STOP → one separate proposal �
   ).toHaveLength(1);
   expect(api.calls.filter((c) => c.operation === "evaluate")).toHaveLength(2);
   expect(JSON.stringify(api.evaluationInputs)).not.toMatch(
-    /wikimedia|presentationOnly|licenseUrl/,
+    /wikimedia|presentationOnly|licenseUrl|taste-\d|\.svg|spectrum|palette|Illustrative taste image/,
   );
   expect(api.errors).toEqual([]);
 });
@@ -410,6 +454,14 @@ test("synthetic consumer mobile keyboard, light/dark, reduced motion and long al
         getComputedStyle(document.querySelector(".choiceStage")!).animationName,
     ),
   ).toBe("none");
+  // The Boundary keeps its static, non-motion treatment under reduced motion.
+  expect(
+    await page.evaluate(() => {
+      const t = getComputedStyle(document.querySelector(".boundary .bTaste")!);
+      const i = getComputedStyle(document.querySelector(".cardBoundary i")!);
+      return [t.transitionDuration, t.animationName, i.animationName];
+    }),
+  ).toEqual(["0s", "none", "none"]);
   await page.screenshot({
     path: ".tastebench/wgb-progressive/mobile-discover.png",
     fullPage: true,

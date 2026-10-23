@@ -109,6 +109,7 @@ test("licensed context, keyboard controls and photo-independent evaluation on mo
   ).toBeVisible();
   // Attribution stays visible; the local portrait kicker no longer collides with it.
   await expect(page.locator(".licensedPhotoCredit")).toBeVisible();
+  await expect(page.locator(".placePortrait img.tasteImage")).toHaveCount(1);
   await expect(page.locator(".portraitCopy")).toBeHidden();
   const check = page.getByRole("button", {
     name: /^Looks good/,
@@ -117,7 +118,7 @@ test("licensed context, keyboard controls and photo-independent evaluation on mo
   await page.keyboard.press("Enter");
   await expect(page.getByText("Internal policy: ALLOW")).toBeVisible();
   expect(JSON.stringify(inputs)).not.toMatch(
-    /wikimedia|presentationOnly|licenseUrl/,
+    /wikimedia|presentationOnly|licenseUrl|taste-\d|\.svg|spectrum|palette|Illustrative taste image/,
   );
   expect(
     await page.evaluate(
@@ -142,20 +143,23 @@ for (const mode of ["none", "broken"] as const)
     // Every candidate keeps a meaningful local visual: never an empty card.
     for (const name of ["place 0", "place 1"]) {
       await expect(page.locator(".placeContent h3")).toContainText(name);
+      // A real, authored image asset renders, labelled truthfully.
       await expect(
-        page.getByText("Taste portrait · presentation only"),
+        page.getByText("Illustrative taste image · not property photography"),
       ).toBeVisible();
-      await expect(page.locator(".portraitCopy p")).toHaveText("TastePolicy");
-      await expect(page.locator(".portraitMonogram")).toHaveText("S");
+      const image = page.locator(".placePortrait img.tasteImage");
+      await expect(image).toBeVisible();
+      expect(
+        await image.evaluate(
+          (img: HTMLImageElement) =>
+            img.complete && img.naturalWidth > 0 && img.naturalHeight > 0,
+        ),
+      ).toBe(true);
+      expect(await image.getAttribute("src")).toMatch(
+        /^\/taste\/taste-[0-7]\.svg$/,
+      );
       const portrait = await page.locator(".placePortrait").boundingBox();
       expect(portrait!.height).toBeGreaterThan(300);
-      expect(
-        await page.evaluate(
-          () =>
-            getComputedStyle(document.querySelector(".placePortrait")!)
-              .backgroundImage,
-        ),
-      ).toMatch(/gradient/);
       await expect(page.locator(".hasLicensedPhoto")).toHaveCount(0);
       await expect(page.locator(".licensedPlacePhoto")).toHaveCount(0);
       if (name === "place 0")
@@ -166,6 +170,6 @@ for (const mode of ["none", "broken"] as const)
     await page.getByRole("button", { name: /^Looks good/ }).click();
     await expect(page.getByText("Internal policy: ALLOW")).toBeVisible();
     expect(JSON.stringify(inputs)).not.toMatch(
-      /wikimedia|presentationOnly|licenseUrl/,
+      /wikimedia|presentationOnly|licenseUrl|taste-\d|\.svg|spectrum|palette|Illustrative taste image/,
     );
   });

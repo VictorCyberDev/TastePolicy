@@ -30,6 +30,8 @@ import {
   TasteStage,
   type Stage,
 } from "./ConsumerStages";
+import Boundary, { type BoundaryState } from "./Boundary";
+import { portraitSeed } from "./portrait";
 import "./consumer-arena.css";
 
 function selectedEntity(
@@ -58,6 +60,19 @@ function defaultIdentity(
     ? (result.data.matches[0]?.id ?? "")
     : "";
 }
+
+const BOUNDARY_OF: Record<Stage, BoundaryState> = {
+  taste: "taste",
+  confirm: "taste",
+  discover: "discover",
+  checking: "checking",
+  allow: "allow",
+  handoff: "handoff",
+  ask: "ask",
+  reject: "reject",
+  noRepair: "reject",
+  pause: "pause",
+};
 
 function money(currency: string, amount: number) {
   return currency === "USD" ? `$${amount}` : `${currency} ${amount}`;
@@ -139,6 +154,12 @@ export default function ConsumerArena() {
                   ? "pause"
                   : "discover";
 
+  // Discovery is expressive; everything after the check collapses to structure.
+  const mode =
+    stage === "taste" || stage === "confirm" || stage === "discover"
+      ? "discovery"
+      : "authorization";
+  const spectrum = candidate ? portraitSeed(candidate.id).palette : 0;
   const askLead =
     auth.plan?.factor?.answerSchema === "MONEY_OR_UNKNOWN" &&
     constraint?.kind === "MAX_PRICE"
@@ -324,211 +345,224 @@ export default function ConsumerArena() {
   ) => run(label, operation, checkingTitle);
 
   return (
-    <main className="consumerArena">
-      <header className="consumerTop">
-        <Link href="/">TastePolicy</Link>
-        <span>CONSUMER ARENA · WG-B PROTOTYPE</span>
-        <Link href="/arena">Engineering view</Link>
-      </header>
-      <StageProgress stage={stage} />
+    <main
+      className="consumerArena"
+      data-mode={mode}
+      data-stage-now={stage}
+      data-spectrum={spectrum}
+    >
+      <div className="consumerShell">
+        <header className="consumerTop">
+          <Link href="/">TastePolicy</Link>
+          <span>CONSUMER ARENA · WG-B PROTOTYPE</span>
+          <Link href="/arena">Engineering view</Link>
+        </header>
+        <StageProgress stage={stage} />
+        <Boundary state={BOUNDARY_OF[stage]} />
 
-      {stage === "taste" && (
-        <TasteStage
-          signals={CANONICAL_SIGNALS.map((signal) => signal.query)}
-          busy={busy}
-          onStart={() => void resolveTaste()}
-          headingRef={heading}
-        />
-      )}
-
-      {stage === "confirm" && (
-        <ConfirmStage
-          headingRef={heading}
-          items={CANONICAL_SIGNALS.map((signal, index) => {
-            const entity = selectedEntity(resolutions[index], selected[index]);
-            return {
-              query: signal.query,
-              name: entity ? entity.name : "Choose the exact match",
-              detail: entity
-                ? `${entity.type}${entity.releaseYear ? ` · ${entity.releaseYear}` : ""}`
-                : "Needs your review",
-            };
-          })}
-          identities={resolutions.map((result, index) => (
-            <label key={CANONICAL_SIGNALS[index].query}>
-              {CANONICAL_SIGNALS[index].query}
-              <select
-                aria-label={`Identity for ${CANONICAL_SIGNALS[index].query}`}
-                value={selected[index]}
-                onChange={(event) => {
-                  setSelected(
-                    selected.map((value, itemIndex) =>
-                      itemIndex === index ? event.target.value : value,
-                    ),
-                  );
-                  setReviewed(false);
-                }}
-              >
-                <option value="">Choose the exact match</option>
-                {result.status === "available"
-                  ? result.data.matches.map((match) => (
-                      <option key={match.id} value={match.id}>
-                        {match.name} · {match.type}
-                        {match.releaseYear ? ` · ${match.releaseYear}` : ""}
-                      </option>
-                    ))
-                  : null}
-              </select>
-            </label>
-          ))}
-          reviewed={reviewed}
-          onReviewed={setReviewed}
-          disabled={busy || !reviewed || selected.some((value) => !value)}
-          onDiscover={() => void discoverPlaces()}
-        />
-      )}
-
-      {stage === "discover" && candidate && (
-        <DiscoverCard
-          key={candidate.id}
-          candidate={candidate}
-          basedOn={reviewedEntities.map((entity) => entity.name)}
-          proposal={Boolean(replacement)}
-          busy={busy}
-          onNext={nextCandidate}
-          onCheck={() => void checkChoice()}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          headingRef={heading}
-        >
-          <DemoBoundaries
-            auth={auth}
-            candidate={candidate}
+        {stage === "taste" && (
+          <TasteStage
+            signals={CANONICAL_SIGNALS.map((signal) => signal.query)}
             busy={busy}
-            run={run}
-            runPlain={runPlain}
-            locked={Boolean(replacement)}
+            onStart={() => void resolveTaste()}
+            headingRef={heading}
           />
-        </DiscoverCard>
-      )}
+        )}
 
-      {stage === "checking" && (
-        <CheckingStage title={checking} headingRef={heading} />
-      )}
+        {stage === "confirm" && (
+          <ConfirmStage
+            headingRef={heading}
+            items={CANONICAL_SIGNALS.map((signal, index) => {
+              const entity = selectedEntity(
+                resolutions[index],
+                selected[index],
+              );
+              return {
+                query: signal.query,
+                name: entity ? entity.name : "Choose the exact match",
+                detail: entity
+                  ? `${entity.type}${entity.releaseYear ? ` · ${entity.releaseYear}` : ""}`
+                  : "Needs your review",
+              };
+            })}
+            identities={resolutions.map((result, index) => (
+              <label key={CANONICAL_SIGNALS[index].query}>
+                {CANONICAL_SIGNALS[index].query}
+                <select
+                  aria-label={`Identity for ${CANONICAL_SIGNALS[index].query}`}
+                  value={selected[index]}
+                  onChange={(event) => {
+                    setSelected(
+                      selected.map((value, itemIndex) =>
+                        itemIndex === index ? event.target.value : value,
+                      ),
+                    );
+                    setReviewed(false);
+                  }}
+                >
+                  <option value="">Choose the exact match</option>
+                  {result.status === "available"
+                    ? result.data.matches.map((match) => (
+                        <option key={match.id} value={match.id}>
+                          {match.name} · {match.type}
+                          {match.releaseYear ? ` · ${match.releaseYear}` : ""}
+                        </option>
+                      ))
+                    : null}
+                </select>
+              </label>
+            ))}
+            reviewed={reviewed}
+            onReviewed={setReviewed}
+            disabled={busy || !reviewed || selected.some((value) => !value)}
+            onDiscover={() => void discoverPlaces()}
+          />
+        )}
 
-      {stage === "allow" && candidate && (
-        <AllowStage
-          candidate={candidate}
-          exclusionKept={Boolean(replacement)}
-          onContinue={() => setHandoff(true)}
-          evidence={evidence}
-          headingRef={heading}
-        />
-      )}
-
-      {stage === "handoff" && candidate && (
-        <HandoffStage
-          candidate={candidate}
-          onBack={nextCandidate}
-          headingRef={heading}
-        />
-      )}
-
-      {stage === "ask" && candidate && evaluation && (
-        <AskStage
-          candidate={candidate}
-          lead={askLead}
-          clarify={
-            <ClarifyPanel
+        {stage === "discover" && candidate && (
+          <DiscoverCard
+            key={candidate.id}
+            candidate={candidate}
+            basedOn={reviewedEntities.map((entity) => entity.name)}
+            proposal={Boolean(replacement)}
+            busy={busy}
+            onNext={nextCandidate}
+            onCheck={() => void checkChoice()}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            headingRef={heading}
+          >
+            <DemoBoundaries
               auth={auth}
-              evaluation={evaluation}
-              interaction={interaction}
+              candidate={candidate}
               busy={busy}
               run={run}
+              runPlain={runPlain}
+              locked={Boolean(replacement)}
             />
-          }
-          evidence={evidence}
-          headingRef={heading}
-        />
-      )}
+          </DiscoverCard>
+        )}
 
-      {stage === "reject" && candidate && (
-        <RejectStage
-          candidate={candidate}
-          lead={rejectLead}
-          canRepair={evaluation?.decision.outcome === "REJECT" && !auth.repair}
-          busy={busy}
-          onRepair={() =>
-            void run(
-              "Looking for one alternative that keeps your rule…",
-              auth.findAlternative,
-              "Looking for something that respects that…",
-            )
-          }
-          onAnother={nextCandidate}
-          evidence={evidence}
-          headingRef={heading}
-        />
-      )}
+        {stage === "checking" && (
+          <CheckingStage title={checking} headingRef={heading} />
+        )}
 
-      {stage === "noRepair" && candidate && auth.repair && (
-        <NoRepairStage
-          candidate={candidate}
-          status={auth.repair.status}
-          budget={hasBudget}
-          busy={busy}
-          onAnother={nextCandidate}
-          onRefresh={() => {
-            auth.clearEvaluation();
-            void run("Reading your saved rules…", auth.refresh);
-          }}
-          evidence={evidence}
-          headingRef={heading}
-        />
-      )}
+        {stage === "allow" && candidate && (
+          <AllowStage
+            candidate={candidate}
+            exclusionKept={Boolean(replacement)}
+            onContinue={() => setHandoff(true)}
+            evidence={evidence}
+            headingRef={heading}
+          />
+        )}
 
-      {stage === "pause" && (
-        <PauseStage
-          candidate={candidate}
-          busy={busy}
-          onAgain={() => void checkChoice()}
-          evidence={evidence}
-          headingRef={heading}
-        />
-      )}
+        {stage === "handoff" && candidate && (
+          <HandoffStage
+            candidate={candidate}
+            onBack={nextCandidate}
+            headingRef={heading}
+          />
+        )}
 
-      {(["ask", "allow", "reject", "pause", "noRepair"] as Stage[]).includes(
-        stage,
-      ) && (
-        <p className="stageBack">
-          <button
-            className="quietAction"
-            disabled={busy}
-            onClick={backToChoice}
-          >
-            ← Back to the choice
-          </button>
-        </p>
-      )}
+        {stage === "ask" && candidate && evaluation && (
+          <AskStage
+            candidate={candidate}
+            lead={askLead}
+            clarify={
+              <ClarifyPanel
+                auth={auth}
+                evaluation={evaluation}
+                interaction={interaction}
+                busy={busy}
+                run={run}
+              />
+            }
+            evidence={evidence}
+            headingRef={heading}
+          />
+        )}
 
-      {notice && (
-        <div className="consumerNotice" role="status">
-          <p>{notice}</p>
-          {needsRefresh && auth.state && (
+        {stage === "reject" && candidate && (
+          <RejectStage
+            candidate={candidate}
+            lead={rejectLead}
+            canRepair={
+              evaluation?.decision.outcome === "REJECT" && !auth.repair
+            }
+            busy={busy}
+            onRepair={() =>
+              void run(
+                "Looking for one alternative that keeps your rule…",
+                auth.findAlternative,
+                "Looking for something that respects that…",
+              )
+            }
+            onAnother={nextCandidate}
+            evidence={evidence}
+            headingRef={heading}
+          />
+        )}
+
+        {stage === "noRepair" && candidate && auth.repair && (
+          <NoRepairStage
+            candidate={candidate}
+            status={auth.repair.status}
+            budget={hasBudget}
+            busy={busy}
+            onAnother={nextCandidate}
+            onRefresh={() => {
+              auth.clearEvaluation();
+              void run("Reading your saved rules…", auth.refresh);
+            }}
+            evidence={evidence}
+            headingRef={heading}
+          />
+        )}
+
+        {stage === "pause" && (
+          <PauseStage
+            candidate={candidate}
+            busy={busy}
+            onAgain={() => void checkChoice()}
+            evidence={evidence}
+            headingRef={heading}
+          />
+        )}
+
+        {(["ask", "allow", "reject", "pause", "noRepair"] as Stage[]).includes(
+          stage,
+        ) && (
+          <p className="stageBack">
             <button
+              className="quietAction"
               disabled={busy}
-              onClick={() => {
-                auth.clearEvaluation();
-                void run("Reading your saved rules…", auth.refresh);
-              }}
+              onClick={backToChoice}
             >
-              Refresh my saved rules
+              ← Back to the choice
             </button>
-          )}
-        </div>
-      )}
+          </p>
+        )}
 
-      <StageFooter />
+        {notice && (
+          <div className="consumerNotice" role="status">
+            <p>{notice}</p>
+            {needsRefresh && auth.state && (
+              <button
+                disabled={busy}
+                onClick={() => {
+                  auth.clearEvaluation();
+                  void run("Reading your saved rules…", auth.refresh);
+                }}
+              >
+                Refresh my saved rules
+              </button>
+            )}
+          </div>
+        )}
+
+        <StageFooter />
+      </div>
     </main>
   );
 }

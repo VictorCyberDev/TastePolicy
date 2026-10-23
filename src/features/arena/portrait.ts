@@ -1,7 +1,11 @@
-// Presentation only. A deterministic local "taste portrait" so every candidate
-// has a meaningful visual. It carries no property identity and is never an
-// input to authorization.
-export const PORTRAIT_LABEL = "Taste portrait · presentation only";
+// Presentation only. A deterministic, authored "taste image" so every
+// candidate card shows a real image asset. It is illustrative, never property
+// photography, carries no property identity and is never an input to
+// authorization.
+export const TASTE_IMAGE_LABEL =
+  "Illustrative taste image · not property photography";
+
+export const TASTE_IMAGE_COUNT = 8;
 
 function hash(text: string) {
   let value = 2166136261;
@@ -12,18 +16,11 @@ function hash(text: string) {
   return value >>> 0;
 }
 
+// The Taste Spectrum pairing (0-7) is shared by the image and the card accent.
 export function portraitSeed(id: string) {
-  const value = hash(id);
-  return {
-    palette: value % 6,
-    glowX: 54 + ((value >>> 3) % 34),
-    glowY: 12 + ((value >>> 7) % 22),
-    tilt: -6 + ((value >>> 11) % 11),
-    arcs: 2 + ((value >>> 15) % 3),
-  };
+  return { palette: hash(id) % TASTE_IMAGE_COUNT };
 }
 
-export function monogram(name: string) {
-  const letter = name.trim()[0];
-  return letter ? letter.toLocaleUpperCase() : "·";
+export function tasteImageSrc(id: string) {
+  return `/taste/taste-${portraitSeed(id).palette}.svg`;
 }

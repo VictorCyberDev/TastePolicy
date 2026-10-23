@@ -2,13 +2,6 @@
   background: #182028;
 }
 
-.placePortrait.hasLicensedPhoto .portraitGlow,
-.placePortrait.hasLicensedPhoto .portraitHorizon,
-.placePortrait.hasLicensedPhoto .portraitFrame,
-.placePortrait.hasLicensedPhoto .portraitMonogram {
-  display: none;
-}
-
 .licensedPlacePhoto,
 .licensedPhotoShade {
   position: absolute;

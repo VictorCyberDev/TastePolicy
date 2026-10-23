@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties, PointerEventHandler, ReactNode, Ref } from "react";
+import { useState } from "react";
+import type { PointerEventHandler, ReactNode, Ref } from "react";
 import type { QlooEntity } from "@/types/domain";
-import { monogram, PORTRAIT_LABEL, portraitSeed } from "./portrait";
+import { TASTE_IMAGE_LABEL, portraitSeed, tasteImageSrc } from "./portrait";
 
 export type Stage =
   | "taste"
@@ -56,15 +57,6 @@ export function StageProgress({ stage }: { stage: Stage }) {
   );
 }
 
-function portraitStyle(id: string): CSSProperties {
-  const seed = portraitSeed(id);
-  return {
-    "--glow-x": `${seed.glowX}%`,
-    "--glow-y": `${seed.glowY}%`,
-    "--tilt": `${seed.tilt}deg`,
-  } as CSSProperties;
-}
-
 function Screen({ stage, children }: { stage: Stage; children: ReactNode }) {
   return (
     <section className="stageScreen" data-stage={stage}>
@@ -76,18 +68,27 @@ function Screen({ stage, children }: { stage: Stage; children: ReactNode }) {
 function ChosenPlace({ candidate }: { candidate: QlooEntity }) {
   return (
     <div className="chosenPlace">
-      <span
-        className="miniPortrait"
-        data-portrait={portraitSeed(candidate.id).palette}
-        style={portraitStyle(candidate.id)}
-        aria-hidden="true"
-      >
-        {monogram(candidate.name)}
-      </span>
+      {/* Presentation only: an authored illustrative image, never property photography. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className="chosenImage"
+        src={tasteImageSrc(candidate.id)}
+        alt=""
+        width={40}
+        height={40}
+      />
       <strong>{candidate.name}</strong>
     </div>
   );
 }
+
+const SPECTRUM_TILES = [
+  "vermilion",
+  "cobalt",
+  "saffron",
+  "violet",
+  "aqua",
+] as const;
 
 export function TasteStage({
   signals,
@@ -102,24 +103,25 @@ export function TasteStage({
 }) {
   return (
     <Screen stage="taste">
-      <p className="stageEyebrow">Your taste</p>
-      <h1 ref={headingRef} tabIndex={-1}>
-        Start with five things you already chose.
-      </h1>
-      <p className="stageLead">
-        Qloo gives agents taste. TastePolicy gives that taste authority
-        boundaries.
-      </p>
-      <div className="tasteChips" aria-label="Taste signals">
-        {signals.map((signal) => (
-          <span key={signal}>{signal}</span>
+      <div className="heroText">
+        <p className="stageEyebrow">TastePolicy</p>
+        <h1 ref={headingRef} tabIndex={-1}>
+          Taste is plural. Permission is precise.
+        </h1>
+        <p className="stageLead">Start with five things you already chose.</p>
+        <div className="stageActions">
+          <button className="primaryAction" disabled={busy} onClick={onStart}>
+            Use my reviewed taste
+          </button>
+        </div>
+      </div>
+      <ul className="tasteTiles" aria-label="Taste signals">
+        {signals.map((signal, index) => (
+          <li key={signal} data-tone={SPECTRUM_TILES[index % 5]}>
+            <span>{signal}</span>
+          </li>
         ))}
-      </div>
-      <div className="stageActions">
-        <button className="primaryAction" disabled={busy} onClick={onStart}>
-          Use my reviewed taste
-        </button>
-      </div>
+      </ul>
     </Screen>
   );
 }
@@ -148,8 +150,12 @@ export function ConfirmStage({
         Are these the five things you meant?
       </h1>
       <div className="resolvedGrid">
-        {items.map((item) => (
-          <article key={item.query} className="resolvedItem">
+        {items.map((item, index) => (
+          <article
+            key={item.query}
+            className="resolvedItem"
+            data-tone={SPECTRUM_TILES[index % 5]}
+          >
             <strong>{item.name}</strong>
             <small>{item.detail}</small>
           </article>
@@ -204,11 +210,13 @@ export function DiscoverCard({
   headingRef: Heading;
   children?: ReactNode;
 }) {
+  const [why, setWhy] = useState(false);
   const seed = portraitSeed(candidate.id);
   return (
     <section
       className="choiceStage"
       data-stage="discover"
+      data-entry={proposal ? "proposal" : "card"}
       aria-label="Agent recommendation"
     >
       <h1 className="srOnly">
@@ -217,24 +225,27 @@ export function DiscoverCard({
       <div
         className="placeCard"
         data-portrait={seed.palette}
-        style={portraitStyle(candidate.id)}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
       >
-        <div
-          className="placePortrait"
-          aria-label={`Taste portrait for ${candidate.name}`}
-        >
-          <span className="portraitGlow" />
-          <span className="portraitHorizon" />
-          <span className="portraitFrame" />
-          <span className="portraitMonogram" aria-hidden="true">
-            {monogram(candidate.name)}
-          </span>
+        <div className="placePortrait">
+          {/* A real, authored image asset; the licensed photo (when valid) layers above it. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="tasteImage"
+            src={tasteImageSrc(candidate.id)}
+            alt="Illustrative taste image, not property photography"
+            width={800}
+            height={1000}
+            decoding="async"
+          />
+          <span className="portraitScrim" />
           <div className="portraitCopy">
-            <p>TastePolicy</p>
-            <span>{PORTRAIT_LABEL}</span>
+            <span>{TASTE_IMAGE_LABEL}</span>
           </div>
+        </div>
+        <div className="cardBoundary" aria-hidden="true">
+          <i />
         </div>
 
         <div className="placeContent">
@@ -247,42 +258,50 @@ export function DiscoverCard({
           <h3 ref={headingRef} tabIndex={-1}>
             {candidate.name}
           </h3>
-          {proposal && (
-            <p className="stageSupport">
-              Your excluded choice stays excluded. This one still needs its own
-              check.
-            </p>
-          )}
+          <p className="framing">
+            {proposal
+              ? "Your excluded choice stays excluded. This one still needs its own check."
+              : "A match for your five confirmed tastes."}
+          </p>
+          <ul className="tasteCues" aria-label="Based on your taste">
+            {basedOn.slice(0, 3).map((name, index) => (
+              <li key={name} data-tone={SPECTRUM_TILES[index % 5]}>
+                {name}
+              </li>
+            ))}
+            {basedOn.length > 3 && <li>+{basedOn.length - 3}</li>}
+          </ul>
 
-          <div className="cardActions">
+          <div className="cardActions" data-proposal={proposal}>
             {!proposal && (
               <button className="quietAction" disabled={busy} onClick={onNext}>
                 ← Another one
               </button>
             )}
+            <button
+              className="quietAction"
+              aria-expanded={why}
+              onClick={() => setWhy((value) => !value)}
+            >
+              Why this?
+            </button>
             <button className="primaryAction" disabled={busy} onClick={onCheck}>
               {proposal ? "Check this alternative →" : "Looks good →"}
             </button>
           </div>
 
-          <details className="stageEvidence">
-            <summary>Why this?</summary>
+          {why && (
             <div className="whyPanel">
-              <p>Qloo suggested this from the five things you confirmed:</p>
-              <div
-                className="tasteChips compact"
-                aria-label="Based on your taste"
-              >
-                {basedOn.map((name) => (
-                  <span key={name}>{name}</span>
-                ))}
-              </div>
+              <p>
+                Qloo matched this to the five things you confirmed. TastePolicy
+                has not checked it yet.
+              </p>
               <p className="stageFine">
                 Swipe right checks this choice. Swipe left shows another.
                 Neither grants booking, payment or any other authority.
               </p>
             </div>
-          </details>
+          )}
         </div>
       </div>
       {children}
@@ -299,8 +318,10 @@ export function CheckingStage({
 }) {
   return (
     <Screen stage="checking">
-      <div className="checkingOrb" aria-hidden="true">
-        <span />
+      <div className="checkingPlane" aria-hidden="true">
+        <span className="cpTaste" />
+        <span className="cpLine" />
+        <span className="cpPermission" />
       </div>
       <h1 ref={headingRef} tabIndex={-1}>
         {title}
@@ -313,7 +334,9 @@ export function CheckingStage({
 function Mark({ glyph, label }: { glyph: string; label: string }) {
   return (
     <>
-      <span aria-hidden="true">{glyph} </span>
+      <span className="markGlyph" aria-hidden="true">
+        {glyph}
+      </span>
       {label}
     </>
   );
@@ -347,10 +370,11 @@ export function AllowStage({
           Your concierge can continue with this choice.
         </p>
         <p className="stageSupport">
-          Recommendation is cleared. Booking and payment still need separate
-          authority.
-          {exclusionKept ? " Your earlier exclusion is still saved." : ""}
+          Booking and payment still need separate authority.
         </p>
+        {exclusionKept && (
+          <p className="stageFine">Your earlier exclusion is still saved.</p>
+        )}
         <div className="stageActions">
           <button className="primaryAction" onClick={onContinue}>
             Continue with this choice →
@@ -383,14 +407,16 @@ export function HandoffStage({
       <div className="handoffBoundary" aria-label="Where TastePolicy ends">
         <div data-side="done">
           <span>TastePolicy</span>
-          <strong>Preference authorization · done</strong>
+          <strong>Taste approved</strong>
+          <small>The subjective choice may continue.</small>
         </div>
-        <span aria-hidden="true">→</span>
+        <i aria-hidden="true" />
         <div data-side="next">
           <span>Next, elsewhere</span>
           <strong>
             Booking, purchase or payment needs separate execution authorization
           </strong>
+          <small>Not granted here.</small>
         </div>
       </div>
       <p className="stageFine">
@@ -589,8 +615,7 @@ export function PauseStage({
           Missing taste evidence is not the same as disliking this.
         </p>
         <p className="stageSupport">
-          Your concierge should pause. No evidence was made up and nothing
-          retries on its own.
+          Your concierge pauses. Nothing was guessed.
         </p>
         <div className="stageActions">
           <button className="quietAction" disabled={busy} onClick={onAgain}>
