@@ -22,8 +22,10 @@ const messages: Record<string, string> = {
 export default function InteractivePanel({
   evaluation,
   onEvaluateRepair,
+  onClarified,
 }: {
   evaluation: StateEvaluation;
+  onClarified?: (value: InteractiveAuthorization) => void;
   onEvaluateRepair: (v: StateEvaluation) => Promise<void>;
 }) {
   const [plan, setPlan] = useState<ClarificationPlan | null>(null),
@@ -94,6 +96,7 @@ export default function InteractivePanel({
         true,
       );
       setAnswer(result);
+      onClarified?.(result);
       setPlan(null);
       setReplayed(false);
     });

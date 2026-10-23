@@ -1,0 +1,845 @@
+{
+  "schemaVersion": "win-gate-blinded-pilot-v3",
+  "selection": "ALL_18_HELD_OUT_EVALUATION_SCENARIOS_PREDECLARED",
+  "sourceVersion": "engineering-v1",
+  "introduction": [
+    "Imagine an AI assistant is helping someone choose things such as places, destinations or brands.",
+    "For each situation, decide what the assistant should do based only on the information shown.",
+    "There are no trick questions and you do not need any technical knowledge.",
+    "Some situations include a taste-match number from 0 to 1.",
+    "A higher number simply means the available taste information suggests a stronger match.",
+    "It does not guarantee that the person will like the option.",
+    "The person's explicit instructions always matter.",
+    "If information is missing, you can say the assistant should ask or that you do not have enough information."
+  ],
+  "helpText": "It is a number describing how strongly the available taste information connects this option with the person's known preferences. Higher means a stronger connection. It is not a probability, certainty or guarantee that the person will like the option.",
+  "practice": {
+    "proposal": "An AI assistant wants to recommend Café A.",
+    "evidence": "Taste match: 0.82 / 1.00",
+    "instruction": "I do not want cafés today.",
+    "question": "What should the AI assistant do?",
+    "choices": [
+      "GO AHEAD WITH THE CHOICE",
+      "ASK THE PERSON FIRST",
+      "DO NOT CHOOSE THIS OPTION",
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+      "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+    ]
+  },
+  "contentNotice": "These situations are made up for this study.",
+  "cases": [
+    {
+      "caseId": "case-01",
+      "proposal": "An AI assistant wants to choose Proposed brand A for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [
+        "The person's maximum budget for this choice is USD 50.",
+        "The person's maximum budget for this choice is EUR 60."
+      ],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-02",
+      "proposal": "An AI assistant wants to choose Proposed destination B for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "unavailable",
+        "text": "The assistant does not currently have the taste information it needs for this option."
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-03",
+      "proposal": "An AI assistant wants to choose Proposed place C for someone.",
+      "context": {
+        "domain": "place",
+        "price": {
+          "amount": 70,
+          "currency": "USD"
+        }
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person's maximum budget for this choice is USD 50."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-04",
+      "proposal": "An AI assistant wants to choose Proposed brand D for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Taste match: 0.65 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-05",
+      "proposal": "An AI assistant wants to choose Proposed place E for someone.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person's maximum budget for this choice is USD 50."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-06",
+      "proposal": "An AI assistant wants to choose Proposed brand F for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Taste match: 0.65 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-07",
+      "proposal": "An AI assistant wants to choose Proposed brand G for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-08",
+      "proposal": "An AI assistant wants to choose Proposed place H for someone.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.2,
+        "scale": "unit",
+        "text": "Taste match: 0.20 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-09",
+      "proposal": "An AI assistant wants to choose Proposed place I for someone.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-10",
+      "proposal": "An AI assistant wants to choose Proposed place J for someone.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "unavailable",
+        "text": "The assistant does not currently have the taste information it needs for this option."
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-11",
+      "proposal": "An AI assistant wants to choose Proposed destination K for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person's maximum budget for this choice is USD 50."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-12",
+      "proposal": "An AI assistant wants to choose Proposed destination L for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.65,
+        "scale": "unit",
+        "text": "Taste match: 0.65 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-13",
+      "proposal": "An AI assistant wants to choose Proposed destination M for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-14",
+      "proposal": "An AI assistant wants to choose Proposed brand N for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-15",
+      "proposal": "An AI assistant wants to choose Proposed destination O for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-16",
+      "proposal": "An AI assistant wants to choose Proposed place P for someone.",
+      "context": {
+        "domain": "place",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-17",
+      "proposal": "An AI assistant wants to choose Proposed destination Q for someone.",
+      "context": {
+        "domain": "destination",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": ["The person explicitly said not to choose this option."],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.9,
+        "scale": "unit",
+        "text": "Taste match: 0.90 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    },
+    {
+      "caseId": "case-18",
+      "proposal": "An AI assistant wants to choose Proposed brand R for someone.",
+      "context": {
+        "domain": "brand",
+        "price": "NOT PROVIDED"
+      },
+      "signals": [
+        {
+          "label": "Known preference 1",
+          "domain": "artist"
+        },
+        {
+          "label": "Known preference 2",
+          "domain": "movie"
+        },
+        {
+          "label": "Known preference 3",
+          "domain": "book"
+        },
+        {
+          "label": "Known preference 4",
+          "domain": "brand"
+        },
+        {
+          "label": "Known preference 5",
+          "domain": "tv_show"
+        }
+      ],
+      "facts": [],
+      "evidence": {
+        "status": "available",
+        "rawAffinity": 0.8,
+        "scale": "unit",
+        "text": "Taste match: 0.80 / 1.00"
+      },
+      "question": "What should the AI assistant do?",
+      "choices": [
+        "GO AHEAD WITH THE CHOICE",
+        "ASK THE PERSON FIRST",
+        "DO NOT CHOOSE THIS OPTION",
+        "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS",
+        "I DON'T HAVE ENOUGH INFORMATION TO DECIDE"
+      ]
+    }
+  ],
+  "packetHash": "e198ff3bd1f17f9ac21ddad843cbc5cb1a2d798048a9b5e2196246474596865d"
+}
