@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CANONICAL_SIGNALS } from "@/features/demo/profile";
 import type {
-  CulturalReceipt,
   EntityResolution,
   InferenceResult,
   ProviderResult,
   QlooEntity,
 } from "@/types/domain";
+import { boundedContinuation } from "@/lib/agent/continuation";
+import { useConsumerAuthorization } from "./useConsumerAuthorization";
+import ConsumerAuthorization from "./ConsumerAuthorization";
 import "./consumer-arena.css";
 
 const HUMAN_DECISION = {
@@ -21,11 +23,24 @@ const HUMAN_DECISION = {
     title: "One thing first…",
     body: "TastePolicy needs one explicit answer before the agent can continue.",
   },
+  UNAVAILABLE: {
+    title: "I don’t know enough yet",
+    body: "Missing taste evidence is not the same as disliking this. Your concierge must pause without guessing.",
+  },
   REJECT: {
     title: "Not this one",
     body: "TastePolicy found a boundary the agent must respect. It can offer another option instead.",
   },
 } as const;
+
+const NEXT_STEP_COPY: Record<string, string> = {
+  recommend: "recommend this option",
+  add_to_draft: "add it to a draft",
+  request_clarification: "ask before continuing",
+  do_not_proceed: "do not proceed",
+  offer_repair: "offer a verifiable alternative",
+  do_not_assume_negative_preference: "pause without assuming dislike",
+};
 
 function selectedEntity(
   result: ProviderResult<EntityResolution> | undefined,
@@ -62,17 +77,66 @@ export default function ConsumerArena() {
     [reviewed, setReviewed] = useState(false),
     [candidates, setCandidates] = useState<InferenceResult | null>(null),
     [candidateIndex, setCandidateIndex] = useState(0),
-    [receipt, setReceipt] = useState<CulturalReceipt | null>(null),
+    [alternative, setAlternative] = useState<QlooEntity | null>(null),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState("");
   const last = useRef(0);
+  const inFlight = useRef(false);
   const swipeStart = useRef<number | null>(null);
+  const outcomeHeading = useRef<HTMLHeadingElement>(null);
+  const candidateHeading = useRef<HTMLHeadingElement>(null);
 
-  const candidate = candidates?.candidates[candidateIndex]?.entity ?? null;
-  const decision = receipt ? HUMAN_DECISION[receipt.decision.outcome] : null;
+  const candidate =
+    alternative ?? candidates?.candidates[candidateIndex]?.entity ?? null;
   const reviewedEntities = selected
     .map((id, index) => selectedEntity(resolutions[index], id))
     .filter((entity): entity is QlooEntity => Boolean(entity));
+
+  const auth = useConsumerAuthorization(call, reviewedEntities, (next) => {
+    setAlternative(next);
+  });
+  const evaluation =
+    auth.evaluation?.action.candidate.id === candidate?.id
+      ? auth.evaluation
+      : null;
+  const interaction = evaluation ? auth.interaction : null;
+  const cultural =
+    evaluation?.cultural.status === "available"
+      ? evaluation.cultural.data
+      : null;
+  const outcome = auth.unavailable
+    ? "UNAVAILABLE"
+    : (interaction?.finalDecision.outcome ?? evaluation?.decision.outcome);
+  const decision = outcome ? HUMAN_DECISION[outcome] : null;
+  const continuation = outcome ? boundedContinuation(outcome) : null;
+  const constraint = auth.state?.entries.find(
+    (entry) => entry.signalId === auth.plan?.factor?.constraintId,
+  )?.constraint;
+  const humanReason =
+    outcome === "ASK" &&
+    auth.plan?.factor?.answerSchema === "MONEY_OR_UNKNOWN" &&
+    constraint?.kind === "MAX_PRICE"
+      ? `Your budget for this choice is ${constraint.currency} ${constraint.amount}, but this place’s price is not known in that currency yet.`
+      : outcome === "REJECT" &&
+          (interaction?.finalDecision.basis ?? evaluation?.decision.basis) ===
+            "USER_HARD_BLOCK"
+        ? "You told TastePolicy not to choose this place. Your agent has to respect that."
+        : interaction && outcome === "ALLOW"
+          ? "Your concierge can recommend this within the boundary you gave. Your explicit answer applies only to this choice."
+          : decision?.body;
+
+  useEffect(() => {
+    if (busy || auth.plan?.status === "ACTIONABLE") return;
+    if (outcome) outcomeHeading.current?.focus();
+    else if (alternative) candidateHeading.current?.focus();
+  }, [
+    busy,
+    outcome,
+    evaluation?.evaluationId,
+    interaction?.interactionId,
+    auth.plan?.status,
+    alternative,
+  ]);
 
   async function call<T>(path: string, body: unknown): Promise<T> {
     const delay = 1100 - (Date.now() - last.current);
@@ -89,7 +153,13 @@ export default function ConsumerArena() {
         throw Error(
           code === "not_configured"
             ? "Live Qloo is not configured. No synthetic fallback is used."
-            : "This choice could not be checked right now. TastePolicy did not guess or fabricate a result.",
+            : code === "persistence_not_configured"
+              ? "Saved rules are not available in this environment. No temporary substitute was used."
+              : code === "STATE_VERSION_CONFLICT"
+                ? "Your saved rules changed. Refresh them and explicitly check this choice again."
+                : code === "SESSION_EXPIRED"
+                  ? "This temporary demo profile has expired. Open the engineering view to start a new one."
+                  : "This operation is unavailable. No answer was guessed, no evidence was invented and no automatic retry was made.",
         );
       }
       return data.data as T;
@@ -99,6 +169,8 @@ export default function ConsumerArena() {
   }
 
   async function run(label: string, operation: () => Promise<void>) {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy(true);
     setNotice(label);
     try {
@@ -110,13 +182,16 @@ export default function ConsumerArena() {
       );
     } finally {
       setBusy(false);
+      inFlight.current = false;
     }
   }
 
   async function resolveTaste() {
     await run("Finding the exact things you meant…", async () => {
       setCandidates(null);
-      setReceipt(null);
+      setAlternative(null);
+      auth.resetCandidate();
+
       setReviewed(false);
       const found = await call<ProviderResult<EntityResolution>[]>(
         "/api/demo/resolve",
@@ -142,8 +217,9 @@ export default function ConsumerArena() {
         targetType: "place",
       });
       setCandidates(found);
+      setAlternative(null);
+      auth.resetCandidate();
       setCandidateIndex(0);
-      setReceipt(null);
     });
   }
 
@@ -152,13 +228,7 @@ export default function ConsumerArena() {
     await run(
       "Checking what your agent is actually allowed to do…",
       async () => {
-        const result = await call<CulturalReceipt>("/api/demo/evaluate", {
-          signalIds: selected,
-          candidateId: candidate.id,
-          context:
-            "Dinner or stay recommendation; no booking or payment authority.",
-        });
-        setReceipt(result);
+        await auth.check(candidate);
       },
     );
   }
@@ -166,7 +236,9 @@ export default function ConsumerArena() {
   function nextCandidate() {
     if (!candidates?.candidates.length) return;
     setCandidateIndex((index) => (index + 1) % candidates.candidates.length);
-    setReceipt(null);
+    setAlternative(null);
+
+    auth.resetCandidate();
     setNotice("");
   }
 
@@ -290,6 +362,10 @@ export default function ConsumerArena() {
             />
             Yes — these are my five explicit taste signals.
           </label>
+          <p>
+            Checking a choice keeps these five preferences in a temporary demo
+            profile and respects its saved rules.
+          </p>
           <button
             className="primaryAction"
             disabled={busy || !reviewed || selected.some((value) => !value)}
@@ -327,7 +403,9 @@ export default function ConsumerArena() {
                 <span>{candidate.type}</span>
                 {candidate.address && <span>{candidate.address}</span>}
               </div>
-              <h3>{candidate.name}</h3>
+              <h3 ref={candidateHeading} tabIndex={-1}>
+                {candidate.name}
+              </h3>
               <p>
                 Your concierge wants to recommend this. TastePolicy checks the
                 boundary before the agent continues.
@@ -345,14 +423,48 @@ export default function ConsumerArena() {
               {decision ? (
                 <section
                   className="humanDecision"
-                  data-decision={receipt!.decision.outcome}
+                  data-decision={outcome}
                   aria-live="polite"
                 >
                   <p className="consumerEyebrow">TastePolicy says</p>
-                  <h4>{decision.title}</h4>
-                  <p>{decision.body}</p>
+                  <h4 ref={outcomeHeading} tabIndex={-1}>
+                    <span aria-hidden="true">
+                      {outcome === "ALLOW"
+                        ? "✓ "
+                        : outcome === "ASK"
+                          ? "? "
+                          : outcome === "REJECT"
+                            ? "× "
+                            : "— "}
+                    </span>
+                    {decision.title}
+                  </h4>
+                  <p>{humanReason}</p>
+                  <p className="consumerNext">
+                    <strong>What your concierge may do next:</strong>{" "}
+                    {continuation!.permitted
+                      .map((action) => NEXT_STEP_COPY[action])
+                      .join(" · ")}
+                  </p>
+                  <p>
+                    Booking, payment, purchase and other execution still require
+                    separate authority.
+                  </p>
+                  {interaction && (
+                    <p className="consumerCaptured">
+                      Explicit answer for this choice · Original decision:{" "}
+                      {interaction.originalEvaluation.decision.outcome} · Final
+                      interaction decision: {interaction.finalDecision.outcome}
+                    </p>
+                  )}
+                  {outcome === "UNAVAILABLE" && (
+                    <p>
+                      No cultural evidence or Cultural Receipt was fabricated.
+                      No automatic retry.
+                    </p>
+                  )}
                   <span className="machineOutcome">
-                    Internal policy: {receipt!.decision.outcome}
+                    Internal policy: {outcome}
                   </span>
                 </section>
               ) : (
@@ -371,24 +483,29 @@ export default function ConsumerArena() {
                 </button>
                 <details>
                   <summary>Why this?</summary>
-                  {receipt ? (
+                  {cultural ? (
                     <div className="whyPanel">
                       <p>
-                        <strong>LIVE QLOO</strong> candidate-specific cultural
-                        evidence.
+                        <strong>
+                          {interaction ? "CAPTURED QLOO EVIDENCE" : "LIVE QLOO"}
+                        </strong>{" "}
+                        candidate-specific cultural evidence
+                        {interaction
+                          ? " — reused with your explicit interaction answer; no new Qloo request."
+                          : "."}
                       </p>
                       <p>
-                        Affinity {receipt.alignmentScore.toFixed(4)} ·{" "}
-                        {receipt.qlooEvidence.scale}. This is not confidence or
+                        Affinity {cultural.alignmentScore.toFixed(4)} ·{" "}
+                        {cultural.qlooEvidence.scale}. This is not confidence or
                         preference probability.
                       </p>
-                      {receipt.explainability.status !== "unavailable" && (
+                      {cultural.explainability.status !== "unavailable" && (
                         <ul>
-                          {receipt.explainability.contributions
+                          {cultural.explainability.contributions
                             .slice(0, 3)
                             .map((item) => (
                               <li key={item.signalId}>
-                                {receipt.inputSignals.find(
+                                {cultural.inputSignals.find(
                                   (signal) => signal.id === item.signalId,
                                 )?.name ?? "Reviewed signal"}
                                 : {item.score.toFixed(3)}
@@ -398,8 +515,8 @@ export default function ConsumerArena() {
                       )}
                       <p className="technicalNote">
                         Provider: Qloo ·{" "}
-                        {receipt.qlooEvidence.provenance.endpoint} · receipt{" "}
-                        {receipt.receiptId}
+                        {cultural.qlooEvidence.provenance.endpoint} · receipt{" "}
+                        {cultural.receiptId}
                       </p>
                     </div>
                   ) : (
@@ -415,9 +532,19 @@ export default function ConsumerArena() {
                   onClick={() => void checkChoice()}
                   aria-label="Check this choice with TastePolicy"
                 >
-                  Check this choice →
+                  {alternative && !evaluation
+                    ? "Check this alternative →"
+                    : "Check this choice →"}
                 </button>
               </div>
+              <ConsumerAuthorization
+                key={candidate.id}
+                auth={auth}
+                candidate={candidate}
+                busy={busy}
+                run={run}
+                clearBaseline={auth.clearEvaluation}
+              />
             </div>
           </div>
 

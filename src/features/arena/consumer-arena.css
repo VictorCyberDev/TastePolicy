@@ -568,3 +568,85 @@
     scroll-behavior: auto !important;
   }
 }
+
+.consumerAuthorization {
+  min-width: 0;
+  margin-top: 18px;
+}
+.consumerQuestion,
+.consumerRepair,
+.consumerBoundaries,
+.consumerDeveloper {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow-wrap: anywhere;
+}
+.consumerQuestion h4 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+.consumerQuestion p,
+.consumerRepair p,
+.consumerBoundaries p {
+  line-height: 1.55;
+}
+.consumerButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+.consumerButtons > button {
+  flex: 1 1 160px;
+  min-height: 48px;
+}
+.consumerQuestion label {
+  display: grid;
+  gap: 8px;
+}
+.consumerQuestion input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 1rem;
+}
+.consumerBoundaries > summary,
+.consumerDeveloper > summary {
+  min-height: 44px;
+  cursor: pointer;
+  align-content: center;
+}
+.consumerDeveloper pre {
+  max-height: 380px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+.repairAction {
+  width: 100%;
+  min-height: 48px;
+}
+.humanDecision[data-decision="UNAVAILABLE"] {
+  border-left: 5px dashed var(--muted);
+}
+.consumerNext,
+.consumerCaptured {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.consumerRehearsal {
+  border-style: dashed;
+}
+.consumerAuthorization :focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 4px;
+}

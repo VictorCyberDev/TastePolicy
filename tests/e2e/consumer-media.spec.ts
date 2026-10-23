@@ -1,3 +1,4 @@
+import { mockConsumerState } from "./consumer-state-fixture";
 import { test, expect, type Page } from "@playwright/test";
 import { syntheticReceipt } from "../receipt-presentation-fixture";
 import { entities } from "../qloo-fixtures";
@@ -23,8 +24,9 @@ async function prepare(page: Page, mode: "photo" | "none" | "broken") {
   const candidates = [0, 1].map((i) => ({
     entity: {
       ...receipt.candidate,
-      id: entities[i].id,
-      type: "place",
+      id:
+        i === 0 ? receipt.candidate.id : "10000000-0000-4000-8000-000000000006",
+      type: "place" as const,
       name: `SYNTHETIC TEST DATA place ${i}`,
       address: "SYNTHETIC location",
     },
@@ -74,6 +76,11 @@ async function prepare(page: Page, mode: "photo" | "none" | "broken") {
           ),
         }),
   );
+  const state = await mockConsumerState(
+    page,
+    receipt,
+    candidates.map((c) => c.entity),
+  );
   await page.goto("/arena/consumer");
   await labelSynthetic(page);
   await page.getByRole("button", { name: "Use my reviewed taste" }).click();
@@ -82,7 +89,7 @@ async function prepare(page: Page, mode: "photo" | "none" | "broken") {
   await page
     .getByRole("button", { name: "Find a place through my taste" })
     .click();
-  return inputs;
+  return state.evaluationInputs;
 }
 test("licensed context, keyboard controls and photo-independent evaluation on mobile", async ({
   page,
