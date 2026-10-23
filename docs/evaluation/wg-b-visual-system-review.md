@@ -46,7 +46,11 @@ Provenance stays truthful: the base image is a static presentation asset keyed b
 
 ## Screens
 
-TASTE (editorial hero + five colour tiles), confirm, DISCOVER (image, name, location, one-line framing, three taste cues, Another one / Why this? / Looks good), CHECKING (boundary plane), ALLOW "This fits", ASK "One thing first", REJECT "Not this one", PAUSE "I don't know enough yet", HANDOFF (taste approved on one side; booking/purchase/payment needing separate execution authorization on the dashed other side, nothing executed). A repair proposal enters as a new card from the side, not appended.
+TASTE (editorial hero + five colour tiles), confirm, DISCOVER (image, name, location, one-line framing, three taste cues, Another one / Why this? / Looks good), CHECKING (boundary plane), ALLOW "This fits", ASK "One thing first", REJECT "Not this one", PAUSE "I don't know enough yet", HANDOFF (taste approved on one side; booking/purchase/payment needing separate execution authority on the dashed "Next permission" side: same agent, different permission, nothing executed). A repair proposal enters as a new card from the side, not appended.
+
+## Copy repair after the first human test
+
+The opening line now reads "Qloo finds what fits. TastePolicy decides whether your agent may continue." (Qloo supplies taste; TastePolicy supplies the permission boundary). The handoff now says "The same concierge can keep going with this choice. Same agent. Different permission." and labels the dashed side "Next permission", so it no longer implies a second agent is needed. Copy only; no visual, state or policy change.
 
 ## Tests
 

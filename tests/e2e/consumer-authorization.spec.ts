@@ -100,6 +100,12 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
   await expect(
     page.getByRole("heading", { name: /Taste is plural/ }),
   ).toBeVisible();
+  // The opening screen separates Qloo's taste evidence from TastePolicy's permission.
+  await expect(
+    page.getByText(
+      "Qloo finds what fits. TastePolicy decides whether your agent may continue.",
+    ),
+  ).toBeVisible();
   await expect(page.locator(".placeCard")).toHaveCount(0);
   await page.getByRole("button", { name: "Use my reviewed taste" }).click();
 
@@ -206,12 +212,18 @@ test("stage journey: TASTE → confirm → DISCOVER → CHECKING → ALLOW → n
     "data-boundary",
     "handoff",
   );
+  // Same-agent continuity is explicit; booking/payment need separate authority.
   await expect(
-    page.getByText("Your agent may continue with this choice."),
+    page.getByText("The same concierge can keep going with this choice."),
   ).toBeVisible();
   await expect(
-    page.getByText(/needs separate execution authorization/),
+    page.getByText("Same agent. Different permission."),
   ).toBeVisible();
+  await expect(page.getByText("Next permission")).toBeVisible();
+  await expect(
+    page.getByText(/need separate execution authority/),
+  ).toBeVisible();
+  await expect(page.getByText(/another agent|elsewhere/i)).toHaveCount(0);
   await expect(
     page.getByText(/Nothing was booked, reserved, purchased or paid/),
   ).toBeVisible();

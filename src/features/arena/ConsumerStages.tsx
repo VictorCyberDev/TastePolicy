@@ -108,7 +108,13 @@ export function TasteStage({
         <h1 ref={headingRef} tabIndex={-1}>
           Taste is plural. Permission is precise.
         </h1>
-        <p className="stageLead">Start with five things you already chose.</p>
+        <p className="stageLead">
+          Qloo finds what fits. TastePolicy decides whether your agent may
+          continue.
+        </p>
+        <p className="stageSupport">
+          Start with five things you already chose.
+        </p>
         <div className="stageActions">
           <button className="primaryAction" disabled={busy} onClick={onStart}>
             Use my reviewed taste
@@ -403,7 +409,10 @@ export function HandoffStage({
       <h1 ref={headingRef} tabIndex={-1}>
         Preference check complete.
       </h1>
-      <p className="stageLead">Your agent may continue with this choice.</p>
+      <p className="stageLead">
+        The same concierge can keep going with this choice.
+      </p>
+      <p className="stageSupport">Same agent. Different permission.</p>
       <div className="handoffBoundary" aria-label="Where TastePolicy ends">
         <div data-side="done">
           <span>TastePolicy</span>
@@ -412,9 +421,9 @@ export function HandoffStage({
         </div>
         <i aria-hidden="true" />
         <div data-side="next">
-          <span>Next, elsewhere</span>
+          <span>Next permission</span>
           <strong>
-            Booking, purchase or payment needs separate execution authorization
+            Booking, purchase or payment need separate execution authority.
           </strong>
           <small>Not granted here.</small>
         </div>
