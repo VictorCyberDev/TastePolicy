@@ -4,7 +4,8 @@
 
 .placePortrait.hasLicensedPhoto .portraitGlow,
 .placePortrait.hasLicensedPhoto .portraitHorizon,
-.placePortrait.hasLicensedPhoto .portraitFrame {
+.placePortrait.hasLicensedPhoto .portraitFrame,
+.placePortrait.hasLicensedPhoto .portraitMonogram {
   display: none;
 }
 

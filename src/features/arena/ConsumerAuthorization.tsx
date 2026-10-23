@@ -1,271 +1,294 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { QlooEntity } from "@/types/domain";
+import type { CulturalReceipt, QlooEntity } from "@/types/domain";
+import type { InteractiveAuthorization } from "@/lib/interactive/types";
+import type { StateEvaluation } from "@/lib/state/types";
 import type { useConsumerAuthorization } from "./useConsumerAuthorization";
 
 type Authorization = ReturnType<typeof useConsumerAuthorization>;
-export default function ConsumerAuthorization({
+export type Run = (
+  label: string,
+  operation: () => Promise<void>,
+  checking?: string,
+) => Promise<void>;
+
+/** The single clarification question, shown on its own ASK screen. */
+export function ClarifyPanel({
+  auth,
+  evaluation,
+  interaction,
+  busy,
+  run,
+}: {
+  auth: Authorization;
+  evaluation: StateEvaluation;
+  interaction: InteractiveAuthorization | null;
+  busy: boolean;
+  run: Run;
+}) {
+  const [amount, setAmount] = useState("");
+  const priceInput = useRef<HTMLInputElement>(null);
+  const plan = auth.plan;
+  useEffect(() => {
+    if (!busy && plan?.status === "ACTIONABLE") priceInput.current?.focus();
+  }, [busy, plan?.planId, plan?.status]);
+
+  if (plan?.status !== "ACTIONABLE" || !plan.factor) {
+    return (
+      <div className="clarifyPanel">
+        <p className="stageSupport">
+          {plan?.status === "STALE"
+            ? "Your saved rules changed. Refresh them before checking again."
+            : "Your concierge still needs an explicit answer. Nothing has been assumed."}
+        </p>
+        <button
+          className="primaryAction"
+          disabled={busy}
+          onClick={() =>
+            void run("Finding the next question…", () =>
+              auth.question(evaluation, interaction ?? undefined),
+            )
+          }
+        >
+          Show the question
+        </button>
+      </div>
+    );
+  }
+  const factor = plan.factor;
+  return (
+    <div className="clarifyPanel">
+      <h2 className="questionTitle">
+        {factor.answerSchema === "MONEY_OR_UNKNOWN"
+          ? "What does this place cost?"
+          : "Would this choice work for you in this situation?"}
+      </h2>
+      {factor.answerSchema === "MONEY_OR_UNKNOWN" ? (
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void run(
+              "Checking your answer…",
+              () =>
+                auth.answer({
+                  kind: "PRICE",
+                  amount: Number(amount),
+                  currency: factor.currency!,
+                }),
+              "Checking your answer against your rule…",
+            );
+          }}
+        >
+          <label>
+            Price in {factor.currency}
+            <input
+              ref={priceInput}
+              type="number"
+              inputMode="decimal"
+              required
+              min="0"
+              max="1000000"
+              step="any"
+              value={amount}
+              disabled={busy}
+              onChange={(event) => setAmount(event.target.value)}
+            />
+          </label>
+          <div className="stageActions">
+            <button
+              className="primaryAction"
+              disabled={busy || amount === ""}
+              type="submit"
+            >
+              Use this price
+            </button>
+            <button
+              type="button"
+              className="quietAction"
+              disabled={busy}
+              onClick={() =>
+                void run(
+                  "Keeping the missing price explicit…",
+                  () => auth.answer({ kind: "UNKNOWN" }),
+                  "Checking your answer against your rule…",
+                )
+              }
+            >
+              I don’t know
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="stageActions stacked">
+          {(
+            [
+              ["ACCEPTABLE", "Yes, for this choice"],
+              ["UNACCEPTABLE", "No, not this choice"],
+              ["STILL_UNSURE", "I’m still unsure"],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              className={value === "ACCEPTABLE" ? "primaryAction" : undefined}
+              disabled={busy}
+              onClick={() =>
+                void run(
+                  "Checking your explicit answer…",
+                  () => auth.answer({ kind: "DISPOSITION", value }),
+                  "Checking your answer against your rule…",
+                )
+              }
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="stageFine">
+        Your answer applies to this choice only. Saved preferences don’t change.
+      </p>
+    </div>
+  );
+}
+
+/** Demo-only rule setup. Collapsed; it never appears on a decision screen. */
+export function DemoBoundaries({
   auth,
   candidate,
   busy,
   run,
-  clearBaseline,
+  runPlain,
+  locked,
 }: {
   auth: Authorization;
   candidate: QlooEntity;
   busy: boolean;
-  run: (label: string, operation: () => Promise<void>) => Promise<void>;
-  clearBaseline: () => void;
+  run: Run;
+  runPlain: Run;
+  locked: boolean;
 }) {
-  const [amount, setAmount] = useState("");
-  const priceInput = useRef<HTMLInputElement>(null);
   const [rehearsal, setRehearsal] = useState(false);
-  const e =
-    auth.evaluation?.action.candidate.id === candidate.id
-      ? auth.evaluation
-      : null;
-  const interaction = e ? auth.interaction : null;
-  const outcome = interaction?.finalDecision.outcome ?? e?.decision.outcome;
-  const plan = e ? auth.plan : null;
-  const replacement =
-    auth.repair?.status === "REPAIR_AVAILABLE" &&
-    auth.repair.verification?.action.candidate.id === candidate.id;
-  useEffect(() => {
-    if (!busy && plan?.status === "ACTIONABLE") priceInput.current?.focus();
-  }, [busy, plan?.planId, plan?.status]);
   return (
-    <div
-      className="consumerAuthorization"
-      onPointerDown={(event) => event.stopPropagation()}
-      onPointerUp={(event) => event.stopPropagation()}
-    >
-      {outcome === "ASK" && (
-        <section
-          className="consumerQuestion"
-          aria-label="One question before continuing"
-        >
-          {plan?.status === "ACTIONABLE" && plan.factor ? (
-            <>
-              <h4>
-                {plan.factor.answerSchema === "MONEY_OR_UNKNOWN"
-                  ? "What does this place cost?"
-                  : "Would this choice work for you in this situation?"}
-              </h4>
-              <p>
-                Your answer applies only to this choice. It does not change your
-                saved preferences.
-              </p>
-              {plan.factor.answerSchema === "MONEY_OR_UNKNOWN" ? (
-                <form
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    void run("Checking your answer…", () =>
-                      auth.answer({
-                        kind: "PRICE",
-                        amount: Number(amount),
-                        currency: plan.factor!.currency!,
-                      }),
-                    );
-                  }}
-                >
-                  <label>
-                    Price in {plan.factor.currency}
-                    <input
-                      ref={priceInput}
-                      type="number"
-                      required
-                      min="0"
-                      max="1000000"
-                      step="any"
-                      value={amount}
-                      disabled={busy}
-                      onChange={(event) => setAmount(event.target.value)}
-                    />
-                  </label>
-                  <div className="consumerButtons">
-                    <button
-                      className="primaryAction"
-                      disabled={busy || amount === ""}
-                      type="submit"
-                    >
-                      Use this price
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() =>
-                        void run("Keeping the missing price explicit…", () =>
-                          auth.answer({ kind: "UNKNOWN" }),
-                        )
-                      }
-                    >
-                      I don’t know
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className="consumerButtons">
-                  {(
-                    [
-                      ["ACCEPTABLE", "Yes, for this choice"],
-                      ["UNACCEPTABLE", "No, not this choice"],
-                      ["STILL_UNSURE", "I’m still unsure"],
-                    ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      disabled={busy}
-                      onClick={() =>
-                        void run("Checking your explicit answer…", () =>
-                          auth.answer({ kind: "DISPOSITION", value }),
-                        )
-                      }
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <p>
-                {plan?.status === "STALE"
-                  ? "Your saved rules changed. Refresh them before checking again."
-                  : "Your concierge still needs an explicit answer. No answer has been assumed."}
-              </p>
-              <button
-                disabled={busy}
-                onClick={() =>
-                  void run("Finding the next question…", () =>
-                    auth.question(e!, interaction ?? undefined),
-                  )
-                }
-              >
-                Show the question
-              </button>
-            </>
-          )}
-        </section>
-      )}
-      {e?.decision.outcome === "REJECT" && !auth.repair && (
+    <details className="demoBoundaries">
+      <summary>Try a boundary</summary>
+      <p className="stageFine">
+        Saves a rule in this temporary demo profile. A different saved profile
+        is never overwritten.
+      </p>
+      <div className="stageActions stacked">
         <button
-          className="repairAction"
-          disabled={busy}
-          onClick={() =>
+          disabled={busy || locked}
+          onClick={() => {
+            auth.clearEvaluation();
             void run(
-              "Looking for one alternative that keeps your rule…",
-              auth.findAlternative,
-            )
-          }
+              "Saving your $100 budget and checking this choice…",
+              () => auth.budget(candidate),
+              "Saving your rule, then checking it…",
+            );
+          }}
         >
-          Find another that respects this
+          I have a $100 budget
         </button>
-      )}
-      {auth.repair && (
-        <section className="consumerRepair" aria-label="Bounded alternative">
-          <p>
-            <strong>
-              {auth.repair.status === "REPAIR_AVAILABLE"
-                ? "One alternative found"
-                : "No verified alternative yet"}
-            </strong>
-          </p>
-          <p>
-            Original option:{" "}
-            {auth.repair.originalEvaluation.action.candidate.name} — Not this
-            one (REJECT).
-          </p>
-          {replacement ? (
-            <p>
-              {e
-                ? "This alternative has its own new authorization. Its actual result is shown above."
-                : "This alternative keeps the same rules. It is not authorized yet: check this alternative before your agent may recommend it."}
-            </p>
-          ) : auth.repair.status === "NO_VERIFIABLE_REPAIR" ? (
-            <p>
-              Your rules remain in place. I cannot verify an alternative’s own
-              price while a budget applies. No price or replacement was
-              invented.
-            </p>
-          ) : auth.repair.status === "STALE" ? (
-            <p>Your saved rules changed. Refresh and check again.</p>
-          ) : (
-            <p>
-              No suitable alternative was verified within this single search.
-              Your rule has not been weakened, and no automatic retry will run.
-            </p>
-          )}
-          <p>
-            Any saved exclusion and other rules are kept. Finding or checking an
-            alternative does not change them.
-          </p>
-        </section>
-      )}
-      <details className="consumerBoundaries">
-        <summary>Try a boundary</summary>
-        <p>
-          Save a rule for your five reviewed preferences in this temporary demo
-          profile. A different saved profile will never be overwritten.
-        </p>
-        <div className="consumerButtons">
-          <button
-            disabled={busy || replacement}
-            onClick={() => {
-              clearBaseline();
-              void run(
-                "Saving your $100 budget and checking this choice…",
-                () => auth.budget(candidate),
-              );
-            }}
-          >
-            I have a $100 budget
-          </button>
-          <button
-            disabled={busy || replacement}
-            onClick={() => {
-              clearBaseline();
-              void run("Saving your explicit exclusion…", () =>
-                auth.exclude(candidate),
-              );
-            }}
-          >
-            Never choose this place for me
-          </button>
-          <button
-            disabled={busy}
-            onClick={() => setRehearsal((value) => !value)}
-          >
-            What if evidence is missing?
-          </button>
-        </div>
+        <button
+          disabled={busy || locked}
+          onClick={() => {
+            auth.clearEvaluation();
+            void run(
+              "Saving your explicit exclusion…",
+              () => auth.exclude(candidate),
+              "Saving your rule, then checking it…",
+            );
+          }}
+        >
+          Never choose this place for me
+        </button>
+        <button disabled={busy} onClick={() => setRehearsal((value) => !value)}>
+          What if evidence is missing?
+        </button>
         {auth.state && (
           <button
             disabled={busy}
             onClick={() => {
-              clearBaseline();
-              void run("Reading your saved rules…", auth.refresh);
+              auth.clearEvaluation();
+              void runPlain("Reading your saved rules…", auth.refresh);
             }}
           >
             Refresh my saved rules
           </button>
         )}
-        {rehearsal && (
-          <section
-            className="humanDecision consumerRehearsal"
-            data-decision="UNAVAILABLE"
-            aria-label="Demo rehearsal"
-            aria-live="polite"
-          >
-            <p>Demo rehearsal · No live outage is claimed</p>
-            <h4>I don’t know enough yet</h4>
-            <p>Missing taste evidence is not the same as disliking this.</p>
-            <p>No Qloo call · No authorization · No fabricated receipt</p>
-            <span className="machineOutcome">Rehearsal only: UNAVAILABLE</span>
-          </section>
-        )}
-      </details>
+      </div>
+      {rehearsal && (
+        <section
+          className="humanDecision consumerRehearsal"
+          data-decision="UNAVAILABLE"
+          aria-label="Demo rehearsal"
+          aria-live="polite"
+        >
+          <p>Demo rehearsal · No live outage is claimed</p>
+          <h2>I don’t know enough yet</h2>
+          <p>Missing taste evidence is not the same as disliking this.</p>
+          <p>No Qloo call · No authorization · No fabricated receipt</p>
+          <span className="machineOutcome">Rehearsal only: UNAVAILABLE</span>
+        </section>
+      )}
+    </details>
+  );
+}
+
+/** Technical evidence stays behind progressive disclosure. */
+export function EvidencePanel({
+  auth,
+  evaluation,
+  interaction,
+  cultural,
+}: {
+  auth: Authorization;
+  evaluation: StateEvaluation | null;
+  interaction: InteractiveAuthorization | null;
+  cultural: CulturalReceipt | null;
+}) {
+  return (
+    <details className="stageEvidence">
+      <summary>Why this?</summary>
+      {cultural ? (
+        <div className="whyPanel">
+          <p>
+            <strong>
+              {interaction ? "CAPTURED QLOO EVIDENCE" : "LIVE QLOO"}
+            </strong>{" "}
+            candidate-specific cultural evidence
+            {interaction
+              ? " — reused with your explicit answer; no new Qloo request."
+              : "."}
+          </p>
+          <p>
+            Affinity {cultural.alignmentScore.toFixed(4)} ·{" "}
+            {cultural.qlooEvidence.scale}. This is not confidence or preference
+            probability.
+          </p>
+          {cultural.explainability.status !== "unavailable" && (
+            <ul>
+              {cultural.explainability.contributions.slice(0, 3).map((item) => (
+                <li key={item.signalId}>
+                  {cultural.inputSignals.find(
+                    (signal) => signal.id === item.signalId,
+                  )?.name ?? "Reviewed signal"}
+                  : {item.score.toFixed(3)}
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="technicalNote">
+            Provider: Qloo · {cultural.qlooEvidence.provenance.endpoint} ·
+            receipt {cultural.receiptId}
+          </p>
+        </div>
+      ) : (
+        <p className="stageFine">
+          No candidate-specific Qloo evidence is held for this screen.
+        </p>
+      )}
       {auth.state && (
         <details className="consumerDeveloper">
           <summary>Developer details</summary>
@@ -284,9 +307,9 @@ export default function ConsumerAuthorization({
           <pre>
             {JSON.stringify(
               {
-                evaluation: e,
+                evaluation,
                 interaction,
-                plan,
+                plan: evaluation ? auth.plan : null,
                 repair: auth.repair,
                 savedRules: auth.state.entries.filter(
                   (entry) => entry.kind !== "EXPLICIT_LIKE",
@@ -298,6 +321,6 @@ export default function ConsumerAuthorization({
           </pre>
         </details>
       )}
-    </div>
+    </details>
   );
 }

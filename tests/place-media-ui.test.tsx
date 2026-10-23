@@ -29,7 +29,7 @@ function mount() {
     <>
       <div className="placeCard">
         <div className="placePortrait">
-          <span>Visual mood artwork — presentation only.</span>
+          <span>Taste portrait · presentation only</span>
         </div>
         <div className="placeContent">
           <h3>Hotel Cycle</h3>
@@ -60,9 +60,7 @@ it("shows credited context only after successful load and restores mood on image
   fireEvent.error(img);
   await waitFor(() => expect(screen.queryByRole("img")).toBeNull());
   expect(document.querySelector(".hasLicensedPhoto")).toBeNull();
-  expect(
-    screen.getByText("Visual mood artwork — presentation only."),
-  ).toBeVisible();
+  expect(screen.getByText("Taste portrait · presentation only")).toBeVisible();
 });
 it("keeps mood artwork on no-result media", async () => {
   vi.stubGlobal(
@@ -72,9 +70,7 @@ it("keeps mood artwork on no-result media", async () => {
   mount();
   await waitFor(() => expect(fetch).toHaveBeenCalled());
   expect(screen.queryByRole("img")).toBeNull();
-  expect(
-    screen.getByText("Visual mood artwork — presentation only."),
-  ).toBeVisible();
+  expect(screen.getByText("Taste portrait · presentation only")).toBeVisible();
 });
 it("removes the old photo immediately when the candidate changes", async () => {
   const fetcher = vi

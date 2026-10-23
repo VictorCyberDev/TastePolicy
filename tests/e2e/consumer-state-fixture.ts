@@ -25,6 +25,7 @@ export async function mockConsumerState(
     unavailable?: boolean;
     stale?: boolean;
     mismatched?: boolean;
+    evaluateDelayMs?: number;
   } = {},
 ) {
   const state: StateVersion = {
@@ -138,6 +139,10 @@ export async function mockConsumerState(
     }
     if (operation === "evaluate") {
       evaluationInputs.push(body);
+      if (options.evaluateDelayMs)
+        await new Promise((resolve) =>
+          setTimeout(resolve, options.evaluateDelayMs),
+        );
       if (options.stale || body.expectedStateVersion !== state.stateVersion)
         return route.fulfill({
           status: 409,

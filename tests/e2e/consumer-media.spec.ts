@@ -103,8 +103,12 @@ test("licensed context, keyboard controls and photo-independent evaluation on mo
     page.getByRole("link", { name: /Synthetic photographer/ }),
   ).toBeVisible();
   await expect(page.getByText(/exact property not verified/)).toBeVisible();
+  // Truthful provenance: licensed context is labelled presentation only.
+  await expect(
+    page.getByText(/presentation only, not Qloo evidence/),
+  ).toBeVisible();
   const check = page.getByRole("button", {
-    name: "Check this choice with TastePolicy",
+    name: /^Looks good/,
   });
   await check.focus();
   await page.keyboard.press("Enter");
@@ -117,7 +121,9 @@ test("licensed context, keyboard controls and photo-independent evaluation on mo
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.getByRole("button", { name: "Show another place" }).click();
+  // Navigation only: step back from the decision, then to the next candidate.
+  await page.getByRole("button", { name: "← Back to the choice" }).click();
+  await page.getByRole("button", { name: /Another one/ }).click();
   await expect(page.locator(".placeContent h3")).toContainText("place 1");
   await page.screenshot({
     path: ".tastebench/wgb-photo-review/consumer-mobile.png",
@@ -130,13 +136,30 @@ for (const mode of ["none", "broken"] as const)
     page,
   }) => {
     const inputs = await prepare(page, mode);
-    await expect(
-      page.getByText("Visual mood artwork — presentation only."),
-    ).toBeVisible();
-    await expect(page.locator(".hasLicensedPhoto")).toHaveCount(0);
-    await page
-      .getByRole("button", { name: "Check this choice with TastePolicy" })
-      .click();
+    // Every candidate keeps a meaningful local visual: never an empty card.
+    for (const name of ["place 0", "place 1"]) {
+      await expect(page.locator(".placeContent h3")).toContainText(name);
+      await expect(
+        page.getByText("Taste portrait · presentation only"),
+      ).toBeVisible();
+      await expect(page.locator(".portraitMonogram")).toHaveText("S");
+      const portrait = await page.locator(".placePortrait").boundingBox();
+      expect(portrait!.height).toBeGreaterThan(300);
+      expect(
+        await page.evaluate(
+          () =>
+            getComputedStyle(document.querySelector(".placePortrait")!)
+              .backgroundImage,
+        ),
+      ).toMatch(/gradient/);
+      await expect(page.locator(".hasLicensedPhoto")).toHaveCount(0);
+      await expect(page.locator(".licensedPlacePhoto")).toHaveCount(0);
+      if (name === "place 0")
+        await page.getByRole("button", { name: /Another one/ }).click();
+    }
+    await page.getByRole("button", { name: /Another one/ }).click();
+    await expect(page.locator(".placeContent h3")).toContainText("place 0");
+    await page.getByRole("button", { name: /^Looks good/ }).click();
     await expect(page.getByText("Internal policy: ALLOW")).toBeVisible();
     expect(JSON.stringify(inputs)).not.toMatch(
       /wikimedia|presentationOnly|licenseUrl/,
