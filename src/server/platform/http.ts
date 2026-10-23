@@ -6,6 +6,7 @@ import {
   platformFail,
   type Principal,
 } from "@/lib/platform/types";
+import { errorSpec } from "@/lib/platform/errors";
 import { StateFailure } from "@/lib/state/types";
 import { SubjectFailure } from "@/lib/subjects/types";
 import { BodyReadFailure, readJsonBody } from "@/server/taste/read-body";
@@ -44,26 +45,7 @@ export function safePlatformError(e: unknown, requestId: string) {
   return Response.json(
     { status: "error", code, requestId },
     {
-      status:
-        code === "NOT_CONFIGURED" || code === "PROVIDER_UNAVAILABLE"
-          ? 503
-          : code === "AUTH_REQUIRED"
-            ? 401
-            : code === "BODY_TOO_LARGE"
-              ? 413
-              : code === "BODY_READ_TIMEOUT"
-                ? 408
-                : code.endsWith("CONFLICT")
-                  ? 409
-                  : code === "INVALID_INPUT"
-                    ? 400
-                    : code === "RATE_LIMITED"
-                      ? 429
-                      : code === "PASSPORT_NOT_FOUND"
-                        ? 404
-                        : code === "INTERNAL_ERROR"
-                          ? 500
-                          : 403,
+      status: errorSpec(code).http,
       headers: { "Cache-Control": "no-store", "X-Request-ID": requestId },
     },
   );
