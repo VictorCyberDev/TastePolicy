@@ -25,7 +25,7 @@
     "db:migrate:leases": "node scripts/state-db.mjs migrate-leases",
     "db:migrate:attestations": "node scripts/state-db.mjs migrate-attestations",
     "conformance:attest": "node --experimental-transform-types --import ./scripts/source-imports.mjs ./scripts/conformance/run-attest.mjs",
-    "conformance:attest:generate": "node --experimental-transform-types --import ./scripts/source-imports.mjs ./scripts/conformance/generate-attest-vectors.ts",
+    "conformance:attest:generate": "node --experimental-transform-types --import ./scripts/source-imports.mjs ./scripts/conformance/generate-attest-vectors.ts && prettier --write conformance",
     "mcp:platform": "node --experimental-transform-types scripts/platform-mcp.mjs",
     "db:purge:platform": "node scripts/state-db.mjs purge-platform",
     "db:purge": "node scripts/state-db.mjs purge",

@@ -10,7 +10,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> },
 ) {
   const requestId = crypto.randomUUID(),
-    release = admitPublic(request);
+    release = admitPublic(request, "status");
   if (!release)
     return Response.json(
       { status: "error", code: "RATE_LIMITED", requestId },
@@ -26,7 +26,7 @@ export async function GET(
     );
     if (!token)
       return Response.json(
-        { status: "error", code: "PASSPORT_NOT_FOUND", requestId },
+        { status: "error", code: "STATUS_LIST_NOT_FOUND", requestId },
         { status: 404 },
       );
     return new Response(token, {

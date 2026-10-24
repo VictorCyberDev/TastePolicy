@@ -117,7 +117,6 @@ const add = (
   });
 const full = (await issueAttestation(base(okList, 5), issuer.signer)).compact;
 const parts = parseCompact(full);
-const swap = (s: string, from: string, to: string) => s.replace(from, to);
 
 add("V01-valid-full", "All claims disclosed", full, { valid: true });
 add(
@@ -422,6 +421,27 @@ add(
   "Signed by another key that claims the trusted kid",
   (await issueAttestation(base(okList, 11), sameKid)).compact,
   { valid: false, reason: "SIGNATURE_INVALID" },
+);
+const tooLong = await issueSdJwt({
+  signer: issuer.signer,
+  typ: "dc+sd-jwt",
+  visible: {
+    iss: ISS,
+    aud: AUD,
+    iat: NOW,
+    exp: NOW + 7200,
+    jti: "too-long-0001",
+    vct: VCT,
+    authority: "CULTURAL_ONLY",
+    status: { status_list: { idx: 12, uri: okList } },
+  },
+  disclosable: { decision: "ALLOW" },
+});
+add(
+  "N31-lifetime-too-long",
+  "exp - iat exceeds the profile maximum of one hour",
+  tooLong.compact,
+  { valid: false, reason: "LIFETIME_TOO_LONG" },
 );
 add("N30-malformed", "Not an SD-JWT", "this-is-not-a-token", {
   valid: false,

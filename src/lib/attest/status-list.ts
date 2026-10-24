@@ -14,12 +14,14 @@ export function emptyList(size = LIST_SIZE, bits = 2): Uint8Array {
   if (![1, 2, 4, 8].includes(bits) || size <= 0) throw Error("bad list");
   return new Uint8Array(Math.ceil((size * bits) / 8));
 }
+const inRange = (list: Uint8Array, idx: number, bits: number) =>
+  Number.isSafeInteger(idx) &&
+  idx >= 0 &&
+  idx < Math.floor((list.length * 8) / bits);
 export function getStatus(list: Uint8Array, idx: number, bits: number) {
-  const bit = idx * bits,
-    byte = bit >> 3,
-    shift = bit & 7;
-  if (!Number.isInteger(idx) || idx < 0 || byte >= list.length) return null;
-  return (list[byte] >> shift) & ((1 << bits) - 1);
+  if (!inRange(list, idx, bits)) return null;
+  const bit = idx * bits; // safe integers only: no 32-bit bitwise coercion
+  return (list[Math.floor(bit / 8)] >> (bit % 8)) & ((1 << bits) - 1);
 }
 export function setStatus(
   list: Uint8Array,
@@ -27,13 +29,12 @@ export function setStatus(
   bits: number,
   value: number,
 ) {
-  const bit = idx * bits,
-    byte = bit >> 3,
-    shift = bit & 7,
-    mask = ((1 << bits) - 1) << shift;
-  if (!Number.isInteger(idx) || idx < 0 || byte >= list.length)
-    throw Error("index out of range");
+  if (!inRange(list, idx, bits)) throw Error("index out of range");
   if (value < 0 || value >= 1 << bits) throw Error("status does not fit");
+  const bit = idx * bits,
+    byte = Math.floor(bit / 8),
+    shift = bit % 8,
+    mask = ((1 << bits) - 1) << shift;
   list[byte] = (list[byte] & ~mask) | (value << shift);
 }
 export const encodeList = (list: Uint8Array) =>

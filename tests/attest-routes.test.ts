@@ -172,20 +172,48 @@ it("the status route serves the signed list publicly and cacheably; unknown list
     (await GET(new Request(`${ORIGIN}/api/attest/status/0`), ctx("0"))).status,
   ).toBe(400);
 });
-it("public admission: per-client window and concurrency are bounded and independent of the credential budget", () => {
-  const req = (ip: string) =>
-    new Request(ORIGIN, { headers: { "x-forwarded-for": ip } });
+it("public admission: bounded per client, per pool, with a hard cap and platform-set client identity", () => {
+  const req = (ip: string, h = "x-real-ip") =>
+    new Request(ORIGIN, { headers: { [h]: ip } });
   const t = 10_000_000,
     releases: (() => void)[] = [];
   for (let i = 0; i < 7; i++)
-    releases.push(admitPublic(req(`192.0.2.${i}`), t)!);
+    releases.push(admitPublic(req(`192.0.2.${i}`), "verify", t)!);
   expect(releases.every(Boolean)).toBe(true);
-  const eighth = admitPublic(req("192.0.2.200"), t)!;
+  const eighth = admitPublic(req("192.0.2.200"), "verify", t)!;
   expect(eighth).toBeTruthy();
-  expect(admitPublic(req("192.0.2.201"), t)).toBeNull(); // concurrency cap of 8
+  expect(admitPublic(req("192.0.2.201"), "verify", t)).toBeNull(); // verify pool: 8 at once
+  expect(admitPublic(req("192.0.2.201"), "status", t)).toBeTruthy(); // status has its own pool
   eighth();
   releases.forEach((r) => r());
-  for (let i = 0; i < 60; i++) admitPublic(req("192.0.2.77"), t + i)!();
-  expect(admitPublic(req("192.0.2.77"), t + 61)).toBeNull(); // 60 per minute
-  expect(admitPublic(req("192.0.2.77"), t + 61_000)).toBeTruthy();
+  for (let i = 0; i < 60; i++)
+    admitPublic(req("192.0.2.77"), "verify", t + i)!();
+  expect(admitPublic(req("192.0.2.77"), "verify", t + 61)).toBeNull(); // 60 per minute
+  expect(admitPublic(req("192.0.2.77"), "verify", t + 61_000)).toBeTruthy();
+  // a client-chosen first X-Forwarded-For entry does not choose the bucket
+  const spoof = (n: number) =>
+    new Request(ORIGIN, {
+      headers: { "x-forwarded-for": `1.1.1.${n}, 198.51.100.5` },
+    });
+  for (let i = 0; i < 60; i++)
+    admitPublic(spoof(i), "verify", t + 200_000 + i)!();
+  expect(admitPublic(spoof(99), "verify", t + 200_100)).toBeNull();
+});
+it("the tracking map is capped even under a flood of distinct clients", () => {
+  const t = 20_000_000;
+  for (let i = 0; i < 6000; i++)
+    admitPublic(
+      new Request(ORIGIN, {
+        headers: { "x-real-ip": `10.${i >> 8}.${i & 255}.1` },
+      }),
+      "status",
+      t + i,
+    )?.();
+  // the earliest clients were evicted: they get a fresh window rather than memory growth
+  const fresh = admitPublic(
+    new Request(ORIGIN, { headers: { "x-real-ip": "10.0.0.1" } }),
+    "status",
+    t + 7000,
+  );
+  expect(fresh).toBeTruthy();
 });

@@ -8,9 +8,9 @@ The issuer identifier is the pinned public origin (`TASTEPOLICY_PUBLIC_ORIGIN`).
 
 ## Status
 
-One Token Status List per issuer shard (`bits` 2, size 131,072 entries) served at `/api/attest/status/{id}` as `application/statuslist+jwt`, `ttl` 60 s. An index is chosen uniformly at random among free entries so the index leaks nothing about order or owner, and 131,072 entries give the bitstring-list herd-privacy floor once the list is reasonably full (a nearly empty list gives little herd privacy; documented, not hidden). Status mapping: ACTIVE→VALID (0), SUSPENDED→SUSPENDED (2), ASK_PENDING and all terminal states→INVALID (1).
+One Token Status List per issuer shard (`bits` 2, size 131,072 entries) served at `/api/attest/status/{id}` as `application/statuslist+jwt`, `ttl` 60 s. An index is chosen uniformly at random among free entries so the index leaks nothing about order or owner, and 131,072 entries give the bitstring-list herd-privacy floor once the list is reasonably full (a nearly empty list gives little herd privacy; documented, not hidden). **Each attestation has its own entry** (the status index is in an always-visible claim, so a per-lease index would let relying parties link proofs of one lease). Status mapping: ACTIVE→VALID (0), SUSPENDED→SUSPENDED (2), ASK_PENDING and all terminal states→INVALID (1).
 
-Propagation is eager. The lease service updates the entry in the same transaction as every lease event, and settles all live leases of a Passport inside the same transaction as: policy publish, override end or revoke, grant revoke, Passport state update and deletion. A lease whose drift would only be noticed lazily is therefore already INVALID/SUSPENDED in the list when the triggering change commits. Expiry is carried by the attestation's own `exp`. The remaining lag is the list's `ttl` plus verifier caching, stated in `ttl`; a verifier that needs zero lag uses the authoritative lease verification.
+Propagation is eager. The lease service updates the entry in the same transaction as every lease event, and settles all live leases of a Passport inside the same transaction as: policy publish, override end or revoke, grant revoke, Passport state update and deletion. A lease whose drift would only be noticed lazily is therefore already INVALID/SUSPENDED in the list when the triggering change commits. Time-based endings are noticed lazily, so the issuer clamps `exp` to the earliest of lease expiry, next checkpoint, Passport expiry, grant expiry and 15 minutes; a skipped check-in therefore cannot leave a proof valid longer than the lease was. Status lists carry `exp = iat + 2·ttl` and verifiers reject a list older than `ttl` plus skew. The remaining lag is the list's `ttl` plus verifier caching, stated in `ttl`; a verifier that needs zero lag uses the authoritative lease verification.
 
 ## Verifiers
 
@@ -20,7 +20,7 @@ The hosted verifier `POST /api/attest/verify` does the same for relying parties 
 
 ## Replay
 
-`jti` is single-use per audience in a database table (`attestation_replays`, unique `(jti, audience)`), so serverless instances share it. With key binding the verifier's `nonce` must match the key-binding JWT. A presentation whose `jti` was already accepted for that audience is rejected as replay. Verification that does not consume (`dryRun`) is available for diagnostics and is never used to gate an action.
+`jti` is single-use per (issuer, audience) in a database table (`attestation_replays`, key `(issuer|jti, audience)`); verifiers cap `exp - iat` (default one hour) so retention always outlasts a proof, so serverless instances share it. With key binding the verifier's `nonce` must match the key-binding JWT. A presentation whose `jti` was already accepted for that audience is rejected as replay. Verification that does not consume (`dryRun`) is available for diagnostics and is never used to gate an action.
 
 ## Federation
 
@@ -28,7 +28,7 @@ No federation protocol is adopted. The honest minimum is an explicit **trust lis
 
 ## Cross-agent handoff
 
-Authority is not transferable by copying a token. A holder may ask for a **handoff attestation**: the lease actor requests an attestation for the same lease with `holder_key` (the receiving agent's public JWK) and `delegate_agent_id`. The result is bound to that key (`cnf`), names the receiving agent, discloses the delegating agent as `act`, is no broader than the lease (`permitted` ⊆ lease, `exp` ≤ lease expiry), shares the lease's status entry, and **cannot be handed on**: only the lease actor can request issuance, and handoff attestations do not authorise issuance. If the lease is suspended or revoked, every attestation derived from it fails status checks.
+Authority is not transferable by copying a token. A holder may ask for a **handoff attestation**: the lease actor requests an attestation for the same lease with `holder_key` (the receiving agent's public JWK) and `delegate_agent_id`. The result is bound to that key (`cnf`), keeps `agent_id` as the lease's agent and names the receiver in `delegate_agent_id` (a label bound to the key, not an identity assertion), is no broader than the lease (`permitted` ⊆ lease, `exp` ≤ lease expiry), follows the lease's status, and **cannot be handed on**: only the lease actor can request issuance, and handoff attestations do not authorise issuance. If the lease is suspended or revoked, every attestation derived from it fails status checks.
 
 ## Conformance
 

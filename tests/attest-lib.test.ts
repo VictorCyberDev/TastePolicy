@@ -29,7 +29,11 @@ import {
 import { issueAttestation, signStatusList, VCT } from "@/lib/attest/issue";
 import { present, parseCompact, type Signer } from "@/lib/attest/sdjwt";
 import { verifyPresentation, type VerifierConfig } from "@/lib/attest/verify";
-import { privateAddress, safeFetchText } from "@/lib/attest/safe-fetch";
+import {
+  guardedLookup,
+  privateAddress,
+  safeFetchText,
+} from "@/lib/attest/safe-fetch";
 
 const ISS = "https://issuer.test",
   AUD = "https://merchant.test",
@@ -524,4 +528,90 @@ it("interop: the independent @sd-jwt/sd-jwt-vc implementation verifies what we i
   const r = await verifyPresentation(issued, await cfg());
   expect(r).toMatchObject({ valid: true });
   expect(r.claims).toMatchObject({ decision: "ALLOW", candidate_id: "c" });
+});
+
+it("IPv6 forms that embed or tunnel IPv4 are blocked in every spelling", () => {
+  for (const a of [
+    "::ffff:127.0.0.1",
+    "::ffff:7f00:1",
+    "::7f00:1",
+    "::127.0.0.1",
+    "64:ff9b::7f00:1",
+    "64:ff9b::a00:1",
+    "2002:7f00:1::",
+    "2001:0:4136:e378:8000:63bf:3fff:fdd2",
+    "fc00::1",
+    "fd12::1",
+    "fe80::1",
+    "ff02::1",
+    "100::1",
+    "2001:db8::1",
+    "::",
+    "[::1]".replace(/\[|\]/g, ""),
+  ])
+    expect(privateAddress(a), a).toBe(true);
+  for (const a of [
+    "2606:4700:4700::1111",
+    "2a00:1450:4001:81b::200e",
+    "93.184.216.34",
+  ])
+    expect(privateAddress(a), a).toBe(false);
+  expect(privateAddress("not-an-ip")).toBe(true);
+});
+it("the connection-time resolver honours all:true and refuses any private answer", async () => {
+  const run = (host: string, all: boolean) =>
+    new Promise<{ err: Error | null; res: unknown }>((resolve) =>
+      guardedLookup(host, { all }, (err, res) => resolve({ err, res })),
+    );
+  const local = await run("localhost", true);
+  expect(local.err).toMatchObject({ reason: "ADDRESS_NOT_ALLOWED" });
+  expect(local.res).toEqual([]);
+  expect((await run("localhost", false)).err).toMatchObject({
+    reason: "ADDRESS_NOT_ALLOWED",
+  });
+  expect((await run("nonexistent.invalid", true)).err).toBeTruthy();
+});
+it("status-list index math has no 32-bit wraparound", () => {
+  const list = emptyList(1024, 2);
+  setStatus(list, 5, 2, STATUS.INVALID);
+  for (const idx of [
+    2 ** 31,
+    2 ** 32 + 5,
+    2 ** 53,
+    -1,
+    1024,
+    1.5,
+    NaN,
+    Infinity,
+  ]) {
+    expect(getStatus(list, idx, 2), String(idx)).toBeNull();
+    expect(() => setStatus(list, idx, 2, 1)).toThrow();
+  }
+  expect(getStatus(list, 5, 2)).toBe(STATUS.INVALID);
+  expect(getStatus(list, 1023, 2)).toBe(STATUS.VALID);
+});
+it("rejects over-long lifetimes, stale status lists and keys the replay store would not outlive", async () => {
+  const long = await issueAttestation(
+    facts({ leaseExpiresAt: NOW + 86400 }),
+    issuerSigner,
+  );
+  expect(long.exp - NOW).toBe(900); // issuer clamps
+  const forged = await issue({}); // normal attestation, but verifier policy is stricter
+  expect(await reasons(forged, { maxLifetimeSeconds: 100 })).toEqual([
+    "LIFETIME_TOO_LONG",
+  ]);
+  const stale = await listToken({}, issuerSigner, URI, {
+    now: NOW - 200,
+    ttlSeconds: 60,
+  });
+  expect(await reasons(forged, { fetchStatus: async () => stale })).toEqual([
+    "STATUS_LIST_INVALID",
+  ]);
+});
+it("replay keys include the issuer, so one issuer cannot burn another's jti", async () => {
+  const seen: string[] = [],
+    consumeJti = async (j: string, a: string) => (seen.push(`${j}@${a}`), true);
+  const p = await issue();
+  await verifyPresentation(p, await cfg({ consumeJti }));
+  expect(seen[0]).toMatch(new RegExp(`^${ISS.replace(/\./g, "\\.")}\\|`));
 });

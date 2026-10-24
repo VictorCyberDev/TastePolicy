@@ -15,12 +15,15 @@ CREATE TABLE tastepolicy.attestation_status_used (
  idx integer NOT NULL CHECK(idx>=0),
  PRIMARY KEY(list_id,idx)
 );
+-- One entry per attestation, so two relying parties cannot link proofs of one lease by index.
 CREATE TABLE tastepolicy.lease_status_entries (
- lease_ref text PRIMARY KEY REFERENCES tastepolicy.platform_leases(lease_ref) ON DELETE CASCADE,
  list_id integer NOT NULL,
  idx integer NOT NULL,
+ lease_ref text NOT NULL REFERENCES tastepolicy.platform_leases(lease_ref) ON DELETE CASCADE,
+ PRIMARY KEY(list_id,idx),
  FOREIGN KEY(list_id,idx) REFERENCES tastepolicy.attestation_status_used(list_id,idx)
 );
+CREATE INDEX lease_status_entries_lease ON tastepolicy.lease_status_entries(lease_ref);
 CREATE TABLE tastepolicy.attestations (
  jti text PRIMARY KEY CHECK(length(jti) BETWEEN 8 AND 64),
  lease_ref text NOT NULL REFERENCES tastepolicy.platform_leases(lease_ref) ON DELETE CASCADE,
@@ -50,15 +53,13 @@ END $$;
 CREATE FUNCTION tastepolicy.lease_status_value(p_status text) RETURNS integer LANGUAGE sql IMMUTABLE AS $$
  SELECT CASE p_status WHEN 'ACTIVE' THEN 0 WHEN 'SUSPENDED' THEN 2 ELSE 1 END $$;
 CREATE FUNCTION tastepolicy.sync_lease_status() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE e record;
+DECLARE e record; v integer;
 BEGIN
- IF TG_OP='DELETE' THEN
-  SELECT * INTO e FROM tastepolicy.lease_status_entries WHERE lease_ref=OLD.lease_ref;
-  IF FOUND THEN PERFORM tastepolicy.set_status(e.list_id,e.idx,1); END IF;
-  RETURN OLD;
- END IF;
- SELECT * INTO e FROM tastepolicy.lease_status_entries WHERE lease_ref=NEW.lease_ref;
- IF FOUND THEN PERFORM tastepolicy.set_status(e.list_id,e.idx,tastepolicy.lease_status_value(NEW.status)); END IF;
+ IF TG_OP='DELETE' THEN v := 1; ELSE v := tastepolicy.lease_status_value(NEW.status); END IF;
+ FOR e IN SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=OLD.lease_ref ORDER BY list_id,idx LOOP
+  PERFORM tastepolicy.set_status(e.list_id,e.idx,v);
+ END LOOP;
+ IF TG_OP='DELETE' THEN RETURN OLD; END IF;
  RETURN NEW;
 END $$;
 CREATE TRIGGER lease_status_sync AFTER UPDATE OF status ON tastepolicy.platform_leases FOR EACH ROW EXECUTE FUNCTION tastepolicy.sync_lease_status();

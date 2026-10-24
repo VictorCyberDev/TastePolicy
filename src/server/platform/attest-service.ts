@@ -11,6 +11,10 @@ import { verifyPresentation, type VerifyResult } from "@/lib/attest/verify";
 import { safeFetchText } from "@/lib/attest/safe-fetch";
 import type { Repositories, StateStore } from "@/server/state/repositories";
 
+const statusMemo = new Map<
+  string,
+  { token: string; at: number; version: string }
+>();
 const AUD = /^https:\/\/[a-z0-9.-]{1,190}(:\d{1,5})?$/;
 const AGENT = /^[a-zA-Z0-9_-]{1,64}$/;
 const toSeconds = (iso: string) => Math.floor(Date.parse(iso) / 1000);
@@ -55,21 +59,16 @@ export class AttestationService extends LeaseService {
         "d" in k ||
         "p" in k ||
         "k" in k ||
-        !(
-          (k.kty === "EC" && k.crv === "P-256") ||
-          (k.kty === "OKP" && k.crv === "Ed25519")
-        )
+        !(k.kty === "EC" && k.crv === "P-256")
       )
         fail("INVALID_INPUT");
+      // P-256 only: the point is validated on-curve by the crypto library.
       try {
-        await importJWK(k, k.kty === "EC" ? "ES256" : "Ed25519");
+        await importJWK(k, "ES256");
       } catch {
         fail("INVALID_INPUT");
       }
-      holderKey =
-        k.kty === "EC"
-          ? { kty: k.kty, crv: k.crv, x: k.x, y: k.y }
-          : { kty: k.kty, crv: k.crv, x: k.x };
+      holderKey = { kty: k.kty, crv: k.crv, x: k.x, y: k.y };
     }
     const delegate = v.delegateAgentId;
     if (
@@ -94,9 +93,19 @@ export class AttestationService extends LeaseService {
       if (l.state.status !== "ACTIVE") fail("LEASE_STATE_CONFLICT");
       const passport = await r.platform.passport(l.passportRef);
       if (!passport) fail("PASSPORT_NOT_FOUND");
-      const entry =
-        (await r.attest.entry(l.leaseRef)) ??
-        (await r.attest.allocate(l.leaseRef, STATUS.VALID));
+      // One status entry per proof, so proofs of one lease cannot be linked by index.
+      const entry = await r.attest.allocate(l.leaseRef, STATUS.VALID);
+      // The proof never outlives anything it relied on that is only noticed lazily.
+      let validUntil = Math.min(
+        toSeconds(l.state.expiresAt),
+        toSeconds(l.state.checkpointDueAt),
+        toSeconds(passport.expiresAt),
+      );
+      if (l.grantId) {
+        const g = await r.platform.getGrant(l.grantId);
+        if (!g) fail("LEASE_STATE_CONFLICT");
+        validUntil = Math.min(validUntil, toSeconds(g.expiresAt));
+      }
       const now = toSeconds(this.clock()),
         jti = newJti();
       const issued = await issueAttestation(
@@ -104,7 +113,7 @@ export class AttestationService extends LeaseService {
           issuer: cfg.issuer,
           audience,
           now,
-          leaseExpiresAt: toSeconds(l.state.expiresAt),
+          leaseExpiresAt: validUntil,
           jti,
           statusUri: this.statusUri(cfg, entry.listId),
           statusIdx: entry.idx,
@@ -115,11 +124,9 @@ export class AttestationService extends LeaseService {
             candidate_id: l.candidateId,
             candidate_name: l.candidateName,
             context_key: l.contextKey,
-            agent_id: delegate ?? l.agentId,
-            lease_ref: l.leaseRef,
-            subject_ref: passport.subjectRef,
+            agent_id: l.agentId,
             policy: { version: l.state.fingerprint.policyVersion },
-            ...(delegate ? { act: { agent_id: l.agentId } } : {}),
+            ...(delegate ? { delegate_agent_id: delegate } : {}),
           },
         },
         cfg.signer,
@@ -148,7 +155,26 @@ export class AttestationService extends LeaseService {
   }
   // Public: sign the current status list for serving.
   async statusListToken(listId: number): Promise<string | null> {
-    const cfg = await this.cfg();
+    const cfg = await this.cfg(),
+      key = `${cfg.issuer}|${listId}`,
+      now = Date.parse(this.clock());
+    const version = await this.store.transaction((r) =>
+      r.attest.listVersion(listId),
+    );
+    if (version === null) return null;
+    // Reuse a signed list only while no bit has changed (the version moves on
+    // every change) and for at most 30 s, so revocations are never hidden.
+    const hit = statusMemo.get(key);
+    if (hit && hit.version === version && now - hit.at < 30_000)
+      return hit.token;
+    const token = await this.signList(cfg, listId);
+    if (token) statusMemo.set(key, { token, at: now, version });
+    return token;
+  }
+  private async signList(
+    cfg: AttestationConfig,
+    listId: number,
+  ): Promise<string | null> {
     return this.store.transaction(async (r) => {
       const list = await r.attest.list(listId);
       if (!list) return null;
@@ -169,7 +195,13 @@ export class AttestationService extends LeaseService {
   async attestationVerify(
     raw: unknown,
   ): Promise<VerifyResult & { dryRun: boolean }> {
-    const v = object(raw, ["presentation", "audience", "nonce", "dryRun"]);
+    const v = object(raw, [
+      "presentation",
+      "audience",
+      "nonce",
+      "dryRun",
+      "requireKeyBinding",
+    ]);
     if (
       typeof v.presentation !== "string" ||
       v.presentation.length > 16384 ||
@@ -177,7 +209,9 @@ export class AttestationService extends LeaseService {
       !AUD.test(v.audience) ||
       (v.nonce !== undefined &&
         (typeof v.nonce !== "string" || v.nonce.length > 200)) ||
-      (v.dryRun !== undefined && typeof v.dryRun !== "boolean")
+      (v.dryRun !== undefined && typeof v.dryRun !== "boolean") ||
+      (v.requireKeyBinding !== undefined &&
+        typeof v.requireKeyBinding !== "boolean")
     )
       fail("INVALID_INPUT");
     const cfg = await this.cfg(),
@@ -199,6 +233,7 @@ export class AttestationService extends LeaseService {
       trustedIssuers: cfg.trusted,
       now: () => now,
       nonce: v.nonce as string | undefined,
+      requireKeyBinding: v.requireKeyBinding === true,
       fetchStatus,
       // A separate short transaction at the very end: a rejected presentation
       // never records its jti, and nothing is nested.

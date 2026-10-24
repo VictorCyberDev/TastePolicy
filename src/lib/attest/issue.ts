@@ -9,11 +9,14 @@ export interface AttestationFacts {
   issuer: string;
   audience: string;
   now: number; // epoch seconds
-  leaseExpiresAt: number; // epoch seconds
+  // Latest time anything the proof relied on is known to hold (epoch seconds).
+  leaseExpiresAt: number;
   jti: string;
   statusUri: string;
   statusIdx: number;
   holderKey?: JWK;
+  // Deliberately no lease or Passport identifiers: they would link presentations
+  // made to different relying parties.
   disclosable: {
     decision: "ALLOW";
     permitted: string[];
@@ -21,11 +24,9 @@ export interface AttestationFacts {
     candidate_name: string;
     context_key: string;
     agent_id: string;
-    lease_ref: string;
-    subject_ref: string;
     policy?: { version: number | null };
-    act?: { agent_id: string };
-    sub?: string;
+    // Set only on a handoff: the agent the holder key was issued to.
+    delegate_agent_id?: string;
   };
 }
 // Build the attestation. The visible set is fixed by the profile; everything
@@ -33,7 +34,6 @@ export interface AttestationFacts {
 export async function issueAttestation(f: AttestationFacts, signer: Signer) {
   const exp = Math.min(f.leaseExpiresAt, f.now + ATTESTATION_TTL_MAX);
   if (exp <= f.now) throw Error("LEASE_EXPIRED");
-  const { sub, ...rest } = f.disclosable;
   return {
     exp,
     ...(await issueSdJwt({
@@ -50,7 +50,7 @@ export async function issueAttestation(f: AttestationFacts, signer: Signer) {
         status: { status_list: { idx: f.statusIdx, uri: f.statusUri } },
         ...(f.holderKey ? { cnf: { jwk: f.holderKey } } : {}),
       },
-      disclosable: { ...rest, ...(sub ? { sub } : {}) },
+      disclosable: { ...f.disclosable },
     })),
   };
 }
@@ -71,7 +71,7 @@ export async function signStatusList(
         iss: o.issuer,
         sub: o.uri,
         iat: o.now,
-        exp: o.now + o.ttlSeconds * 5,
+        exp: o.now + o.ttlSeconds * 2,
         ttl: o.ttlSeconds,
         status_list: { bits: o.bits, lst: encodeList(o.list) },
       }),

@@ -9,7 +9,7 @@ const NO_STORE = { "Cache-Control": "no-store" };
 // Public relying-party verifier. No credential; bounded body; best-effort limit.
 export async function POST(request: Request) {
   const requestId = crypto.randomUUID(),
-    release = admitPublic(request);
+    release = admitPublic(request, "verify");
   if (!release)
     return Response.json(
       { status: "error", code: "RATE_LIMITED", requestId },

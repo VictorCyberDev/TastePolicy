@@ -39,6 +39,7 @@ export type Reason =
   | "KB_NONCE_MISMATCH"
   | "KB_AUDIENCE_MISMATCH"
   | "KB_SD_HASH_MISMATCH"
+  | "LIFETIME_TOO_LONG"
   | "REPLAY";
 export const ATTESTATION_TYP = "dc+sd-jwt";
 export const STATUS_TYP = "statuslist+jwt";
@@ -60,6 +61,8 @@ export interface VerifierConfig {
   // true when this (jti, audience) pair was not seen before and is now recorded.
   consumeJti?: (jti: string, audience: string) => Promise<boolean>;
   allowSuspended?: boolean;
+  // Longest accepted exp - iat (default 3600). Bounds replay-store retention.
+  maxLifetimeSeconds?: number;
 }
 export interface VerifyResult {
   valid: boolean;
@@ -164,6 +167,8 @@ export async function verifyPresentation(
   if (p.iss !== iss) return fail(["ISSUER_UNTRUSTED"]);
   const t = timeChecks(p, now, skew);
   if (t) return fail([t], { issuer: iss });
+  if ((p.exp as number) - (p.iat as number) > (cfg.maxLifetimeSeconds ?? 3600))
+    return fail(["LIFETIME_TOO_LONG"], { issuer: iss });
   const audOk = Array.isArray(p.aud)
     ? p.aud.includes(cfg.audience)
     : p.aud === cfg.audience;
@@ -267,6 +272,7 @@ export async function verifyPresentation(
     ![1, 2, 4, 8].includes(sl.bits as number) ||
     typeof sl.lst !== "string" ||
     typeof lp.iat !== "number" ||
+    (typeof lp.ttl === "number" && now > lp.iat + lp.ttl + skew) ||
     (lp.exp !== undefined &&
       (typeof lp.exp !== "number" || lp.exp + skew <= now))
   )
@@ -291,7 +297,10 @@ export async function verifyPresentation(
     return fail(["STATUS_SUSPENDED"], { issuer: iss, status: name });
 
   // Replay last, so a rejected presentation never burns a jti.
-  if (cfg.consumeJti && !(await cfg.consumeJti(p.jti, cfg.audience)))
+  if (
+    cfg.consumeJti &&
+    !(await cfg.consumeJti(`${iss}|${p.jti}`, cfg.audience))
+  )
     return fail(["REPLAY"], { issuer: iss, status: name });
   return { valid: true, reasons: [], issuer: iss, claims, status: name };
 }

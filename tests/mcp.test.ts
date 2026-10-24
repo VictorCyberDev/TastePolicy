@@ -72,6 +72,7 @@ for (const mode of ["auto", "legacy"] as const)
         "tastepolicy_get_policy",
         "tastepolicy_get_receipt",
         "tastepolicy_get_status",
+        "tastepolicy_issue_attestation",
         "tastepolicy_release_lease",
         "tastepolicy_request_lease",
         "tastepolicy_resume_lease",

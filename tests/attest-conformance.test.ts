@@ -11,7 +11,7 @@ const file = JSON.parse(
 );
 it("the committed conformance vectors pass the reference verifier, with the stated reasons", async () => {
   expect(file.version).toBe("tastepolicy-attestation-vectors-v1");
-  expect(file.vectors.length).toBeGreaterThanOrEqual(34);
+  expect(file.vectors.length).toBeGreaterThanOrEqual(35);
   const failures: string[] = [];
   for (const v of file.vectors) {
     const o = v.options ?? {};

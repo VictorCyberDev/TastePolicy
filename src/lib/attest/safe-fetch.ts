@@ -1,6 +1,6 @@
 import { request } from "node:https";
 import { lookup as dnsLookup } from "node:dns";
-import { isIP } from "node:net";
+import { BlockList, isIP } from "node:net";
 
 // Fetch for issuer metadata and status lists. Verifier-side SSRF defence:
 // HTTPS only, address validated at connection time (no DNS-rebinding gap),
@@ -10,30 +10,63 @@ export class SafeFetchError extends Error {
     super(reason);
   }
 }
-function privateV4(a: string) {
-  const [x, y] = a.split(".").map(Number);
-  return (
-    x === 0 ||
-    x === 10 ||
-    x === 127 ||
-    (x === 100 && y >= 64 && y <= 127) ||
-    (x === 169 && y === 254) ||
-    (x === 172 && y >= 16 && y <= 31) ||
-    (x === 192 && y === 168) ||
-    (x === 192 && y === 0) ||
-    (x === 198 && (y === 18 || y === 19)) ||
-    x >= 224
-  );
-}
+// Address policy as a BlockList over parsed addresses (never string patterns).
+// IPv4-mapped IPv6 addresses are matched by the IPv4 rules (Node unwraps them);
+// the other forms that embed IPv4 (compatible, NAT64, 6to4, Teredo) are blocked
+// outright rather than unwrapped.
+const blocked = new BlockList();
+for (const [net, len] of [
+  ["0.0.0.0", 8],
+  ["10.0.0.0", 8],
+  ["100.64.0.0", 10],
+  ["127.0.0.0", 8],
+  ["169.254.0.0", 16],
+  ["172.16.0.0", 12],
+  ["192.0.0.0", 24],
+  ["192.0.2.0", 24],
+  ["192.88.99.0", 24],
+  ["192.168.0.0", 16],
+  ["198.18.0.0", 15],
+  ["198.51.100.0", 24],
+  ["203.0.113.0", 24],
+  ["224.0.0.0", 3],
+] as const)
+  blocked.addSubnet(net, len, "ipv4");
+for (const [net, len] of [
+  ["::", 96],
+  ["64:ff9b::", 96],
+  ["64:ff9b:1::", 48],
+  ["100::", 64],
+  ["2001::", 23],
+  ["2001:db8::", 32],
+  ["2002::", 16],
+  ["fc00::", 7],
+  ["fe80::", 10],
+  ["ff00::", 8],
+] as const)
+  blocked.addSubnet(net, len, "ipv6");
 export function privateAddress(addr: string): boolean {
   const v = isIP(addr);
-  if (v === 4) return privateV4(addr);
-  if (v !== 6) return true;
-  const a = addr.toLowerCase();
-  if (a === "::" || a === "::1") return true;
-  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(a);
-  if (mapped) return privateV4(mapped[1]);
-  return /^(fc|fd|fe[89ab])/.test(a) || a.startsWith("ff");
+  if (v === 0) return true;
+  return blocked.check(addr, v === 4 ? "ipv4" : "ipv6");
+}
+// Connection-time resolver: validates every address that could be used.
+export function guardedLookup(
+  host: string,
+  opts: { all?: boolean } | number | undefined,
+  cb: (err: Error | null, address: unknown, family?: number) => void,
+) {
+  const all = typeof opts === "object" && opts?.all === true;
+  dnsLookup(host, { all: true }, (err, addrs) => {
+    const list =
+      (addrs as unknown as { address: string; family: number }[]) ?? [];
+    if (err || !list.length)
+      return cb(err ?? new Error("NO_ADDRESS"), all ? [] : "", 4);
+    if (list.some((a) => privateAddress(a.address)))
+      return cb(new SafeFetchError("ADDRESS_NOT_ALLOWED"), all ? [] : "", 4);
+    if (all) return cb(null, list);
+    cb(null, list[0].address, list[0].family);
+  });
 }
 export interface SafeFetchOptions {
   maxBytes?: number;
@@ -60,6 +93,11 @@ export async function safeFetchText(
   )
     throw new SafeFetchError("ADDRESS_NOT_ALLOWED");
   return new Promise<string>((resolve, reject) => {
+    // Absolute deadline: a server trickling bytes cannot hold the slot.
+    const total = setTimeout(() => {
+      req.destroy();
+      reject(new SafeFetchError("TIMEOUT"));
+    }, timeout * 2);
     const req = request(
       {
         protocol: "https:",
@@ -70,17 +108,7 @@ export async function safeFetchText(
         headers: { accept },
         timeout,
         // Validate the address actually used for the connection.
-        lookup: (host, opts, cb) => {
-          dnsLookup(host, { ...opts, all: true }, (err, addrs) => {
-            const list =
-              (addrs as unknown as { address: string; family: number }[]) ?? [];
-            if (err || !list.length)
-              return cb(err ?? new Error("NO_ADDRESS"), "", 4);
-            if (list.some((a) => privateAddress(a.address)))
-              return cb(new SafeFetchError("ADDRESS_NOT_ALLOWED"), "", 4);
-            cb(null, list[0].address, list[0].family);
-          });
-        },
+        lookup: guardedLookup as never,
       },
       (res) => {
         if ((res.statusCode ?? 0) !== 200) {
@@ -96,7 +124,10 @@ export async function safeFetchText(
             reject(new SafeFetchError("TOO_LARGE"));
           } else chunks.push(c);
         });
-        res.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+        res.on("end", () => {
+          clearTimeout(total);
+          resolve(Buffer.concat(chunks).toString("utf8"));
+        });
         res.on("error", () => reject(new SafeFetchError("FETCH_FAILED")));
       },
     );
@@ -109,6 +140,7 @@ export async function safeFetchText(
         e instanceof SafeFetchError ? e : new SafeFetchError("FETCH_FAILED"),
       ),
     );
+    req.on("close", () => clearTimeout(total));
     req.end();
   });
 }

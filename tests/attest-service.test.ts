@@ -113,10 +113,8 @@ it("issues a proof for an ACTIVE lease and the hosted verifier checks signature,
     "candidate_name",
     "context_key",
     "decision",
-    "lease_ref",
     "permitted",
     "policy",
-    "subject_ref",
   ]);
   const full = await w.verify(at.attestation, { dryRun: true });
   expect(full).toMatchObject({ valid: true, status: "VALID", dryRun: true });
@@ -286,16 +284,18 @@ it("handoff: a key-bound proof names the receiving agent and the delegator, need
   const ts = Math.floor(now / 1000);
   const pres = await present(
     at.attestation,
-    ["decision", "agent_id", "act", "candidate_id"],
+    ["decision", "agent_id", "delegate_agent_id", "candidate_id"],
     { signer: receiver, nonce: "challenge-1", aud: AUD, iat: ts },
   );
   const ok = await w.verify(pres, { nonce: "challenge-1", dryRun: true });
   expect(ok.valid).toBe(true);
+  // the lease's own agent stays agent_id; the receiver is a separate, key-bound claim
   expect(ok.claims).toMatchObject({
-    agent_id: "Agent-B",
-    act: { agent_id: l.agentId },
+    agent_id: l.agentId,
+    delegate_agent_id: "Agent-B",
     decision: "ALLOW",
   });
+  expect(ok.claims).not.toHaveProperty("act");
   expect(
     await w.verify(await present(at.attestation, ["decision"]), {
       nonce: "challenge-1",
@@ -477,3 +477,56 @@ it("MCP exposes the issuer tool and issues from environment-configured keys", as
     delete process.env.TASTEPOLICY_ATTESTATION_KEY;
   }
 }, 40000);
+
+it("each proof gets its own status index (proofs of one lease cannot be linked), and indices are all distinct", async () => {
+  const w = await world(),
+    l = await w.lease();
+  const read = (a: Record<string, any>) =>
+    JSON.parse(
+      Buffer.from(
+        a.attestation.split("~")[0].split(".")[1],
+        "base64url",
+      ).toString(),
+    ).status.status_list.idx as number;
+  const a1 = await w.attest(l.leaseRef),
+    a2 = await w.attest(l.leaseRef),
+    a3 = await w.attest(l.leaseRef);
+  expect(new Set([read(a1), read(a2), read(a3)]).size).toBe(3);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  for (const a of [a1, a2, a3])
+    expect(await w.verify(a.attestation, { dryRun: true })).toMatchObject({
+      reasons: ["STATUS_INVALID"],
+    });
+}, 40000);
+it("a proof never outlives the next checkpoint, so a skipped check-in cannot leave it valid", async () => {
+  const w = await world(),
+    e = await w.evaluate(),
+    l = (await svc.leaseRequest(w.agent, {
+      idempotencyKey: "cp" + ++n + "-key",
+      evaluationRef: e.evaluationRef,
+      ttlSeconds: 3600,
+      checkpointSeconds: 60,
+    })) as Record<string, any>;
+  const at = await w.attest(l.leaseRef);
+  expect(Date.parse(at.expiresAt)).toBeLessThanOrEqual(
+    Date.parse(l.checkpointDueAt),
+  );
+});
+it("holder keys: P-256 only, public only; the hosted verifier can insist on key binding", async () => {
+  const w = await world(),
+    l = await w.lease();
+  await expect(
+    w.attest(l.leaseRef, {
+      holderKey: {
+        kty: "OKP",
+        crv: "Ed25519",
+        x: "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo",
+      },
+    }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  const at = await w.attest(l.leaseRef);
+  expect(
+    await w.verify(at.attestation, { dryRun: true, requireKeyBinding: true }),
+  ).toMatchObject({ valid: false, reasons: ["KB_REQUIRED"] });
+  expect((await w.verify(at.attestation, { dryRun: true })).valid).toBe(true);
+});

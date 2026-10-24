@@ -11,6 +11,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   const paths = Object.keys(doc.paths).sort();
   expect(paths).toEqual(
     [
+      "attestation",
       "capabilities",
       "evaluate",
       "lease",
@@ -30,6 +31,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   expect(evalBody).toContain("never grants purchase");
   expect(new Set(PLATFORM_TOOLS.map((t) => t.op))).toEqual(
     new Set([
+      "attestation",
       "capabilities",
       "evaluate",
       "lease",

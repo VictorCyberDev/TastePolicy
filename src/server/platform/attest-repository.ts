@@ -13,13 +13,14 @@ export interface AttestationRow {
   delegatedTo: string | null;
 }
 export interface AttestRepository {
-  entry(leaseRef: string): Promise<{ listId: number; idx: number } | null>;
-  // Creates the lease's status entry at a random never-used index and sets its bit.
+  // Creates a status entry for one attestation at a random never-used index.
   allocate(
     leaseRef: string,
     value: number,
   ): Promise<{ listId: number; idx: number }>;
   list(listId: number): Promise<Uint8Array | null>;
+  // Changes whenever any status bit in the list changes.
+  listVersion(listId: number): Promise<string | null>;
   insert(a: AttestationRow): Promise<void>;
   forLease(leaseRef: string): Promise<AttestationRow[]>;
   forPassport(passportRef: string): Promise<AttestationRow[]>;
@@ -28,19 +29,11 @@ export interface AttestRepository {
 }
 export function attestRepository(c: PoolClient): AttestRepository {
   return {
-    async entry(ref) {
-      const q = await c.query(
-        "SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=$1",
-        [ref],
-      );
-      return q.rows[0]
-        ? { listId: q.rows[0].list_id, idx: q.rows[0].idx }
-        : null;
-    },
     async allocate(ref, value) {
-      // Serialise allocation per list so capacity checks are exact.
+      // One allocator at a time: capacity checks and new-list creation are exact.
+      await c.query("SELECT pg_advisory_xact_lock(90210)");
       const head = await c.query(
-        "SELECT list_id FROM tastepolicy.attestation_status_lists ORDER BY list_id DESC LIMIT 1 FOR UPDATE",
+        "SELECT list_id FROM tastepolicy.attestation_status_lists ORDER BY list_id DESC LIMIT 1",
       );
       let listId: number = head.rows[0].list_id;
       const used = (
@@ -64,8 +57,8 @@ export function attestRepository(c: PoolClient): AttestRepository {
         );
         if (ins.rowCount === 1) {
           await c.query(
-            "INSERT INTO tastepolicy.lease_status_entries(lease_ref,list_id,idx) VALUES($1,$2,$3)",
-            [ref, listId, idx],
+            "INSERT INTO tastepolicy.lease_status_entries(list_id,idx,lease_ref) VALUES($1,$2,$3)",
+            [listId, idx, ref],
           );
           await c.query("SELECT tastepolicy.set_status($1,$2,$3)", [
             listId,
@@ -83,6 +76,13 @@ export function attestRepository(c: PoolClient): AttestRepository {
         [listId],
       );
       return q.rows[0] ? new Uint8Array(q.rows[0].data) : null;
+    },
+    async listVersion(listId) {
+      const q = await c.query(
+        "SELECT updated_at::text AS v FROM tastepolicy.attestation_status_lists WHERE list_id=$1",
+        [listId],
+      );
+      return q.rows[0]?.v ?? null;
     },
     async insert(a) {
       await c.query(

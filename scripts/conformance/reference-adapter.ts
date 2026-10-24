@@ -19,7 +19,8 @@ export interface ConformanceOutput {
 export default async function verify(
   i: ConformanceInput,
 ): Promise<ConformanceOutput> {
-  const seen = new Set(i.seenJtis.map((j) => j + "|" + i.audience));
+  const issuer = Object.keys(i.trustedIssuers)[0],
+    seen = new Set(i.seenJtis.map((j) => `${issuer}|${j}|${i.audience}`));
   const r = await verifyPresentation(i.presentation, {
     audience: i.audience,
     now: () => i.now,
