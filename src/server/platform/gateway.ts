@@ -1,5 +1,5 @@
 import "server-only";
-import { PolicyService } from "./policy-service";
+import { LeaseService } from "./lease-service";
 import {
   PLATFORM_CONTRACT_VERSION,
   AUTHORITY_BOUNDARY,
@@ -22,7 +22,7 @@ export async function gatewayAuthenticate(
 ): Promise<Principal> {
   if (!authorization?.startsWith("Bearer ")) platformFail("AUTH_REQUIRED");
   if (!deps.store) platformFail("NOT_CONFIGURED");
-  return new PolicyService(deps.store).credentialPrincipal(
+  return new LeaseService(deps.store).credentialPrincipal(
     authorization.slice(7),
   );
 }
@@ -53,9 +53,14 @@ export async function gatewayInvoke(
     platformFail("ACCESS_DENIED");
   if (tool.op === "capabilities") return capabilities(p);
   if (!deps.store) platformFail("NOT_CONFIGURED");
-  const s = new PolicyService(deps.store);
+  const s = new LeaseService(deps.store);
   if (tool.op === "passport") return s.read(p, input);
   if (tool.op === "policy") return s.policySummary(p, input);
+  if (tool.op === "lease") return s.leaseRequest(p, input);
+  if (tool.op === "lease-verify") return s.leaseVerify(p, input);
+  if (tool.op === "lease-checkpoint") return s.leaseCheckpoint(p, input);
+  if (tool.op === "lease-resume") return s.leaseResume(p, input);
+  if (tool.op === "lease-release") return s.leaseRelease(p, input);
   if (tool.op === "evaluate")
     return s.evaluate(p, input, deps.factory, requestId);
   return s.receipt(p, input, tool.op === "status");

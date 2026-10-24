@@ -1,3 +1,4 @@
+import { leaseRepository } from "@/server/platform/lease-repository";
 import { policyRepository } from "@/server/platform/policy-repository";
 import { platformRepository } from "@/server/platform/postgres";
 import { subjectRepositories } from "@/server/subjects/postgres";
@@ -25,6 +26,7 @@ function repositories(c: PoolClient): Repositories {
     ...subjectRepositories(c),
     platform: platformRepository(c),
     policy: policyRepository(c),
+    leases: leaseRepository(c),
     trajectories: trajectoryRepository(c),
     states: {
       profile: (id, lock = false) =>

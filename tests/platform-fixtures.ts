@@ -20,12 +20,16 @@ export async function platformDatabase(
       ),
     );
   if (migrate)
-    await d.db.exec(
-      await readFile(
-        new URL("../migrations/0006_policy_control_plane.sql", import.meta.url),
-        "utf8",
-      ),
-    );
+    for (const file of [
+      "0006_policy_control_plane.sql",
+      "0007_preference_authority_leases.sql",
+    ])
+      await d.db.exec(
+        await readFile(
+          new URL(`../migrations/${file}`, import.meta.url),
+          "utf8",
+        ),
+      );
   await d.db.exec("SET search_path=tastepolicy");
   const auth = createAuthentication(
     d.store.pool,

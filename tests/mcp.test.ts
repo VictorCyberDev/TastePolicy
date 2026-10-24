@@ -1,4 +1,5 @@
 // @vitest-environment node
+/* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON */
 import { beforeAll, afterAll, it, expect } from "vitest";
 import {
   Client,
@@ -62,14 +63,21 @@ for (const mode of ["auto", "legacy"] as const)
       client = await connect(s, mode);
     expect(client.getProtocolEra()).toBe(mode === "auto" ? "modern" : "legacy");
     const tools = await client.listTools();
-    expect(tools.tools.map((t) => t.name).sort()).toEqual([
-      "tastepolicy_capabilities",
-      "tastepolicy_evaluate_choice",
-      "tastepolicy_get_authority",
-      "tastepolicy_get_policy",
-      "tastepolicy_get_receipt",
-      "tastepolicy_get_status",
-    ]);
+    expect(tools.tools.map((t) => t.name).sort()).toEqual(
+      [
+        "tastepolicy_capabilities",
+        "tastepolicy_checkpoint_lease",
+        "tastepolicy_evaluate_choice",
+        "tastepolicy_get_authority",
+        "tastepolicy_get_policy",
+        "tastepolicy_get_receipt",
+        "tastepolicy_get_status",
+        "tastepolicy_release_lease",
+        "tastepolicy_request_lease",
+        "tastepolicy_resume_lease",
+        "tastepolicy_verify_lease",
+      ].sort(),
+    );
     const evalTool = tools.tools.find(
       (t) => t.name === "tastepolicy_evaluate_choice",
     )!;
@@ -212,3 +220,40 @@ it("rejects JSON-RPC batches, and anonymous traffic never reaches the shared adm
   );
   expect(none.status).toBe(429);
 });
+
+it("lease tools round-trip over MCP: request, verify, checkpoint, release; verification is uncacheable", async () => {
+  const s = await setup(),
+    client = await connect(s, "auto");
+  const call = async (name: string, args: Record<string, unknown>) =>
+    (await client.callTool({ name, arguments: args }))
+      .structuredContent as Record<string, any>;
+  const ev = await call("tastepolicy_evaluate_choice", {
+    passportRef: s.passport.passportRef,
+    idempotencyKey: "mcp-lease-eval",
+    proposal: proposal(1),
+  });
+  const l = await call("tastepolicy_request_lease", {
+    idempotencyKey: "mcp-lease-req-1",
+    evaluationRef: ev.evaluationRef,
+  });
+  expect([l.status, l.valid, l.cacheable, l.ttlMs]).toEqual([
+    "ACTIVE",
+    true,
+    false,
+    0,
+  ]);
+  expect(
+    (await call("tastepolicy_verify_lease", { leaseRef: l.leaseRef })).valid,
+  ).toBe(true);
+  expect(
+    (await call("tastepolicy_checkpoint_lease", { leaseRef: l.leaseRef })).rev,
+  ).toBe(2);
+  expect(
+    (await call("tastepolicy_release_lease", { leaseRef: l.leaseRef })).status,
+  ).toBe("RELEASED");
+  const gone = await call("tastepolicy_verify_lease", {
+    leaseRef: "tl_" + "0".repeat(48),
+  });
+  expect(gone.code).toBe("LEASE_NOT_FOUND");
+  await client.close();
+}, 30000);

@@ -20,6 +20,10 @@ MCP tools: `tastepolicy_capabilities`, `tastepolicy_get_authority`, `tastepolicy
 
 A2A skill `preference_authorization`: `SendMessage` with one `data` part `{passportRef, grantId?, idempotencyKey?, proposal}`. `messageId` is the idempotency key when none is given. The response is a `TASK_STATE_COMPLETED` task whose artifact holds the `taste-authorization-response`. `GetTask` takes the evaluation reference and returns `TaskNotFound` for anyone but the caller. Streaming, push notifications, `ListTasks` and the extended card are not supported and return the A2A error for that.
 
+## Leases
+
+After an ALLOW (or an ASK the person may answer) an agent can request a short **lease** and keep verifying it while it works. See `docs/product/m8-preference-authority-leases.md`. A lease is never a purchase or booking authority.
+
 ## Vendor routes
 
 Each recipe below is the configuration shape from the vendor's own documentation as researched on 2026-10-23 (ADR 0014). Automation here proves our server speaks the protocol using the official MCP and A2A clients; it does **not** prove any vendor's hosted product has been connected. Items marked human-only were not run.
