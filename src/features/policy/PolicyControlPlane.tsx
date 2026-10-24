@@ -589,6 +589,30 @@ export default function PolicyControlPlane() {
           </Link>
         </p>
       </section>
+      <section aria-labelledby="others">
+        <h2 id="others">When other people are involved</h2>
+        <ul>
+          <li>
+            <strong>Whose rules apply:</strong> yours, to your own choices. In a
+            group, every member’s own rules apply to that member.
+          </li>
+          <li>
+            <strong>One no ends it:</strong> if any member’s rules say no, the
+            group answer is no. A group cannot outvote a no, and a temporary
+            permission only ever releases the person who gave it.
+          </li>
+          <li>
+            <strong>Someone acting for you</strong> can see your rules and make
+            them stricter if you allowed it. They cannot loosen your rules or
+            give a permission in your name unless you gave them that exact
+            right.
+          </li>
+          <li>
+            <strong>Who can end things:</strong> you, and anyone you let manage
+            your rules, can end a permission or a lease at any time.
+          </li>
+        </ul>
+      </section>
     </main>
   );
 }

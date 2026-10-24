@@ -1,6 +1,8 @@
 import type { MemberAuthorization } from "@/lib/subjects/types";
 // Subject decisions only. Deliberately no affinity input or provider dependency.
-export function groupPolicy(members: readonly MemberAuthorization[]) {
+export function groupPolicy(
+  members: readonly Pick<MemberAuthorization, "subjectId" | "decision">[],
+) {
   const ids = (decision: MemberAuthorization["decision"]) =>
     members
       .filter((m) => m.decision === decision)
