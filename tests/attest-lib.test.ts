@@ -72,6 +72,7 @@ const facts = (over: Record<string, unknown> = {}) =>
     now: NOW,
     leaseExpiresAt: NOW + 3600,
     jti: base64url.encode(randomBytes(12)),
+    epochRef: base64url.encode(randomBytes(16)),
     statusUri: URI,
     statusIdx: 7,
     disclosable: {
@@ -148,6 +149,7 @@ it("a full or minimal presentation verifies and shows only what was disclosed", 
   expect(Object.keys(m.claims!).sort()).toEqual(
     [
       "authority",
+      "authority_epoch",
       "aud",
       "candidate_id",
       "decision",
@@ -518,6 +520,7 @@ it("interop: the independent @sd-jwt/sd-jwt-vc implementation verifies what we i
       jti: "their-jti",
       vct: VCT,
       authority: "CULTURAL_ONLY",
+      authority_epoch: "E".repeat(22),
       status: { status_list: { idx: 9, uri: URI } },
       decision: "ALLOW",
       candidate_id: "c",

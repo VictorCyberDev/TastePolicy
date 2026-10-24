@@ -75,6 +75,7 @@ const base = (
   now: NOW,
   leaseExpiresAt: NOW + 3600,
   jti: base64url.encode(crypto.getRandomValues(new Uint8Array(12))),
+  epochRef: base64url.encode(crypto.getRandomValues(new Uint8Array(16))),
   statusUri,
   statusIdx: idx,
   disclosable: {
@@ -228,6 +229,27 @@ const noAuthority = await issueSdJwt({
   },
   disclosable: { decision: "ALLOW" },
 });
+const noEpoch = await issueSdJwt({
+  signer: issuer.signer,
+  typ: "dc+sd-jwt",
+  visible: {
+    iss: ISS,
+    aud: AUD,
+    iat: NOW,
+    exp: NOW + 600,
+    jti: "no-epoch-1",
+    vct: VCT,
+    authority: "CULTURAL_ONLY",
+    status: { status_list: { idx: 9, uri: okList } },
+  },
+  disclosable: { decision: "ALLOW" },
+});
+add(
+  "N36-epoch-missing",
+  "Authority epoch reference absent: a proof must belong to exactly one epoch",
+  noEpoch.compact,
+  { valid: false, reason: "EPOCH_MISSING" },
+);
 add(
   "N10-authority-missing",
   "Cultural-only authority statement absent",
@@ -306,6 +328,7 @@ const noStatus = await issueSdJwt({
     jti: "no-status-001",
     vct: VCT,
     authority: "CULTURAL_ONLY",
+    authority_epoch: "E".repeat(22),
   },
   disclosable: { decision: "ALLOW" },
 });
@@ -433,6 +456,7 @@ const tooLong = await issueSdJwt({
     jti: "too-long-0001",
     vct: VCT,
     authority: "CULTURAL_ONLY",
+    authority_epoch: "E".repeat(22),
     status: { status_list: { idx: 12, uri: okList } },
   },
   disclosable: { decision: "ALLOW" },

@@ -12,6 +12,8 @@ export interface AttestationFacts {
   // Latest time anything the proof relied on is known to hold (epoch seconds).
   leaseExpiresAt: number;
   jti: string;
+  // Per-audience reference to the authority epoch (see attest-epoch.ts).
+  epochRef: string;
   statusUri: string;
   statusIdx: number;
   holderKey?: JWK;
@@ -47,6 +49,7 @@ export async function issueAttestation(f: AttestationFacts, signer: Signer) {
         jti: f.jti,
         vct: VCT,
         authority: "CULTURAL_ONLY",
+        authority_epoch: f.epochRef,
         status: { status_list: { idx: f.statusIdx, uri: f.statusUri } },
         ...(f.holderKey ? { cnf: { jwk: f.holderKey } } : {}),
       },

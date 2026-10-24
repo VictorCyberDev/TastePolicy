@@ -47,6 +47,7 @@ async function makeConfig(
       issuer,
       signer: { key: privateKey, alg: "ES256", kid },
       jwks,
+      epochKey: new Uint8Array(32).fill(7),
       trusted: { [issuer]: { jwks, vct: [VCT] } },
     },
     pub: jwks.keys[0],
@@ -168,7 +169,7 @@ it("status follows the lease at once: owner revoke, policy change, grant revoke 
   });
   expect(await w.verify(a2.attestation, { dryRun: true })).toMatchObject({
     valid: false,
-    reasons: ["STATUS_SUSPENDED"],
+    reasons: ["STATUS_INVALID"],
   });
 
   const w2 = await world(),
@@ -214,7 +215,7 @@ it("status follows the lease at once: owner revoke, policy change, grant revoke 
   });
   expect(await w.verify(da.attestation, { dryRun: true })).toMatchObject({
     valid: false,
-    reasons: ["STATUS_SUSPENDED"],
+    reasons: ["STATUS_INVALID"],
   });
 
   const w3 = await world(),
@@ -530,3 +531,88 @@ it("holder keys: P-256 only, public only; the hosted verifier can insist on key 
   ).toMatchObject({ valid: false, reasons: ["KB_REQUIRED"] });
   expect((await w.verify(at.attestation, { dryRun: true })).valid).toBe(true);
 });
+
+// ---- R2: authority epochs ----
+const decodeClaims = (compact: string) =>
+  JSON.parse(
+    Buffer.from(compact.split("~")[0].split(".")[1], "base64url").toString(),
+  );
+it("authority epochs: drift ends the epoch for good; a fresh ALLOW starts a new one; old proofs never come back", async () => {
+  const w = await world();
+  const l = await w.lease();
+  const a1 = await w.attest(l.leaseRef);
+  expect((await w.verify(a1.attestation, { dryRun: true })).status).toBe(
+    "VALID",
+  );
+  const c1 = decodeClaims(a1.attestation);
+  expect(typeof c1.authority_epoch).toBe("string");
+  // no raw identifiers inside the proof
+  expect(JSON.stringify(c1)).not.toContain(l.leaseRef);
+  // a second proof of the same epoch for another audience is not linkable by epoch
+  const other = (await svc.attestationIssue(w.agent, {
+    leaseRef: l.leaseRef,
+    audience: "https://other.test",
+  })) as Record<string, any>;
+  expect(decodeClaims(other.attestation).authority_epoch).not.toBe(
+    c1.authority_epoch,
+  );
+  // policy change ends epoch 1
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "ep-pp-0001",
+    passportRef: w.ref,
+    document: observe,
+    expectedVersion: 0,
+  });
+  expect(await w.verify(a1.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  // a fresh evaluation that is ALLOW again (override-free): relax the policy
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "ep-pp-0002",
+    passportRef: w.ref,
+    document: DEFAULT_POLICY,
+    expectedVersion: 1,
+  });
+  const e2: any = await w.evaluate();
+  expect(e2.decision).toBe("ALLOW");
+  const resumed: any = await svc.leaseResume(w.agent, {
+    idempotencyKey: "ep-res-0001",
+    leaseRef: l.leaseRef,
+    evaluationRef: e2.evaluationRef,
+  });
+  expect(resumed.status).toBe("ACTIVE");
+  // the old proof stays dead although the lease is ACTIVE again
+  expect(await w.verify(a1.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  const a2 = await w.attest(l.leaseRef);
+  expect((await w.verify(a2.attestation, { dryRun: true })).status).toBe(
+    "VALID",
+  );
+  expect(decodeClaims(a2.attestation).authority_epoch).not.toBe(
+    c1.authority_epoch,
+  );
+  // bookkeeping: epochs 1 and 2, distinct commitments
+  const rows = await d.store.transaction((r) => r.attest.forLease(l.leaseRef));
+  expect(new Set(rows.map((x) => x.epoch))).toEqual(new Set([1, 2]));
+  const commits = new Map(rows.map((x) => [x.epoch, x.epochCommitment]));
+  expect(commits.get(1)).not.toBe(commits.get(2));
+}, 60000);
+
+it("the database refuses to resurrect an invalid status entry", async () => {
+  const w = await world();
+  const l = await w.lease();
+  await w.attest(l.leaseRef);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  const entry = await d.db.query(
+    "SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=$1",
+    [l.leaseRef],
+  );
+  const { list_id, idx } = entry.rows[0] as any;
+  for (const v of [0, 2])
+    await expect(
+      d.db.query("SELECT tastepolicy.set_status($1,$2,$3)", [list_id, idx, v]),
+    ).rejects.toThrow();
+}, 40000);

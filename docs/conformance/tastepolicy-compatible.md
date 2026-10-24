@@ -16,7 +16,7 @@ Compatible means: a **verifier** that accepts and rejects TastePolicy attestatio
 
 ## Required behaviour (vector set `tastepolicy-attestation-vectors-v1`)
 
-A Compatible verifier accepts V01–V04 and rejects N01–N30 for the reasons listed. In short, it must reject: expired or not-yet-valid tokens; wrong audience; issuers or keys it was not configured with; altered payloads or disclosures; duplicate or unreferenced disclosures; unsupported algorithms (including `none` and `HS256`) and untrusted key-bearing headers (`jwk`); wrong `typ`; unaccepted `vct`; a missing authority statement; missing, invalid, suspended, out-of-range, forged, expired or mis-addressed status lists; oversized (decompression-bomb) status lists; missing or wrong key binding (nonce, audience, `sd_hash`, holder key); and replay of a `jti` for an audience. Failing closed on any status fetch error is required.
+A Compatible verifier accepts V01–V04 and rejects N01–N36 for the reasons listed. In short, it must reject: expired or not-yet-valid tokens; wrong audience; issuers or keys it was not configured with; altered payloads or disclosures; duplicate or unreferenced disclosures; unsupported algorithms (including `none` and `HS256`) and untrusted key-bearing headers (`jwk`); wrong `typ`; unaccepted `vct`; a missing authority statement or authority epoch (`EPOCH_MISSING`, N36); missing, invalid, suspended, out-of-range, forged, expired or mis-addressed status lists; oversized (decompression-bomb) status lists; missing or wrong key binding (nonce, audience, `sd_hash`, holder key); and replay of a `jti` for an audience. Failing closed on any status fetch error is required.
 
 ## Running it
 

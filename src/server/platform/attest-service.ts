@@ -5,6 +5,7 @@ import { attestationConfig, type AttestationConfig } from "./attest-config";
 import { leaseRef as parseLeaseRef } from "./lease-service";
 import { platformFail as fail, type Principal } from "@/lib/platform/types";
 import { object } from "@/server/subjects/common";
+import { epochCommitment, epochRef } from "./attest-epoch";
 import { issueAttestation, newJti, signStatusList } from "@/lib/attest/issue";
 import { STATUS } from "@/lib/attest/status-list";
 import { verifyPresentation, type VerifyResult } from "@/lib/attest/verify";
@@ -94,7 +95,8 @@ export class AttestationService extends LeaseService {
       const passport = await r.platform.passport(l.passportRef);
       if (!passport) fail("PASSPORT_NOT_FOUND");
       // One status entry per proof, so proofs of one lease cannot be linked by index.
-      const entry = await r.attest.allocate(l.leaseRef, STATUS.VALID);
+      const commitment = epochCommitment(l),
+        entry = await r.attest.allocate(l.leaseRef, STATUS.VALID);
       // The proof never outlives anything it relied on that is only noticed lazily.
       let validUntil = Math.min(
         toSeconds(l.state.expiresAt),
@@ -115,6 +117,7 @@ export class AttestationService extends LeaseService {
           now,
           leaseExpiresAt: validUntil,
           jti,
+          epochRef: epochRef(cfg.epochKey, audience, commitment),
           statusUri: this.statusUri(cfg, entry.listId),
           statusIdx: entry.idx,
           holderKey,
@@ -139,6 +142,8 @@ export class AttestationService extends LeaseService {
         expiresAt: new Date(issued.exp * 1000).toISOString(),
         holderBound: !!holderKey,
         delegatedTo: delegate ?? null,
+        epoch: l.state.epoch.n,
+        epochCommitment: commitment,
       });
       return {
         schemaVersion: "taste-attestation-v1",

@@ -37,6 +37,7 @@ beforeAll(async () => {
     issuer: "https://tastepolicy.test",
     signer: { key: privateKey, alg: "ES256", kid },
     jwks,
+    epochKey: new Uint8Array(32).fill(7),
     trusted: { "https://tastepolicy.test": { jwks, vct: [VCT] } },
   };
   svc = new AttestationService(d.store, undefined, async () => cfg);
@@ -105,6 +106,7 @@ it("rules → ask → approval → lease → proof → handoff → verification 
     idempotencyKey: "demo-appr-01",
     leaseRef: lease.leaseRef,
     ttlSeconds: 600,
+    confirm: true,
   });
   expect([approved.status, approved.valid]).toEqual(["ACTIVE", true]);
   // 5. The agent proves it to a merchant, revealing only the decision and the choice.

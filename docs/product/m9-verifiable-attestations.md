@@ -50,3 +50,7 @@ Always visible: issuer, audience, times, `jti`, type, authority statement, statu
 ## Limits
 
 No OpenID4VCI/OpenID4VP, no wallets, no `did:web`, no W3C VC JSON-LD, no federation protocol (an explicit trust list instead), no multi-hop delegation, no hardware-backed key. SD-JWT VC and Token Status List are IETF drafts as of 2026-10-24; this profile is aligned with them, not certified.
+
+## Authority epochs (ADR 0020)
+
+Every proof belongs to one authority epoch and carries `authority_epoch` (a per-audience keyed reference; unlinkable across audiences). When the lease stops being ACTIVE for any reason (policy, state, override, grant, Passport, checkpoint, revoke, expiry) all proofs of that epoch become permanently INVALID. A resume after a fresh ALLOW starts a new epoch; earlier proofs never become valid again. This issuer never emits the SUSPENDED status. Verifiers reject a proof without `authority_epoch` (`EPOCH_MISSING`).

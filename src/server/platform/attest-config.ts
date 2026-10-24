@@ -1,4 +1,5 @@
 import "server-only";
+import { hkdfSync } from "node:crypto";
 import {
   calculateJwkThumbprint,
   importJWK,
@@ -13,6 +14,8 @@ export interface AttestationConfig {
   issuer: string;
   signer: Signer;
   jwks: JSONWebKeySet;
+  // Keys the per-audience epoch references; derived from the signing key.
+  epochKey: Uint8Array;
   // This issuer plus any operator-configured co-issuers. Nothing is discovered.
   trusted: Record<string, TrustedIssuer>;
 }
@@ -78,7 +81,22 @@ export async function attestationConfig(): Promise<AttestationConfig | null> {
           trusted[iss] = t;
         }
       }
-      value = { issuer, signer: { key, alg: "ES256", kid }, jwks, trusted };
+      const epochKey = new Uint8Array(
+        hkdfSync(
+          "sha256",
+          Buffer.from(jwk.d, "base64url"),
+          Buffer.alloc(0),
+          "tastepolicy-epoch-ref-v1",
+          32,
+        ),
+      );
+      value = {
+        issuer,
+        signer: { key, alg: "ES256", kid },
+        jwks,
+        epochKey,
+        trusted,
+      };
     }
   } catch {
     value = null;

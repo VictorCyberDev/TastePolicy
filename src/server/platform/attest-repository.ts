@@ -11,6 +11,8 @@ export interface AttestationRow {
   expiresAt: string;
   holderBound: boolean;
   delegatedTo: string | null;
+  epoch: number;
+  epochCommitment: string;
 }
 export interface AttestRepository {
   // Creates a status entry for one attestation at a random never-used index.
@@ -86,7 +88,7 @@ export function attestRepository(c: PoolClient): AttestRepository {
     },
     async insert(a) {
       await c.query(
-        "INSERT INTO tastepolicy.attestations(jti,lease_ref,audience,issued_at,expires_at,holder_bound,delegated_to) VALUES($1,$2,$3,$4,$5,$6,$7)",
+        "INSERT INTO tastepolicy.attestations(jti,lease_ref,audience,issued_at,expires_at,holder_bound,delegated_to,epoch,epoch_commitment) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
         [
           a.jti,
           a.leaseRef,
@@ -95,6 +97,8 @@ export function attestRepository(c: PoolClient): AttestRepository {
           a.expiresAt,
           a.holderBound,
           a.delegatedTo,
+          a.epoch,
+          a.epochCommitment,
         ],
       );
     },
@@ -112,6 +116,8 @@ export function attestRepository(c: PoolClient): AttestRepository {
         expiresAt: new Date(r.expires_at).toISOString(),
         holderBound: r.holder_bound,
         delegatedTo: r.delegated_to,
+        epoch: r.epoch,
+        epochCommitment: r.epoch_commitment,
       }));
     },
     async forPassport(ref) {
@@ -128,6 +134,8 @@ export function attestRepository(c: PoolClient): AttestRepository {
         expiresAt: new Date(r.expires_at).toISOString(),
         holderBound: r.holder_bound,
         delegatedTo: r.delegated_to,
+        epoch: r.epoch,
+        epochCommitment: r.epoch_commitment,
       }));
     },
     async consume(jti, audience, now) {

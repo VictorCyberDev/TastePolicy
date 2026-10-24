@@ -25,6 +25,7 @@ export type Reason =
   | "AUDIENCE_MISMATCH"
   | "VCT_NOT_ACCEPTED"
   | "AUTHORITY_MISSING"
+  | "EPOCH_MISSING"
   | "DISCLOSURE_INVALID"
   | "DISCLOSURE_DUPLICATE"
   | "DISCLOSURE_UNREFERENCED"
@@ -177,6 +178,12 @@ export async function verifyPresentation(
     return fail(["VCT_NOT_ACCEPTED"], { issuer: iss });
   if (p.authority !== "CULTURAL_ONLY")
     return fail(["AUTHORITY_MISSING"], { issuer: iss });
+  // Every proof belongs to exactly one authority epoch.
+  if (
+    typeof p.authority_epoch !== "string" ||
+    !/^[A-Za-z0-9_-]{22,64}$/.test(p.authority_epoch)
+  )
+    return fail(["EPOCH_MISSING"], { issuer: iss });
   if (typeof p.jti !== "string" || !p.jti)
     return fail(["MALFORMED"], { issuer: iss });
   if (p._sd_alg !== undefined && p._sd_alg !== "sha-256")

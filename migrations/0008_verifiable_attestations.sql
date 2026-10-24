@@ -31,7 +31,10 @@ CREATE TABLE tastepolicy.attestations (
  issued_at timestamptz NOT NULL,
  expires_at timestamptz NOT NULL,
  holder_bound boolean NOT NULL,
- delegated_to text CHECK(delegated_to IS NULL OR delegated_to ~ '^[a-zA-Z0-9_-]{1,64}$')
+ delegated_to text CHECK(delegated_to IS NULL OR delegated_to ~ '^[a-zA-Z0-9_-]{1,64}$'),
+ -- The authority epoch this proof belongs to (ADR 0020).
+ epoch integer NOT NULL CHECK(epoch>=1),
+ epoch_commitment text NOT NULL CHECK(epoch_commitment ~ '^[a-f0-9]{64}$')
 );
 CREATE INDEX attestations_lease ON tastepolicy.attestations(lease_ref);
 CREATE TABLE tastepolicy.attestation_replays (
@@ -40,25 +43,30 @@ CREATE TABLE tastepolicy.attestation_replays (
  first_seen timestamptz NOT NULL,
  PRIMARY KEY(jti,audience)
 );
--- value: 0 VALID, 1 INVALID, 2 SUSPENDED. Entry 0 sits in the least significant bits of byte 0.
+-- value: 0 VALID, 1 INVALID. (2 SUSPENDED exists in the encoding for other issuers; this one never writes it.)
+-- INVALID is permanent: an entry can never leave 1, so an ended epoch cannot come back.
 CREATE FUNCTION tastepolicy.set_status(p_list integer, p_idx integer, p_value integer) RETURNS void LANGUAGE plpgsql AS $$
 DECLARE b integer := p_idx/4; s integer := (p_idx%4)*2; cur integer;
 BEGIN
- IF p_value NOT BETWEEN 0 AND 2 THEN RAISE EXCEPTION 'status out of range'; END IF;
+ IF p_value NOT BETWEEN 0 AND 1 THEN RAISE EXCEPTION 'status out of range'; END IF;
+ SELECT (get_byte(data,b)>>s)&3 INTO cur FROM tastepolicy.attestation_status_lists WHERE list_id=p_list AND b<length(data);
+ IF NOT FOUND THEN RAISE EXCEPTION 'status index out of range'; END IF;
+ IF cur=1 AND p_value<>1 THEN RAISE EXCEPTION 'invalid status is permanent'; END IF;
  UPDATE tastepolicy.attestation_status_lists SET
   data=set_byte(data,b,(get_byte(data,b) & ~(3<<s)) | (p_value<<s)), updated_at=now()
- WHERE list_id=p_list AND b<length(data);
- IF NOT FOUND THEN RAISE EXCEPTION 'status index out of range'; END IF;
+ WHERE list_id=p_list;
 END $$;
-CREATE FUNCTION tastepolicy.lease_status_value(p_status text) RETURNS integer LANGUAGE sql IMMUTABLE AS $$
- SELECT CASE p_status WHEN 'ACTIVE' THEN 0 WHEN 'SUSPENDED' THEN 2 ELSE 1 END $$;
+-- Leaving ACTIVE ends the authority epoch: every proof issued so far becomes
+-- permanently INVALID. Returning to ACTIVE (a resume after a fresh ALLOW) starts
+-- a new epoch and touches no existing entry; new proofs get new entries.
 CREATE FUNCTION tastepolicy.sync_lease_status() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE e record; v integer;
+DECLARE e record;
 BEGIN
- IF TG_OP='DELETE' THEN v := 1; ELSE v := tastepolicy.lease_status_value(NEW.status); END IF;
- FOR e IN SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=OLD.lease_ref ORDER BY list_id,idx LOOP
-  PERFORM tastepolicy.set_status(e.list_id,e.idx,v);
- END LOOP;
+ IF TG_OP='DELETE' OR NEW.status<>'ACTIVE' THEN
+  FOR e IN SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=OLD.lease_ref ORDER BY list_id,idx LOOP
+   PERFORM tastepolicy.set_status(e.list_id,e.idx,1);
+  END LOOP;
+ END IF;
  IF TG_OP='DELETE' THEN RETURN OLD; END IF;
  RETURN NEW;
 END $$;
