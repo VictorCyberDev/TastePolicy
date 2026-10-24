@@ -15,14 +15,14 @@ import { errorSpec } from "@/lib/platform/errors";
 import { PlatformFailure, type Principal } from "@/lib/platform/types";
 import { StateFailure } from "@/lib/state/types";
 import { SubjectFailure } from "@/lib/subjects/types";
-import { BodyReadFailure } from "@/server/taste/read-body";
+import { publicOrigin } from "./origin";
+import { BodyReadFailure, readJsonBody } from "@/server/taste/read-body";
 
 const OUTPUT = z.looseObject({});
 const NO_STORE = { "Cache-Control": "no-store" };
 
 export function mcpResourceMetadataUrl(request: Request) {
-  const u = new URL(request.url);
-  return `${u.origin}/.well-known/oauth-protected-resource/api/mcp`;
+  return `${publicOrigin(request)}/.well-known/oauth-protected-resource/api/mcp`;
 }
 export function allowedOriginHostnames(request: Request) {
   const own = new URL(request.url).hostname;
@@ -92,7 +92,11 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
     );
   return s;
 }
-export async function handleMcp(request: Request, deps: GatewayDeps) {
+export async function handleMcp(
+  request: Request,
+  deps: GatewayDeps,
+  admit: () => (() => void) | null = () => () => {},
+) {
   const requestId = crypto.randomUUID();
   if (request.method !== "POST")
     return new Response(null, {
@@ -123,18 +127,46 @@ export async function handleMcp(request: Request, deps: GatewayDeps) {
       { status: errorSpec(code).http, headers: NO_STORE },
     );
   }
-  const handler = createMcpHandler(() => server(deps, p, requestId), {
-    responseMode: "json",
-    legacy: "stateless",
-    maxRequestBodySize: 16 * 1024,
-  });
+  // Admission (shared budget) is spent only after authentication.
+  const release = admit();
+  if (!release)
+    return Response.json(
+      { code: "RATE_LIMITED", retryable: true, requestId },
+      { status: 429, headers: NO_STORE },
+    );
   try {
-    const res = await handler.fetch(request);
-    const headers = new Headers(res.headers);
-    headers.set("Cache-Control", "no-store");
-    headers.set("X-Request-ID", requestId);
-    return new Response(res.body, { status: res.status, headers });
+    // Read with the platform deadline and size cap; one JSON-RPC message per
+    // request so a batch cannot multiply work under one rate token.
+    let body: unknown;
+    try {
+      body = await readJsonBody(request);
+    } catch (e) {
+      const code = e instanceof BodyReadFailure ? e.code : "INVALID_INPUT";
+      return Response.json(
+        { code, requestId },
+        { status: errorSpec(code).http, headers: NO_STORE },
+      );
+    }
+    if (Array.isArray(body))
+      return Response.json(
+        { code: "INVALID_INPUT", requestId },
+        { status: 400, headers: NO_STORE },
+      );
+    const handler = createMcpHandler(() => server(deps, p, requestId), {
+      responseMode: "json",
+      legacy: "stateless",
+      maxRequestBodySize: 16 * 1024,
+    });
+    try {
+      const res = await handler.fetch(request, { parsedBody: body });
+      const headers = new Headers(res.headers);
+      headers.set("Cache-Control", "no-store");
+      headers.set("X-Request-ID", requestId);
+      return new Response(res.body, { status: res.status, headers });
+    } finally {
+      await handler.close();
+    }
   } finally {
-    await handler.close();
+    release();
   }
 }

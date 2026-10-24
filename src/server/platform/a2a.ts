@@ -181,7 +181,11 @@ function skillInput(message: unknown) {
   if (input.idempotencyKey === undefined) input.idempotencyKey = m.messageId;
   return input;
 }
-export async function handleA2a(request: Request, deps: GatewayDeps) {
+export async function handleA2a(
+  request: Request,
+  deps: GatewayDeps,
+  admit: () => (() => void) | null = () => () => {},
+) {
   const requestId = crypto.randomUUID();
   if (request.method !== "POST")
     return new Response(null, {
@@ -203,6 +207,26 @@ export async function handleA2a(request: Request, deps: GatewayDeps) {
         : {},
     );
   }
+  const release = admit();
+  if (!release)
+    return rpcResponse(
+      null,
+      { error: new RpcError(-32020, "RATE_LIMITED") },
+      requestId,
+      429,
+    );
+  try {
+    return await a2aDispatch(request, deps, p, requestId);
+  } finally {
+    release();
+  }
+}
+async function a2aDispatch(
+  request: Request,
+  deps: GatewayDeps,
+  p: Principal,
+  requestId: string,
+) {
   const version =
     request.headers.get("a2a-version") ??
     new URL(request.url).searchParams.get("A2A-Version");

@@ -169,3 +169,45 @@ it("insufficient scope is a tool error, and UNAVAILABLE is a normal result not a
   expect(JSON.stringify(r)).not.toMatch(/stack|postgres|sql/i);
   await client.close();
 }, 30000);
+
+it("rejects JSON-RPC batches, and anonymous traffic never reaches the shared admission budget", async () => {
+  const s = await setup();
+  let admitted = 0;
+  const admit = () => {
+    admitted++;
+    return () => {};
+  };
+  const post = (headers: Record<string, string>, body: string) =>
+    handleMcp(
+      new Request(URL_, {
+        method: "POST",
+        headers: { "content-type": "application/json", ...headers },
+        body,
+      }),
+      s.deps,
+      admit,
+    );
+  expect((await post({}, "{}")).status).toBe(401);
+  expect(admitted).toBe(0);
+  const batch = await post(
+    { authorization: `Bearer ${s.secret}` },
+    JSON.stringify([
+      { jsonrpc: "2.0", id: 1, method: "ping" },
+      { jsonrpc: "2.0", id: 2, method: "ping" },
+    ]),
+  );
+  expect(batch.status).toBe(400);
+  const none = await handleMcp(
+    new Request(URL_, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${s.secret}`,
+      },
+      body: "{}",
+    }),
+    s.deps,
+    () => null,
+  );
+  expect(none.status).toBe(429);
+});
