@@ -51,6 +51,11 @@ export const ERROR_CATALOG: Record<string, ErrorSpec> = {
     "No such lease is available to this caller.",
   ),
   LEASE_NOT_PERMITTED: spec(403, false, "This decision cannot be leased."),
+  CLARIFICATION_REQUIRED: spec(
+    409,
+    false,
+    "A fact is missing. Capture it and evaluate again; approving cannot supply it.",
+  ),
   LEASE_STATE_CONFLICT: spec(
     409,
     false,

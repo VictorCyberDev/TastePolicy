@@ -9,6 +9,10 @@ type Lease = {
   status: string;
   valid: boolean;
   reasons: string[];
+  ask: {
+    kind: "AUTHORITY_CONFIRMATION" | "CLARIFICATION_REQUIRED";
+    question: string;
+  } | null;
   agentId: string;
   candidateName: string;
   contextKey: string;
@@ -146,55 +150,86 @@ export default function LeaseControl() {
       <section aria-labelledby="ask">
         <h2 id="ask">Questions from agents</h2>
         {data.pending.length === 0 && <p className="help">None right now.</p>}
-        {data.pending.map((l) => (
-          <article key={l.leaseRef}>
-            <p>
-              <strong>{l.agentId}</strong> wants to go ahead with{" "}
-              <strong>{l.candidateName}</strong> for “{l.contextKey}”. Your
-              rules said to ask you first.
-            </p>
-            <label>
-              Allow for
-              <select
-                value={minutes}
-                onChange={(e) => setMinutes(Number(e.target.value))}
+        {data.pending.map((l) =>
+          l.ask?.kind === "AUTHORITY_CONFIRMATION" ? (
+            <article key={l.leaseRef}>
+              <p>
+                <strong>{l.ask.question}</strong>
+              </p>
+              <p>
+                <strong>{l.agentId}</strong> wants to go ahead with{" "}
+                <strong>{l.candidateName}</strong> for “{l.contextKey}”. Nothing
+                about your taste changes if you allow it.
+              </p>
+              <label>
+                Allow for
+                <select
+                  value={minutes}
+                  onChange={(e) => setMinutes(Number(e.target.value))}
+                >
+                  {[5, 15, 60, 240].map((m) => (
+                    <option key={m} value={m}>
+                      {m < 60
+                        ? `${m} minutes`
+                        : `${m / 60} hour${m > 60 ? "s" : ""}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                disabled={busy}
+                onClick={() =>
+                  run(async () => {
+                    await call(
+                      "lease-approve",
+                      {
+                        leaseRef: l.leaseRef,
+                        ttlSeconds: minutes * 60,
+                        confirm: true,
+                      },
+                      true,
+                    );
+                  }, "Allowed once.")
+                }
               >
-                {[5, 15, 60, 240].map((m) => (
-                  <option key={m} value={m}>
-                    {m < 60
-                      ? `${m} minutes`
-                      : `${m / 60} hour${m > 60 ? "s" : ""}`}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              disabled={busy}
-              onClick={() =>
-                run(async () => {
-                  await call(
-                    "lease-approve",
-                    { leaseRef: l.leaseRef, ttlSeconds: minutes * 60 },
-                    true,
-                  );
-                }, "Approved.")
-              }
-            >
-              Yes, allow
-            </button>
-            <button
-              className="quiet"
-              disabled={busy}
-              onClick={() =>
-                run(async () => {
-                  await call("lease-decline", { leaseRef: l.leaseRef });
-                }, "Declined.")
-              }
-            >
-              No
-            </button>
-          </article>
-        ))}
+                Allow this once
+              </button>
+              <button
+                className="quiet"
+                disabled={busy}
+                onClick={() =>
+                  run(async () => {
+                    await call("lease-decline", { leaseRef: l.leaseRef });
+                  }, "Declined.")
+                }
+              >
+                Not this time
+              </button>
+            </article>
+          ) : (
+            // A missing fact is never a yes/no: it must be supplied and the
+            // choice decided again. There is deliberately no approve button.
+            <article key={l.leaseRef}>
+              <p>
+                <strong>
+                  TastePolicy needs one fact before it can decide.
+                </strong>
+              </p>
+              <p>{l.ask?.question ?? "A fact is missing."}</p>
+              <button
+                className="quiet"
+                disabled={busy}
+                onClick={() =>
+                  run(async () => {
+                    await call("lease-decline", { leaseRef: l.leaseRef });
+                  }, "Dismissed.")
+                }
+              >
+                Dismiss
+              </button>
+            </article>
+          ),
+        )}
       </section>
 
       <section aria-labelledby="live">

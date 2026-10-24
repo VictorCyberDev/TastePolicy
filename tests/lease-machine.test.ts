@@ -23,11 +23,20 @@ const fp: Fingerprint = {
   grantId: null,
   overrideIds: [],
 };
+const SCOPE = { candidateId: "c", contextKey: "k", permitted: ["recommend"] };
 const issued = (decision: "ALLOW" | "ASK"): LeaseEvent => ({
   kind: "ISSUED",
   at: T0,
   actor: "AGENT",
   decision,
+  ...(decision === "ASK"
+    ? {
+        ask: {
+          kind: "AUTHORITY_CONFIRMATION" as const,
+          reasons: ["AUTONOMY:OBSERVE"],
+        },
+      }
+    : {}),
   expiresAt: T3,
   checkpointDueAt: T1,
   fingerprint: fp,
@@ -38,6 +47,7 @@ const all = (): LeaseEvent[] => [
     kind: "APPROVED",
     at: T0,
     actor: "OWNER",
+    scope: SCOPE,
     fingerprint: fp,
     expiresAt: T3,
     checkpointDueAt: T1,
@@ -128,6 +138,7 @@ it("approval can shorten but never extend the requested lifetime", () => {
     kind: "APPROVED",
     at: T1,
     actor: "OWNER",
+    scope: SCOPE,
     fingerprint: fp,
     expiresAt: T2,
     checkpointDueAt: T2,
@@ -137,6 +148,7 @@ it("approval can shorten but never extend the requested lifetime", () => {
     kind: "APPROVED",
     at: T1,
     actor: "OWNER",
+    scope: SCOPE,
     fingerprint: fp,
     expiresAt: "2030-01-01T00:00:00.000Z",
     checkpointDueAt: T2,
@@ -150,6 +162,7 @@ it("replay is deterministic and equals step-by-step reduction", () => {
       kind: "APPROVED",
       at: T0,
       actor: "OWNER",
+      scope: SCOPE,
       fingerprint: fp,
       expiresAt: T3,
       checkpointDueAt: T1,
@@ -251,4 +264,21 @@ it("drift reasons come from comparing the issued fingerprint with current facts"
       { ...same, grantUsable: false },
     ),
   ).toEqual([]);
+});
+
+it("a clarification can never become a lease, and ASK needs a typed reason", () => {
+  const base = issued("ASK") as Extract<LeaseEvent, { kind: "ISSUED" }>;
+  expect(() =>
+    reduce(null, {
+      ...base,
+      ask: { kind: "CLARIFICATION_REQUIRED", reasons: ["REQUIRED_PRICE:x"] },
+    }),
+  ).toThrow(LeaseTransitionError);
+  expect(() => reduce(null, { ...base, ask: undefined })).toThrow(
+    LeaseTransitionError,
+  );
+  expect(() =>
+    reduce(null, { ...(issued("ALLOW") as typeof base), ask: base.ask }),
+  ).toThrow(LeaseTransitionError);
+  expect(reduce(null, base).ask?.kind).toBe("AUTHORITY_CONFIRMATION");
 });

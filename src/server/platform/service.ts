@@ -1,5 +1,6 @@
 import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
+import { describeAsk } from "@/lib/lease/ask";
 import type { StateStore, Repositories } from "@/server/state/repositories";
 import type {
   Principal,
@@ -576,6 +577,14 @@ export class PlatformService {
       decision: outcome,
       decisionBasis: pd ? pd.basis : e.evaluation.decision.basis,
       unresolvedFactors: outcome === "ASK" ? rules : [],
+      ...(outcome === "ASK"
+        ? {
+            ask: describeAsk(
+              pd ? pd.basis : e.evaluation.decision.basis,
+              rules,
+            ),
+          }
+        : {}),
       receiptRef: e.evaluationRef,
       status: "COMPLETED",
       continuation: continuation(outcome),
