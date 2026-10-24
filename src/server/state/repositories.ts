@@ -47,6 +47,7 @@ export interface Repositories {
   platform: import("@/server/platform/repositories").PlatformRepository;
   policy: import("@/server/platform/policy-repository").PolicyRepository;
   leases: import("@/server/platform/lease-repository").LeaseRepository;
+  oauth: import("@/server/platform/oauth-repository").OAuthRepository;
   subjects: import("@/server/subjects/repositories").SubjectRepository;
   groups: import("@/server/subjects/repositories").GroupRepository;
   subjectOperations: import("@/server/subjects/repositories").SubjectOperationRepository;

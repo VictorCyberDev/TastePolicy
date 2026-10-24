@@ -149,7 +149,13 @@ export class PlatformService {
       return result;
     });
   }
-  async credentialPrincipal(raw: string): Promise<Principal> {
+  // `surface` limits where an OAuth-linked token may be used: it is audience
+  // bound to the MCP endpoint, so REST and A2A refuse it (developer keys work
+  // everywhere).
+  async credentialPrincipal(
+    raw: string,
+    surface: "rest" | "mcp" | "a2a" = "rest",
+  ): Promise<Principal> {
     const match = /^tp_live_([a-f0-9-]{36})\.([A-Za-z0-9_-]{43})$/.exec(raw);
     if (!match) fail("AUTH_REQUIRED");
     return this.store.transaction(async (r) => {
@@ -162,7 +168,9 @@ export class PlatformService {
         credentialHash: hash(raw),
         scopes: c.scopes,
         authenticatedAt: c.createdAt,
+        ...(c.oauth ? { oauth: c.oauth } : {}),
       };
+      if (c.oauth && surface !== "mcp") fail("ACCESS_DENIED");
       await this.locked(r, p, []);
       if (
         !(await r.platform.rate(
@@ -381,7 +389,9 @@ export class PlatformService {
       if (p.kind !== "SESSION") fail("ACCESS_DENIED");
       const passport = await r.platform.owned(p.userId),
         grants = await r.platform.grants(p.userId),
-        credentials = await r.platform.credentials(p.userId);
+        credentials = (await r.platform.credentials(p.userId)).filter(
+          (c) => !c.oauth,
+        );
       return {
         mode: "AUTHENTICATED_ACCOUNT",
         userId: p.userId,
