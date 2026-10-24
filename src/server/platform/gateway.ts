@@ -19,11 +19,13 @@ export interface GatewayDeps {
 export async function gatewayAuthenticate(
   deps: GatewayDeps,
   authorization: string | null,
+  surface: "mcp" | "a2a" = "mcp",
 ): Promise<Principal> {
   if (!authorization?.startsWith("Bearer ")) platformFail("AUTH_REQUIRED");
   if (!deps.store) platformFail("NOT_CONFIGURED");
   return new PlatformService(deps.store).credentialPrincipal(
     authorization.slice(7),
+    surface,
   );
 }
 export function capabilities(p: Principal) {

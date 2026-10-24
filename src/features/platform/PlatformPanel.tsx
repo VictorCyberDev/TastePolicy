@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import type { Credential, Grant } from "@/lib/platform/types";
 import { KEY_SCOPES, SHARE_SCOPES } from "@/lib/platform/types";
+import ConnectedAgents from "./ConnectedAgents";
 import "./PlatformPanel.css";
 type Passport = {
   subjectRef: string;
@@ -130,6 +131,9 @@ export default function PlatformPanel() {
     }
     setPassword("");
     await inspect();
+    // Returning to an assistant's connection request after signing in.
+    const next = new URLSearchParams(location.search).get("next");
+    if (next?.startsWith("/oauth/consent?")) location.assign(next);
     setNotice(
       "Authenticated account. Control of account credentials is not legal identity or independently verified email ownership.",
     );
@@ -700,6 +704,7 @@ export default function PlatformPanel() {
               </article>
             ))}
           </fieldset>
+          <ConnectedAgents />
           <fieldset disabled={busy}>
             <legend>Export &amp; delete</legend>
             <p>

@@ -36,6 +36,35 @@ CREATE TABLE tastepolicy.developer_credentials (
  secret_hash text NOT NULL UNIQUE CHECK(length(secret_hash)=64), scopes text[] NOT NULL CHECK(cardinality(scopes)>0 AND scopes <@ ARRAY['PASSPORT_READ','TASTE_EVALUATE','RECEIPT_READ']),
  expires_at timestamptz NOT NULL, data jsonb NOT NULL, UNIQUE(user_id,credential_id)
 );
+-- OAuth account linking (ADR 0022). Access tokens are developer_credentials rows
+-- (short-lived, with data.oauth); these tables hold the rest.
+CREATE TABLE tastepolicy.oauth_clients (
+ client_id text PRIMARY KEY CHECK(length(client_id) BETWEEN 8 AND 512),
+ source text NOT NULL CHECK(source IN ('CIMD','DCR')),
+ client_name text NOT NULL CHECK(length(client_name) BETWEEN 1 AND 100),
+ redirect_uris text[] NOT NULL CHECK(cardinality(redirect_uris) BETWEEN 1 AND 10),
+ fetched_at timestamptz NOT NULL
+);
+CREATE TABLE tastepolicy.oauth_families (
+ family_id uuid PRIMARY KEY, user_id text NOT NULL REFERENCES tastepolicy.platform_auth_user(id) ON DELETE CASCADE,
+ client_id text NOT NULL REFERENCES tastepolicy.oauth_clients(client_id), client_name text NOT NULL,
+ scopes text[] NOT NULL CHECK(cardinality(scopes)>0 AND scopes <@ ARRAY['PASSPORT_READ','TASTE_EVALUATE','RECEIPT_READ']),
+ resource text NOT NULL, created_at timestamptz NOT NULL, revoked_at timestamptz, last_used_at timestamptz
+);
+CREATE INDEX oauth_families_user ON tastepolicy.oauth_families(user_id);
+CREATE TABLE tastepolicy.oauth_codes (
+ code_hash text PRIMARY KEY CHECK(length(code_hash)=64),
+ user_id text NOT NULL REFERENCES tastepolicy.platform_auth_user(id) ON DELETE CASCADE,
+ client_id text NOT NULL REFERENCES tastepolicy.oauth_clients(client_id),
+ redirect_uri text NOT NULL, code_challenge text NOT NULL CHECK(length(code_challenge)=43),
+ scopes text[] NOT NULL, resource text NOT NULL, expires_at timestamptz NOT NULL,
+ used_at timestamptz, family_id uuid REFERENCES tastepolicy.oauth_families(family_id) ON DELETE CASCADE
+);
+CREATE TABLE tastepolicy.oauth_refresh (
+ token_hash text PRIMARY KEY CHECK(length(token_hash)=64),
+ family_id uuid NOT NULL REFERENCES tastepolicy.oauth_families(family_id) ON DELETE CASCADE,
+ expires_at timestamptz NOT NULL, used_at timestamptz
+);
 CREATE TABLE tastepolicy.developer_credential_events (
  user_id text NOT NULL, credential_id uuid NOT NULL, data jsonb NOT NULL, PRIMARY KEY(user_id,credential_id),
  FOREIGN KEY(user_id,credential_id) REFERENCES tastepolicy.developer_credentials(user_id,credential_id) ON DELETE CASCADE
@@ -107,7 +136,7 @@ CREATE CONSTRAINT TRIGGER grant_revocation_not_removed AFTER DELETE ON tastepoli
 CREATE CONSTRAINT TRIGGER credential_not_resurrected AFTER DELETE ON tastepolicy.developer_credentials DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION tastepolicy.prevent_grant_resurrection();
 CREATE CONSTRAINT TRIGGER credential_revocation_not_removed AFTER DELETE ON tastepolicy.developer_credential_events DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION tastepolicy.prevent_grant_resurrection();
 DO $$ DECLARE t text; BEGIN
- FOREACH t IN ARRAY ARRAY['platform_auth_user','platform_auth_session','platform_auth_account','platform_auth_verification','rateLimit','platform_ownership','taste_passports','passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports','platform_rate','account_deletion_records'] LOOP
+ FOREACH t IN ARRAY ARRAY['platform_auth_user','platform_auth_session','platform_auth_account','platform_auth_verification','rateLimit','platform_ownership','taste_passports','passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports','platform_rate','account_deletion_records','oauth_clients','oauth_families','oauth_codes','oauth_refresh'] LOOP
  EXECUTE format('ALTER TABLE tastepolicy.%I ENABLE ROW LEVEL SECURITY',t); EXECUTE format('REVOKE ALL ON tastepolicy.%I FROM PUBLIC',t);
  IF t IN ('passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports') THEN EXECUTE format('CREATE TRIGGER immutable_platform BEFORE UPDATE ON tastepolicy.%I FOR EACH ROW EXECUTE FUNCTION tastepolicy.immutable_snapshot()',t); END IF;
  END LOOP;

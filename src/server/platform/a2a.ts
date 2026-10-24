@@ -194,7 +194,11 @@ export async function handleA2a(
     });
   let p: Principal;
   try {
-    p = await gatewayAuthenticate(deps, request.headers.get("authorization"));
+    p = await gatewayAuthenticate(
+      deps,
+      request.headers.get("authorization"),
+      "a2a",
+    );
   } catch (e) {
     const code = codeOf(e);
     return rpcResponse(
