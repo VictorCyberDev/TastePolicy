@@ -66,6 +66,7 @@ for (const mode of ["auto", "legacy"] as const)
       "tastepolicy_capabilities",
       "tastepolicy_evaluate_choice",
       "tastepolicy_get_authority",
+      "tastepolicy_get_policy",
       "tastepolicy_get_receipt",
       "tastepolicy_get_status",
     ]);

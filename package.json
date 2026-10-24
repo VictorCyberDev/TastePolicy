@@ -21,6 +21,7 @@
     "db:migrate:trajectory": "node scripts/state-db.mjs migrate-trajectory",
     "db:migrate:subjects": "node scripts/state-db.mjs migrate-subjects",
     "db:migrate:platform": "node scripts/state-db.mjs migrate-platform",
+    "db:migrate:policy": "node scripts/state-db.mjs migrate-policy",
     "mcp:platform": "node --experimental-transform-types scripts/platform-mcp.mjs",
     "db:purge:platform": "node scripts/state-db.mjs purge-platform",
     "db:purge": "node scripts/state-db.mjs purge",

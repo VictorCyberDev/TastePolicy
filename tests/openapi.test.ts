@@ -10,7 +10,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   expect(doc.openapi).toBe("3.1.0");
   const paths = Object.keys(doc.paths).sort();
   expect(paths).toEqual(
-    ["capabilities", "evaluate", "passport", "receipt", "status"].map(
+    ["capabilities", "evaluate", "passport", "policy", "receipt", "status"].map(
       (o) => `/api/v1/${o}`,
     ),
   );
@@ -22,6 +22,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
     "capabilities",
     "evaluate",
     "passport",
+    "policy",
     "receipt",
     "status",
   ]);

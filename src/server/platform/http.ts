@@ -1,6 +1,6 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-import { PlatformService } from "./service";
+import { PolicyService } from "./policy-service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
 import { capabilities } from "./gateway";
@@ -75,14 +75,21 @@ export async function handlePlatform(
     )
       platformFail("INVALID_INPUT");
     if (!store) platformFail("NOT_CONFIGURED");
-    const service = new PlatformService(store);
+    const service = new PolicyService(store);
     const p =
       mode === "v1"
         ? await service.credentialPrincipal(bearer!.replace(/^Bearer /, ""))
         : await authenticate(request);
     if (
       request.method === "GET" &&
-      !["inspect", "passport", "receipt", "status", "capabilities"].includes(op)
+      ![
+        "inspect",
+        "passport",
+        "receipt",
+        "status",
+        "capabilities",
+        "policy",
+      ].includes(op)
     )
       platformFail("INVALID_INPUT");
     const body =
@@ -116,6 +123,20 @@ export async function handlePlatform(
         data = await service.delete(p, body, op === "delete-account");
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);
+      else if (op === "policy") data = await service.policySummary(p, body);
+      else if (op === "policy-get") data = await service.policyGet(p, body);
+      else if (op === "policy-publish")
+        data = await service.policyPublish(p, body);
+      else if (op === "override-create")
+        data = await service.overrideCreate(p, body);
+      else if (op === "override-revoke")
+        data = await service.overrideRevoke(p, body);
+      else if (op === "policy-simulate")
+        data = await service.policySimulate(p, body);
+      else if (op === "policy-impact")
+        data = await service.policyImpact(p, body);
+      else if (op === "policy-explain")
+        data = await service.policyExplain(p, body);
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "receipt" || op === "status")
         data = await service.receipt(p, body, op === "status");
@@ -140,6 +161,7 @@ export async function handlePlatform(
       } else platformFail("INVALID_INPUT");
     } else {
       if (op === "capabilities") data = capabilities(p);
+      else if (op === "policy") data = await service.policySummary(p, body);
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);

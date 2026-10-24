@@ -1,5 +1,5 @@
 import "server-only";
-import { PlatformService } from "./service";
+import { PolicyService } from "./policy-service";
 import {
   PLATFORM_CONTRACT_VERSION,
   AUTHORITY_BOUNDARY,
@@ -23,7 +23,7 @@ export async function gatewayAuthenticate(
 ): Promise<Principal> {
   if (!authorization?.startsWith("Bearer ")) platformFail("AUTH_REQUIRED");
   if (!deps.store) platformFail("NOT_CONFIGURED");
-  return new PlatformService(deps.store).credentialPrincipal(
+  return new PolicyService(deps.store).credentialPrincipal(
     authorization.slice(7),
     surface,
   );
@@ -55,8 +55,9 @@ export async function gatewayInvoke(
     platformFail("ACCESS_DENIED");
   if (tool.op === "capabilities") return capabilities(p);
   if (!deps.store) platformFail("NOT_CONFIGURED");
-  const s = new PlatformService(deps.store);
+  const s = new PolicyService(deps.store);
   if (tool.op === "passport") return s.read(p, input);
+  if (tool.op === "policy") return s.policySummary(p, input);
   if (tool.op === "evaluate")
     return s.evaluate(p, input, deps.factory, requestId);
   return s.receipt(p, input, tool.op === "status");

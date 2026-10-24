@@ -68,13 +68,26 @@ export function createSandbox() {
         schemaVersion: "tastepolicy-capabilities-v1",
         sandbox: true,
       });
-    if (op === "passport" || op === "evaluate") {
+    if (op === "passport" || op === "evaluate" || op === "policy") {
       const ref = String(body.passportRef ?? "");
       if (!Object.values(SANDBOX_PASSPORTS).includes(ref as never))
         return fail("PASSPORT_NOT_FOUND");
       if (ref === SANDBOX_PASSPORTS.expiredGrant) return fail("GRANT_EXPIRED");
       if (ref === SANDBOX_PASSPORTS.revokedGrant) return fail("GRANT_REVOKED");
     }
+    if (op === "policy")
+      return ok({
+        schemaVersion: "taste-policy-summary-v1",
+        passportRef: body.passportRef,
+        policyVersion: null,
+        autonomy: {
+          brand: "AUTONOMOUS",
+          place: "AUTONOMOUS",
+          destination: "AUTONOMOUS",
+        },
+        limit: null,
+        freshnessDays: {},
+      });
     if (op === "passport")
       return ok({
         schemaVersion: "taste-passport-v1",

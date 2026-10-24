@@ -26,9 +26,10 @@ import {
 } from "@/server/state/evaluate-profile";
 import { replayEvaluation } from "@/server/subjects/common";
 import type { QlooProvider } from "@/server/qloo/contracts";
+import type { PolicyDecision } from "@/lib/policy/types";
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 const ref = () => "tp_" + randomBytes(24).toString("hex");
-function reference(v: unknown): string {
+export function reference(v: unknown): string {
   if (typeof v !== "string" || !/^tp_[a-f0-9]{48}$/.test(v))
     fail("INVALID_INPUT");
   return v;
@@ -71,7 +72,7 @@ export class PlatformService {
     readonly store: StateStore,
     readonly clock = () => new Date().toISOString(),
   ) {}
-  private expiry(v: unknown, limit?: string) {
+  protected expiry(v: unknown, limit?: string) {
     if (typeof v !== "string" || !Number.isFinite(Date.parse(v)))
       fail("INVALID_INPUT");
     const e = new Date(v).toISOString();
@@ -83,7 +84,7 @@ export class PlatformService {
       fail("INVALID_INPUT");
     return e;
   }
-  private async authority(
+  protected async authority(
     r: Repositories,
     p: Principal,
     required?: KeyScope,
@@ -114,7 +115,7 @@ export class PlatformService {
       if (required && !c.scopes.includes(required)) fail("ACCESS_DENIED");
     }
   }
-  private async locked(
+  protected async locked(
     r: Repositories,
     p: Principal,
     users: string[],
@@ -125,7 +126,7 @@ export class PlatformService {
       if (!(await r.platform.user(u, true))) fail("AUTH_REQUIRED");
     await this.authority(r, p, required, fresh);
   }
-  private async op<T>(
+  protected async op<T>(
     p: Principal,
     op: string,
     input: Record<string, unknown>,
@@ -331,7 +332,7 @@ export class PlatformService {
       semanticHash: hash(material),
     };
   }
-  private async access(
+  protected async access(
     r: Repositories,
     p: Principal,
     passportRef: string,
@@ -585,7 +586,13 @@ export class PlatformService {
       return { credentialId: cid, revoked: true };
     });
   }
-  private response(e: PlatformEvaluation, subjectRef: string) {
+  protected response(
+    e: PlatformEvaluation,
+    subjectRef: string,
+    pd: PolicyDecision | null = null,
+  ) {
+    const outcome = pd ? pd.outcome : e.evaluation.decision.outcome,
+      rules = pd ? pd.rules : e.evaluation.decision.rules;
     return {
       schemaVersion: "taste-authorization-response-v1",
       subjectRef,
@@ -593,17 +600,42 @@ export class PlatformService {
       passportRef: e.passportRef,
       stateVersion: e.stateVersion,
       stateHash: e.stateHash,
-      decision: e.evaluation.decision.outcome,
-      decisionBasis: e.evaluation.decision.basis,
-      unresolvedFactors:
-        e.evaluation.decision.outcome === "ASK"
-          ? e.evaluation.decision.rules
-          : [],
+      decision: outcome,
+      decisionBasis: pd ? pd.basis : e.evaluation.decision.basis,
+      unresolvedFactors: outcome === "ASK" ? rules : [],
       receiptRef: e.evaluationRef,
       status: "COMPLETED",
-      continuation: continuation(e.evaluation.decision.outcome),
+      continuation: continuation(outcome),
       createdAt: e.evaluation.evaluatedAt,
+      ...(pd
+        ? {
+            policy: {
+              version: pd.policyVersion,
+              baseDecision: pd.baseOutcome,
+              trace: pd.trace,
+            },
+          }
+        : {}),
     };
+  }
+  // Extension points for the M7 policy layer. Defaults leave behaviour unchanged.
+  protected async policyDecide(
+    r: Repositories,
+    e: PlatformEvaluation,
+    state: import("@/lib/state/types").StateVersion,
+  ): Promise<PolicyDecision | null> {
+    void r;
+    void e;
+    void state;
+    return null;
+  }
+  protected async policyLoad(
+    r: Repositories,
+    e: PlatformEvaluation,
+  ): Promise<PolicyDecision | null> {
+    void r;
+    void e;
+    return null;
   }
   async evaluate(
     p: Principal,
@@ -707,7 +739,8 @@ export class PlatformService {
         evaluation,
       };
       await r.platform.evaluation(e);
-      const response = this.response(e, passport.subjectRef);
+      const pd = await this.policyDecide(r, e, state);
+      const response = this.response(e, passport.subjectRef, pd);
       await r.platform.saveOp(p.userId, "evaluate", k, h, response);
       return response;
     });
@@ -742,10 +775,11 @@ export class PlatformService {
         e.evaluation.evaluationId,
       );
       if (hash(replay) !== hash(e.evaluation)) fail("INTEGRITY_ERROR");
+      const pd = await this.policyLoad(r, e);
       return statusOnly
-        ? this.response(e, passport.subjectRef)
+        ? this.response(e, passport.subjectRef, pd)
         : {
-            ...this.response(e, passport.subjectRef),
+            ...this.response(e, passport.subjectRef, pd),
             source: "recorded",
             receiptSchemaVersion: "taste-platform-receipt-v1",
             authorizationEvidence: {
