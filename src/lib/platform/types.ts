@@ -87,7 +87,11 @@ export class PlatformFailure extends Error {
       | "RECENT_AUTH_REQUIRED"
       | "INTEGRITY_ERROR"
       | "NOT_CONFIGURED"
-      | "PROVIDER_UNAVAILABLE",
+      | "PROVIDER_UNAVAILABLE"
+      | "LEASE_NOT_FOUND"
+      | "LEASE_NOT_PERMITTED"
+      | "CLARIFICATION_REQUIRED"
+      | "LEASE_STATE_CONFLICT",
   ) {
     super(code);
   }

@@ -6,6 +6,9 @@ import {
   evaluateInput,
   evaluationRefInput,
   passportInput,
+  leaseRefInput,
+  leaseRequestInput,
+  leaseResumeInput,
   policyInput,
 } from "./contracts";
 
@@ -77,6 +80,25 @@ export function openApiDocument(origin: string) {
       },
       "/api/v1/policy": {
         post: op("Read autonomy rules", "PASSPORT_READ", policyInput),
+      },
+      "/api/v1/lease": {
+        post: op("Request a lease", "TASTE_EVALUATE", leaseRequestInput),
+      },
+      "/api/v1/lease-verify": {
+        post: op("Verify a lease", "RECEIPT_READ", leaseRefInput),
+      },
+      "/api/v1/lease-checkpoint": {
+        post: op("Checkpoint a lease", "TASTE_EVALUATE", leaseRefInput),
+      },
+      "/api/v1/lease-resume": {
+        post: op(
+          "Resume a suspended lease",
+          "TASTE_EVALUATE",
+          leaseResumeInput,
+        ),
+      },
+      "/api/v1/lease-release": {
+        post: op("Release a lease", "TASTE_EVALUATE", leaseRefInput),
       },
       "/api/v1/evaluate": {
         post: op("Evaluate a proposed choice", "TASTE_EVALUATE", evaluateInput),

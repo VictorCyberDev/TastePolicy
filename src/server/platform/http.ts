@@ -1,6 +1,6 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-import { PolicyService } from "./policy-service";
+import { LeaseService } from "./lease-service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
 import { capabilities } from "./gateway";
@@ -75,7 +75,7 @@ export async function handlePlatform(
     )
       platformFail("INVALID_INPUT");
     if (!store) platformFail("NOT_CONFIGURED");
-    const service = new PolicyService(store);
+    const service = new LeaseService(store);
     const p =
       mode === "v1"
         ? await service.credentialPrincipal(bearer!.replace(/^Bearer /, ""))
@@ -124,6 +124,12 @@ export async function handlePlatform(
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);
       else if (op === "policy") data = await service.policySummary(p, body);
+      else if (op === "lease-list") data = await service.leaseList(p, body);
+      else if (op === "lease-approve")
+        data = await service.leaseApprove(p, body);
+      else if (op === "lease-decline")
+        data = await service.leaseDecline(p, body);
+      else if (op === "lease-revoke") data = await service.leaseRevoke(p, body);
       else if (op === "policy-get") data = await service.policyGet(p, body);
       else if (op === "policy-publish")
         data = await service.policyPublish(p, body);
@@ -162,6 +168,13 @@ export async function handlePlatform(
     } else {
       if (op === "capabilities") data = capabilities(p);
       else if (op === "policy") data = await service.policySummary(p, body);
+      else if (op === "lease") data = await service.leaseRequest(p, body);
+      else if (op === "lease-verify") data = await service.leaseVerify(p, body);
+      else if (op === "lease-checkpoint")
+        data = await service.leaseCheckpoint(p, body);
+      else if (op === "lease-resume") data = await service.leaseResume(p, body);
+      else if (op === "lease-release")
+        data = await service.leaseRelease(p, body);
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);

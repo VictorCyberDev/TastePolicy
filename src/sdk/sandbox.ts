@@ -26,6 +26,10 @@ function scenarioOf(name: unknown): SandboxScenario {
     if (n.includes(s)) return s;
   return "ALLOW";
 }
+const clarify = (name: unknown) =>
+  String(name ?? "")
+    .toUpperCase()
+    .includes("CLARIFY");
 const hex = (s: string) => {
   let x = 0;
   for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0;
@@ -34,6 +38,30 @@ const hex = (s: string) => {
 export function createSandbox() {
   const evaluations = new Map<string, Record<string, unknown>>();
   const operations = new Map<string, { payload: string; response: unknown }>();
+  type SandboxLease = {
+    leaseRef: string;
+    status: string;
+    rev: number;
+    decision: string;
+    evaluationRef: string;
+  };
+  const leases = new Map<string, SandboxLease>();
+  const leaseView = (l: SandboxLease) => {
+    const valid = l.status === "ACTIVE";
+    return {
+      schemaVersion: "taste-lease-v1",
+      leaseRef: l.leaseRef,
+      status: l.status,
+      valid,
+      permitted: valid ? ["recommend", "add_to_draft"] : [],
+      reasons: [],
+      expiresAt: "2026-01-01T00:15:00.000Z",
+      checkpointDueAt: "2026-01-01T00:05:00.000Z",
+      rev: l.rev,
+      cacheable: false,
+      ttlMs: 0,
+    };
+  };
   const ok = (data: unknown) =>
     Response.json({
       status: "available",
@@ -74,6 +102,47 @@ export function createSandbox() {
         return fail("PASSPORT_NOT_FOUND");
       if (ref === SANDBOX_PASSPORTS.expiredGrant) return fail("GRANT_EXPIRED");
       if (ref === SANDBOX_PASSPORTS.revokedGrant) return fail("GRANT_REVOKED");
+    }
+    if (op?.startsWith("lease")) {
+      const b = body as { evaluationRef?: string; leaseRef?: string };
+      if (op === "lease") {
+        const e = evaluations.get(String(b.evaluationRef));
+        if (!e) return fail("LEASE_NOT_FOUND");
+        const decision = String(e.decision);
+        if (decision !== "ALLOW" && decision !== "ASK")
+          return fail("LEASE_NOT_PERMITTED");
+        if (
+          (e.ask as { kind?: string } | undefined)?.kind ===
+          "CLARIFICATION_REQUIRED"
+        )
+          return fail("CLARIFICATION_REQUIRED");
+        for (const l of leases.values())
+          if (
+            l.evaluationRef === e.evaluationRef &&
+            ["ACTIVE", "ASK_PENDING", "SUSPENDED"].includes(l.status)
+          )
+            return fail("LEASE_STATE_CONFLICT");
+        const l: SandboxLease = {
+          leaseRef: `tl_${hex("lease" + leases.size + String(e.evaluationRef))}`,
+          status: decision === "ALLOW" ? "ACTIVE" : "ASK_PENDING",
+          rev: 1,
+          decision,
+          evaluationRef: String(e.evaluationRef),
+        };
+        leases.set(l.leaseRef, l);
+        return ok(leaseView(l));
+      }
+      const l = leases.get(String(b.leaseRef));
+      if (!l) return fail("LEASE_NOT_FOUND");
+      if (op === "lease-checkpoint" && l.status === "ACTIVE") l.rev++;
+      if (
+        op === "lease-release" &&
+        ["ACTIVE", "SUSPENDED"].includes(l.status)
+      ) {
+        l.status = "RELEASED";
+        l.rev++;
+      }
+      return ok(leaseView(l));
     }
     if (op === "policy")
       return ok({
@@ -123,6 +192,24 @@ export function createSandbox() {
               : "SANDBOX_SCENARIO",
           unresolvedFactors:
             decision === "ASK" ? ["sandbox-unresolved-factor"] : [],
+          // A candidate whose name says CLARIFY needs a missing fact; any
+          // other sandbox ASK is the owner's own rule asking first.
+          ...(decision === "ASK"
+            ? {
+                ask: clarify(p.candidate.name)
+                  ? {
+                      kind: "CLARIFICATION_REQUIRED",
+                      reasons: ["REQUIRED_PRICE:sandbox"],
+                      question: "What is the price?",
+                    }
+                  : {
+                      kind: "AUTHORITY_CONFIRMATION",
+                      reasons: ["AUTONOMY:OBSERVE"],
+                      question:
+                        "Your rule says to ask you before your agent continues.",
+                    },
+              }
+            : {}),
           receiptRef: ref,
           status: "COMPLETED",
           continuation: {
@@ -151,7 +238,28 @@ export function createSandbox() {
     }
     return fail("INVALID_INPUT");
   }) as typeof fetch;
+  // Owner actions are simulated here because the sandbox has no person.
+  const owner = {
+    approve(leaseRef: string) {
+      const l = leases.get(leaseRef);
+      if (l?.status === "ASK_PENDING") {
+        l.status = "ACTIVE";
+        l.rev++;
+      }
+    },
+    revoke(leaseRef: string) {
+      const l = leases.get(leaseRef);
+      if (
+        l &&
+        !["REVOKED", "RELEASED", "DECLINED", "EXPIRED"].includes(l.status)
+      ) {
+        l.status = "REVOKED";
+        l.rev++;
+      }
+    },
+  };
   return {
+    owner,
     fetch: fetchImpl,
     origin: SANDBOX_ORIGIN,
     credential: SANDBOX_CREDENTIAL,

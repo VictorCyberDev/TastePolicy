@@ -45,6 +45,22 @@ export const ERROR_CATALOG: Record<string, ErrorSpec> = {
     false,
     "No such Passport or evaluation is available to this caller.",
   ),
+  LEASE_NOT_FOUND: spec(
+    404,
+    false,
+    "No such lease is available to this caller.",
+  ),
+  LEASE_NOT_PERMITTED: spec(403, false, "This decision cannot be leased."),
+  CLARIFICATION_REQUIRED: spec(
+    409,
+    false,
+    "A fact is missing. Capture it and evaluate again; approving cannot supply it.",
+  ),
+  LEASE_STATE_CONFLICT: spec(
+    409,
+    false,
+    "The lease changed or is not in a state that allows this.",
+  ),
   INVALID_INPUT: spec(400, false, "The request does not match the contract."),
   STATE_VERSION_CONFLICT: spec(
     409,

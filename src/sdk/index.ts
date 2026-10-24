@@ -19,6 +19,26 @@ export type {
   AuthorizationResponse,
   ReceiptResponse,
 } from "./types";
+export interface Lease {
+  schemaVersion: "taste-lease-v1";
+  leaseRef: string;
+  status:
+    | "ASK_PENDING"
+    | "ACTIVE"
+    | "SUSPENDED"
+    | "DECLINED"
+    | "REVOKED"
+    | "EXPIRED"
+    | "RELEASED";
+  valid: boolean;
+  permitted: string[];
+  reasons: string[];
+  expiresAt: string;
+  checkpointDueAt: string;
+  rev: number;
+  cacheable: false;
+  ttlMs: 0;
+}
 // Typed failure for every non-success response. `message` stays the stable
 // code so existing string checks keep working.
 export class TastePolicyError extends Error {
@@ -65,6 +85,11 @@ export class TastePolicyClient {
       | "capabilities"
       | "passport"
       | "policy"
+      | "lease"
+      | "lease-verify"
+      | "lease-checkpoint"
+      | "lease-resume"
+      | "lease-release"
       | "evaluate"
       | "receipt"
       | "status",
@@ -110,6 +135,35 @@ export class TastePolicyClient {
   }
   policy(input: { passportRef: string; grantId?: string; agentId?: string }) {
     return this.call<Record<string, unknown>>("policy", input);
+  }
+  // Leases permit only the cultural continuation of one decision; they never
+  // carry purchase, payment or booking authority. Verify before relying on one.
+  lease(input: {
+    idempotencyKey: string;
+    evaluationRef: string;
+    ttlSeconds?: number;
+    checkpointSeconds?: number;
+  }) {
+    return this.call<Lease>("lease", input);
+  }
+  leaseVerify(leaseRef: string) {
+    return this.call<Lease>("lease-verify", { leaseRef });
+  }
+  leaseCheckpoint(leaseRef: string, expectedRev?: number) {
+    return this.call<Lease>("lease-checkpoint", {
+      leaseRef,
+      ...(expectedRev === undefined ? {} : { expectedRev }),
+    });
+  }
+  leaseResume(input: {
+    idempotencyKey: string;
+    leaseRef: string;
+    evaluationRef: string;
+  }) {
+    return this.call<Lease>("lease-resume", input);
+  }
+  leaseRelease(leaseRef: string) {
+    return this.call<Lease>("lease-release", { leaseRef });
   }
   evaluate(input: EvaluationRequest) {
     return this.call<AuthorizationResponse>("evaluate", input);

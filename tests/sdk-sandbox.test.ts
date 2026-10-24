@@ -89,3 +89,48 @@ it("SDK retryable set matches the shared error catalog", async () => {
     .map(([k]) => k);
   expect(listed.sort()).toEqual(expected.sort());
 });
+
+it("sandbox leases: ALLOW is active, ASK waits for the owner, REJECT/UNAVAILABLE are not leasable, revocation shows on verify", async () => {
+  const sb = createSandbox(),
+    c = new TastePolicyClient(sb.origin, sb.credential, { fetch: sb.fetch });
+  const evalOf = (scenario: string) =>
+    c.evaluate({
+      passportRef: SANDBOX_PASSPORTS.own,
+      idempotencyKey: "lease-" + scenario,
+      proposal: propose("Sandbox " + scenario),
+    });
+  const allow = await c.lease({
+    idempotencyKey: "lease-key-allow",
+    evaluationRef: (await evalOf("ALLOW")).evaluationRef,
+  });
+  expect([allow.status, allow.valid, allow.permitted]).toEqual([
+    "ACTIVE",
+    true,
+    ["recommend", "add_to_draft"],
+  ]);
+  const ask = await c.lease({
+    idempotencyKey: "lease-key-ask0",
+    evaluationRef: (await evalOf("ASK")).evaluationRef,
+  });
+  expect([ask.status, ask.valid, ask.permitted]).toEqual([
+    "ASK_PENDING",
+    false,
+    [],
+  ]);
+  sb.owner.approve(ask.leaseRef);
+  expect((await c.leaseVerify(ask.leaseRef)).valid).toBe(true);
+  for (const s of ["REJECT", "UNAVAILABLE"])
+    await expect(
+      c.lease({
+        idempotencyKey: "lease-key-" + s,
+        evaluationRef: (await evalOf(s)).evaluationRef,
+      }),
+    ).rejects.toMatchObject({ code: "LEASE_NOT_PERMITTED", status: 403 });
+  sb.owner.revoke(allow.leaseRef);
+  expect(await c.leaseVerify(allow.leaseRef)).toMatchObject({
+    status: "REVOKED",
+    valid: false,
+    permitted: [],
+  });
+  expect((await c.leaseRelease(ask.leaseRef)).status).toBe("RELEASED");
+});

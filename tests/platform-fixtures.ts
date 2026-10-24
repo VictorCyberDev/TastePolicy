@@ -1,5 +1,7 @@
 // SYNTHETIC TEST DATA. Real Better Auth email/password and actual PostgreSQL SQL in PGlite.
 import { randomBytes } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { readdirSync } from "node:fs";
 import { subjectsDatabase, subjectProvider } from "./subjects-fixtures";
 import { createAuthentication } from "@/server/platform/auth";
 import { PlatformService } from "@/server/platform/service";
@@ -11,6 +13,18 @@ export async function platformDatabase(
   authSecret = randomBytes(48).toString("base64url"),
 ) {
   const d = await subjectsDatabase(dir, migrate);
+  // subjectsDatabase carries 0001-0006 (groups apply member policy); every later
+  // migration present at this milestone's head is applied here, in order.
+  if (migrate)
+    for (const file of readdirSync(new URL("../migrations/", import.meta.url))
+      .filter((f) => /^\d{4}_.*\.sql$/.test(f) && Number(f.slice(0, 4)) > 6)
+      .sort())
+      await d.db.exec(
+        await readFile(
+          new URL(`../migrations/${file}`, import.meta.url),
+          "utf8",
+        ),
+      );
   await d.db.exec("SET search_path=tastepolicy");
   const auth = createAuthentication(
     d.store.pool,

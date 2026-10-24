@@ -47,13 +47,39 @@ export const policyInput = z.object({
     .optional()
     .describe("Resolve autonomy rules for this agent"),
 });
+const leaseRefField = z.string().regex(/^tl_[a-f0-9]{48}$/);
+export const leaseRequestInput = z.object({
+  idempotencyKey: z.string().min(8).max(80),
+  evaluationRef: ref,
+  ttlSeconds: z.number().int().min(60).max(86400).optional(),
+  checkpointSeconds: z.number().int().min(30).max(86400).optional(),
+});
+export const leaseRefInput = z.object({
+  leaseRef: leaseRefField,
+  expectedRev: z.number().int().min(0).optional(),
+});
+export const leaseResumeInput = z.object({
+  idempotencyKey: z.string().min(8).max(80),
+  leaseRef: leaseRefField,
+  evaluationRef: ref,
+});
 export const evaluationRefInput = z.object({ evaluationRef: ref });
 export const emptyInput = z.object({});
 
 export interface PlatformTool {
   name: string;
   op:
-    "capabilities" | "passport" | "policy" | "evaluate" | "receipt" | "status";
+    | "capabilities"
+    | "passport"
+    | "policy"
+    | "evaluate"
+    | "receipt"
+    | "status"
+    | "lease"
+    | "lease-verify"
+    | "lease-checkpoint"
+    | "lease-resume"
+    | "lease-release";
   title: string;
   description: string;
   scope: KeyScope | null;
@@ -126,6 +152,60 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     readOnly: true,
     idempotent: true,
     input: evaluationRefInput,
+  },
+  {
+    name: "tastepolicy_request_lease",
+    op: "lease",
+    title: "Request a preference authority lease",
+    description:
+      "After an ALLOW or ASK evaluation, request a short-lived lease for that exact choice. ALLOW starts active; ASK waits for the person to answer. The lease permits only recommend/add_to_draft and never any purchase, payment or booking. Verify before relying on it and checkpoint before it is due.",
+    scope: "TASTE_EVALUATE",
+    readOnly: false,
+    idempotent: true,
+    input: leaseRequestInput,
+  },
+  {
+    name: "tastepolicy_verify_lease",
+    op: "lease-verify",
+    title: "Verify a lease",
+    description:
+      "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked.",
+    scope: "RECEIPT_READ",
+    readOnly: true,
+    idempotent: true,
+    input: leaseRefInput,
+  },
+  {
+    name: "tastepolicy_checkpoint_lease",
+    op: "lease-checkpoint",
+    title: "Checkpoint a lease",
+    description:
+      "Confirm nothing the lease relied on has changed and push the next checkpoint forward. If anything changed the lease is suspended instead of extended.",
+    scope: "TASTE_EVALUATE",
+    readOnly: false,
+    idempotent: false,
+    input: leaseRefInput,
+  },
+  {
+    name: "tastepolicy_resume_lease",
+    op: "lease-resume",
+    title: "Resume a suspended lease",
+    description:
+      "Resume a suspended lease with a new evaluation of the same choice that is ALLOW under the current state and rules.",
+    scope: "TASTE_EVALUATE",
+    readOnly: false,
+    idempotent: true,
+    input: leaseResumeInput,
+  },
+  {
+    name: "tastepolicy_release_lease",
+    op: "lease-release",
+    title: "Release a lease",
+    description: "End a lease you no longer need.",
+    scope: "TASTE_EVALUATE",
+    readOnly: false,
+    idempotent: true,
+    input: leaseRefInput,
   },
 ];
 export const toolByName = (name: string) =>

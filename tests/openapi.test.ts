@@ -10,22 +10,39 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   expect(doc.openapi).toBe("3.1.0");
   const paths = Object.keys(doc.paths).sort();
   expect(paths).toEqual(
-    ["capabilities", "evaluate", "passport", "policy", "receipt", "status"].map(
-      (o) => `/api/v1/${o}`,
-    ),
+    [
+      "capabilities",
+      "evaluate",
+      "lease",
+      "lease-checkpoint",
+      "lease-release",
+      "lease-resume",
+      "lease-verify",
+      "passport",
+      "policy",
+      "receipt",
+      "status",
+    ].map((o) => `/api/v1/${o}`),
   );
   const evalBody = JSON.stringify(doc.paths["/api/v1/evaluate"].post);
   expect(evalBody).toContain("idempotencyKey");
   expect(evalBody).toContain("TASTE_EVALUATE");
   expect(evalBody).toContain("never grants purchase");
-  expect(PLATFORM_TOOLS.map((t) => t.op).sort()).toEqual([
-    "capabilities",
-    "evaluate",
-    "passport",
-    "policy",
-    "receipt",
-    "status",
-  ]);
+  expect(new Set(PLATFORM_TOOLS.map((t) => t.op))).toEqual(
+    new Set([
+      "capabilities",
+      "evaluate",
+      "lease",
+      "lease-checkpoint",
+      "lease-release",
+      "lease-resume",
+      "lease-verify",
+      "passport",
+      "policy",
+      "receipt",
+      "status",
+    ]),
+  );
 });
 it("discovery documents are public, cacheable and contain no credentials or user data", async () => {
   for (const r of [
