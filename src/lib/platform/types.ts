@@ -20,6 +20,8 @@ export interface Principal {
   credentialHash?: string;
   sessionId?: string;
   scopes?: KeyScope[];
+  // Present when the principal is an OAuth-linked agent, never a developer key.
+  oauth?: { clientId: string; familyId: string; resource: string };
 }
 export interface PassportRecord {
   subjectRef: string;
@@ -54,6 +56,7 @@ export interface Credential {
   scopes: KeyScope[];
   createdAt: string;
   expiresAt: string;
+  oauth?: { clientId: string; familyId: string; resource: string };
 }
 export interface PlatformEvaluation {
   evaluationRef: string;

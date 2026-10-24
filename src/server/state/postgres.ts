@@ -1,6 +1,7 @@
 import { attestRepository } from "@/server/platform/attest-repository";
 import { leaseRepository } from "@/server/platform/lease-repository";
 import { policyRepository } from "@/server/platform/policy-repository";
+import { oauthRepository } from "@/server/platform/oauth-repository";
 import { platformRepository } from "@/server/platform/postgres";
 import { subjectRepositories } from "@/server/subjects/postgres";
 import { trajectoryRepository } from "@/server/trajectory/postgres";
@@ -29,6 +30,7 @@ function repositories(c: PoolClient): Repositories {
     policy: policyRepository(c),
     leases: leaseRepository(c),
     attest: attestRepository(c),
+    oauth: oauthRepository(c),
     trajectories: trajectoryRepository(c),
     states: {
       profile: (id, lock = false) =>

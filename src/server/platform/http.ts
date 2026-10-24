@@ -1,6 +1,8 @@
 import "server-only";
 import { getAuthentication } from "./auth";
 import { AttestationService } from "./attest-service";
+import { OAuthService, OAuthError } from "./oauth-service";
+import { publicOrigin } from "./origin";
 import { capabilities } from "./gateway";
 import {
   PlatformFailure,
@@ -144,7 +146,25 @@ export async function handlePlatform(
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "receipt" || op === "status")
         data = await service.receipt(p, body, op === "status");
-      else platformFail("INVALID_INPUT");
+      else if (op === "connected-agents" || op === "disconnect-agent") {
+        // Agents linked through OAuth: list them, or end one at once.
+        const oauth = new OAuthService(store, publicOrigin(request));
+        try {
+          data =
+            op === "connected-agents"
+              ? await oauth.connected(p)
+              : await oauth.disconnect(
+                  p,
+                  String((body as { familyId?: unknown }).familyId ?? ""),
+                );
+        } catch (e) {
+          if (e instanceof OAuthError)
+            platformFail(
+              e.error === "login_required" ? "AUTH_REQUIRED" : "INVALID_INPUT",
+            );
+          throw e;
+        }
+      } else platformFail("INVALID_INPUT");
     } else {
       if (op === "capabilities") data = capabilities(p);
       else if (op === "policy") data = await service.policySummary(p, body);

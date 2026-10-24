@@ -36,7 +36,7 @@ Each recipe below is the configuration shape from the vendor's own documentation
 
 - **Responses API remote MCP** (bearer works because OpenAI lets you pass the token in `authorization`): see `examples/integrations/openai-responses.json`. Requires a publicly reachable HTTPS deployment and an OpenAI API key. Not run here.
 - **Function calling**: use the generated OpenAPI/JSON schemas with your own code calling the SDK. Works with any key.
-- **ChatGPT custom MCP / plugin**: ChatGPT supports OAuth, no-auth or mixed, not static bearer. TastePolicy does not yet run a connector-grade authorization server (see "OAuth for hosted connectors"), so this route is **not supported yet**.
+- **ChatGPT custom MCP / plugin**: ChatGPT supports OAuth, no-auth or mixed, not static bearer. TastePolicy now runs an OAuth 2.1 authorization server for account linking (ADR 0022) when `TASTEPOLICY_PUBLIC_ORIGIN` is pinned. The protocol is tested against our own client; a live ChatGPT connection has **not** been run.
 
 ### Anthropic
 
@@ -53,7 +53,7 @@ Each recipe below is the configuration shape from the vendor's own documentation
 
 ## OAuth for hosted connectors
 
-Hosted consumer connectors (ChatGPT, claude.ai directory entries, Gemini Enterprise) expect an OAuth 2.1 authorization server. The MCP endpoint publishes RFC 9728 Protected Resource Metadata at `/.well-known/oauth-protected-resource/api/mcp` and a `WWW-Authenticate: Bearer resource_metadata=…` challenge, but advertises no authorization server. Until one is accepted, use the bearer routes above.
+With `TASTEPOLICY_PUBLIC_ORIGIN` pinned, TastePolicy is an OAuth 2.1 authorization server for **public clients** (ADR 0022): `/.well-known/oauth-authorization-server`, PKCE S256, CIMD or DCR, RFC 8707 `resource` (the MCP endpoint), RFC 9207 `iss`, consent by the signed-in owner, 15-minute audience-bound access tokens, rotating refresh tokens, revocation (RFC 7009) and a "Connected assistants" page. The protected-resource metadata then names the authorization server. Developer credentials keep working everywhere; OAuth tokens work on MCP only. Without a pinned origin no authorization server is offered.
 
 ## Limits and failure semantics
 

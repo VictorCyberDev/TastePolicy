@@ -35,3 +35,5 @@ An authorization server is a separate, security-critical component. Decision: us
 ## Not claimed
 
 Live ChatGPT, claude.ai, Gemini Enterprise, Gemini API and Claude/OpenAI model-driven runs. Each is recorded `unverified` with reason in the M6 review.
+
+> Update: the "no authorization server" position above was replaced by ADR 0022.
