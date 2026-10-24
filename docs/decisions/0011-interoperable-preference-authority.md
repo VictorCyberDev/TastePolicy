@@ -1,0 +1,45 @@
+# ADR 0011 — Interoperable Preference Authority
+
+Authoritative base: 35ceed937ef0bebb88b200af6f21bcc362210cb8. Recorded before runtime implementation. The original implementation decisions were recorded under V2. [Canonical Architecture v3](../architecture/canonical-architecture-v3.md) now supersedes conflicting future direction: preference authority, not generic platform/IAM authority. V2 remains historical; no M7.
+
+## Identity and account ownership
+
+Use Better Auth 1.7.10 with existing PostgreSQL, email/password sign-in and database-backed sessions. This avoids an external paid identity platform. Authentication proves control of account credentials, not legal identity or email ownership (no email-delivery claim). Production requires an explicit trusted HTTPS origin and high-entropy server secret; no default production secret, cookie-cache authorization or caller-provided identity. Secure/HttpOnly/SameSite cookies, finite sessions, fresh login for sensitive operations, logout invalidation and persisted auth rate limits apply. Browser mutations retain exact-origin/JSON/body deadlines. Test configuration uses ephemeral secrets and real local database auth calls, never production bypasses.
+
+An authenticated account maps to a separate platform user identity and account-owned SELF state profile. Demo capability remains explicitly temporary Judge Mode and cannot authorize platform calls. No demo claim/transfer is implemented: no silent conversion, merging, copied owner state or fake session. Account Passport initialization requires five explicitly reviewed, distinct, server-validated anchors. Internal snapshot evaluation/persistence reuse M2/M5 primitives; policy/provider/receipt/graph semantics are not duplicated.
+
+## Passport and versioned references
+
+One active SELF Passport per account in v1. Opaque high-entropy passportRef resolves to an owner-bound internal profile, never browser-selected profile IDs. taste-passport-v1 has bounded public-safe label, PRIVATE or SHARED_BY_GRANT visibility, current state version/hash, explicit input provenance, capability list, schema/semantic hash and expiry. Default PRIVATE; sharing is solely grant-based, never public discovery. Metadata edits create immutable Passport versions with expected version; state snapshots remain historical. Account state retention is explicitly bounded to 30 days in v1, never exceeds Passport retention; renewal/long-term permanent retention is future. An active grant does not imply public state access.
+
+Semantic Passport hash covers subject/state/version/hash, label, privacy, explicit provenance and supported capabilities. Exclude transport reference, issuance/update timestamps. Historical snapshots are not rewritten. A Passport summary never contains anchors, feedback, constraints, proxies/groups or provider receipts.
+
+## Authenticated sharing consent
+
+Immutable taste-passport-grant-v1 records grantor user/SELF subject, exact Passport, known existing grantee account ID entered explicitly, scopes, purpose, issuance and bounded expiry (maximum 30 days and never beyond Passport). No contact discovery, invitations, external delivery or relationship inference. Assurance AUTHENTICATED_GRANTOR_CONSENT means a signed-in grantor performed the action; no legal-identity or external consent claim. READ_PASSPORT_SUMMARY, READ_STATE_SUMMARY, EVALUATE_TASTE_ACTION and READ_RECEIPT are independent scopes; no WRITE_STATE. Revocation is an immutable event and blocks new access immediately, including receipt access. Scope/expiry/ownership/fresh state are checked under account/Passport locks before provider construction. Shared evaluation uses the subject's current SELF state only. Receipt scope exposes only evaluations attributed to that grantee/grant, not arbitrary owner history. M5 DELEGATE_ATTESTED/USER_ATTESTED_PERMISSION history stays unchanged; no proxy is silently upgraded.
+
+## Developer credentials and interfaces
+
+Opaque developer keys contain an identifier and 256-bit secret, shown once; only a cryptographic hash and metadata persist. PASSPORT_READ, TASTE_EVALUATE and RECEIPT_READ are narrow scopes, no wildcard. Maximum 30-day expiry, immutable revocation/rotation events; rotation atomically revokes old and issues new. Persisted request-rate and evaluation quotas complement the existing process admission/body/provider ceilings. Revoked credentials fail before provider construction. Keys identify the owning account; shared access additionally needs that account's active grant. API credentials are not browser sessions and cannot manage grants/keys/export/delete.
+
+Versioned /api/v1 semantic operations return opaque references, structured decisions/basis/unresolved factors, status and captured receipt references. No raw Qloo endpoint. Thin server-only TypeScript SDK is repository-local, unpublished, with no policy or automatic retry. MCP stdio uses an explicit developer credential and the same API client, implements bounded JSON-RPC discovery/tool calls, and rejects arbitrary operation/profile/host authority. No public remote MCP server.
+
+Continuation is cultural-only: ALLOW may recommend/add_to_draft; ASK requests clarification; REJECT stops/offers repair; UNAVAILABLE must not assume negative preference and has no automatic retry. No purchase, payment, booking, private-data sharing or execution permission.
+
+## Export, deletion and retention
+
+Export-only v1: taste-passport-export-v1 with normalized explicit SELF versions/signals/constraints/scoped feedback and provenance, plus receipt references. Provider-derived material is normalized provenance/reference-only, not raw Qloo payload redistribution. Delegated proxy state and group records are distinctly excluded, not flattened into SELF. Import is deferred: no unsigned/untrusted archive ingestion. Export requires fresh authenticated browser authority, is returned directly (no public URL), and persists an immutable manifest/hash, never logged contents. Export hash covers portable material and versions, excludes request/transport/issuance metadata and secrets. No export implies external provider data licensing.
+
+Delete Passport/state requires fresh authentication and explicit confirmation; revoke shares/credentials and physically purge owned state/evidence/associated M5 records transactionally. Account deletion additionally invalidates sessions/auth credentials and deletes owned auth identity. Do not retain full state under a hard-delete claim. Minimal non-content deletion/idempotency tombstones may expire after 30 days; no perpetual full audit retention. Historical decisions are never rewritten as new decisions; revoked access is denied and purged records are unavailable, not replayable after physical purge. Export is available before deletion but never mandatory. Deletion races with evaluation serialize under the same account/Passport locks: work either precedes deletion or fails closed afterwards. No new work in deleted/pending state.
+
+## Persistence and idempotency
+
+Migration 0005 owns account mappings, Passports/versions, grants/events, developer credentials/events, evaluation references, export manifests, deletion tombstones, rate records and operation ledger. Composite user/Passport/profile/grant/evaluation foreign keys enforce ownership. RLS enabled, PUBLIC revoked; no browser database client. Immutable grants/versions/events/manifests, mutable current pointers only. Ownership/auth is server-derived. Multi-account locks use stable ordering to avoid deadlocks.
+
+Completed idempotency is checked before provider work; same canonical key/payload returns the durable result, changed payload conflicts. Key issuance's durable result is metadata only: a replay cannot reveal the one-time secret again or mint another secret. The secret is an ephemeral initial-response addition and is never stored in the operation ledger. Terminal account deletion invalidates authentication, so subsequent unauthenticated retries cannot recover private results. Provider work and persistence are not exactly-once delivery: a crash before durable commit may cause work on explicit retry. Rollback, concurrency, revocation, freshness, cross-account, actual SQL and filesystem durability tests are required. Hosted/native concurrency, external live auth and delivery remain separately reported environmental proof.
+
+No enterprise hierarchies, billing, fleets, commercial IAM, sensitive inference or other M7 implementation.
+
+## V3 reconciliation
+
+TastePolicy Passport is a user-controlled preference authority reference, distinct from agent identity/passport systems. A random stable subjectRef maps to the existing internal profileId under immutable relational ownership. Public summaries, SDK/MCP, export identity and the platform receipt wrapper use subjectRef. Stored StateEvaluation and Cultural Receipt v1 remain unchanged. Capabilities are PREFERENCE_AUTHORIZATION and CAPTURED_REPLAY; SELECT_ENTITY is the current supported action, for brand/place/destination. A2A remains M6G work after the guide-owned Win Gate; neither is implemented or completed here. M6 is held at the Win Gate and is not merge-ready.

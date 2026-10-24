@@ -44,6 +44,8 @@ export interface DemoSessionRepository {
   purge(now: string): Promise<void>;
 }
 export interface Repositories {
+  platform: import("@/server/platform/repositories").PlatformRepository;
+  oauth: import("@/server/platform/oauth-repository").OAuthRepository;
   subjects: import("@/server/subjects/repositories").SubjectRepository;
   groups: import("@/server/subjects/repositories").GroupRepository;
   subjectOperations: import("@/server/subjects/repositories").SubjectOperationRepository;

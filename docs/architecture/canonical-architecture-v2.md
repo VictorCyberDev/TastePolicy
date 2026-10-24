@@ -1,6 +1,8 @@
 # TastePolicy — Canonical Architecture & Milestone Journey v2
 
-Status: **AUTHORITATIVE PRODUCT AND MILESTONE DIRECTION**
+Status: **HISTORICAL ARCHITECTURE RECORD**
+
+[Canonical Architecture v3](canonical-architecture-v3.md) supersedes conflicting future product/M6+ direction. Accepted M1–M5 implementation truth remains intact. The V2 checkpoint and original milestone journey below are preserved as historical evidence.
 
 Effective: 2026-10-14
 
