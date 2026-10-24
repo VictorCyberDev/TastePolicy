@@ -157,6 +157,30 @@ test("account runtime without authentication configuration is explicitly unavail
     .click();
   await expect(page.getByRole("status")).toContainText("not configured");
 });
+test("a malformed optional section cannot take the signed-in account page down", async ({
+  page,
+}) => {
+  const f = await fixture(page);
+  // Registered after the fixture's catch-all, so it takes precedence.
+  await page.route("**/api/account/connected-agents", (r) =>
+    r.fulfill({
+      json: {
+        status: "available",
+        data: [{ familyId: "x", clientName: "Broken" }],
+      },
+    }),
+  );
+  await f.signIn();
+  await expect(
+    page.getByText("AUTHENTICATED ACCOUNT", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Connected assistants is unavailable right now."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("PRIVATE · never publicly discoverable"),
+  ).toBeVisible();
+});
 test("synthetic authenticated sign-in and private Passport summary leak no raw state", async ({
   page,
 }) => {

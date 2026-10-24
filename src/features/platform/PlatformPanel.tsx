@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { Credential, Grant } from "@/lib/platform/types";
 import { KEY_SCOPES, SHARE_SCOPES } from "@/lib/platform/types";
 import ConnectedAgents from "./ConnectedAgents";
+import SectionBoundary from "./SectionBoundary";
 import "./PlatformPanel.css";
 type Passport = {
   subjectRef: string;
@@ -711,7 +712,9 @@ export default function PlatformPanel() {
               </article>
             ))}
           </fieldset>
-          <ConnectedAgents />
+          <SectionBoundary label="Connected assistants">
+            <ConnectedAgents />
+          </SectionBoundary>
           <fieldset disabled={busy}>
             <legend>Export &amp; delete</legend>
             <p>

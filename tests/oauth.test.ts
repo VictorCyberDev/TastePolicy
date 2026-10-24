@@ -208,14 +208,21 @@ it("PKCE, redirect, client, scope, resource and duplicate-parameter checks fail 
       token_endpoint_auth_method: "client_secret_basic",
     }),
   ).rejects.toBeInstanceOf(OAuthError);
-  // loopback redirects may vary the port
-  const lo = await oauth.register({
+  // a hosted issuer refuses loopback redirects unless the operator enabled developer mode
+  await expect(
+    oauth.register({ redirect_uris: ["http://127.0.0.1:1111/callback"] }),
+  ).rejects.toBeInstanceOf(OAuthError);
+  const dev = new OAuthService(d.store, ORIGIN, clock, undefined, true);
+  // developer mode: loopback redirects may vary the port
+  const lo = await dev.register({
     redirect_uris: ["http://127.0.0.1:1111/callback"],
   });
   const q = authQ(lo.client_id, k.challenge, {
     redirect_uri: "http://127.0.0.1:54321/callback",
   });
-  expect(await code(oauth.decide(p, q, true))).toBe("OK");
+  expect(await code(dev.decide(p, q, true))).toBe("OK");
+  // and a registered loopback client does not work against a hosted issuer that is not in developer mode
+  expect(await code(oauth.decide(p, q, true))).toBe("invalid_request");
 }, 60000);
 
 it("consent needs a recent sign-in by the account owner; denial returns access_denied with iss", async () => {
