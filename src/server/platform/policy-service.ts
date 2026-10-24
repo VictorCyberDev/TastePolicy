@@ -13,50 +13,19 @@ import {
   evaluateWithPolicy,
   type PolicyEvaluationInput,
 } from "@/lib/policy/engine";
+import {
+  classifyPolicyChange,
+  widensAuthority,
+} from "@/lib/policy/composition";
 import { counterfactuals, impactAnalysis } from "@/lib/policy/analysis";
 import { overrideRequest, policyDocument } from "@/lib/policy/validation";
 import {
-  AUTONOMY_LEVELS,
-  type AutonomyLevel,
   type PolicyDecision,
   type PolicyDocument,
   type PolicyOverride,
 } from "@/lib/policy/types";
 import type { StateVersion } from "@/lib/state/types";
 
-const RANK = (l: AutonomyLevel) => AUTONOMY_LEVELS.indexOf(l);
-// A change is loosening when it lets an agent do more without asking.
-export function isLoosening(
-  before: PolicyDocument | null,
-  after: PolicyDocument,
-): boolean {
-  if (!before) return false;
-  const b = before.autonomy,
-    a = after.autonomy;
-  const domains = new Set([
-    ...Object.keys(b.byDomain),
-    ...Object.keys(a.byDomain),
-  ]);
-  for (const d of domains) {
-    const was = b.byDomain[d as "place"] ?? b.default,
-      now = a.byDomain[d as "place"] ?? a.default;
-    if (RANK(now) > RANK(was)) return true;
-  }
-  const agents = new Set([
-    ...Object.keys(b.byAgent),
-    ...Object.keys(a.byAgent),
-  ]);
-  for (const g of agents)
-    if (RANK(a.byAgent[g] ?? a.default) > RANK(b.byAgent[g] ?? b.default))
-      return true;
-  if (RANK(a.default) > RANK(b.default)) return true;
-  if (a.limit && b.limit && a.limit.amount > b.limit.amount) return true;
-  for (const [cls, days] of Object.entries(before.freshness)) {
-    const next = (after.freshness as Record<string, number | undefined>)[cls];
-    if (next === undefined || next > days) return true;
-  }
-  return false;
-}
 export class PolicyService extends PlatformService {
   private async owned(r: Repositories, p: Principal, passportRef: string) {
     const passport = await r.platform.passport(passportRef);
@@ -256,7 +225,7 @@ export class PolicyService extends PlatformService {
       const active = await r.policy.active(ref);
       if ((active?.version ?? 0) !== expected) fail("STATE_VERSION_CONFLICT");
       // Loosening needs a recent sign-in; tightening never does.
-      if (isLoosening(active?.document ?? null, doc))
+      if (widensAuthority(classifyPolicyChange(active?.document ?? null, doc)))
         await this.locked(r, p, [], undefined, true);
       const latest = await r.policy.latest(ref),
         docHash = hash(doc);

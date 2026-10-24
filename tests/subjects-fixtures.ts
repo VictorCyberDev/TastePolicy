@@ -43,6 +43,10 @@ export async function subjectsDatabase(dataDir?: string, migrate = true) {
       "0002_interactive_authorization.sql",
       "0003_taste_trajectory.sql",
       "0004_taste_proxy_group.sql",
+      // Group authorization applies each member's own policy (M7), so the
+      // platform and policy tables are part of the schema it runs on.
+      "0005_platformization.sql",
+      "0006_policy_control_plane.sql",
     ])
       await d.db.exec(
         await readFile(

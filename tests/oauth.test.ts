@@ -208,14 +208,21 @@ it("PKCE, redirect, client, scope, resource and duplicate-parameter checks fail 
       token_endpoint_auth_method: "client_secret_basic",
     }),
   ).rejects.toBeInstanceOf(OAuthError);
-  // loopback redirects may vary the port
-  const lo = await oauth.register({
+  // a hosted issuer refuses loopback redirects unless the operator enabled developer mode
+  await expect(
+    oauth.register({ redirect_uris: ["http://127.0.0.1:1111/callback"] }),
+  ).rejects.toBeInstanceOf(OAuthError);
+  const dev = new OAuthService(d.store, ORIGIN, clock, undefined, true);
+  // developer mode: loopback redirects may vary the port
+  const lo = await dev.register({
     redirect_uris: ["http://127.0.0.1:1111/callback"],
   });
   const q = authQ(lo.client_id, k.challenge, {
     redirect_uri: "http://127.0.0.1:54321/callback",
   });
-  expect(await code(oauth.decide(p, q, true))).toBe("OK");
+  expect(await code(dev.decide(p, q, true))).toBe("OK");
+  // and a registered loopback client does not work against a hosted issuer that is not in developer mode
+  expect(await code(oauth.decide(p, q, true))).toBe("invalid_request");
 }, 60000);
 
 it("consent needs a recent sign-in by the account owner; denial returns access_denied with iss", async () => {
@@ -426,3 +433,54 @@ it("client ID metadata documents: the document must name its own URL, use https/
       "invalid_client",
     );
 }, 60000);
+
+it("review fixes: a client mismatch does not spend the refresh token; the family has an absolute lifetime; names are sanitized; revoke tolerates malformed ids", async () => {
+  const p = await person();
+  const l = await link(p);
+  const t = await l.exchange();
+  const other = await client();
+  // a thief using the token under another client_id cannot burn it
+  expect(
+    await code(
+      oauth.token(
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: t.refresh_token,
+          client_id: other,
+        }),
+      ),
+    ),
+  ).toBe("invalid_grant");
+  const ok = await oauth.token(
+    new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: t.refresh_token,
+      client_id: l.id,
+    }),
+  );
+  expect((ok as any).access_token).toBeTruthy();
+  // absolute lifetime: 90 days after consent a refresh is refused
+  const old = new OAuthService(d.store, ORIGIN, () =>
+    new Date(now + 91 * 86_400_000).toISOString(),
+  );
+  expect(
+    await code(
+      old.token(
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: (ok as any).refresh_token,
+          client_id: l.id,
+        }),
+      ),
+    ),
+  ).toBe("invalid_grant");
+  // control and bidi characters never reach the consent screen
+  const reg = await oauth.register({
+    client_name: "Cl‮aude\u0000 \n",
+    redirect_uris: [REDIRECT],
+  });
+  expect(reg.client_name).toBe("Claude");
+  // a malformed token id is a no-op, not an error
+  await oauth.revoke("tp_live_zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz.x");
+  await oauth.revoke("tp_live_00000000-0000-0000-0000-00000000000g.x");
+});

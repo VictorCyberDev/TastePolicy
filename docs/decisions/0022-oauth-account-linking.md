@@ -30,3 +30,16 @@ TastePolicy is its own minimal OAuth 2.1 authorization server for **public clien
 ## Not done / limits
 
 No dynamic scope step-up; no JWT access tokens (opaque by design); the OAuth endpoints use a per-process limiter until the distributed limiter lands; the consent page's "sign in again" round trip uses `/account?next=`.
+
+## Security review (independent, read-only) and outcome
+
+No blocking finding. Fixed: client metadata is fetched before any database transaction (a slow client host cannot hold a connection or a row lock); client rows are capped (5000) and unlinked clients pruned after a day; shared database-backed admission counters on all unauthenticated OAuth endpoints (keyed by HMAC of the caller; the caller identity is taken only from platform-set headers); consent shows that the name is self-asserted, where a metadata-described client says it lives, and the redirect host; control and bidirectional characters are stripped from names; expired/revoked tokens on MCP answer 401 with `error="invalid_token"` and the resource metadata so clients refresh; request bodies are read with a hard cap; a refresh token presented under another client is not spent, the family row is locked, and the family has a 90-day absolute lifetime; CIMD documents need a path, `null` documents are refused, cached metadata is trusted for at most 7 days when the host is down; malformed token ids are a no-op on revocation.
+
+Accepted and documented: parallel retries of one refresh token revoke the link (standard reuse detection); revoking an access token ends only that token; authorize errors about scope/PKCE are returned as JSON rather than redirected; credential rows from refreshes are not yet purged.
+
+## Revision after GUIDE review (R4 normalisation)
+
+- **Loopback redirects are a developer-mode feature.** A hosted (non-localhost) issuer refuses `http://127.0.0.1|localhost|[::1]` redirect URIs, at registration, at metadata fetch and at authorize time, unless the operator sets `TASTEPOLICY_OAUTH_ALLOW_LOOPBACK=true` (needed, for example, for Claude Code's local callback). A localhost issuer allows them. Exact matching (port may vary only for loopback) is unchanged.
+- **No provider call holds a transaction.** Passport creation and evaluation now run as short authority/replay transaction → provider call with nothing held → one transaction that re-checks authority, idempotency and state version and discards a stale answer (`tests/evaluate-lifecycle.test.ts`, `tests/realpg-m6.test.ts`). OAuth client metadata is fetched the same way.
+- **A malformed optional section cannot unmount the signed-in account page** (error boundary around "Connected assistants"); the earlier account-UI instability was exactly such a crash, not a timing problem.
+- Styling for the consent page is M6-owned; `tests/layering.test.ts` forbids imports of later milestone layers.

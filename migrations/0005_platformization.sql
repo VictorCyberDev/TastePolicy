@@ -38,6 +38,12 @@ CREATE TABLE tastepolicy.developer_credentials (
 );
 -- OAuth account linking (ADR 0022). Access tokens are developer_credentials rows
 -- (short-lived, with data.oauth); these tables hold the rest.
+-- Shared admission counters for the unauthenticated OAuth endpoints. The key is
+-- a keyed hash of the caller and endpoint, never an address; buckets are minutes.
+CREATE TABLE tastepolicy.public_rate (
+ key_hash text NOT NULL CHECK(length(key_hash)=64), bucket text NOT NULL CHECK(length(bucket) BETWEEN 1 AND 40),
+ used integer NOT NULL CHECK(used>=0), PRIMARY KEY(key_hash,bucket)
+);
 CREATE TABLE tastepolicy.oauth_clients (
  client_id text PRIMARY KEY CHECK(length(client_id) BETWEEN 8 AND 512),
  source text NOT NULL CHECK(source IN ('CIMD','DCR')),
@@ -136,7 +142,7 @@ CREATE CONSTRAINT TRIGGER grant_revocation_not_removed AFTER DELETE ON tastepoli
 CREATE CONSTRAINT TRIGGER credential_not_resurrected AFTER DELETE ON tastepolicy.developer_credentials DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION tastepolicy.prevent_grant_resurrection();
 CREATE CONSTRAINT TRIGGER credential_revocation_not_removed AFTER DELETE ON tastepolicy.developer_credential_events DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION tastepolicy.prevent_grant_resurrection();
 DO $$ DECLARE t text; BEGIN
- FOREACH t IN ARRAY ARRAY['platform_auth_user','platform_auth_session','platform_auth_account','platform_auth_verification','rateLimit','platform_ownership','taste_passports','passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports','platform_rate','account_deletion_records','oauth_clients','oauth_families','oauth_codes','oauth_refresh'] LOOP
+ FOREACH t IN ARRAY ARRAY['platform_auth_user','platform_auth_session','platform_auth_account','platform_auth_verification','rateLimit','platform_ownership','taste_passports','passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports','platform_rate','account_deletion_records','public_rate','oauth_clients','oauth_families','oauth_codes','oauth_refresh'] LOOP
  EXECUTE format('ALTER TABLE tastepolicy.%I ENABLE ROW LEVEL SECURITY',t); EXECUTE format('REVOKE ALL ON tastepolicy.%I FROM PUBLIC',t);
  IF t IN ('passport_versions','passport_access_grants','passport_access_events','developer_credentials','developer_credential_events','platform_evaluations','platform_operations','passport_exports') THEN EXECUTE format('CREATE TRIGGER immutable_platform BEFORE UPDATE ON tastepolicy.%I FOR EACH ROW EXECUTE FUNCTION tastepolicy.immutable_snapshot()',t); END IF;
  END LOOP;

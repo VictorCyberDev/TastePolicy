@@ -31,11 +31,13 @@ const leaseRef = (v: unknown): string => {
   return v as string;
 };
 const PERMITTED = ["recommend", "add_to_draft"];
+export const MAX_LIVE_LEASES = 50;
 const plus = (iso: string, seconds: number) =>
   new Date(Date.parse(iso) + seconds * 1000).toISOString();
 const min = (a: string, b: string) => (a < b ? a : b);
 
 export class LeaseService extends PolicyService {
+  protected readonly maxLive: number = MAX_LIVE_LEASES;
   private async facts(r: Repositories, l: LeaseRecord): Promise<CurrentFacts> {
     const now = this.clock(),
       passport = await r.platform.passport(l.passportRef),
@@ -155,6 +157,25 @@ export class LeaseService extends PolicyService {
       continuation: valid ? continuation("ALLOW") : null,
     };
   }
+  // Lock order is always accounts first, then the lease row (owner operations
+  // do the same). Locking the lease first deadlocks against them on a real
+  // server, so the lease is read unlocked, accounts are locked, and only then
+  // is the lease locked and re-checked.
+  protected async agentLease(
+    r: Repositories,
+    p: Principal,
+    ref: string,
+    scope: KeyScope,
+    actorOnly: boolean,
+  ) {
+    const peek = await r.leases.get(ref, false);
+    if (!peek || (actorOnly && peek.actorId !== p.userId))
+      fail("LEASE_NOT_FOUND");
+    await this.agentAccess(r, p, peek, scope);
+    const l = await r.leases.get(ref, true);
+    if (!l || (actorOnly && l.actorId !== p.userId)) fail("LEASE_NOT_FOUND");
+    return l;
+  }
   private async agentAccess(
     r: Repositories,
     p: Principal,
@@ -252,6 +273,10 @@ export class LeaseService extends PolicyService {
       const ctx = e.evaluation.context.key,
         cand = e.evaluation.action.candidate.id,
         agent = e.evaluation.agentId;
+      // Bounded: a runaway agent cannot pile up unlimited open permissions or
+      // questions for the owner, and the quota is not an authorization input.
+      if ((await r.leases.countLive(e.passportRef)) >= this.maxLive)
+        fail("RATE_LIMITED");
       const existing = await r.leases.live(
         e.passportRef,
         p.userId,
@@ -301,9 +326,7 @@ export class LeaseService extends PolicyService {
     const v = object(raw, ["leaseRef"]),
       ref = leaseRef(v.leaseRef);
     return this.store.transaction(async (r) => {
-      const l0 = await r.leases.get(ref, true);
-      if (!l0) fail("LEASE_NOT_FOUND");
-      await this.agentAccess(r, p, l0, "RECEIPT_READ");
+      const l0 = await this.agentLease(r, p, ref, "RECEIPT_READ", false);
       const l = await this.settle(r, l0);
       return this.leaseView(l);
     });
@@ -313,9 +336,7 @@ export class LeaseService extends PolicyService {
       ref = leaseRef(v.leaseRef),
       rev = v.expectedRev === undefined ? undefined : integer(v.expectedRev);
     return this.store.transaction(async (r) => {
-      const l0 = await r.leases.get(ref, true);
-      if (!l0 || l0.actorId !== p.userId) fail("LEASE_NOT_FOUND");
-      await this.agentAccess(r, p, l0, "TASTE_EVALUATE");
+      const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       if (rev !== undefined && rev !== l0.state.rev)
         fail("LEASE_STATE_CONFLICT");
       let l = await this.settle(r, l0);
@@ -343,9 +364,7 @@ export class LeaseService extends PolicyService {
       er = reference(v.evaluationRef);
     key(v.idempotencyKey);
     return this.store.transaction(async (r) => {
-      const l0 = await r.leases.get(ref, true);
-      if (!l0 || l0.actorId !== p.userId) fail("LEASE_NOT_FOUND");
-      await this.agentAccess(r, p, l0, "TASTE_EVALUATE");
+      const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       let l = await this.settle(r, l0);
       if (l.state.status === "ACTIVE") return this.leaseView(l);
       if (l.state.status !== "SUSPENDED") fail("LEASE_STATE_CONFLICT");
@@ -395,9 +414,7 @@ export class LeaseService extends PolicyService {
     const v = object(raw, ["leaseRef"]),
       ref = leaseRef(v.leaseRef);
     return this.store.transaction(async (r) => {
-      const l0 = await r.leases.get(ref, true);
-      if (!l0 || l0.actorId !== p.userId) fail("LEASE_NOT_FOUND");
-      await this.agentAccess(r, p, l0, "TASTE_EVALUATE");
+      const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       const l = await this.settle(r, l0);
       if (isTerminal(l.state.status)) return this.leaseView(l);
       return this.leaseView(

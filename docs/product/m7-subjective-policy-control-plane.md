@@ -43,4 +43,4 @@ Migration `0006_policy_control_plane.sql` is additive (`policy_versions`, `polic
 
 ## Groups, delegates and proxies (ADR 0021)
 
-Each member is decided by their own policy; the M5 rule `UNANIMOUS_NO_VETO_V1` aggregates. One no ends it; a temporary permission releases only its owner; a delegate may read and tighten, never loosen or grant a permission unless the owner explicitly gave that right. See `src/lib/policy/composition.ts` and `tests/policy-composition.test.ts`.
+In a group each member is decided by their own rules (and their own temporary permission) before the M5 rule `UNANIMOUS_NO_VETO_V1` aggregates: one no ends it, one member who must be asked holds the group, and a permission releases only the person who gave it. A group result records, per member, the policy version that applied; replaying it reproduces that decision and reports separately whether the member's rules have changed since. A delegate holding a grant cannot read or change the owner's rules or permissions. Widening changes (looser autonomy for any agent or kind, a new or higher limit, longer freshness, or any mix) need a recent sign-in.
