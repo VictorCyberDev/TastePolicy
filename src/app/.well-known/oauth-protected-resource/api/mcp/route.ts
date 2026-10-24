@@ -9,7 +9,6 @@ export function GET(request: Request) {
       bearer_methods_supported: ["header"],
       scopes_supported: ["PASSPORT_READ", "TASTE_EVALUATE", "RECEIPT_READ"],
       resource_name: "TastePolicy Preference Authority",
-      resource_documentation: `${origin}/developers`,
     },
     { headers: { "Cache-Control": "public, max-age=300" } },
   );
