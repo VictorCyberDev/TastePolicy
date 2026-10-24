@@ -19,6 +19,14 @@ type Listing = {
   passportRef: string;
   pending: Lease[];
   leases: Lease[];
+  attestations?: {
+    ref: string;
+    audience: string;
+    issuedAt: string;
+    expiresAt: string;
+    holderBound: boolean;
+    delegatedTo: string | null;
+  }[];
   timeline: {
     leaseRef: string;
     seq: number;
@@ -236,6 +244,28 @@ export default function LeaseControl() {
         >
           Stop all agents
         </button>
+      </section>
+
+      <section aria-labelledby="proofs">
+        <h2 id="proofs">Proofs agents have shared</h2>
+        <p className="help">
+          A proof lets another party confirm a permission without asking us. It
+          shows only what the agent chose to share and ends with the permission.
+        </p>
+        <ul>
+          {(data.attestations ?? []).slice(0, 20).map((a) => (
+            <li key={a.ref + a.issuedAt}>
+              For <strong>{a.audience}</strong> ·{" "}
+              {new Date(a.issuedAt).toLocaleString()} · until{" "}
+              {new Date(a.expiresAt).toLocaleTimeString()}
+              {a.delegatedTo ? ` · handed to ${a.delegatedTo}` : ""}
+              {a.holderBound ? " · tied to one holder" : ""}
+            </li>
+          ))}
+          {(data.attestations ?? []).length === 0 && (
+            <li className="help">None.</li>
+          )}
+        </ul>
       </section>
 
       <section aria-labelledby="log">

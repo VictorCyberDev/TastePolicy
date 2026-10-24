@@ -24,6 +24,10 @@ A2A skill `preference_authorization`: `SendMessage` with one `data` part `{passp
 
 After an ALLOW (or an ASK the person may answer) an agent can request a short **lease** and keep verifying it while it works. See `docs/product/m8-preference-authority-leases.md`. A lease is never a purchase or booking authority.
 
+## Attestations
+
+For parties that cannot hold a TastePolicy credential, an agent can turn an ACTIVE lease into a short-lived verifiable proof. See `docs/product/m9-verifiable-attestations.md` and, for verifiers, `src/sdk/attest.ts` and `npm run conformance:attest`.
+
 ## Vendor routes
 
 Each recipe below is the configuration shape from the vendor's own documentation as researched on 2026-10-23 (ADR 0014). Automation here proves our server speaks the protocol using the official MCP and A2A clients; it does **not** prove any vendor's hosted product has been connected. Items marked human-only were not run.
