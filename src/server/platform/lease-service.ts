@@ -6,6 +6,7 @@ import type { Repositories } from "@/server/state/repositories";
 import type { LeaseRecord } from "./lease-repository";
 import {
   platformFail as fail,
+  PlatformFailure,
   type KeyScope,
   type Principal,
 } from "@/lib/platform/types";
@@ -425,7 +426,13 @@ export class LeaseService extends PolicyService {
       const passport = await r.platform.passport(ref);
       if (!passport || passport.userId !== p.userId) fail("PASSPORT_NOT_FOUND");
       for (const l of await r.leases.liveForPassport(ref))
-        await this.settle(r, l);
+        try {
+          await this.settle(r, l);
+        } catch (e) {
+          // One unreadable lease must not hide the others or the stop button.
+          if (!(e instanceof PlatformFailure && e.code === "INTEGRITY_ERROR"))
+            throw e;
+        }
       const leases = await r.leases.forPassport(ref, 30),
         timeline: {
           leaseRef: string;
@@ -506,6 +513,13 @@ export class LeaseService extends PolicyService {
       )
         fail("LEASE_STATE_CONFLICT");
       await this.requireCurrentLoose(r, l);
+      // Freshness is time-driven: a question answered long after the check
+      // that raised it is asked again, not approved.
+      if (
+        Date.parse(e.evaluation.evaluatedAt) + 3_600_000 <=
+        Date.parse(this.clock())
+      )
+        fail("STATE_VERSION_CONFLICT");
       const now = this.clock(),
         expiresAt =
           ttl === undefined
@@ -520,6 +534,8 @@ export class LeaseService extends PolicyService {
             candidateId: l.candidateId,
             contextKey: l.contextKey,
             permitted: l.permitted,
+            // What the owner saw: the price the choice was evaluated at.
+            price: e.evaluation.context.price ?? null,
           },
           fingerprint: l.state.fingerprint,
           expiresAt,
