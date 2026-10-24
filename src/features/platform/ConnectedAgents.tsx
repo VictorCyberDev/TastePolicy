@@ -31,7 +31,8 @@ export default function ConnectedAgents() {
     [notice, setNotice] = useState("");
   async function load() {
     try {
-      setList(await api<Linked[]>("connected-agents"));
+      const l = await api<Linked[]>("connected-agents");
+      setList(Array.isArray(l) ? l : []);
     } catch {
       setList([]);
     }

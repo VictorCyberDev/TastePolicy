@@ -1,6 +1,6 @@
 // @vitest-environment node
 // SYNTHETIC TEST DATA. No live Qloo claim.
-import { beforeAll, afterAll, it, expect, vi } from "vitest";
+import { beforeAll, afterAll, describe, it, expect, vi } from "vitest";
 import { readFile, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -641,34 +641,45 @@ it("profile purge cascades trajectory evidence, projections and events", async (
       ).rows[0].count,
     ).toBe(0);
 });
-it("filesystem close/reopen preserves trajectory and actual SQL projection", async () => {
-  const path = await mkdtemp(join(tmpdir(), "taste-trajectory-"));
-  let db: Awaited<ReturnType<typeof interactiveDatabase>> | undefined;
-  try {
+// Creating a filesystem PostgreSQL cluster (initdb, migrations, state) is slow
+// and load-sensitive, and is not what this test is about. It is arranged once in
+// a hook with its own budget; the test body is exactly the durability claim:
+// close, reopen the same directory, and replay the stored generation.
+describe("filesystem durability", () => {
+  let path: string,
+    db: Awaited<ReturnType<typeof interactiveDatabase>> | undefined,
+    token: string,
+    stored: TrajectoryGeneration;
+  beforeAll(async () => {
+    path = await mkdtemp(join(tmpdir(), "taste-trajectory-"));
     db = await interactiveDatabase(path);
     await db.db.exec(await migration());
     const x = await setup(db.store),
       s = new TrajectoryService(db.store, () => NOW),
-      t = await s.create(x.token, creation(1), () => provider().q, reqId),
-      g = (await s.plan(
-        x.token,
-        request(2, { trajectoryId: t.trajectoryId, breadth: "STRICT" }),
-        () => provider().q,
-        reqId,
-      )) as TrajectoryGeneration;
-    await db.db.close();
+      t = await s.create(x.token, creation(1), () => provider().q, reqId);
+    token = x.token;
+    stored = (await s.plan(
+      x.token,
+      request(2, { trajectoryId: t.trajectoryId, breadth: "STRICT" }),
+      () => provider().q,
+      reqId,
+    )) as TrajectoryGeneration;
+  }, 120_000);
+  afterAll(async () => {
+    await db?.db.close();
+    await rm(path, { recursive: true, force: true });
+  }, 60_000);
+  it("filesystem close/reopen preserves trajectory and actual SQL projection", async () => {
+    await db!.db.close();
     db = await interactiveDatabase(path, false);
     expect(
       (
-        await new TrajectoryService(db.store, () => NOW).replay(x.token, {
-          generationId: g.generationId,
+        await new TrajectoryService(db.store, () => NOW).replay(token, {
+          generationId: stored.generationId,
         })
       ).generation,
-    ).toEqual(g);
-  } finally {
-    await db?.db.close();
-    await rm(path, { recursive: true, force: true });
-  }
+    ).toEqual(stored);
+  });
 });
 it.each([
   ["https://evil.test", "application/json", 403],

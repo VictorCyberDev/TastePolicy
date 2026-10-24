@@ -32,6 +32,8 @@ export interface OAuthFamily {
   lastUsedAt: string | null;
 }
 export interface OAuthRepository {
+  // Shared across instances. True when this call is within the limit.
+  admit(keyHash: string, bucket: string, max: number): Promise<boolean>;
   client(id: string): Promise<OAuthClient | null>;
   saveClient(c: OAuthClient): Promise<void>;
   insertCode(c: Omit<OAuthCode, "usedAt" | "familyId">): Promise<void>;
@@ -40,7 +42,11 @@ export interface OAuthRepository {
   codeByHash(hash: string): Promise<OAuthCode | null>;
   attachFamily(hash: string, familyId: string): Promise<void>;
   insertFamily(f: OAuthFamily): Promise<void>;
-  family(id: string): Promise<OAuthFamily | null>;
+  family(id: string, lock?: boolean): Promise<OAuthFamily | null>;
+  // The family a refresh token belongs to, without spending the token.
+  refreshFamily(hash: string): Promise<string | null>;
+  clientCount(): Promise<number>;
+  pruneClients(before: string): Promise<void>;
   families(user: string): Promise<OAuthFamily[]>;
   revokeFamily(id: string, at: string): Promise<string[]>;
   touchFamily(id: string, at: string): Promise<void>;
@@ -85,6 +91,18 @@ const code = (r: Record<string, unknown>): OAuthCode => ({
 });
 export function oauthRepository(c: PoolClient): OAuthRepository {
   return {
+    async admit(keyHash, bucket, max) {
+      const q = await c.query(
+        "INSERT INTO tastepolicy.public_rate(key_hash,bucket,used) VALUES($1,$2,1) ON CONFLICT(key_hash,bucket) DO UPDATE SET used=tastepolicy.public_rate.used+1 WHERE tastepolicy.public_rate.used<$3 RETURNING used",
+        [keyHash, bucket, max],
+      );
+      // Old minutes are dropped opportunistically, so the table stays small.
+      if (Math.random() < 0.02)
+        await c.query("DELETE FROM tastepolicy.public_rate WHERE bucket < $1", [
+          bucket,
+        ]);
+      return q.rows.length > 0;
+    },
     async client(id) {
       const q = await c.query(
         "SELECT * FROM tastepolicy.oauth_clients WHERE client_id=$1",
@@ -156,9 +174,10 @@ export function oauthRepository(c: PoolClient): OAuthRepository {
         ],
       );
     },
-    async family(id) {
+    async family(id, lock = false) {
       const q = await c.query(
-        "SELECT * FROM tastepolicy.oauth_families WHERE family_id=$1",
+        "SELECT * FROM tastepolicy.oauth_families WHERE family_id=$1" +
+          (lock ? " FOR UPDATE" : ""),
         [id],
       );
       return q.rows[0] ? family(q.rows[0]) : null;
@@ -186,6 +205,26 @@ export function oauthRepository(c: PoolClient): OAuthRepository {
           [r.user_id, r.credential_id, { kind: "CREDENTIAL_REVOKED", at }],
         );
       return q.rows.map((r) => r.credential_id as string);
+    },
+    async refreshFamily(hash) {
+      const q = await c.query(
+        "SELECT family_id FROM tastepolicy.oauth_refresh WHERE token_hash=$1",
+        [hash],
+      );
+      return q.rows[0]?.family_id ?? null;
+    },
+    async clientCount() {
+      const q = await c.query(
+        "SELECT count(*)::int AS n FROM tastepolicy.oauth_clients",
+      );
+      return q.rows[0].n;
+    },
+    // Clients nobody ever linked to, older than `before`, are dropped.
+    async pruneClients(before) {
+      await c.query(
+        "DELETE FROM tastepolicy.oauth_clients k WHERE k.fetched_at<$1 AND NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_families f WHERE f.client_id=k.client_id) AND NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_codes o WHERE o.client_id=k.client_id)",
+        [before],
+      );
     },
     async touchFamily(id, at) {
       await c.query(
