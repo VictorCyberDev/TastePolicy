@@ -12,6 +12,13 @@ const passportRef = "tp_" + "a".repeat(48),
     agentId: "Agent-A",
     candidateName: "SYNTHETIC TEST DATA Cafe",
     contextKey: "dinner",
+    ask:
+      status === "ASK_PENDING"
+        ? {
+            kind: "AUTHORITY_CONFIRMATION",
+            question: "Your rule says to ask you before your agent continues.",
+          }
+        : null,
     expiresAt: "2026-10-24T13:00:00.000Z",
     checkpointDueAt: "2026-10-24T12:05:00.000Z",
   });
@@ -103,6 +110,16 @@ async function intercept(page: Page) {
     };
     await r.fulfill({ json: { status: "available", data: data[op] ?? {} } });
   });
+  await page.route("**/api/oauth/decision", (r) =>
+    r.fulfill({
+      json: {
+        clientName: "SYNTHETIC TEST DATA Assistant",
+        redirectHost: "app.test",
+        scopes: ["PASSPORT_READ", "TASTE_EVALUATE"],
+        expiresInDays: 30,
+      },
+    }),
+  );
   await page.route("**/api/attest/verify", (r) =>
     r.fulfill({
       json: {
@@ -122,6 +139,12 @@ const pages: [string, string][] = [
   ["/account/inspector", "Why was this the answer?"],
   ["/account/leases", "What agents may do now"],
   ["/verify", "Check a TastePolicy proof"],
+  [
+    "/oauth/consent?response_type=code&client_id=tpc_synthetic01&redirect_uri=https%3A%2F%2Fapp.test%2Fcb&code_challenge=" +
+      "a".repeat(43) +
+      "&code_challenge_method=S256",
+    "wants to ask TastePolicy about your preference boundaries",
+  ],
 ];
 for (const colorScheme of ["light", "dark"] as const)
   for (const [path, heading] of pages)
