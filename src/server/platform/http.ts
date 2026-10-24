@@ -1,6 +1,7 @@
 import "server-only";
 import { getAuthentication } from "./auth";
 import { PlatformService } from "./service";
+import { capabilities } from "./gateway";
 import {
   PlatformFailure,
   platformFail,
@@ -79,7 +80,7 @@ export async function handlePlatform(
         : await authenticate(request);
     if (
       request.method === "GET" &&
-      !["inspect", "passport", "receipt", "status"].includes(op)
+      !["inspect", "passport", "receipt", "status", "capabilities"].includes(op)
     )
       platformFail("INVALID_INPUT");
     const body =
@@ -118,7 +119,8 @@ export async function handlePlatform(
         data = await service.receipt(p, body, op === "status");
       else platformFail("INVALID_INPUT");
     } else {
-      if (op === "passport") data = await service.read(p, body);
+      if (op === "capabilities") data = capabilities(p);
+      else if (op === "passport") data = await service.read(p, body);
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);
       else if (op === "receipt" || op === "status")

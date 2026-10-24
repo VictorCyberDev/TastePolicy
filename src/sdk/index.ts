@@ -1,3 +1,4 @@
+import { errorSpec } from "../lib/platform/errors";
 import type {
   PassportSummary,
   EvaluationRequest,
@@ -10,11 +11,25 @@ export type {
   AuthorizationResponse,
   ReceiptResponse,
 } from "./types";
+// Typed failure for every non-success response. `message` stays the stable
+// code so existing string checks keep working.
+export class TastePolicyError extends Error {
+  constructor(
+    readonly code: string,
+    readonly status: number,
+    readonly retryable: boolean,
+    readonly requestId?: string,
+  ) {
+    super(code);
+    this.name = "TastePolicyError";
+  }
+}
 // Server-only first-party thin client. Never import a developer secret into a browser.
 export class TastePolicyClient {
   constructor(
     private readonly baseURL: string,
     private readonly apiKey: string,
+    private readonly options: { fetch?: typeof fetch } = {},
   ) {
     if (typeof window !== "undefined")
       throw Error("TastePolicy credentials are server-only");
@@ -38,10 +53,10 @@ export class TastePolicyClient {
       throw Error("Invalid TastePolicy endpoint");
   }
   async call<T = unknown>(
-    operation: "passport" | "evaluate" | "receipt" | "status",
+    operation: "capabilities" | "passport" | "evaluate" | "receipt" | "status",
     input: unknown,
   ): Promise<T> {
-    const response = await fetch(
+    const response = await (this.options.fetch ?? fetch)(
       new URL(`/api/v1/${operation}`, this.baseURL),
       {
         method: "POST",
@@ -54,14 +69,23 @@ export class TastePolicyClient {
         signal: AbortSignal.timeout(45000),
       },
     );
-    const result = await response.json();
-    if (!response.ok || result.status !== "available")
-      throw Error(
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.status !== "available") {
+      const code =
         typeof result.code === "string" && /^[A-Z_]{1,80}$/.test(result.code)
           ? result.code
-          : "TASTEPOLICY_UNAVAILABLE",
+          : "TASTEPOLICY_UNAVAILABLE";
+      throw new TastePolicyError(
+        code,
+        response.status,
+        errorSpec(code).retryable,
+        typeof result.requestId === "string" ? result.requestId : undefined,
       );
+    }
     return result.data as T;
+  }
+  capabilities() {
+    return this.call<Record<string, unknown>>("capabilities", {});
   }
   passport(input: {
     passportRef: string;
