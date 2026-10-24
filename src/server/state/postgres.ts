@@ -1,4 +1,5 @@
 import { policyRepository } from "@/server/platform/policy-repository";
+import { oauthRepository } from "@/server/platform/oauth-repository";
 import { platformRepository } from "@/server/platform/postgres";
 import { subjectRepositories } from "@/server/subjects/postgres";
 import { trajectoryRepository } from "@/server/trajectory/postgres";
@@ -25,6 +26,7 @@ function repositories(c: PoolClient): Repositories {
     ...subjectRepositories(c),
     platform: platformRepository(c),
     policy: policyRepository(c),
+    oauth: oauthRepository(c),
     trajectories: trajectoryRepository(c),
     states: {
       profile: (id, lock = false) =>
