@@ -12,20 +12,6 @@ export async function platformDatabase(
   authSecret = randomBytes(48).toString("base64url"),
 ) {
   const d = await subjectsDatabase(dir, migrate);
-  if (migrate)
-    await d.db.exec(
-      await readFile(
-        new URL("../migrations/0005_platformization.sql", import.meta.url),
-        "utf8",
-      ),
-    );
-  if (migrate)
-    await d.db.exec(
-      await readFile(
-        new URL("../migrations/0006_policy_control_plane.sql", import.meta.url),
-        "utf8",
-      ),
-    );
   await d.db.exec("SET search_path=tastepolicy");
   const auth = createAuthentication(
     d.store.pool,

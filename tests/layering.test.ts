@@ -33,6 +33,7 @@ const layerOf = (f: string): number => {
     return 8;
   if (
     /^src\/lib\/policy\//.test(p) ||
+    p === "src/server/subjects/member-policy.ts" ||
     /^src\/server\/platform\/policy-/.test(p) ||
     /^src\/features\/policy\//.test(p) ||
     /^src\/app\/account\/(rules|inspector)\//.test(p)
@@ -46,6 +47,8 @@ const COMPOSITION = new Set([
   "src/server/platform/mcp.ts",
   "src/server/platform/a2a.ts",
   "src/server/platform/service.ts",
+  "src/server/subjects/group-service.ts",
+  "src/server/subjects/postgres.ts",
   "src/server/state/postgres.ts",
   "src/server/state/repositories.ts",
   "src/lib/platform/contracts.ts",
