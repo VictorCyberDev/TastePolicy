@@ -26,6 +26,7 @@ export interface LeaseRepository {
   events(ref: string): Promise<LeaseEvent[]>;
   forPassport(passportRef: string, limit: number): Promise<LeaseRecord[]>;
   liveForPassport(passportRef: string): Promise<LeaseRecord[]>;
+  countLive(passportRef: string): Promise<number>;
   live(
     passportRef: string,
     actorId: string,
@@ -172,6 +173,13 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
           [ref, limit],
         )
       ).rows.map(rec);
+    },
+    async countLive(ref) {
+      const q = await c.query(
+        "SELECT count(*)::int AS n FROM tastepolicy.platform_leases WHERE passport_ref=$1 AND status IN ('ASK_PENDING','ACTIVE','SUSPENDED')",
+        [ref],
+      );
+      return q.rows[0].n as number;
     },
     async liveForPassport(ref) {
       return (

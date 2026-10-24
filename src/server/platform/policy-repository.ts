@@ -16,6 +16,8 @@ export interface PolicyVersionRow {
   note: string | null;
 }
 export interface PolicyRepository {
+  // The Passport (if any) whose state profile this is. Policies belong to it.
+  passportRefForProfile(profileId: string): Promise<string | null>;
   active(ref: string): Promise<PolicyVersionRow | null>;
   version(ref: string, n: number): Promise<PolicyVersionRow | null>;
   versions(ref: string, limit: number): Promise<PolicyVersionRow[]>;
@@ -47,6 +49,13 @@ const row = (r: Record<string, unknown>): PolicyVersionRow => ({
 });
 export function policyRepository(c: PoolClient): PolicyRepository {
   return {
+    async passportRefForProfile(profileId) {
+      const q = await c.query(
+        "SELECT passport_ref FROM tastepolicy.taste_passports WHERE profile_id=$1",
+        [profileId],
+      );
+      return q.rows[0]?.passport_ref ?? null;
+    },
     async active(ref) {
       const q = await c.query(
         "SELECT v.* FROM tastepolicy.policy_active a JOIN tastepolicy.policy_versions v ON v.passport_ref=a.passport_ref AND v.version=a.version WHERE a.passport_ref=$1",

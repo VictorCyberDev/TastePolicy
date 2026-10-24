@@ -31,11 +31,13 @@ export const leaseRef = (v: unknown): string => {
   return v as string;
 };
 const PERMITTED = ["recommend", "add_to_draft"];
+export const MAX_LIVE_LEASES = 50;
 const plus = (iso: string, seconds: number) =>
   new Date(Date.parse(iso) + seconds * 1000).toISOString();
 const min = (a: string, b: string) => (a < b ? a : b);
 
 export class LeaseService extends PolicyService {
+  protected readonly maxLive: number = MAX_LIVE_LEASES;
   private async facts(r: Repositories, l: LeaseRecord): Promise<CurrentFacts> {
     const now = this.clock(),
       passport = await r.platform.passport(l.passportRef),
@@ -184,7 +186,7 @@ export class LeaseService extends PolicyService {
     if (!l || (actorOnly && l.actorId !== p.userId)) fail("LEASE_NOT_FOUND");
     return l;
   }
-  protected async agentAccess(
+  private async agentAccess(
     r: Repositories,
     p: Principal,
     l: LeaseRecord,
@@ -281,6 +283,10 @@ export class LeaseService extends PolicyService {
       const ctx = e.evaluation.context.key,
         cand = e.evaluation.action.candidate.id,
         agent = e.evaluation.agentId;
+      // Bounded: a runaway agent cannot pile up unlimited open permissions or
+      // questions for the owner, and the quota is not an authorization input.
+      if ((await r.leases.countLive(e.passportRef)) >= this.maxLive)
+        fail("RATE_LIMITED");
       const existing = await r.leases.live(
         e.passportRef,
         p.userId,

@@ -9,6 +9,7 @@ import {
 import { hash } from "@/server/state/hash";
 import { groupPolicy } from "./policy";
 import { replayProxy } from "./proxy-service";
+import { applyMemberPolicy, replayMemberPolicy } from "./member-policy";
 import {
   object,
   id,
@@ -198,20 +199,23 @@ export class GroupService {
             await replayProxy(r, p.profileId, ref.authorizationId);
           }
           const e = await replayEvaluation(r, s, ref.authorizationId),
-            m = member(s, e),
+            base = member(s, e),
             state = await currentState(r, s);
           if (
-            state.stateVersion !== m.stateVersion ||
-            state.stateHash !== m.stateHash
+            state.stateVersion !== base.stateVersion ||
+            state.stateHash !== base.stateHash
           )
             fail("GROUP_MEMBER_STATE_STALE");
+          // The recorded evidence-level authorization is stored once and never
+          // changes; the member's own policy is applied on top, per group
+          // authorization, and captured inside that group's result.
           const stored = await r.subjects.memberAuthorization(
             p.profileId,
-            m.authorizationId,
+            base.authorizationId,
           );
-          if (stored && hash(stored) !== hash(m)) fail("INTEGRITY_ERROR");
-          if (!stored) await r.subjects.authorization(p.profileId, m);
-          members.push(m);
+          if (stored && hash(stored) !== hash(base)) fail("INTEGRITY_ERROR");
+          if (!stored) await r.subjects.authorization(p.profileId, base);
+          members.push(await applyMemberPolicy(r, s, e, this.clock()));
         }
         const first = members[0];
         if (
@@ -259,15 +263,19 @@ export class GroupService {
       checkHash(version);
       const links = await r.groups.members(o, aid),
         members: MemberAuthorization[] = [],
-        permissionActiveNow: Record<string, boolean> = {};
+        permissionActiveNow: Record<string, boolean> = {},
+        policyChangedSince: Record<string, boolean> = {};
       for (const link of links) {
         const s = await subject(r, o, link.subjectId);
         if (s.subjectKind === "PROXY")
           await replayProxy(r, o, link.authorizationId);
         const e = await replayEvaluation(r, s, link.authorizationId),
-          m = member(s, e);
+          replayed = await replayMemberPolicy(r, s, e, link),
+          m = replayed.member;
         if (hash(m) !== hash(link)) fail("INTEGRITY_ERROR");
         members.push(m);
+        policyChangedSince[s.subjectId] =
+          (link.policy?.version ?? null) !== replayed.currentPolicyVersion;
         try {
           if (s.subjectKind === "PROXY")
             await permitted(r, s, "GROUP_EVALUATION", this.clock());
@@ -292,6 +300,9 @@ export class GroupService {
         envelope: captured,
         source: "recorded" as const,
         permissionActiveNow,
+        // The captured decision above is historical. These say whether the
+        // member's rules have changed since, which a replay never applies.
+        policyChangedSince,
       };
     });
   }

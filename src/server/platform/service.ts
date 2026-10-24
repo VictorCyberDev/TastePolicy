@@ -198,89 +198,105 @@ export class PlatformService {
       fail("INVALID_INPUT");
     const ids = (v.signalIds as unknown[]).map(id).sort();
     if (new Set(ids).size !== 5) fail("INVALID_INPUT");
-    return this.op(
-      p,
-      "passport.create",
-      { ...v, displayLabel, signalIds: ids },
-      async (r) => {
-        if (await r.platform.owned(p.userId)) fail("STATE_VERSION_CONFLICT");
-        let result;
-        try {
-          result = await factory().entities(ids);
-        } catch {
-          fail("PROVIDER_UNAVAILABLE");
-        }
-        if (result.status !== "available") fail("PROVIDER_UNAVAILABLE");
-        if (
-          result.status !== "available" ||
-          !isResolvedProfile(result.data) ||
-          hash(result.data.map((e) => e.id).sort()) !== hash(ids)
-        )
-          fail("INVALID_INPUT");
-        const now = this.clock(),
-          profileId = randomUUID(),
-          expiresAt = new Date(Date.parse(now) + 30 * DAY).toISOString();
-        await r.states.create({
-          profileId,
-          currentStateVersion: 0,
-          status: "TEMPORARY",
+    const input = { ...v, displayLabel, signalIds: ids },
+      k = key(v.idempotencyKey),
+      h = hash(input);
+    // Phase 1 (short transaction): is this caller allowed, is it a replay, is the
+    // account free. Nothing is held while the provider is called.
+    const replayed = await this.store.transaction(async (r) => {
+      await this.locked(r, p, [], undefined, true);
+      const old = await r.platform.op(p.userId, "passport.create", k);
+      if (old) {
+        if (old.hash !== h) fail("IDEMPOTENCY_KEY_CONFLICT");
+        return true;
+      }
+      if (await r.platform.owned(p.userId)) fail("STATE_VERSION_CONFLICT");
+      return false;
+    });
+    // Phase 2: the provider call, outside any transaction or lock. A replay
+    // needs none: the stored result is returned by the operation below.
+    let result: Awaited<
+      ReturnType<ReturnType<typeof factory>["entities"]>
+    > | null = null;
+    if (!replayed)
+      try {
+        result = await factory().entities(ids);
+      } catch {
+        fail("PROVIDER_UNAVAILABLE");
+      }
+    // Phase 3: everything is re-validated and written in one transaction.
+    return this.op(p, "passport.create", input, async (r) => {
+      if (await r.platform.owned(p.userId)) fail("STATE_VERSION_CONFLICT");
+      const found = result;
+      if (!found || found.status !== "available") fail("PROVIDER_UNAVAILABLE");
+      if (
+        !isResolvedProfile(found.data) ||
+        hash(found.data.map((e) => e.id).sort()) !== hash(ids)
+      )
+        fail("INVALID_INPUT");
+      const now = this.clock(),
+        profileId = randomUUID(),
+        expiresAt = new Date(Date.parse(now) + 30 * DAY).toISOString();
+      await r.states.create({
+        profileId,
+        currentStateVersion: 0,
+        status: "TEMPORARY",
+        createdAt: now,
+        expiresAt,
+      });
+      await r.states.insertVersion({
+        profileId,
+        stateVersion: 0,
+        parentVersion: null,
+        mutationId: null,
+        entries: [],
+        stateHash: stateHash([]),
+        createdAt: now,
+      });
+      const mutationId = randomUUID(),
+        entries = found.data.map(snapshotEntity).map((entity) => ({
+          signalId: randomUUID(),
+          kind: "EXPLICIT_LIKE" as const,
+          entity,
+          scope: "GLOBAL_PREFERENCE" as const,
+          persistence: "DURABLE" as const,
+          source: "USER" as const,
+          sourceEventId: mutationId,
           createdAt: now,
-          expiresAt,
-        });
-        await r.states.insertVersion({
-          profileId,
-          stateVersion: 0,
-          parentVersion: null,
-          mutationId: null,
-          entries: [],
-          stateHash: stateHash([]),
-          createdAt: now,
-        });
-        const mutationId = randomUUID(),
-          entries = result.data.map(snapshotEntity).map((entity) => ({
-            signalId: randomUUID(),
-            kind: "EXPLICIT_LIKE" as const,
-            entity,
-            scope: "GLOBAL_PREFERENCE" as const,
-            persistence: "DURABLE" as const,
-            source: "USER" as const,
-            sourceEventId: mutationId,
-            createdAt: now,
-          }));
-        const state = {
-          profileId,
-          stateVersion: 1,
-          parentVersion: 0,
-          mutationId,
-          entries,
-          stateHash: stateHash(entries),
-          createdAt: now,
-        };
-        await r.states.insertVersion(state);
-        await r.mutations.insert({
-          profileId,
-          key: "account-initialize",
-          payloadHash: hash(ids),
-          result: { state, mutationId },
-        });
-        await r.states.advance(profileId, 1);
-        const passport: PassportRecord = {
-          subjectRef: `tps_${randomBytes(24).toString("hex")}`,
-          passportRef: ref(),
-          userId: p.userId,
-          profileId,
-          version: 1,
-          stateVersion: state.stateVersion,
-          stateHash: state.stateHash,
-          displayLabel,
-          visibility: "PRIVATE",
-          createdAt: now,
-          expiresAt,
-        };
-        await r.platform.insertPassport(passport);
-        return this.summary(r, passport);
-      },
-    );
+        }));
+      const state = {
+        profileId,
+        stateVersion: 1,
+        parentVersion: 0,
+        mutationId,
+        entries,
+        stateHash: stateHash(entries),
+        createdAt: now,
+      };
+      await r.states.insertVersion(state);
+      await r.mutations.insert({
+        profileId,
+        key: "account-initialize",
+        payloadHash: hash(ids),
+        result: { state, mutationId },
+      });
+      await r.states.advance(profileId, 1);
+      const passport: PassportRecord = {
+        subjectRef: `tps_${randomBytes(24).toString("hex")}`,
+        passportRef: ref(),
+        userId: p.userId,
+        profileId,
+        version: 1,
+        stateVersion: state.stateVersion,
+        stateHash: state.stateHash,
+        displayLabel,
+        visibility: "PRIVATE",
+        createdAt: now,
+        expiresAt,
+      };
+      await r.platform.insertPassport(passport);
+      return this.summary(r, passport);
+    });
   }
   private async summary(r: Repositories, p: PassportRecord) {
     const profile = await r.states.profile(p.profileId);
@@ -651,8 +667,8 @@ export class PlatformService {
       k = key(v.idempotencyKey);
     if (!input) fail("INVALID_INPUT");
     const h = hash({ ...v, proposal: input });
-    return this.store.transaction(async (r) => {
-      const { passport, grant } = await this.access(
+    const authorize = (r: Repositories) =>
+      this.access(
         r,
         p,
         pr,
@@ -660,10 +676,14 @@ export class PlatformService {
         "EVALUATE_TASTE_ACTION",
         "TASTE_EVALUATE",
       );
+    // Phase 1 (short transaction): authority, replay, quota, and the state the
+    // answer will be about. No lock outlives it.
+    const pre = await this.store.transaction(async (r) => {
+      const { passport } = await authorize(r);
       const old = await r.platform.op(p.userId, "evaluate", k);
       if (old) {
         if (old.hash !== h) fail("IDEMPOTENCY_KEY_CONFLICT");
-        return old.result;
+        return { replay: old.result };
       }
       if (
         !(await r.platform.rate(
@@ -673,7 +693,7 @@ export class PlatformService {
         ))
       )
         fail("RATE_LIMITED");
-      const profile = await r.states.profile(passport.profileId, true),
+      const profile = await r.states.profile(passport.profileId),
         state = profile
           ? await r.states.version(
               profile.profileId,
@@ -683,13 +703,42 @@ export class PlatformService {
       if (!state) fail("PASSPORT_NOT_FOUND");
       if (state.stateVersion !== input.expectedStateVersion)
         fail("STATE_VERSION_CONFLICT");
-      const evaluation = await evaluateStateSnapshot(
-        state,
-        input,
-        factory,
-        requestId,
-        this.clock(),
-      );
+      return { state };
+    });
+    if ("replay" in pre)
+      return pre.replay as ReturnType<PlatformService["response"]>;
+    // Phase 2: the cultural provider (slow, up to several calls) runs with no
+    // transaction, no row lock and no pooled connection held.
+    const evaluation = await evaluateStateSnapshot(
+      pre.state,
+      input,
+      factory,
+      requestId,
+      this.clock(),
+    );
+    // Phase 3: authority, state and idempotency are checked again against what
+    // is true now. An answer computed on a state that has since moved, or for a
+    // grant that has since ended, is discarded, never committed.
+    return this.store.transaction(async (r) => {
+      const { passport, grant } = await authorize(r);
+      const old = await r.platform.op(p.userId, "evaluate", k);
+      if (old) {
+        if (old.hash !== h) fail("IDEMPOTENCY_KEY_CONFLICT");
+        return old.result as ReturnType<PlatformService["response"]>;
+      }
+      const profile = await r.states.profile(passport.profileId, true),
+        state = profile
+          ? await r.states.version(
+              profile.profileId,
+              profile.currentStateVersion,
+            )
+          : null;
+      if (
+        !state ||
+        state.stateVersion !== pre.state.stateVersion ||
+        state.stateHash !== pre.state.stateHash
+      )
+        fail("STATE_VERSION_CONFLICT");
       await persistStateEvaluation(r, state, evaluation);
       const e: PlatformEvaluation = {
         evaluationRef: ref(),

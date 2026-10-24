@@ -616,3 +616,120 @@ it("REJECT and UNAVAILABLE never lease and never carry an ask", async () => {
     code: "LEASE_NOT_PERMITTED",
   });
 }, 40000);
+
+it("pending confirmation created through a grant is refused once the grant is revoked", async () => {
+  const w = await world(),
+    other = await account(d);
+  await w.publish(observe, 0);
+  const grant: any = await svc.grant(w.a.principal, {
+    idempotencyKey: "gp-key-" + ++n,
+    passportRef: w.ref,
+    granteeUserId: other.principal.userId,
+    scopes: ["EVALUATE_TASTE_ACTION", "READ_RECEIPT"],
+    purpose: "Test",
+    expiresAt: new Date(now + 3 * 86400000).toISOString(),
+  });
+  const key: any = await svc.issueKey(other.principal, {
+    idempotencyKey: "gk" + ++n,
+    displayLabel: "SYNTHETIC TEST DATA",
+    scopes: ["TASTE_EVALUATE", "RECEIPT_READ"],
+    expiresAt: new Date(now + 5 * 86400000).toISOString(),
+  });
+  const delegate = await svc.credentialPrincipal(key.secret);
+  const e: any = await svc.evaluate(
+    delegate,
+    {
+      idempotencyKey: "ge" + ++n,
+      passportRef: w.ref,
+      grantId: grant.grantId,
+      proposal: proposal(1),
+    },
+    () => w.q.q,
+    reqId,
+  );
+  expect(e.ask.kind).toBe("AUTHORITY_CONFIRMATION");
+  const l: any = await svc.leaseRequest(delegate, {
+    idempotencyKey: "gl" + ++n + "-key",
+    evaluationRef: e.evaluationRef,
+  });
+  expect(l.status).toBe("ASK_PENDING");
+  await svc.revokeGrant(w.a.principal, {
+    idempotencyKey: "rg-key-" + ++n,
+    grantId: grant.grantId,
+  });
+  await expect(approve(w.a.principal, l.leaseRef)).rejects.toMatchObject({
+    code: "STATE_VERSION_CONFLICT",
+  });
+  expect((await status(delegate, l.leaseRef)).valid).toBe(false);
+}, 60000);
+
+it("absolute lifetime: repeated checkpoints never move the end; the lease expires at the instant fixed at issue, and an expired one cannot be approved or resumed", async () => {
+  const w = await world(),
+    e = await w.evaluate(),
+    l: any = await w.lease(e.evaluationRef, {
+      ttlSeconds: 600,
+      checkpointSeconds: 120,
+    });
+  const end = l.expiresAt;
+  for (let i = 0; i < 5; i++) {
+    tick(100);
+    const c: any = await svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef });
+    expect(c.status).toBe("ACTIVE");
+    expect(c.expiresAt).toBe(end);
+    expect(Date.parse(c.checkpointDueAt)).toBeLessThanOrEqual(Date.parse(end));
+  }
+  tick(150); // 650 s after issue, still checking in
+  const gone: any = await status(w.agent, l.leaseRef);
+  expect([gone.status, gone.valid]).toEqual(["EXPIRED", false]);
+  await expect(
+    svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef }),
+  ).resolves.toMatchObject({ status: "EXPIRED" });
+  // a pending question cannot outlive its lifetime either
+  const p = await world();
+  await p.publish(observe, 0);
+  const pend: any = await p.lease((await p.evaluate()).evaluationRef, {
+    ttlSeconds: 60,
+  });
+  tick(61);
+  await expect(approve(p.a.principal, pend.leaseRef)).rejects.toMatchObject({
+    code: "LEASE_STATE_CONFLICT",
+  });
+  // longer than a day is not representable
+  const q = await world();
+  await expect(
+    q.lease((await q.evaluate()).evaluationRef, { ttlSeconds: 86401 }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+}, 90000);
+
+it("open leases per Passport are bounded", async () => {
+  class Tight extends LeaseService {
+    protected override readonly maxLive = 2;
+  }
+  const tight = new Tight(d.store, clock);
+  const w = await world();
+  const ids: string[] = [];
+  for (let i = 0; i < 3; i++) {
+    const cand = proposal(1, { key: `trip-${i}`, domain: "destination" });
+    const ev: any = await tight.evaluate(
+      w.agent,
+      { idempotencyKey: "ce" + ++n, passportRef: w.ref, proposal: cand },
+      () => w.q.q,
+      reqId,
+    );
+    ids.push(ev.evaluationRef);
+  }
+  await tight.leaseRequest(w.agent, {
+    idempotencyKey: "cl" + ++n + "-key",
+    evaluationRef: ids[0],
+  });
+  await tight.leaseRequest(w.agent, {
+    idempotencyKey: "cl" + ++n + "-key",
+    evaluationRef: ids[1],
+  });
+  await expect(
+    tight.leaseRequest(w.agent, {
+      idempotencyKey: "cl" + ++n + "-key",
+      evaluationRef: ids[2],
+    }),
+  ).rejects.toMatchObject({ code: "RATE_LIMITED" });
+}, 90000);

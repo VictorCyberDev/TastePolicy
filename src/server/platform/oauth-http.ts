@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac } from "node:crypto";
 import { OAuthError, OAuthService } from "./oauth-service";
 import { publicOrigin } from "./origin";
-import { clientKey } from "./public-limit";
+import { clientKey } from "./client-key";
 import { sessionPrincipal, trustedOrigin } from "./http";
 import { readJsonBody } from "@/server/taste/read-body";
 import type { StateStore } from "@/server/state/repositories";

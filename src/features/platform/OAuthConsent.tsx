@@ -68,7 +68,7 @@ export default function OAuthConsent() {
   );
   if (state === "loading")
     return (
-      <main className="policyPlane">
+      <main className="oauthConsent">
         <p role="status" aria-live="polite">
           Checking the request…
         </p>
@@ -76,7 +76,7 @@ export default function OAuthConsent() {
     );
   if (state === "error")
     return (
-      <main className="policyPlane">
+      <main className="oauthConsent">
         <h1>This connection request can’t be used</h1>
         <p>
           The request is incomplete or not allowed. Nothing was shared. Start
@@ -86,14 +86,14 @@ export default function OAuthConsent() {
     );
   if (state === "signin")
     return (
-      <main className="policyPlane">
+      <main className="oauthConsent">
         <h1>Sign in to continue</h1>
         <p>For your safety, connecting an assistant needs a recent sign-in.</p>
         <Link href={`/account?next=${next}`}>Sign in</Link>
       </main>
     );
   return (
-    <main className="policyPlane">
+    <main className="oauthConsent">
       <h1>
         {preview!.clientName} wants to ask TastePolicy about your preference
         boundaries

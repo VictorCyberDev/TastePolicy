@@ -2,22 +2,17 @@
 // real concurrency. Enabled by TASTEPOLICY_TEST_DATABASE_URL (a server the test
 // may create and drop databases on). CI provides a postgres service container.
 import { readFile } from "node:fs/promises";
+import { readdirSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
 import { PostgresStateStore } from "@/server/state/postgres";
 import { createAuthentication } from "@/server/platform/auth";
 
 export const REAL_URL = process.env.TASTEPOLICY_TEST_DATABASE_URL;
-const FILES = [
-  "0001_taste_state.sql",
-  "0002_interactive_authorization.sql",
-  "0003_taste_trajectory.sql",
-  "0004_taste_proxy_group.sql",
-  "0005_platformization.sql",
-  "0006_policy_control_plane.sql",
-  "0007_preference_authority_leases.sql",
-  "0008_verifiable_attestations.sql",
-];
+// Every migration present at this milestone's head, in order.
+const FILES = readdirSync(new URL("../migrations/", import.meta.url))
+  .filter((f) => /^\d{4}_.*\.sql$/.test(f))
+  .sort();
 export async function realDatabase() {
   const admin = new Pool({ connectionString: REAL_URL, max: 1 }),
     name = "tp_test_" + randomBytes(6).toString("hex");
@@ -31,6 +26,7 @@ export async function realDatabase() {
     );
   // Dropping the database terminates idle clients; that is expected.
   pool.on("error", () => {});
+  pool.on("connect", (c) => c.on("error", () => {}));
   await pool.query("SET search_path=tastepolicy");
   pool.on("connect", (c) => void c.query("SET search_path=tastepolicy"));
   const authSecret = randomBytes(48).toString("base64url");

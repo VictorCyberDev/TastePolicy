@@ -75,9 +75,28 @@ export interface MemberAuthorization {
   candidate: QlooEntity;
   contextHash: string;
   context: Context;
+  // The member's final decision: their own policy (if the member's state
+  // belongs to a Passport with one) already applied. Never softer than `policy.baseDecision`
+  // except through the member's own explicit temporary permission.
   decision: StateDecision["outcome"];
-  decisionBasis: StateDecision["basis"];
+  decisionBasis:
+    | StateDecision["basis"]
+    | "STALE_EVIDENCE"
+    | "AUTONOMY_CEILING"
+    | "USER_TEMPORARY_OVERRIDE";
   evidenceAvailability: "available" | "unavailable";
+  // Present only when the member's own policy layer took part. It records what
+  // was applied so that a replay reproduces this decision from captured
+  // versions, never from today's rules.
+  policy?: MemberPolicy;
+}
+export interface MemberPolicy {
+  // null: no published policy (an override alone can still apply).
+  version: number | null;
+  baseDecision: StateDecision["outcome"];
+  rules: string[];
+  overrideIds: string[];
+  appliedAt: string;
 }
 export interface TasteGroup {
   ownerProfileId: string;
