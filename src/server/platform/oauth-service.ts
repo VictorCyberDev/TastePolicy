@@ -57,24 +57,38 @@ const sha256b64u = (s: string) =>
   createHash("sha256").update(s).digest("base64url");
 const loopback = (h: string) =>
   h === "localhost" || h === "127.0.0.1" || h === "[::1]";
-export function validRedirect(u: string): URL | null {
+// Loopback redirects (a native client on the person's own machine, RFC 8252) are
+// a developer-mode feature: allowed on a localhost issuer, and on a hosted one
+// only when the operator sets TASTEPOLICY_OAUTH_ALLOW_LOOPBACK=true.
+export function loopbackAllowed(origin: string) {
+  return (
+    process.env.TASTEPOLICY_OAUTH_ALLOW_LOOPBACK === "true" ||
+    new URL(origin).hostname === "localhost"
+  );
+}
+export function validRedirect(u: string, allowLoopback = false): URL | null {
   try {
     const x = new URL(u);
     if (x.hash || x.username || x.password) return null;
     if (x.protocol === "https:") return x;
-    if (x.protocol === "http:" && loopback(x.hostname)) return x;
+    if (allowLoopback && x.protocol === "http:" && loopback(x.hostname))
+      return x;
     return null;
   } catch {
     return null;
   }
 }
 // Exact match; a loopback redirect may differ only in port (RFC 8252).
-export function redirectMatches(registered: string[], given: string) {
-  const g = validRedirect(given);
+export function redirectMatches(
+  registered: string[],
+  given: string,
+  allowLoopback = false,
+) {
+  const g = validRedirect(given, allowLoopback);
   if (!g) return false;
   return registered.some((r) => {
     if (r === given) return true;
-    const x = validRedirect(r);
+    const x = validRedirect(r, allowLoopback);
     return (
       !!x &&
       loopback(x.hostname) &&
@@ -101,6 +115,7 @@ export class OAuthService {
     // Overridable in tests; production uses the SSRF-guarded fetcher.
     private readonly fetchDoc: (url: string) => Promise<string> = (u) =>
       safeFetchText(u, "application/json", { maxBytes: 8192 }),
+    private readonly allowLoopback = loopbackAllowed(origin),
   ) {}
   get issuer() {
     return this.origin;
@@ -176,7 +191,9 @@ export class OAuthService {
       !Array.isArray(uris) ||
       uris.length < 1 ||
       uris.length > 10 ||
-      !uris.every((u) => typeof u === "string" && validRedirect(u)) ||
+      !uris.every(
+        (u) => typeof u === "string" && validRedirect(u, this.allowLoopback),
+      ) ||
       (doc.token_endpoint_auth_method !== undefined &&
         doc.token_endpoint_auth_method !== "none") ||
       "client_secret" in doc
@@ -217,7 +234,9 @@ export class OAuthService {
       !Array.isArray(uris) ||
       uris.length < 1 ||
       uris.length > 5 ||
-      !uris.every((u) => typeof u === "string" && validRedirect(u))
+      !uris.every(
+        (u) => typeof u === "string" && validRedirect(u, this.allowLoopback),
+      )
     )
       throw new OAuthError(
         "invalid_request",
@@ -282,7 +301,7 @@ export class OAuthService {
     const client = await this.client(r, q.client_id);
     if (
       !q.redirect_uri ||
-      !redirectMatches(client.redirectUris, q.redirect_uri)
+      !redirectMatches(client.redirectUris, q.redirect_uri, this.allowLoopback)
     )
       throw new OAuthError(
         "invalid_request",

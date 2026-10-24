@@ -195,4 +195,60 @@ suite("M6 on real PostgreSQL: accounts, OAuth, isolation", () => {
     await second.end();
     expect(results.filter(Boolean)).toHaveLength(10);
   }, 60000);
+
+  it("while the cultural provider is being called no transaction is open and the state row is not locked", async () => {
+    const p = await account();
+    const base = subjectProvider();
+    const passport: any = await svc.initialize(p, init(), () => base.q);
+    const key: any = await svc.issueKey(p, {
+      idempotencyKey: "k-" + randomBytes(4).toString("hex"),
+      displayLabel: "SYNTHETIC TEST DATA",
+      scopes: ["PASSPORT_READ", "TASTE_EVALUATE", "RECEIPT_READ"],
+      expiresAt: new Date(Date.now() + 5 * 86400000).toISOString(),
+    });
+    const agent = await svc.credentialPrincipal(key.secret);
+    let release!: () => void, entered!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    const inside = new Promise<void>((r) => (entered = r));
+    const slow = {
+      ...base.q,
+      async infer(input: any) {
+        entered();
+        await gate;
+        return base.q.infer(input);
+      },
+    };
+    const { proposal, reqId } = await import("./interactive-fixtures");
+    const pending = svc.evaluate(
+      agent,
+      {
+        idempotencyKey: "ev-" + randomBytes(4).toString("hex"),
+        passportRef: passport.passportRef,
+        proposal: proposal(1),
+      },
+      () => slow as any,
+      reqId,
+    );
+    await inside;
+    const open = await d.pool.query(
+      "SELECT count(*)::int AS n FROM pg_stat_activity WHERE datname=current_database() AND state LIKE 'idle in transaction%'",
+    );
+    expect(open.rows[0].n).toBe(0);
+    const c = await d.pool.connect();
+    try {
+      await c.query("BEGIN");
+      // would fail immediately if the evaluation held the profile row
+      await c.query(
+        "SELECT 1 FROM tastepolicy.taste_profiles p JOIN tastepolicy.taste_passports t ON t.profile_id=p.profile_id WHERE t.passport_ref=$1 FOR UPDATE NOWAIT",
+        [passport.passportRef],
+      );
+      await c.query("ROLLBACK");
+    } finally {
+      c.release();
+    }
+    release();
+    expect((await pending) as any).toMatchObject({
+      decision: expect.any(String),
+    });
+  }, 90000);
 });
