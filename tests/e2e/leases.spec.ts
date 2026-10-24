@@ -13,11 +13,18 @@ const lease = (ref: string, status: string, extra: object = {}) => ({
   agentId: "Agent-A",
   candidateName: "SYNTHETIC TEST DATA Cafe",
   contextKey: "dinner",
+  ask: null,
   expiresAt: "2026-10-24T13:00:00.000Z",
   checkpointDueAt: "2026-10-24T12:05:00.000Z",
   ...extra,
 });
-async function fixture(page: Page) {
+const confirmation = {
+  ask: {
+    kind: "AUTHORITY_CONFIRMATION",
+    question: "Your rule says to ask you before your agent continues.",
+  },
+};
+async function fixture(page: Page, pendingAsk: object = confirmation) {
   let pending = true,
     liveStatus = "ACTIVE";
   const calls: { op: string; body: Record<string, unknown> }[] = [],
@@ -32,9 +39,9 @@ async function fixture(page: Page) {
     else if (op === "lease-list")
       data = {
         passportRef,
-        pending: pending ? [lease(ask, "ASK_PENDING")] : [],
+        pending: pending ? [lease(ask, "ASK_PENDING", pendingAsk)] : [],
         leases: [
-          ...(pending ? [lease(ask, "ASK_PENDING")] : []),
+          ...(pending ? [lease(ask, "ASK_PENDING", pendingAsk)] : []),
           lease(
             live,
             liveStatus,
@@ -90,19 +97,38 @@ test("an agent's question is answered in plain language and the answer carries a
     page.getByText(/never lets an agent buy, book or pay/),
   ).toBeVisible();
   await page.getByLabel("Allow for").selectOption("60");
-  await page.getByRole("button", { name: "Yes, allow" }).click();
-  await expect(page.getByRole("status").first()).toContainText("Approved");
+  await page.getByRole("button", { name: "Allow this once" }).click();
+  await expect(page.getByRole("status").first()).toContainText("Allowed once");
   const body = f.calls.find((c) => c.op === "lease-approve")!.body;
   expect(body.ttlSeconds).toBe(3600);
+  expect(body.confirm).toBe(true);
   expect(body.leaseRef).toBe(ask);
   expect(typeof body.idempotencyKey).toBe("string");
   expect(f.errors).toEqual([]);
+});
+test("a missing fact is never offered as a yes: it shows the exact question and no approve control", async ({
+  page,
+}) => {
+  const f = await fixture(page, {
+    ask: { kind: "CLARIFICATION_REQUIRED", question: "What is the price?" },
+  });
+  await expect(
+    page.getByText("TastePolicy needs one fact before it can decide."),
+  ).toBeVisible();
+  await expect(page.getByText("What is the price?")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /allow|approve|yes/i }),
+  ).toHaveCount(0);
+  expect(f.calls.some((c) => c.op === "lease-approve")).toBe(false);
+  await expect(page.getByText(/Your rule says to ask you/)).toHaveCount(0);
 });
 test("declining, ending one permission and stopping everything call the owner operations", async ({
   page,
 }) => {
   const f = await fixture(page);
-  await page.getByRole("button", { name: "No", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Not this time", exact: true })
+    .click();
   await expect(page.getByRole("status").first()).toContainText("Declined");
   await page.getByRole("button", { name: "End now" }).click();
   expect(
