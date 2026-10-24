@@ -1,0 +1,16 @@
+# M8 ENFORCE — acceptance evidence
+
+Head `49e5d994bdfeaaff868c2944eabbee820e98fbc5` (PR #13, stacked on M7 head `0c9c07d`).
+
+| Gate | Result |
+| --- | --- |
+| Lease state machine: full status×event table, terminal finality, bounded approval, replay determinism, 2000 seeded random sequences, lazy expiry/overdue, drift reasons | 7 pass |
+| Database lease tests: ALLOW/ASK flows, fresh sign-in for approval, drift on policy/grant/state, resume needs a newer ALLOW, ownership masking, owner revoke (one/all), concurrency, audit order, tamper detection, DB triggers, cascade | 11 pass |
+| MCP lease round trip; SDK sandbox leases | pass |
+| Full unit run | 674 pass, 1 known load-sensitive timeout (`trajectory.test.ts`, also fails on base) |
+| Production build | pass |
+| Playwright | 88 pass locally (5 new lease cases) |
+| CI `Verify` run 79 on exact head | success |
+| Vercel deployment of exact head | READY; `/account/leases` 200; `/api/v1/openapi` lists the five lease routes; unauthenticated MCP request is 401 |
+
+Not proven: hosted persistence/auth (same M6 limitation); push notification of revocation (not built — verification is pull and uncacheable); A2A lease skill.
