@@ -66,7 +66,12 @@ export type LeaseEvent =
       at: string;
       actor: "OWNER";
       // What the owner explicitly allowed, once: recorded, not inferred.
-      scope: { candidateId: string; contextKey: string; permitted: string[] };
+      scope: {
+        candidateId: string;
+        contextKey: string;
+        permitted: string[];
+        price?: { amount: number; currency: string } | null;
+      };
       fingerprint: Fingerprint;
       expiresAt: string;
       checkpointDueAt: string;
