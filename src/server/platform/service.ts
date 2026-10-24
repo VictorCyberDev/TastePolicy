@@ -1,5 +1,6 @@
 import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
+import { CONTINUATION_ACTIONS } from "@/lib/platform/continuation-table";
 import { describeAsk } from "@/lib/lease/ask";
 import type { StateStore, Repositories } from "@/server/state/repositories";
 import type {
@@ -55,12 +56,7 @@ function grantSummary(g: Grant) {
 export function continuation(
   decision: import("@/lib/state/types").StateDecision["outcome"],
 ) {
-  const actions = {
-    ALLOW: ["recommend", "add_to_draft"],
-    ASK: ["request_clarification"],
-    REJECT: ["do_not_proceed", "offer_repair"],
-    UNAVAILABLE: ["do_not_assume_negative_preference"],
-  };
+  const actions = CONTINUATION_ACTIONS;
   return {
     schemaVersion: "taste-continuation-v1",
     permitted: actions[decision],
@@ -460,6 +456,7 @@ export class PlatformService {
         stateHash: current.stateHash,
       };
       await r.platform.updatePassport(next);
+      await this.afterChange(r, pr);
       return this.summary(r, next);
     });
   }
@@ -521,6 +518,7 @@ export class PlatformService {
       const g = await r.platform.getGrant(gid);
       if (!g || g.grantorUserId !== p.userId) fail("ACCESS_DENIED");
       await r.platform.revokeGrant(g, this.clock());
+      await this.afterChange(r, g.passportRef);
       return { grantId: gid, revoked: true };
     });
   }
@@ -626,6 +624,12 @@ export class PlatformService {
           }
         : {}),
     };
+  }
+  // Called inside the transaction after anything that can change what a prior
+  // decision relied on. Default: nothing.
+  protected async afterChange(r: Repositories, passportRef: string) {
+    void r;
+    void passportRef;
   }
   // Extension points for the M7 policy layer. Defaults leave behaviour unchanged.
   protected async policyDecide(

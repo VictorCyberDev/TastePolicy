@@ -240,6 +240,7 @@ export class PolicyService extends PlatformService {
       };
       await r.policy.insertVersion(ref, p.userId, row);
       await r.policy.setActive(ref, row.version);
+      await this.afterChange(r, ref);
       const result = this.view(row);
       await r.platform.saveOp(p.userId, "policy.publish", k, h, result);
       return result;
@@ -299,6 +300,7 @@ export class PolicyService extends PlatformService {
       await this.owned(r, p, ref);
       // Revocation is idempotent in effect: a second revoke reports the same state.
       await r.policy.revokeOverride(ref, oid, this.clock());
+      await this.afterChange(r, ref);
       return { overrideId: oid, status: "REVOKED" };
     });
   }

@@ -10,12 +10,13 @@ if (
     "migrate-platform",
     "migrate-policy",
     "migrate-leases",
+    "migrate-attestations",
     "purge",
     "purge-platform",
   ].includes(op)
 )
   throw Error(
-    "Use migrate, migrate-interactive, migrate-trajectory, migrate-subjects, migrate-platform, migrate-policy, migrate-leases, purge-platform or purge",
+    "Use migrate, migrate-interactive, migrate-trajectory, migrate-subjects, migrate-platform, migrate-policy, migrate-leases, migrate-attestations, purge-platform or purge",
   );
 if (!process.env.DATABASE_URL) {
   process.stdout.write("M2_REMOTE_PERSISTENCE_ENVIRONMENT_BLOCKED\n");
@@ -44,7 +45,9 @@ if (!process.env.DATABASE_URL) {
                       ? "../migrations/0005_platformization.sql"
                       : op === "migrate-policy"
                         ? "../migrations/0006_policy_control_plane.sql"
-                        : "../migrations/0007_preference_authority_leases.sql",
+                        : op === "migrate-leases"
+                          ? "../migrations/0007_preference_authority_leases.sql"
+                          : "../migrations/0008_verifiable_attestations.sql",
             import.meta.url,
           ),
           "utf8",

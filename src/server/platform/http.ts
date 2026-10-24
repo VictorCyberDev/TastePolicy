@@ -1,6 +1,6 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-import { LeaseService } from "./lease-service";
+import { AttestationService } from "./attest-service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
 import { capabilities } from "./gateway";
@@ -75,7 +75,7 @@ export async function handlePlatform(
     )
       platformFail("INVALID_INPUT");
     if (!store) platformFail("NOT_CONFIGURED");
-    const service = new LeaseService(store);
+    const service = new AttestationService(store);
     const p =
       mode === "v1"
         ? await service.credentialPrincipal(bearer!.replace(/^Bearer /, ""))
@@ -175,6 +175,8 @@ export async function handlePlatform(
       else if (op === "lease-resume") data = await service.leaseResume(p, body);
       else if (op === "lease-release")
         data = await service.leaseRelease(p, body);
+      else if (op === "attestation")
+        data = await service.attestationIssue(p, body);
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);

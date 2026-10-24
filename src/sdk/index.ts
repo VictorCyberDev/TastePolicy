@@ -90,6 +90,7 @@ export class TastePolicyClient {
       | "lease-checkpoint"
       | "lease-resume"
       | "lease-release"
+      | "attestation"
       | "evaluate"
       | "receipt"
       | "status",
@@ -164,6 +165,22 @@ export class TastePolicyClient {
   }
   leaseRelease(leaseRef: string) {
     return this.call<Lease>("lease-release", { leaseRef });
+  }
+  // A short-lived proof of an ACTIVE lease for one verifier. Present only the
+  // claims the verifier needs (see src/sdk/attest.ts).
+  attestation(input: {
+    leaseRef: string;
+    audience: string;
+    holderKey?: Record<string, string>;
+    delegateAgentId?: string;
+  }) {
+    return this.call<{
+      attestation: string;
+      jti: string;
+      expiresAt: string;
+      disclosable: string[];
+      statusUri: string;
+    }>("attestation", input);
   }
   evaluate(input: EvaluationRequest) {
     return this.call<AuthorizationResponse>("evaluate", input);

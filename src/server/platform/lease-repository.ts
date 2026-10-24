@@ -56,6 +56,7 @@ type Row = {
     fingerprint: LeaseState["fingerprint"];
     reasons: LeaseState["reasons"];
     ask?: LeaseState["ask"];
+    epoch?: LeaseState["epoch"];
     checkpointSeconds: number;
     candidateName: string;
   };
@@ -85,6 +86,7 @@ function rec(r: Row): LeaseRecord {
       fingerprint: r.data.fingerprint,
       reasons: r.data.reasons,
       ask: r.data.ask ?? null,
+      epoch: r.data.epoch ?? { n: 0, rev: 0 },
     },
   };
 }
@@ -113,6 +115,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
             fingerprint: l.state.fingerprint,
             reasons: l.state.reasons,
             ask: l.state.ask,
+            epoch: l.state.epoch,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
           },
@@ -141,6 +144,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
             fingerprint: l.state.fingerprint,
             reasons: l.state.reasons,
             ask: l.state.ask,
+            epoch: l.state.epoch,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
           },

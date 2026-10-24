@@ -35,6 +35,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
+      - run: npm run conformance:compatible
       - run: npm run tastebench:validate
       - run: npm run tastebench:contract -- .tastebench/ci
       - run: npm run tastebench:report -- .tastebench/ci

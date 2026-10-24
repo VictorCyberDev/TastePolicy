@@ -42,6 +42,8 @@ const layerOf = (f: string): number => {
   return 6;
 };
 const COMPOSITION = new Set([
+  "src/app/product/page.tsx",
+  "src/app/developers/page.tsx",
   "src/server/platform/http.ts",
   "src/server/platform/gateway.ts",
   "src/server/platform/mcp.ts",

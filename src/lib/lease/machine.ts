@@ -35,6 +35,11 @@ export type DriftReason =
   | "CHECKPOINT_OVERDUE";
 export interface LeaseState {
   status: LeaseStatus;
+  // Authority epoch: n counts how many times authority was (re)established
+  // (0 while an ASK is still pending); rev is the lease revision that did it.
+  // Anything that ends ACTIVE ends the epoch, and a new one needs a fresh
+  // evaluation, so proofs of an earlier epoch can never speak for a later one.
+  epoch: { n: number; rev: number };
   // Why the owner is being asked; null unless the lease began as an ASK.
   ask: { kind: AskKind; reasons: string[] } | null;
   rev: number;
@@ -116,6 +121,7 @@ export function reduce(s: LeaseState | null, e: LeaseEvent): LeaseState {
       return bad(s, e);
     if (e.decision === "ALLOW" && e.ask) return bad(s, e);
     return {
+      epoch: e.decision === "ALLOW" ? { n: 1, rev: 1 } : { n: 0, rev: 0 },
       ask: e.decision === "ASK" ? e.ask! : null,
       status: e.decision === "ALLOW" ? "ACTIVE" : "ASK_PENDING",
       rev: 1,
@@ -139,6 +145,7 @@ export function reduce(s: LeaseState | null, e: LeaseEvent): LeaseState {
       )
         return bad(s, e);
       return next({
+        epoch: { n: s.epoch.n + 1, rev: s.rev + 1 },
         status: "ACTIVE",
         fingerprint: e.fingerprint,
         expiresAt: e.expiresAt < s.expiresAt ? e.expiresAt : s.expiresAt,
@@ -156,6 +163,7 @@ export function reduce(s: LeaseState | null, e: LeaseEvent): LeaseState {
     case "RESUMED":
       if (s.status !== "SUSPENDED") return bad(s, e);
       return next({
+        epoch: { n: s.epoch.n + 1, rev: s.rev + 1 },
         status: "ACTIVE",
         fingerprint: e.fingerprint,
         checkpointDueAt: e.checkpointDueAt,

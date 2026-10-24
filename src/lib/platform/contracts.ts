@@ -63,6 +63,22 @@ export const leaseResumeInput = z.object({
   leaseRef: leaseRefField,
   evaluationRef: ref,
 });
+export const attestationInput = z.object({
+  leaseRef: leaseRefField,
+  audience: z
+    .string()
+    .regex(/^https:\/\/[a-z0-9.-]{1,190}(:\d{1,5})?$/)
+    .describe("Origin of the party that will verify the proof"),
+  holderKey: z
+    .looseObject({ kty: z.string(), crv: z.string(), x: z.string() })
+    .optional()
+    .describe("Public JWK of the holder; adds key binding"),
+  delegateAgentId: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]{1,64}$/)
+    .optional()
+    .describe("Hand the proof to another agent (requires holderKey)"),
+});
 export const evaluationRefInput = z.object({ evaluationRef: ref });
 export const emptyInput = z.object({});
 
@@ -79,7 +95,8 @@ export interface PlatformTool {
     | "lease-verify"
     | "lease-checkpoint"
     | "lease-resume"
-    | "lease-release";
+    | "lease-release"
+    | "attestation";
   title: string;
   description: string;
   scope: KeyScope | null;
@@ -206,6 +223,17 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     readOnly: false,
     idempotent: true,
     input: leaseRefInput,
+  },
+  {
+    name: "tastepolicy_issue_attestation",
+    op: "attestation",
+    title: "Issue a verifiable attestation",
+    description:
+      "For an ACTIVE lease, issue a short-lived SD-JWT proof a third party can verify without a TastePolicy credential. Disclose only the claims the verifier needs when presenting. The proof states cultural authority only and ends with the lease.",
+    scope: "TASTE_EVALUATE",
+    readOnly: false,
+    idempotent: false,
+    input: attestationInput,
   },
 ];
 export const toolByName = (name: string) =>
