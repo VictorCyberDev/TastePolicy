@@ -79,9 +79,7 @@ export class AttestationService extends LeaseService {
       fail("INVALID_INPUT");
     const cfg = await this.cfg();
     return this.store.transaction(async (r) => {
-      const l0 = await r.leases.get(ref, true);
-      if (!l0 || l0.actorId !== p.userId) fail("LEASE_NOT_FOUND");
-      await this.agentAccess(r, p, l0, "TASTE_EVALUATE");
+      const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       if (
         !(await r.platform.rate(
           p.userId,

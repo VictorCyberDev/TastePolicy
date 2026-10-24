@@ -10,6 +10,10 @@ export default function Home() {
         <Link href="/account">
           Account · TastePolicy Passport · Developer access
         </Link>
+        {" · "}
+        <Link href="/product">Product</Link>
+        {" · "}
+        <Link href="/developers">Developers</Link>
       </nav>
     </>
   );

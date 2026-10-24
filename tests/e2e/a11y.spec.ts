@@ -139,6 +139,8 @@ const pages: [string, string][] = [
   ["/account/inspector", "Why was this the answer?"],
   ["/account/leases", "What agents may do now"],
   ["/verify", "Check a TastePolicy proof"],
+  ["/product", "Your taste. Your rules. Any agent."],
+  ["/developers", "Subjective authority for your agents"],
   [
     "/oauth/consent?response_type=code&client_id=tpc_synthetic01&redirect_uri=https%3A%2F%2Fapp.test%2Fcb&code_challenge=" +
       "a".repeat(43) +
