@@ -20,8 +20,6 @@ import {
 import { counterfactuals, impactAnalysis } from "@/lib/policy/analysis";
 import { overrideRequest, policyDocument } from "@/lib/policy/validation";
 import {
-  AUTONOMY_LEVELS,
-  type AutonomyLevel,
   type PolicyDecision,
   type PolicyDocument,
   type PolicyOverride,

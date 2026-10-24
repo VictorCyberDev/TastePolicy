@@ -1,5 +1,4 @@
 // SYNTHETIC TEST DATA. Real Better Auth email/password and actual PostgreSQL SQL in PGlite.
-import { readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { subjectsDatabase, subjectProvider } from "./subjects-fixtures";
 import { createAuthentication } from "@/server/platform/auth";
