@@ -103,6 +103,15 @@ export class AttestationService extends LeaseService {
         toSeconds(l.state.checkpointDueAt),
         toSeconds(passport.expiresAt),
       );
+      // An override the decision relied on ends lazily; the proof must not
+      // outlive it.
+      if (l.state.fingerprint.overrideIds.length) {
+        const live = (await r.policy.overrides(l.passportRef)).filter((o) =>
+          l.state.fingerprint.overrideIds.includes(o.overrideId),
+        );
+        for (const o of live)
+          validUntil = Math.min(validUntil, toSeconds(o.expiresAt));
+      }
       if (l.grantId) {
         const g = await r.platform.getGrant(l.grantId);
         if (!g) fail("LEASE_STATE_CONFLICT");
@@ -237,6 +246,9 @@ export class AttestationService extends LeaseService {
       audience: v.audience as string,
       trustedIssuers: cfg.trusted,
       now: () => now,
+      // Nothing the issuer clamps exp to is noticed by a status flip at that
+      // instant, so the hosted verifier accepts no time past exp.
+      clockSkewSeconds: 0,
       nonce: v.nonce as string | undefined,
       requireKeyBinding: v.requireKeyBinding === true,
       fetchStatus,
