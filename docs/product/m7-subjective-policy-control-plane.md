@@ -40,3 +40,7 @@ Agents: `GET|POST /api/v1/policy` (and MCP `tastepolicy_get_policy`), scope `PAS
 ## Data
 
 Migration `0006_policy_control_plane.sql` is additive (`policy_versions`, `policy_active`, `policy_overrides`, `platform_policy_decisions`), RLS-enabled, cascades with the Passport. Apply with `npm run db:migrate:policy`.
+
+## Groups, delegates and proxies (ADR 0021)
+
+Each member is decided by their own policy; the M5 rule `UNANIMOUS_NO_VETO_V1` aggregates. One no ends it; a temporary permission releases only its owner; a delegate may read and tighten, never loosen or grant a permission unless the owner explicitly gave that right. See `src/lib/policy/composition.ts` and `tests/policy-composition.test.ts`.
