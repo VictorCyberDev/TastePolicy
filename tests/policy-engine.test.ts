@@ -271,13 +271,10 @@ it("counterfactuals list only verified single changes and mark them user actions
     policyVersion: 1,
     overrides: [],
   };
-  const cf = counterfactuals(input, now);
+  const cf = counterfactuals(input);
   // Stale AND observe-only: raising autonomy alone would not flip it, so it is not offered.
   expect(cf.map((c) => c.change)).toEqual(["OVERRIDE_THIS_CANDIDATE"]);
-  const observeOnly = counterfactuals(
-    { ...input, state: state(entry({})) },
-    now,
-  );
+  const observeOnly = counterfactuals({ ...input, state: state(entry({})) });
   expect(observeOnly.map((c) => c.change).sort()).toEqual(
     ["OVERRIDE_THIS_CANDIDATE", "RAISE_AUTONOMY"].sort(),
   );
@@ -290,10 +287,7 @@ it("counterfactuals list only verified single changes and mark them user actions
     candidateId: candidate.id,
     constraint: { kind: "EXCLUDE_CANDIDATE" },
   });
-  const blocked = counterfactuals(
-    { ...input, state: state(block, entry({})) },
-    now,
-  );
+  const blocked = counterfactuals({ ...input, state: state(block, entry({})) });
   expect(blocked.map((c) => c.change)).toEqual(["REMOVE_ENTRY"]);
 });
 it("impact analysis counts transitions between the current and a draft policy", () => {

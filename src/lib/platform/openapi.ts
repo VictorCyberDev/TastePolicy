@@ -6,6 +6,7 @@ import {
   evaluateInput,
   evaluationRefInput,
   passportInput,
+  policyInput,
 } from "./contracts";
 
 const schema = (s: z.ZodType) => {
@@ -73,6 +74,9 @@ export function openApiDocument(origin: string) {
       },
       "/api/v1/passport": {
         post: op("Read Passport summary", "PASSPORT_READ", passportInput),
+      },
+      "/api/v1/policy": {
+        post: op("Read autonomy rules", "PASSPORT_READ", policyInput),
       },
       "/api/v1/evaluate": {
         post: op("Evaluate a proposed choice", "TASTE_EVALUATE", evaluateInput),

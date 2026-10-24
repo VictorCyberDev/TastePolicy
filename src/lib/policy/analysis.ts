@@ -19,10 +19,7 @@ export interface Counterfactual {
   userAction: true;
   resultOutcome: PolicyDecision["outcome"];
 }
-export function counterfactuals(
-  i: PolicyEvaluationInput,
-  at: string,
-): Counterfactual[] {
+export function counterfactuals(i: PolicyEvaluationInput): Counterfactual[] {
   const current = evaluateWithPolicy(i);
   const out: Counterfactual[] = [];
   const consider = (
@@ -46,8 +43,8 @@ export function counterfactuals(
           overrideId: "00000000-0000-4000-8000-000000000000",
           effect: "ALLOW_THROUGH_ASK",
           scope: { candidateId: i.candidate.id },
-          createdAt: at,
-          expiresAt: new Date(Date.parse(at) + 86_400_000).toISOString(),
+          createdAt: i.now,
+          expiresAt: new Date(Date.parse(i.now) + 86_400_000).toISOString(),
         },
       ],
     },

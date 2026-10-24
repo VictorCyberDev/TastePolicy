@@ -61,7 +61,13 @@ export class TastePolicyClient {
       throw Error("Invalid TastePolicy endpoint");
   }
   async call<T = unknown>(
-    operation: "capabilities" | "passport" | "evaluate" | "receipt" | "status",
+    operation:
+      | "capabilities"
+      | "passport"
+      | "policy"
+      | "evaluate"
+      | "receipt"
+      | "status",
     input: unknown,
   ): Promise<T> {
     const response = await (this.options.fetch ?? fetch)(
@@ -101,6 +107,9 @@ export class TastePolicyClient {
     stateSummary?: boolean;
   }) {
     return this.call<PassportSummary>("passport", input);
+  }
+  policy(input: { passportRef: string; grantId?: string; agentId?: string }) {
+    return this.call<Record<string, unknown>>("policy", input);
   }
   evaluate(input: EvaluationRequest) {
     return this.call<AuthorizationResponse>("evaluate", input);

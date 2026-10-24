@@ -45,6 +45,7 @@ export interface DemoSessionRepository {
 }
 export interface Repositories {
   platform: import("@/server/platform/repositories").PlatformRepository;
+  policy: import("@/server/platform/policy-repository").PolicyRepository;
   subjects: import("@/server/subjects/repositories").SubjectRepository;
   groups: import("@/server/subjects/repositories").GroupRepository;
   subjectOperations: import("@/server/subjects/repositories").SubjectOperationRepository;

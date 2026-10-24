@@ -38,12 +38,22 @@ export const evaluateInput = z.object({
     })
     .loose(),
 });
+export const policyInput = z.object({
+  passportRef: ref,
+  grantId: ref.optional(),
+  agentId: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]{1,64}$/)
+    .optional()
+    .describe("Resolve autonomy rules for this agent"),
+});
 export const evaluationRefInput = z.object({ evaluationRef: ref });
 export const emptyInput = z.object({});
 
 export interface PlatformTool {
   name: string;
-  op: "capabilities" | "passport" | "evaluate" | "receipt" | "status";
+  op:
+    "capabilities" | "passport" | "policy" | "evaluate" | "receipt" | "status";
   title: string;
   description: string;
   scope: KeyScope | null;
@@ -73,6 +83,17 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     readOnly: true,
     idempotent: true,
     input: passportInput,
+  },
+  {
+    name: "tastepolicy_get_policy",
+    op: "policy",
+    title: "Read the user's autonomy rules",
+    description:
+      "Read the resolved autonomy level per domain, any spending limit and freshness limits that will make evaluations more cautious. Rules can only add caution or follow an explicit user override; they never override hard rules.",
+    scope: "PASSPORT_READ",
+    readOnly: true,
+    idempotent: true,
+    input: policyInput,
   },
   {
     name: "tastepolicy_evaluate_choice",

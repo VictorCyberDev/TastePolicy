@@ -39,7 +39,11 @@ export function autonomyFor(
   );
 }
 export function overrideActive(o: PolicyOverride, now: string) {
-  return !o.revokedAt && o.expiresAt > now && o.createdAt <= now;
+  return (
+    (!o.revokedAt || o.revokedAt > now) &&
+    o.expiresAt > now &&
+    o.createdAt <= now
+  );
 }
 function overrideMatches(
   o: PolicyOverride,
