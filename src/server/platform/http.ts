@@ -1,12 +1,8 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-<<<<<<< HEAD
 import { PolicyService } from "./policy-service";
-=======
-import { PlatformService } from "./service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
->>>>>>> milestone-6-platformization
 import { capabilities } from "./gateway";
 import {
   PlatformFailure,
