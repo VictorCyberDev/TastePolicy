@@ -426,3 +426,54 @@ it("client ID metadata documents: the document must name its own URL, use https/
       "invalid_client",
     );
 }, 60000);
+
+it("review fixes: a client mismatch does not spend the refresh token; the family has an absolute lifetime; names are sanitized; revoke tolerates malformed ids", async () => {
+  const p = await person();
+  const l = await link(p);
+  const t = await l.exchange();
+  const other = await client();
+  // a thief using the token under another client_id cannot burn it
+  expect(
+    await code(
+      oauth.token(
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: t.refresh_token,
+          client_id: other,
+        }),
+      ),
+    ),
+  ).toBe("invalid_grant");
+  const ok = await oauth.token(
+    new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: t.refresh_token,
+      client_id: l.id,
+    }),
+  );
+  expect((ok as any).access_token).toBeTruthy();
+  // absolute lifetime: 90 days after consent a refresh is refused
+  const old = new OAuthService(d.store, ORIGIN, () =>
+    new Date(now + 91 * 86_400_000).toISOString(),
+  );
+  expect(
+    await code(
+      old.token(
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: (ok as any).refresh_token,
+          client_id: l.id,
+        }),
+      ),
+    ),
+  ).toBe("invalid_grant");
+  // control and bidi characters never reach the consent screen
+  const reg = await oauth.register({
+    client_name: "Cl‮aude\u0000 \n",
+    redirect_uris: [REDIRECT],
+  });
+  expect(reg.client_name).toBe("Claude");
+  // a malformed token id is a no-op, not an error
+  await oauth.revoke("tp_live_zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz.x");
+  await oauth.revoke("tp_live_00000000-0000-0000-0000-00000000000g.x");
+});

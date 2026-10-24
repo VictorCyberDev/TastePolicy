@@ -155,7 +155,10 @@ export class PlatformService {
     raw: string,
     surface: "rest" | "mcp" | "a2a" = "rest",
   ): Promise<Principal> {
-    const match = /^tp_live_([a-f0-9-]{36})\.([A-Za-z0-9_-]{43})$/.exec(raw);
+    const match =
+      /^tp_live_([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\.([A-Za-z0-9_-]{43})$/.exec(
+        raw,
+      );
     if (!match) fail("AUTH_REQUIRED");
     return this.store.transaction(async (r) => {
       const c = await r.platform.findCredential(match[1], hash(raw));
