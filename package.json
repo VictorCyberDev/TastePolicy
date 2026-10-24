@@ -23,6 +23,7 @@
     "db:migrate:platform": "node scripts/state-db.mjs migrate-platform",
     "db:migrate:policy": "node scripts/state-db.mjs migrate-policy",
     "db:migrate:leases": "node scripts/state-db.mjs migrate-leases",
+    "db:migrate:attestations": "node scripts/state-db.mjs migrate-attestations",
     "mcp:platform": "node --experimental-transform-types scripts/platform-mcp.mjs",
     "db:purge:platform": "node scripts/state-db.mjs purge-platform",
     "db:purge": "node scripts/state-db.mjs purge",

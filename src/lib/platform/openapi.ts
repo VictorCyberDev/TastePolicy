@@ -6,6 +6,7 @@ import {
   evaluateInput,
   evaluationRefInput,
   passportInput,
+  attestationInput,
   leaseRefInput,
   leaseRequestInput,
   leaseResumeInput,
@@ -99,6 +100,13 @@ export function openApiDocument(origin: string) {
       },
       "/api/v1/lease-release": {
         post: op("Release a lease", "TASTE_EVALUATE", leaseRefInput),
+      },
+      "/api/v1/attestation": {
+        post: op(
+          "Issue a verifiable attestation for a lease",
+          "TASTE_EVALUATE",
+          attestationInput,
+        ),
       },
       "/api/v1/evaluate": {
         post: op("Evaluate a proposed choice", "TASTE_EVALUATE", evaluateInput),

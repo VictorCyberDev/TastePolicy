@@ -24,7 +24,7 @@ import {
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 
 const LEASE_REF = /^tl_[a-f0-9]{48}$/;
-const leaseRef = (v: unknown): string => {
+export const leaseRef = (v: unknown): string => {
   if (typeof v !== "string" || !LEASE_REF.test(v)) fail("INVALID_INPUT");
   return v as string;
 };
@@ -83,7 +83,10 @@ export class LeaseService extends PolicyService {
     return cur;
   }
   // Time and drift are evaluated at read time; nothing relies on a job.
-  private async settle(r: Repositories, l: LeaseRecord): Promise<LeaseRecord> {
+  protected async settle(
+    r: Repositories,
+    l: LeaseRecord,
+  ): Promise<LeaseRecord> {
     await this.checked(r, l);
     if (isTerminal(l.state.status)) return l;
     const now = this.clock(),
@@ -108,6 +111,13 @@ export class LeaseService extends PolicyService {
   }
   // The stored projection must equal a replay of its event log before anything
   // else touches it.
+  // Eager propagation: when something a lease relied on changes, every live
+  // lease of the Passport is re-settled in the same transaction, so status
+  // lists and verifiers see the change when it commits.
+  protected override async afterChange(r: Repositories, passportRef: string) {
+    for (const l of await r.leases.liveForPassport(passportRef))
+      await this.settle(r, l);
+  }
   private async checked(r: Repositories, l: LeaseRecord) {
     let stored;
     try {
@@ -142,7 +152,7 @@ export class LeaseService extends PolicyService {
       continuation: valid ? continuation("ALLOW") : null,
     };
   }
-  private async agentAccess(
+  protected async agentAccess(
     r: Repositories,
     p: Principal,
     l: LeaseRecord,

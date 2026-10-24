@@ -1,6 +1,6 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-import { LeaseService } from "./lease-service";
+import { AttestationService } from "./attest-service";
 import { capabilities } from "./gateway";
 import {
   PlatformFailure,
@@ -73,7 +73,7 @@ export async function handlePlatform(
     )
       platformFail("INVALID_INPUT");
     if (!store) platformFail("NOT_CONFIGURED");
-    const service = new LeaseService(store);
+    const service = new AttestationService(store);
     const p =
       mode === "v1"
         ? await service.credentialPrincipal(bearer!.replace(/^Bearer /, ""))

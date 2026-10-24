@@ -430,6 +430,7 @@ export class PlatformService {
         stateHash: current.stateHash,
       };
       await r.platform.updatePassport(next);
+      await this.afterChange(r, pr);
       return this.summary(r, next);
     });
   }
@@ -491,6 +492,7 @@ export class PlatformService {
       const g = await r.platform.getGrant(gid);
       if (!g || g.grantorUserId !== p.userId) fail("ACCESS_DENIED");
       await r.platform.revokeGrant(g, this.clock());
+      await this.afterChange(r, g.passportRef);
       return { grantId: gid, revoked: true };
     });
   }
@@ -588,6 +590,12 @@ export class PlatformService {
           }
         : {}),
     };
+  }
+  // Called inside the transaction after anything that can change what a prior
+  // decision relied on. Default: nothing.
+  protected async afterChange(r: Repositories, passportRef: string) {
+    void r;
+    void passportRef;
   }
   // Extension points for the M7 policy layer. Defaults leave behaviour unchanged.
   protected async policyDecide(

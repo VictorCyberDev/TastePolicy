@@ -23,6 +23,7 @@ export async function platformDatabase(
     for (const file of [
       "0006_policy_control_plane.sql",
       "0007_preference_authority_leases.sql",
+      "0008_verifiable_attestations.sql",
     ])
       await d.db.exec(
         await readFile(
