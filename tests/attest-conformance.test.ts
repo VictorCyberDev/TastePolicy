@@ -24,6 +24,13 @@ it("the committed conformance vectors pass the reference verifier, with the stat
         [file.context.issuer]: {
           jwks: file.context.jwks,
           vct: o.acceptedVct ?? [file.context.vct],
+          ...(o.trust?.state ? { state: o.trust.state } : {}),
+          ...(o.trust?.notAfterOffset !== undefined
+            ? { notAfter: file.context.now + 10 + o.trust.notAfterOffset }
+            : {}),
+          ...(o.trust?.revokeSigningKey
+            ? { revokedKids: [file.context.jwks.keys[0].kid] }
+            : {}),
         },
       },
       statusLists: file.statusLists,

@@ -7,6 +7,10 @@ const REASON: Record<string, string> = {
   ALG_NOT_ALLOWED: "It uses a signing method this checker does not accept.",
   TYP_INVALID: "It is the wrong kind of token.",
   ISSUER_UNTRUSTED: "It was issued by someone this checker does not trust.",
+  ISSUER_REVOKED: "This checker no longer trusts the issuer.",
+  KEY_REVOKED: "It was signed with a key that has been withdrawn.",
+  EPOCH_MISSING:
+    "It does not say which permission period it belongs to, so it cannot be relied on.",
   KEY_UNKNOWN: "It was signed with a key this checker does not know.",
   SIGNATURE_INVALID: "The signature does not match. It may have been altered.",
   EXPIRED: "It has expired.",
@@ -35,10 +39,37 @@ const REASON: Record<string, string> = {
     "The shared details were changed after the holder signed.",
   REPLAY: "This proof was already used with this recipient.",
 };
+const TRUST: Record<string, string> = {
+  TRUSTED: "trusted by this checker",
+  UNTRUSTED: "not trusted by this checker",
+  UNKNOWN: "unknown to this checker",
+  REVOKED: "no longer trusted by this checker",
+};
+const ACTION: Record<string, string> = {
+  recommend: "recommend this choice",
+  add_to_draft: "add it to a draft",
+};
+const NOT_ALLOWED = [
+  "Buy, book, pay or sign up for anything.",
+  "Send messages or share personal data.",
+  "Act on any other choice than the one named here.",
+];
+const LABEL: Record<string, string> = {
+  decision: "decision",
+  candidate_name: "choice",
+  candidate_id: "choice id",
+  context_key: "situation",
+  agent_id: "agent",
+  delegate_agent_id: "handed to (label)",
+};
+const permitted = (c: Record<string, unknown>) =>
+  Array.isArray(c.permitted) ? (c.permitted as string[]) : [];
 type Result = {
   valid: boolean;
   reasons: string[];
   claims?: Record<string, unknown>;
+  issuer?: string;
+  issuerTrust?: "TRUSTED" | "UNTRUSTED" | "UNKNOWN" | "REVOKED";
   status?: string;
   dryRun: boolean;
 };
@@ -142,7 +173,11 @@ export default function VerifyProof() {
       </section>
       {result && (
         <section aria-labelledby="res">
-          <h2 id="res">{result.valid ? "Valid" : "Not valid"}</h2>
+          <h2 id="res">{result.valid ? "Valid right now" : "Not valid"}</h2>
+          <p>
+            <strong>Issuer:</strong> {TRUST[result.issuerTrust ?? "UNKNOWN"]}
+            {result.issuer ? ` (${result.issuer})` : ""}
+          </p>
           {!result.valid && (
             <ul>
               {result.reasons.map((r) => (
@@ -152,44 +187,72 @@ export default function VerifyProof() {
           )}
           {result.valid && result.claims && (
             <>
-              <p className="help">Shared with you:</p>
+              <h3>What this allows</h3>
+              <p>
+                {permitted(result.claims).length
+                  ? `The agent may ${permitted(result.claims)
+                      .map((a) => ACTION[a] ?? a)
+                      .join(" and ")}.`
+                  : "The proof does not say what is allowed."}
+              </p>
+              <h3>What it does not allow</h3>
+              <ul>
+                {NOT_ALLOWED.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+              <h3>Until</h3>
+              <p>
+                {new Date(Number(result.claims.exp) * 1000).toLocaleString()}{" "}
+                <span className="help">
+                  (earlier if the permission ends first)
+                </span>
+              </p>
+              <h3>Shared with you</h3>
               <dl>
                 {[
                   "decision",
                   "candidate_name",
                   "candidate_id",
-                  "permitted",
                   "context_key",
                   "agent_id",
+                  "delegate_agent_id",
                 ]
                   .filter((k) => k in result.claims!)
                   .map((k) => (
                     <div key={k}>
-                      <dt>{k.replace("_", " ")}</dt>
-                      <dd>
-                        {Array.isArray(result.claims![k])
-                          ? (result.claims![k] as string[]).join(", ")
-                          : String(result.claims![k])}
-                      </dd>
+                      <dt>{LABEL[k] ?? k}</dt>
+                      <dd>{String(result.claims![k])}</dd>
                     </div>
                   ))}
-                <div>
-                  <dt>valid until</dt>
-                  <dd>
-                    {new Date(
-                      Number(result.claims.exp) * 1000,
-                    ).toLocaleString()}
-                  </dd>
-                </div>
               </dl>
+              {"delegate_agent_id" in result.claims && (
+                <p className="help">
+                  The receiving agent’s name is a label the sender chose, not a
+                  verified identity.
+                </p>
+              )}
               <p className="help">
-                Authority: cultural preference only.{" "}
                 {result.dryRun
                   ? "This check did not use the proof up."
                   : "This proof is now used up for you."}
               </p>
             </>
           )}
+          <details>
+            <summary>Technical details</summary>
+            <pre>
+              {JSON.stringify(
+                {
+                  reasons: result.reasons,
+                  status: result.status,
+                  claims: result.claims,
+                },
+                null,
+                2,
+              )}
+            </pre>
+          </details>
         </section>
       )}
     </main>

@@ -18,6 +18,8 @@ export type Reason =
   | "ALG_NOT_ALLOWED"
   | "TYP_INVALID"
   | "ISSUER_UNTRUSTED"
+  | "ISSUER_REVOKED"
+  | "KEY_REVOKED"
   | "KEY_UNKNOWN"
   | "SIGNATURE_INVALID"
   | "EXPIRED"
@@ -44,9 +46,19 @@ export type Reason =
   | "REPLAY";
 export const ATTESTATION_TYP = "dc+sd-jwt";
 export const STATUS_TYP = "statuslist+jwt";
+// What a verifier decided about an issuer. Discovery (fetching an issuer's
+// metadata) never produces TRUSTED: only an explicit entry does.
+export type IssuerTrust = "TRUSTED" | "UNTRUSTED" | "UNKNOWN" | "REVOKED";
 export interface TrustedIssuer {
   jwks: JSONWebKeySet;
   vct: string[];
+  // Default TRUSTED. UNTRUSTED/REVOKED entries are kept so the verifier can
+  // say why, rather than only "unknown".
+  state?: "TRUSTED" | "UNTRUSTED" | "REVOKED";
+  // Keys that must never verify anything (compromise), by kid.
+  revokedKids?: string[];
+  // Epoch seconds after which the entry no longer counts as trusted.
+  notAfter?: number;
 }
 export interface VerifierConfig {
   audience: string;
@@ -70,6 +82,7 @@ export interface VerifyResult {
   reasons: Reason[];
   issuer?: string;
   claims?: Record<string, unknown>;
+  issuerTrust?: IssuerTrust;
   status?: (typeof STATUS_NAMES)[number];
 }
 const fail = (
@@ -133,7 +146,7 @@ function timeChecks(
   if (typeof p.nbf === "number" && p.nbf - skew > now) return "NOT_YET_VALID";
   return null;
 }
-export async function verifyPresentation(
+async function verifyInner(
   presentation: string,
   cfg: VerifierConfig,
 ): Promise<VerifyResult> {
@@ -155,8 +168,33 @@ export async function verifyPresentation(
   }
   const iss = unverified.iss;
   if (typeof iss !== "string" || !Object.hasOwn(cfg.trustedIssuers, iss))
-    return fail(["ISSUER_UNTRUSTED"]);
-  const issuer = cfg.trustedIssuers[iss];
+    return fail(["ISSUER_UNTRUSTED"], { issuerTrust: "UNKNOWN" });
+  const entry = cfg.trustedIssuers[iss];
+  if (entry.state === "REVOKED")
+    return fail(["ISSUER_REVOKED"], { issuer: iss, issuerTrust: "REVOKED" });
+  if (
+    entry.state === "UNTRUSTED" ||
+    (entry.notAfter !== undefined && entry.notAfter <= now)
+  )
+    return fail(["ISSUER_UNTRUSTED"], {
+      issuer: iss,
+      issuerTrust: "UNTRUSTED",
+    });
+  // A compromised key verifies nothing, even if it is still published.
+  const revoked = new Set(entry.revokedKids ?? []);
+  try {
+    const kid = decodeProtectedHeader(parsed.jwt).kid;
+    if (kid && revoked.has(kid))
+      return fail(["KEY_REVOKED"], { issuer: iss, issuerTrust: "TRUSTED" });
+  } catch {
+    return fail(["MALFORMED"]);
+  }
+  const issuer: TrustedIssuer = {
+    ...entry,
+    jwks: {
+      keys: entry.jwks.keys.filter((k) => !k.kid || !revoked.has(k.kid)),
+    },
+  };
   const sig = await verifySigned(
     parsed.jwt,
     issuer.jwks,
@@ -313,4 +351,13 @@ export async function verifyPresentation(
 }
 export async function jwkKid(jwk: JWK) {
   return calculateJwkThumbprint(jwk, "sha256");
+}
+
+export async function verifyPresentation(
+  presentation: string,
+  cfg: VerifierConfig,
+): Promise<VerifyResult> {
+  const r = await verifyInner(presentation, cfg);
+  // Past the trust gate every result is about a trusted issuer.
+  return r.issuerTrust || !r.issuer ? r : { ...r, issuerTrust: "TRUSTED" };
 }

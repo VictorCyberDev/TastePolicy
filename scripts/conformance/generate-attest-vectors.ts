@@ -251,6 +251,34 @@ add(
   { valid: false, reason: "EPOCH_MISSING" },
 );
 add(
+  "T01-issuer-revoked",
+  "The verifier lists the issuer as REVOKED: nothing it signed is accepted",
+  full,
+  { valid: false, reason: "ISSUER_REVOKED" },
+  { trust: { state: "REVOKED" } },
+);
+add(
+  "T02-issuer-untrusted",
+  "The verifier lists the issuer as UNTRUSTED (seen, not trusted)",
+  full,
+  { valid: false, reason: "ISSUER_UNTRUSTED" },
+  { trust: { state: "UNTRUSTED" } },
+);
+add(
+  "T03-trust-expired",
+  "The verifier's trust entry has expired (notAfter in the past)",
+  full,
+  { valid: false, reason: "ISSUER_UNTRUSTED" },
+  { trust: { notAfterOffset: -1 } },
+);
+add(
+  "T04-key-revoked",
+  "The signing key was announced as compromised: it verifies nothing even though it is published",
+  full,
+  { valid: false, reason: "KEY_REVOKED" },
+  { trust: { revokeSigningKey: true } },
+);
+add(
   "N10-authority-missing",
   "Cultural-only authority statement absent",
   noAuthority.compact,

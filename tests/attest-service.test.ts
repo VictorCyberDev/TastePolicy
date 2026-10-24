@@ -48,6 +48,7 @@ async function makeConfig(
       signer: { key: privateKey, alg: "ES256", kid },
       jwks,
       epochKey: new Uint8Array(32).fill(7),
+      keys: { active: kid, next: [], retired: [], revoked: [] },
       trusted: { [issuer]: { jwks, vct: [VCT] } },
     },
     pub: jwks.keys[0],

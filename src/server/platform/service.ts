@@ -1,5 +1,6 @@
 import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
+import { CONTINUATION_ACTIONS } from "@/lib/platform/continuation-table";
 import { describeAsk } from "@/lib/lease/ask";
 import type { StateStore, Repositories } from "@/server/state/repositories";
 import type {
@@ -55,12 +56,7 @@ function grantSummary(g: Grant) {
 export function continuation(
   decision: import("@/lib/state/types").StateDecision["outcome"],
 ) {
-  const actions = {
-    ALLOW: ["recommend", "add_to_draft"],
-    ASK: ["request_clarification"],
-    REJECT: ["do_not_proceed", "offer_repair"],
-    UNAVAILABLE: ["do_not_assume_negative_preference"],
-  };
+  const actions = CONTINUATION_ACTIONS;
   return {
     schemaVersion: "taste-continuation-v1",
     permitted: actions[decision],

@@ -19,6 +19,20 @@ const file = JSON.parse(
     "utf8",
   ),
 );
+// Verifier-side trust facts a vector can set: the issuer's state, an expired
+// entry, or a signing key announced as compromised.
+const trustOf = (t, f) =>
+  !t
+    ? {}
+    : {
+        ...(t.state ? { state: t.state } : {}),
+        ...(t.notAfterOffset !== undefined
+          ? { notAfter: f.context.now + 10 + t.notAfterOffset }
+          : {}),
+        ...(t.revokeSigningKey
+          ? { revokedKids: [f.context.jwks.keys[0].kid] }
+          : {}),
+      };
 let failed = 0;
 for (const v of file.vectors) {
   const o = v.options ?? {};
@@ -33,6 +47,7 @@ for (const v of file.vectors) {
         [file.context.issuer]: {
           jwks: file.context.jwks,
           vct: o.acceptedVct ?? [file.context.vct],
+          ...trustOf(o.trust, file),
         },
       },
       statusLists: file.statusLists,

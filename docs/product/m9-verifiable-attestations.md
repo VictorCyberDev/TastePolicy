@@ -54,3 +54,7 @@ No OpenID4VCI/OpenID4VP, no wallets, no `did:web`, no W3C VC JSON-LD, no federat
 ## Authority epochs (ADR 0020)
 
 Every proof belongs to one authority epoch and carries `authority_epoch` (a per-audience keyed reference; unlinkable across audiences). When the lease stops being ACTIVE for any reason (policy, state, override, grant, Passport, checkpoint, revoke, expiry) all proofs of that epoch become permanently INVALID. A resume after a fresh ALLOW starts a new epoch; earlier proofs never become valid again. This issuer never emits the SUSPENDED status. Verifiers reject a proof without `authority_epoch` (`EPOCH_MISSING`).
+
+## Issuer metadata, trust and keys (ADR 0023)
+
+`/.well-known/tastepolicy-issuer` describes an issuer; fetching it never makes it trusted. A verifier decides locally: TRUSTED / UNTRUSTED / UNKNOWN / REVOKED (`issuerTrust` in every result). Keys: active, next (published ahead), retired (kept for the historical window), revoked (`TASTEPOLICY_ATTESTATION_REVOKED_KIDS`; removed from the JWKS and rejected with `KEY_REVOKED`). `/verify` now shows validity, issuer trust, what the proof allows and does not allow, the exact expiry and the shared details; technical details are collapsed.

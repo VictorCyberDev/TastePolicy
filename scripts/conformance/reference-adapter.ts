@@ -8,7 +8,16 @@ export interface ConformanceInput {
   audience: string;
   now: number;
   nonce?: string;
-  trustedIssuers: Record<string, { jwks: JSONWebKeySet; vct: string[] }>;
+  trustedIssuers: Record<
+    string,
+    {
+      jwks: JSONWebKeySet;
+      vct: string[];
+      state?: "TRUSTED" | "UNTRUSTED" | "REVOKED";
+      notAfter?: number;
+      revokedKids?: string[];
+    }
+  >;
   statusLists: Record<string, string>;
   seenJtis: string[];
 }

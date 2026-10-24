@@ -40,9 +40,20 @@ test("a valid proof shows only what was shared, in plain words, and does not use
   await fill(page);
   await expect(button).toBeEnabled();
   await button.click();
-  await expect(page.getByRole("heading", { name: "Valid" })).toBeVisible();
-  await expect(page.getByText("SYNTHETIC TEST DATA Cafe")).toBeVisible();
-  await expect(page.getByText(/recommend, add_to_draft/)).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Valid right now" }),
+  ).toBeVisible();
+  await expect(page.getByRole("definition").first()).toBeVisible();
+  await expect(
+    page
+      .getByRole("definition")
+      .filter({ hasText: "SYNTHETIC TEST DATA Cafe" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/may recommend this choice and add it to a draft/),
+  ).toBeVisible();
+  await expect(page.getByText(/Buy, book, pay or sign up/)).toBeVisible();
+  await expect(page.getByText(/unknown to this checker/)).toBeVisible();
   await expect(page.getByText(/did not use the proof up/)).toBeVisible();
   await expect(page.getByText(/subject|lease_ref|agent id/i)).toHaveCount(0);
   expect(f.calls[0]).toMatchObject({

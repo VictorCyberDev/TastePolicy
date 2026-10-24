@@ -38,6 +38,7 @@ beforeAll(async () => {
     signer: { key: privateKey, alg: "ES256", kid },
     jwks,
     epochKey: new Uint8Array(32).fill(7),
+    keys: { active: kid, next: [], retired: [], revoked: [] },
     trusted: { "https://tastepolicy.test": { jwks, vct: [VCT] } },
   };
   svc = new AttestationService(d.store, undefined, async () => cfg);

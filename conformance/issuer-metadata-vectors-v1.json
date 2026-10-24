@@ -1,0 +1,118 @@
+{
+  "version": "tastepolicy-issuer-metadata-vectors-v1",
+  "fetchedFrom": "https://issuer.example/.well-known/tastepolicy-issuer",
+  "base": {
+    "schemaVersion": "tastepolicy-issuer-metadata-v1",
+    "issuer": "https://issuer.example",
+    "metadataVersion": 1,
+    "vct": ["https://tastepolicy.dev/vct/preference-authority/v1"],
+    "authority": "CULTURAL_ONLY",
+    "supportedActions": ["recommend", "add_to_draft"],
+    "algorithms": ["ES256"],
+    "jwksUri": "https://issuer.example/.well-known/jwks.json",
+    "keys": { "active": "k1", "next": [], "retired": [], "revoked": [] },
+    "historicalVerificationSeconds": 3600,
+    "status": {
+      "mechanism": "token-status-list",
+      "draft": 21,
+      "uriTemplate": "https://issuer.example/api/attest/status/{list}",
+      "maxAgeSeconds": 120
+    },
+    "verification": {
+      "hostedEndpoint": "https://issuer.example/api/attest/verify",
+      "interactive": "https://issuer.example/verify"
+    },
+    "conformance": {
+      "profile": "tastepolicy-compatible-v1",
+      "vectors": "https://issuer.example/docs/conformance"
+    },
+    "documentation": "https://issuer.example/docs",
+    "trust": { "discoveryGrantsTrust": false }
+  },
+  "cases": [
+    {
+      "id": "M01",
+      "description": "A complete document is acceptable",
+      "patch": {},
+      "problems": []
+    },
+    {
+      "id": "M02",
+      "description": "Another schema version",
+      "patch": { "schemaVersion": "other" },
+      "problems": ["SCHEMA_VERSION"]
+    },
+    {
+      "id": "M03",
+      "description": "Issuer not https",
+      "patch": { "issuer": "http://issuer.example" },
+      "problems": ["ISSUER_NOT_HTTPS", "JWKS_URI"]
+    },
+    {
+      "id": "M04",
+      "description": "Issuer origin differs from where it was fetched",
+      "patch": {
+        "issuer": "https://other.example",
+        "jwksUri": "https://other.example/jwks"
+      },
+      "problems": ["ISSUER_ORIGIN_MISMATCH"]
+    },
+    {
+      "id": "M05",
+      "description": "Claims more actions than the cultural boundary allows",
+      "patch": { "supportedActions": ["recommend", "purchase"] },
+      "problems": ["ACTIONS_EXCEED_BOUNDARY"]
+    },
+    {
+      "id": "M06",
+      "description": "Offers a symmetric or none algorithm",
+      "patch": { "algorithms": ["HS256"] },
+      "problems": ["ALGORITHMS"]
+    },
+    {
+      "id": "M07",
+      "description": "jwks on a different origin than the issuer",
+      "patch": { "jwksUri": "https://cdn.example/jwks.json" },
+      "problems": ["JWKS_URI"]
+    },
+    {
+      "id": "M08",
+      "description": "Active key is listed as revoked",
+      "patch": {
+        "keys": { "active": "k1", "next": [], "retired": [], "revoked": ["k1"] }
+      },
+      "problems": ["ACTIVE_KEY_REVOKED"]
+    },
+    {
+      "id": "M09",
+      "description": "Historical verification window too short for the proof lifetime",
+      "patch": { "historicalVerificationSeconds": 60 },
+      "problems": ["HISTORICAL_WINDOW"]
+    },
+    {
+      "id": "M10",
+      "description": "Claims that discovery grants trust",
+      "patch": { "trust": { "discoveryGrantsTrust": true } },
+      "problems": ["TRUST_CLAIM"]
+    },
+    {
+      "id": "M11",
+      "description": "No authority statement",
+      "patch": { "authority": "ANY" },
+      "problems": ["AUTHORITY"]
+    },
+    {
+      "id": "M12",
+      "description": "Status mechanism missing",
+      "patch": {
+        "status": {
+          "mechanism": "none",
+          "draft": 21,
+          "uriTemplate": "x",
+          "maxAgeSeconds": 1
+        }
+      },
+      "problems": ["STATUS_MECHANISM", "STATUS_URI"]
+    }
+  ]
+}
