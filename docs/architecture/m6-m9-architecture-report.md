@@ -40,16 +40,16 @@ Migrations: 0001–0005 (M1–M6 foundation: state, interactive, trajectory, sub
 
 ## 10. Protocol map
 
-| Protocol                | Version                                                                                              | Surface                                                                              |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| REST                    | `/api/v1`, OpenAPI 3.1 generated                                                                     | json, bearer                                                                         |
-| MCP                     | 2026-07-28 and 2025-era (stateless, JSON, Streamable HTTP), SDK `@modelcontextprotocol/server` 2.4.0 | `POST /api/mcp`                                                                      |
-| A2A                     | 1.0 JSON-RPC, card at `/.well-known/agent-card.json`                                                 | `POST /api/a2a`                                                                      |
-| OAuth resource metadata | RFC 9728                                                                                             | `/.well-known/oauth-protected-resource/api/mcp` (no authorization server advertised) |
-| SD-JWT                  | RFC 9901                                                                                             | attestations                                                                         |
-| SD-JWT VC               | draft-19 (aligned, not certified)                                                                    | claim vocabulary                                                                     |
-| Token Status List       | draft-21                                                                                             | `/api/attest/status/{id}`                                                            |
-| JOSE                    | RFC 7515/7517/7519/7638/8725; ES256                                                                  | signing                                                                              |
+| Protocol                | Version                                                                                              | Surface                                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| REST                    | `/api/v1`, OpenAPI 3.1 generated                                                                     | json, bearer                                                                                             |
+| MCP                     | 2026-07-28 and 2025-era (stateless, JSON, Streamable HTTP), SDK `@modelcontextprotocol/server` 2.4.0 | `POST /api/mcp`                                                                                          |
+| A2A                     | 1.0 JSON-RPC, card at `/.well-known/agent-card.json`                                                 | `POST /api/a2a`                                                                                          |
+| OAuth resource metadata | RFC 9728 + OAuth 2.1 AS (ADR 0022)                                                                   | `/.well-known/oauth-protected-resource/api/mcp`; authorization server advertised only on a pinned origin |
+| SD-JWT                  | RFC 9901                                                                                             | attestations                                                                                             |
+| SD-JWT VC               | draft-19 (aligned, not certified)                                                                    | claim vocabulary                                                                                         |
+| Token Status List       | draft-21                                                                                             | `/api/attest/status/{id}`                                                                                |
+| JOSE                    | RFC 7515/7517/7519/7638/8725; ES256                                                                  | signing                                                                                                  |
 
 ## 11. MCP
 
@@ -61,7 +61,7 @@ Hand-rolled 1.0 JSON-RPC: `SendMessage` returns a COMPLETED task with the decisi
 
 ## 13. OpenAI integration
 
-Real routes: Responses API `type:"mcp"` (bearer in `authorization`) and function calling against the OpenAPI. Config in `examples/integrations/openai-responses.json`, checked against the live tool names. ChatGPT custom connectors need OAuth and are **not** supported (no authorization server). No model-driven run was performed (no OpenAI credentials).
+Real routes: Responses API `type:"mcp"` (bearer in `authorization`) and function calling against the OpenAPI. Config in `examples/integrations/openai-responses.json`, checked against the live tool names. ChatGPT custom connectors need OAuth: TastePolicy now runs an OAuth 2.1 authorization server (ADR 0022; protocol tested end to end against our own client and a real server) but **no live ChatGPT connection was made**. No model-driven run was performed (no OpenAI credentials).
 
 ## 14. Claude integration
 
@@ -109,7 +109,7 @@ Cultural Receipt v1 and the platform receipt wrapper are unchanged; a response u
 
 ## 25. Lease model
 
-See §6 and ADR 0016. Request from an ALLOW (active) or ASK (pending the person's answer; approval may shorten lifetime, never extend; refused if state changed). TTL 60 s–24 h, checkpoints, lazy expiry. Revocation propagation is pull-based and immediate: verification is authoritative and uncacheable; owner can end one lease or all. No push notification (limitation).
+See §6 and ADR 0016. Request from an ALLOW (active) or from an ASK of kind `AUTHORITY_CONFIRMATION` (pending the person's answer; approval is explicit, may shorten lifetime, never extend; refused if state, policy, grant or evaluation freshness changed). A `CLARIFICATION_REQUIRED` ASK cannot be leased or approved (ADR 0019). TTL 60 s–24 h, checkpoints, lazy expiry. Revocation propagation is pull-based and immediate: verification is authoritative and uncacheable; owner can end one lease or all. No push notification (limitation).
 
 ## 26. Attestation model
 
@@ -177,8 +177,23 @@ Next.js 16 on Vercel (one preview per branch), PostgreSQL via `DATABASE_URL`, mi
 
 ## 42. Known limitations
 
-Hosted persistence/auth/attestation proof not performed (needs branch-scoped secrets). No OAuth authorization server, so ChatGPT/claude.ai/Gemini Enterprise connectors are unsupported. No vendor model-driven runs. Official MCP and A2A conformance suites not run. No metrics backend, no load testing, no push revocation notification. Signing key is an environment secret, not an HSM. SD-JWT VC and Token Status List are drafts. Public rate limiting is best-effort per instance. Flaky `trajectory.test.ts` timeout (inherited). Merge into `main` is pending the Win Gate.
+Hosted persistence/auth/attestation proof on a Vercel preview not performed (needs a dedicated database and branch-scoped secrets; the same acceptance script passes against a local server on real PostgreSQL). ChatGPT/claude.ai connectors are protocol-ready but not live-tested; Gemini Enterprise A2A registration is unsupported. No vendor model-driven runs. The official MCP conformance suite was run: the protocol scenarios pass, scenarios that need the suite's reference fixture server are not applicable; no A2A TCK is installable. No metrics backend, no load testing, no push revocation notification. Signing key is an environment secret, not an HSM. SD-JWT VC and Token Status List are drafts. Public rate limiting is best-effort per instance. Flaky `trajectory.test.ts` timeout (inherited). Merge into `main` is pending the Win Gate.
 
 ## 43. Future expansion boundaries
 
-Not authorized here (M10 and beyond): OAuth authorization server for hosted connectors; push revocation; hardware-backed keys; group/proxy attestations; multi-hop delegation; wallets (OpenID4VCI/VP); federation protocols; payments or any execution authority (never in scope). Each would need its own ADR; none may weaken §8.
+Not authorized here (M10 and beyond): push revocation; hardware-backed keys; group/proxy attestations; multi-hop delegation; wallets (OpenID4VCI/VP); federation protocols; payments or any execution authority (never in scope). Each would need its own ADR; none may weaken §8.
+
+## 44. Repair program R1–R5 (what changed after the first freeze)
+
+| Repair | Defect found by review                                           | Fix                                                                                                                                                                                                      | Record                 |
+| ------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| R1 M8  | Any ASK could be approved, including ones missing a fact (price) | ASK is typed (`AUTHORITY_CONFIRMATION` vs `CLARIFICATION_REQUIRED`); only the first can be leased/approved; approval explicit, bound to the exact choice, re-checked for drift and freshness; UI split   | ADR 0019               |
+| R2 M9  | A resumed lease made old proofs valid again                      | Authority epochs; leaving ACTIVE invalidates the epoch's proofs permanently (DB refuses resurrection); resume starts a new epoch; per-audience epoch reference; proofs never outlive relied-on overrides | ADR 0020               |
+| R3 M7  | No rule for groups/delegates                                     | Composition over the one engine and the M5 rule; individual veto absolute; temporary permissions personal; delegate rights contract                                                                      | ADR 0021               |
+| R4 M6  | No account-linked auth for hosted assistants                     | OAuth 2.1 AS (PKCE S256, CIMD/DCR, consent, audience-bound 15-minute tokens, rotation + reuse detection, revocation), connected-assistants page                                                          | ADR 0022               |
+| R5 M9  | "Network" was a manual list                                      | Issuer metadata, trust states, key lifecycle/revocation, `tastepolicy-compatible-v1` suite, consumer `/verify`                                                                                           | ADR 0023               |
+| Cross  | Inherited 5 s test timeout; no real-server concurrency tests     | Arranged in a hook; real PostgreSQL suite found and fixed a lock-order deadlock between agent and owner lease operations                                                                                 | `tests/realpg.test.ts` |
+
+## 45. Acceptance state and evidence
+
+Status: **ACCEPTANCE CANDIDATE, not PASS.** Exact-head hosted acceptance on a deployed preview is blocked by missing environment (dedicated PostgreSQL, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `TASTEPOLICY_PUBLIC_ORIGIN`, `TASTEPOLICY_ATTESTATION_KEY`, and `QLOO_API_KEY`/`QLOO_API_BASE_URL`/`QLOO_AFFINITY_SCALE` for the cultural story; variable names only). Evidence that exists: CI `Verify` green on the head (unit, integration, real PostgreSQL service, compatible suite, build, Playwright incl. axe); local live run of `scripts/acceptance/hosted-acceptance.mjs` against `next start` on real PostgreSQL 16 (9 pass, 1 skip for the missing cultural provider); official MCP conformance scenarios initialize/ping/tools-list/dns-rebinding pass; independent `@sd-jwt/sd-jwt-vc` interop; `npm audit` and secret scans per the freeze checklist. Not proven: Qloo-backed hosted story, vendor model-driven runs, live ChatGPT/claude.ai connection, load behaviour at scale, A2A TCK.

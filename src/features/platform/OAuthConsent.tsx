@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 type Preview = {
   clientName: string;
   redirectHost: string;
+  clientSource: "CIMD" | "DCR";
+  clientHost: string | null;
   scopes: string[];
   expiresInDays: number;
 };
@@ -97,7 +99,12 @@ export default function OAuthConsent() {
         boundaries
       </h1>
       <p className="help">
-        You will be sent back to {preview!.redirectHost} after you decide.
+        {preview!.clientSource === "CIMD"
+          ? `The application describes itself at ${preview!.clientHost}.`
+          : "This application registered itself; TastePolicy has not verified who it is."}{" "}
+        The name above is chosen by the application. You will be sent back to{" "}
+        <strong>{preview!.redirectHost}</strong> after you decide; continue only
+        if you recognise that address.
       </p>
       <section aria-labelledby="can">
         <h2 id="can">It will be able to</h2>

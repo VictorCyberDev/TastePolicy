@@ -113,13 +113,21 @@ export async function handleMcp(
     p = await gatewayAuthenticate(deps, request.headers.get("authorization"));
   } catch (e) {
     const code = codeOf(e);
-    if (code === "AUTH_REQUIRED")
+    // An expired or revoked token is a 401 with a challenge too, so clients
+    // that follow the specification refresh or re-authorize instead of giving up.
+    if (
+      code === "AUTH_REQUIRED" ||
+      code === "CREDENTIAL_EXPIRED" ||
+      code === "CREDENTIAL_REVOKED"
+    )
       return new Response(JSON.stringify({ code, requestId }), {
         status: 401,
         headers: {
           ...NO_STORE,
           "Content-Type": "application/json",
-          "WWW-Authenticate": `Bearer resource_metadata="${mcpResourceMetadataUrl(request)}"`,
+          "WWW-Authenticate":
+            `Bearer ${code === "AUTH_REQUIRED" ? "" : 'error="invalid_token", '}` +
+            `resource_metadata="${mcpResourceMetadataUrl(request)}"`,
         },
       });
     return Response.json(

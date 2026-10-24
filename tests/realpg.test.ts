@@ -306,4 +306,23 @@ suite("real PostgreSQL: migrations and concurrency", () => {
     for (const r of rows.rows)
       expect((list[r.idx >> 2] >> ((r.idx % 4) * 2)) & 3).toBe(1);
   }, 90000);
+
+  it("the shared admission counter lets exactly the limit through under concurrent callers (two pools = two instances)", async () => {
+    const key = "a".repeat(64);
+    const second = new (await import("pg")).Pool({
+      connectionString: (d.pool as any).options.connectionString,
+      max: 4,
+    });
+    const other = new (
+      await import("@/server/state/postgres")
+    ).PostgresStateStore(second);
+    const calls = Array.from({ length: 24 }, (_, i) =>
+      (i % 2 ? d.store : other).transaction((r) =>
+        r.oauth.admit(key, "2026-10-24T11:30", 10),
+      ),
+    );
+    const results = await Promise.all(calls);
+    await second.end();
+    expect(results.filter(Boolean)).toHaveLength(10);
+  }, 60000);
 });

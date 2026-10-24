@@ -22,6 +22,16 @@ export const ACCESS_TTL = 900;
 export const REFRESH_TTL = 30 * 86400;
 export const CODE_TTL = 120;
 export const CONSENT_FRESH_MS = 10 * 60_000;
+const MAX_CLIENTS = 5000;
+// Names are self-asserted: no control or bidirectional-override characters.
+function cleanName(raw: string, fallback: string) {
+  const n = raw
+    .replace(/[\p{C}\u2028\u2029\u202a-\u202e\u2066-\u2069]/gu, "")
+    .trim()
+    .slice(0, 100);
+  return n || fallback;
+}
+export const REFRESH_ABSOLUTE = 90 * 86400;
 export class OAuthError extends Error {
   constructor(
     readonly error:
@@ -117,23 +127,38 @@ export class OAuthService {
     };
   }
   // ---- clients ----
+  // Inside a transaction a client is only ever read. The outbound metadata fetch
+  // happens in ensureClient, before any transaction, so a slow client host can
+  // never hold a database connection or a row lock.
   async client(r: Repositories, id: string): Promise<OAuthClient> {
     if (id.length < 8 || id.length > 512)
       throw new OAuthError("invalid_client", "", true);
-    const cached = await r.oauth.client(id);
+    const c = await r.oauth.client(id);
+    if (!c) throw new OAuthError("invalid_client", "Unknown client.", true);
+    return c;
+  }
+  async ensureClient(id: unknown): Promise<void> {
+    if (typeof id !== "string" || id.length < 8 || id.length > 512) return;
+    if (!/^https:\/\//.test(id)) return; // DCR clients are already stored
     const now = this.clock();
-    if (!/^https:\/\//.test(id)) {
-      if (cached?.source === "DCR") return cached;
-      throw new OAuthError("invalid_client", "Unknown client.", true);
-    }
+    const cached = await this.store.transaction((r) => r.oauth.client(id));
     if (cached && Date.parse(now) - Date.parse(cached.fetchedAt) < 3_600_000)
-      return cached;
+      return;
     // Client ID Metadata Document: the client_id is the URL of its metadata.
-    let doc: Record<string, unknown>;
+    let doc: Record<string, unknown> | null = null;
     try {
-      doc = JSON.parse(await this.fetchDoc(id));
+      const parsed = JSON.parse(await this.fetchDoc(id));
+      doc = parsed && typeof parsed === "object" ? parsed : null;
     } catch {
-      if (cached) return cached;
+      doc = null;
+    }
+    if (!doc) {
+      // A cached copy survives a short outage, never a long one.
+      if (
+        cached &&
+        Date.parse(now) - Date.parse(cached.fetchedAt) < 7 * 86_400_000
+      )
+        return;
       throw new OAuthError(
         "invalid_client",
         "Client metadata unavailable.",
@@ -141,10 +166,13 @@ export class OAuthService {
       );
     }
     const uris = doc.redirect_uris;
+    let path = "";
+    try {
+      path = new URL(id).pathname;
+    } catch {}
     if (
-      !doc ||
-      typeof doc !== "object" ||
       doc.client_id !== id ||
+      path.length < 2 ||
       !Array.isArray(uris) ||
       uris.length < 1 ||
       uris.length > 10 ||
@@ -158,19 +186,28 @@ export class OAuthService {
         "Client metadata is not acceptable.",
         true,
       );
-    const name =
-      typeof doc.client_name === "string" && doc.client_name.trim()
-        ? doc.client_name.trim().slice(0, 100)
-        : new URL(id).hostname;
     const c: OAuthClient = {
       clientId: id,
       source: "CIMD",
-      clientName: name,
+      clientName: cleanName(
+        typeof doc.client_name === "string" ? doc.client_name : "",
+        new URL(id).hostname,
+      ),
       redirectUris: uris as string[],
       fetchedAt: now,
     };
-    await r.oauth.saveClient(c);
-    return c;
+    await this.saveBounded(c);
+  }
+  // Clients nobody linked are pruned after a day, and the table is capped.
+  private async saveBounded(c: OAuthClient) {
+    await this.store.transaction(async (r) => {
+      await r.oauth.pruneClients(
+        new Date(Date.parse(this.clock()) - 86_400_000).toISOString(),
+      );
+      if ((await r.oauth.clientCount()) >= MAX_CLIENTS)
+        throw new OAuthError("server_error", "Too many clients.");
+      await r.oauth.saveClient(c);
+    });
   }
   // RFC 7591, public clients only.
   async register(raw: unknown) {
@@ -194,20 +231,18 @@ export class OAuthService {
         "invalid_request",
         "Only public clients (none) are supported.",
       );
-    const name =
-      typeof v.client_name === "string" && v.client_name.trim()
-        ? v.client_name.trim().slice(0, 100)
-        : "Unnamed client";
-    const id = `tpc_${randomBytes(18).toString("base64url")}`;
-    await this.store.transaction((r) =>
-      r.oauth.saveClient({
-        clientId: id,
-        source: "DCR",
-        clientName: name,
-        redirectUris: uris as string[],
-        fetchedAt: this.clock(),
-      }),
+    const name = cleanName(
+      typeof v.client_name === "string" ? v.client_name : "",
+      "Unnamed client",
     );
+    const id = `tpc_${randomBytes(18).toString("base64url")}`;
+    await this.saveBounded({
+      clientId: id,
+      source: "DCR",
+      clientName: name,
+      redirectUris: uris as string[],
+      fetchedAt: this.clock(),
+    });
     return {
       client_id: id,
       client_name: name,
@@ -293,10 +328,14 @@ export class OAuthService {
     };
   }
   async preview(q: Record<string, string>) {
+    await this.ensureClient(q.client_id);
     return this.store.transaction(async (r) => {
       const { req, client } = await this.validate(r, q);
       return {
         clientName: client.clientName,
+        clientSource: client.source,
+        clientHost:
+          client.source === "CIMD" ? new URL(client.clientId).host : null,
         redirectHost: new URL(req.redirectUri).host,
         scopes: req.scopes,
         expiresInDays: REFRESH_TTL / 86400,
@@ -315,6 +354,7 @@ export class OAuthService {
         "Sign in again to continue.",
         true,
       );
+    await this.ensureClient(q.client_id);
     return this.store.transaction(async (r) => {
       if (!(await r.platform.user(p.userId, true)))
         throw new OAuthError("login_required", "", true);
@@ -347,6 +387,7 @@ export class OAuthService {
   private async issue(
     r: Repositories,
     f: {
+      familyCreatedAt: string;
       familyId: string;
       userId: string;
       clientId: string;
@@ -380,7 +421,12 @@ export class OAuthService {
     await r.oauth.insertRefresh(
       hash(refresh),
       f.familyId,
-      new Date(Date.parse(now) + REFRESH_TTL * 1000).toISOString(),
+      new Date(
+        Math.min(
+          Date.parse(now) + REFRESH_TTL * 1000,
+          Date.parse(f.familyCreatedAt) + REFRESH_ABSOLUTE * 1000,
+        ),
+      ).toISOString(),
     );
     return {
       access_token: raw,
@@ -456,6 +502,7 @@ export class OAuthService {
         });
         await r.oauth.attachFamily(row.codeHash, familyId);
         return this.issue(r, {
+          familyCreatedAt: now,
           familyId,
           userId: row.userId,
           clientId,
@@ -467,6 +514,18 @@ export class OAuthService {
       if (grant === "refresh_token") {
         const rt = get("refresh_token");
         if (!rt) throw new OAuthError("invalid_request");
+        // Check the family before spending the token: a thief presenting it under
+        // another client_id must not be able to burn the real client's token, and
+        // the family row is locked so a concurrent disconnect cannot be missed.
+        const famId = await r.oauth.refreshFamily(hash(rt));
+        const fam = famId ? await r.oauth.family(famId, true) : null;
+        if (fam && fam.clientId !== clientId)
+          throw new OAuthError("invalid_grant");
+        if (
+          fam &&
+          Date.parse(now) > Date.parse(fam.createdAt) + REFRESH_ABSOLUTE * 1000
+        )
+          return new OAuthError("invalid_grant");
         const used = await r.oauth.useRefresh(hash(rt), now);
         if (used.state === "REUSED") {
           await r.oauth.revokeFamily(used.familyId, now);
@@ -486,6 +545,7 @@ export class OAuthService {
         }
         await r.oauth.touchFamily(f.familyId, now);
         return this.issue(r, {
+          familyCreatedAt: f.createdAt,
           familyId: f.familyId,
           userId: f.userId,
           clientId,
@@ -505,7 +565,10 @@ export class OAuthService {
   async revoke(token: string) {
     await this.store.transaction(async (r) => {
       const now = this.clock();
-      const m = /^tp_live_([a-f0-9-]{36})\./.exec(token);
+      const m =
+        /^tp_live_([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\./.exec(
+          token,
+        );
       if (m) {
         const c = await r.platform.findCredential(m[1], hash(token));
         if (c?.oauth) await r.platform.revokeCredential(c, now);

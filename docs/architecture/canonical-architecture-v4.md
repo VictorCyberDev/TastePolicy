@@ -18,6 +18,7 @@ TastePolicy is a user-controlled, interoperable, runtime-aware and verifiable **
 | Interop surfaces    | M6        | REST + OpenAPI, SDK, remote MCP, A2A 1.0, sandbox; one contract, one error catalog                                                                      | `src/lib/platform/contracts.ts`, `gateway.ts` |
 | Policy              | M7        | Ordered precedence around the evaluator: hard rules → freshness → autonomy ceiling → temporary override; versioned; simulation, counterfactuals, impact | `src/lib/policy`, `policy-service.ts`         |
 | Leases              | M8        | Short, revocable, auditable authority for one choice; drift, checkpoints, ASK resume; replayable state machine                                          | `src/lib/lease`, `lease-service.ts`           |
+| Account linking     | M6        | OAuth 2.1 AS for hosted assistants (PKCE, CIMD/DCR, consent, audience-bound tokens); developer keys unchanged                                           | `oauth-service.ts`, ADR 0022                  |
 | Attestations        | M9        | SD-JWT proofs of a lease; status lists; hosted and library verifiers; conformance vectors                                                               | `src/lib/attest`, `attest-service.ts`         |
 
 Each layer wraps the one below. There is no second evaluator, and no layer can make an answer more permissive than the layer below except by an explicit, expiring act of the person.
@@ -36,8 +37,9 @@ Each layer wraps the one below. There is no second evaluator, and no layer can m
 
 ```
 agent → evaluate → [policy: ceiling/freshness/override] → ALLOW | ASK | REJECT | UNAVAILABLE
-   ASK/ALLOW → lease (ASK waits for the person) → verify / checkpoint (drift ⇒ SUSPENDED)
-   ACTIVE lease → attestation (SD-JWT, audience-bound, minimal disclosure, status index)
+   ALLOW → lease;  ASK{AUTHORITY_CONFIRMATION} → lease waits for the person;  ASK{CLARIFICATION_REQUIRED} → no lease: supply the fact, evaluate again
+   lease → verify / checkpoint (drift ⇒ SUSPENDED; resume = fresh ALLOW = new authority epoch)
+   ACTIVE lease → attestation (SD-JWT, audience-bound, minimal disclosure, epoch reference, status index; leaving ACTIVE invalidates the epoch's proofs for good)
    third party → verify offline + status list (≤ ttl) | hosted verifier
 ```
 

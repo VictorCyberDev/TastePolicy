@@ -1,6 +1,8 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 import { OAuthError, OAuthService } from "./oauth-service";
 import { publicOrigin } from "./origin";
+import { clientKey } from "./public-limit";
 import { sessionPrincipal, trustedOrigin } from "./http";
 import { readJsonBody } from "@/server/taste/read-body";
 import type { StateStore } from "@/server/state/repositories";
@@ -39,24 +41,54 @@ const err = (e: unknown, headers: Record<string, string> = {}) => {
     { status: status(o), headers: { ...JSON_HEADERS, ...headers } },
   );
 };
-// Small per-process limiter for the public OAuth endpoints. A shared limiter
-// replaces it before a multi-instance deployment (R7).
+// Two tiers: a cheap per-process pre-check, then a counter in the database that
+// all instances share. The key is an HMAC of the caller, never an address.
 const hits = new Map<string, { n: number; at: number }>();
-export function limited(request: Request, pool: string, max: number) {
-  const ip = (
-    request.headers.get("x-real-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",").at(-1) ??
-    "unknown"
-  ).trim();
-  const k = `${pool}|${ip}`,
+export async function limited(
+  request: Request,
+  pool: string,
+  max: number,
+  store?: StateStore | null,
+) {
+  const ip = clientKey(request),
+    k = `${pool}|${ip}`,
     now = Date.now();
   if (hits.size > 5000) hits.clear();
   const h = hits.get(k);
-  if (!h || now - h.at > 60_000) {
-    hits.set(k, { n: 1, at: now });
+  if (!h || now - h.at > 60_000) hits.set(k, { n: 1, at: now });
+  else if (++h.n > max * 2) return true;
+  if (!store) return false;
+  const secret = process.env.BETTER_AUTH_SECRET ?? "unconfigured";
+  const keyHash = createHmac("sha256", secret).update(k).digest("hex");
+  try {
+    return !(await store.transaction((r) =>
+      r.oauth.admit(keyHash, new Date(now).toISOString().slice(0, 16), max),
+    ));
+  } catch {
+    // The shared tier failing must not open the endpoint: the local tier holds.
     return false;
   }
-  return ++h.n > max;
+}
+// Reads at most `max` bytes; a larger body is refused before it is buffered.
+async function readCapped(request: Request, max: number) {
+  const declared = Number(request.headers.get("content-length") ?? 0);
+  if (declared > max)
+    throw new OAuthError("invalid_request", "Body too large.");
+  const reader = request.body?.getReader();
+  if (!reader) return "";
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > max) {
+      await reader.cancel();
+      throw new OAuthError("invalid_request", "Body too large.");
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks).toString("utf8");
 }
 function service(request: Request, store: StateStore | null) {
   const origin = oauthOrigin(request);
@@ -79,7 +111,7 @@ export async function handleAuthorize(
   store: StateStore | null,
 ) {
   const svc = service(request, store);
-  if (!svc || limited(request, "authorize", 60))
+  if (!svc || (await limited(request, "authorize", 60, store)))
     return new Response("Authorization is not available.", { status: 404 });
   try {
     const q = svc.parse(new URL(request.url).searchParams);
@@ -103,7 +135,7 @@ export async function handleDecision(
   if (!svc) return notConfigured();
   if (!trustedOrigin(request) || request.headers.get("authorization"))
     return err(new OAuthError("access_denied", "", true));
-  if (limited(request, "decision", 30))
+  if (await limited(request, "decision", 30, store))
     return err(new OAuthError("access_denied", "Slow down.", true));
   try {
     const body = (await readJsonBody(request)) as {
@@ -127,7 +159,7 @@ export async function handleDecision(
 export async function handleToken(request: Request, store: StateStore | null) {
   const svc = service(request, store);
   if (!svc) return notConfigured();
-  if (limited(request, "token", 120))
+  if (await limited(request, "token", 120, store))
     return err(new OAuthError("invalid_request", "Slow down."));
   try {
     if (
@@ -138,8 +170,7 @@ export async function handleToken(request: Request, store: StateStore | null) {
         "invalid_request",
         "Use application/x-www-form-urlencoded.",
       );
-    const text = await request.text();
-    if (text.length > 8192) throw new OAuthError("invalid_request");
+    const text = await readCapped(request, 8192);
     return new Response(
       JSON.stringify(await svc.token(new URLSearchParams(text))),
       {
@@ -156,7 +187,7 @@ export async function handleRegister(
 ) {
   const svc = service(request, store);
   if (!svc) return notConfigured();
-  if (limited(request, "register", 10))
+  if (await limited(request, "register", 10, store))
     return err(new OAuthError("invalid_request", "Slow down."));
   try {
     const out = await svc.register(await readJsonBody(request));
@@ -171,11 +202,11 @@ export async function handleRegister(
 export async function handleRevoke(request: Request, store: StateStore | null) {
   const svc = service(request, store);
   if (!svc) return notConfigured();
-  if (limited(request, "revoke", 60))
+  if (await limited(request, "revoke", 60, store))
     return err(new OAuthError("invalid_request", "Slow down."));
   try {
-    const text = await request.text();
-    const token = new URLSearchParams(text.slice(0, 4096)).get("token");
+    const text = await readCapped(request, 4096);
+    const token = new URLSearchParams(text).get("token");
     if (token) await svc.revoke(token);
     return new Response(null, { status: 200, headers: JSON_HEADERS });
   } catch (e) {
