@@ -6,19 +6,19 @@ Status: accepted (M6). Researched 2026-10-23 from vendor primary documentation. 
 
 TastePolicy exposes one authority through four wire surfaces (REST `/api/v1`, remote MCP `/api/mcp`, A2A `/api/a2a`, SDK) and documents the following vendor routes. Each route states what automation can prove.
 
-| Route | Wire | Auth | Automated proof |
-| --- | --- | --- | --- |
-| OpenAI Responses `tools:[{type:"mcp",server_url,authorization,allowed_tools}]` | MCP Streamable HTTP | bearer passed in `authorization` | Server-side only: official MCP client against `/api/mcp` (no OpenAI key available) |
-| OpenAI function calling | REST `/api/v1/*` | developer credential in app code | OpenAPI + JSON-schema validity |
-| ChatGPT custom MCP / plugin | MCP | OAuth only (bearer headers unsupported) | Not verifiable; human step |
-| Claude Code `claude mcp add --transport http` / `.mcp.json` | MCP | bearer header or OAuth | Config shape validated; live add is a human step |
-| Claude Agent SDK `mcpServers:{type:"http",headers}` | MCP | bearer header | Same MCP client conformance |
-| Claude Messages MCP connector (beta `mcp-client-2025-11-20`) | MCP | `authorization_token` | Not verifiable without an Anthropic key |
-| claude.ai custom connectors | MCP | OAuth or request headers | Not verifiable; human step |
-| Gemini Interactions `{type:"mcp_server",name,url,headers}` | MCP | headers | Not verifiable without a key; Gemini 3 remote-MCP support contradictory in docs (UNVERIFIED) |
-| Gemini CLI / Antigravity CLI | MCP | headers / OAuth | Config shape only (Antigravity shape UNVERIFIED) |
-| Google ADK `McpToolset` / `RemoteA2aAgent` | MCP / A2A | headers | Plumbing equivalent covered by the official MCP and A2A client tests |
-| Gemini Enterprise A2A registration | A2A v0.3 | end-user OAuth only | Not supported: we implement A2A 1.0 (ADR 0013); gap documented, not claimed |
+| Route                                                                          | Wire                | Auth                                    | Automated proof                                                                              |
+| ------------------------------------------------------------------------------ | ------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
+| OpenAI Responses `tools:[{type:"mcp",server_url,authorization,allowed_tools}]` | MCP Streamable HTTP | bearer passed in `authorization`        | Server-side only: official MCP client against `/api/mcp` (no OpenAI key available)           |
+| OpenAI function calling                                                        | REST `/api/v1/*`    | developer credential in app code        | OpenAPI + JSON-schema validity                                                               |
+| ChatGPT custom MCP / plugin                                                    | MCP                 | OAuth only (bearer headers unsupported) | Not verifiable; human step                                                                   |
+| Claude Code `claude mcp add --transport http` / `.mcp.json`                    | MCP                 | bearer header or OAuth                  | Config shape validated; live add is a human step                                             |
+| Claude Agent SDK `mcpServers:{type:"http",headers}`                            | MCP                 | bearer header                           | Same MCP client conformance                                                                  |
+| Claude Messages MCP connector (beta `mcp-client-2025-11-20`)                   | MCP                 | `authorization_token`                   | Not verifiable without an Anthropic key                                                      |
+| claude.ai custom connectors                                                    | MCP                 | OAuth or request headers                | Not verifiable; human step                                                                   |
+| Gemini Interactions `{type:"mcp_server",name,url,headers}`                     | MCP                 | headers                                 | Not verifiable without a key; Gemini 3 remote-MCP support contradictory in docs (UNVERIFIED) |
+| Gemini CLI / Antigravity CLI                                                   | MCP                 | headers / OAuth                         | Config shape only (Antigravity shape UNVERIFIED)                                             |
+| Google ADK `McpToolset` / `RemoteA2aAgent`                                     | MCP / A2A           | headers                                 | Plumbing equivalent covered by the official MCP and A2A client tests                         |
+| Gemini Enterprise A2A registration                                             | A2A v0.3            | end-user OAuth only                     | Not supported: we implement A2A 1.0 (ADR 0013); gap documented, not claimed                  |
 
 ## OAuth for hosted connectors
 

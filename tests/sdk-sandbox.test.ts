@@ -77,3 +77,15 @@ it("sandbox reproduces grant, version, idempotency and credential failures as ty
   );
   expect(await code(wrong.capabilities())).toBe("AUTH_REQUIRED:401:false");
 });
+
+it("SDK retryable set matches the shared error catalog", async () => {
+  const { ERROR_CATALOG } = await import("@/lib/platform/errors");
+  const sdk = await import("node:fs").then((f) =>
+    f.readFileSync("src/sdk/index.ts", "utf8"),
+  );
+  const listed = [...sdk.matchAll(/^\s+"([A-Z_]+)",$/gm)].map((m) => m[1]);
+  const expected = Object.entries(ERROR_CATALOG)
+    .filter(([, v]) => v.retryable)
+    .map(([k]) => k);
+  expect(listed.sort()).toEqual(expected.sort());
+});

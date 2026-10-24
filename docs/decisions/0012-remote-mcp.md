@@ -4,13 +4,13 @@ Status: accepted for M6G. Recorded before implementation. Evidence: primary-sour
 
 ## Protocol and version
 
-| Item                   | Value                                                                                                                         |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Protocol               | Model Context Protocol, Streamable HTTP transport                                                                             |
-| Current specification  | **2026-07-28**, published 2026-07-28 — https://modelcontextprotocol.io/specification/2026-07-28 (versioning: https://modelcontextprotocol.io/specification/versioning) |
-| Also served (legacy)   | 2025-11-25 and 2025-06-18 (`initialize` era), stateless                                                                         |
-| Authorization profile  | MCP authorization, OAuth 2.1 profile; RFC 9728, RFC 8414, RFC 8707, RFC 9207, RFC 7591 (deprecated), Client ID Metadata Documents |
-| Reference SDK          | `@modelcontextprotocol/server` **2.4.0**, Apache-2.0, depends on `zod ^4.2.0` and `@modelcontextprotocol/core` 2.4.0, Node >= 20 |
+| Item                  | Value                                                                                                                                                                  |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Protocol              | Model Context Protocol, Streamable HTTP transport                                                                                                                      |
+| Current specification | **2026-07-28**, published 2026-07-28 — https://modelcontextprotocol.io/specification/2026-07-28 (versioning: https://modelcontextprotocol.io/specification/versioning) |
+| Also served (legacy)  | 2025-11-25 and 2025-06-18 (`initialize` era), stateless                                                                                                                |
+| Authorization profile | MCP authorization, OAuth 2.1 profile; RFC 9728, RFC 8414, RFC 8707, RFC 9207, RFC 7591 (deprecated), Client ID Metadata Documents                                      |
+| Reference SDK         | `@modelcontextprotocol/server` **2.4.0**, Apache-2.0, depends on `zod ^4.2.0` and `@modelcontextprotocol/core` 2.4.0, Node >= 20                                       |
 
 The 2026-07-28 revision is stateless (no `initialize`, no `Mcp-Session-Id`, no GET stream, no resumability) and mandates `server/discover`. Vendor documentation still links 2025-era auth specifications, and the wire version sent by ChatGPT, Claude and Gemini is **not published**. The server therefore serves both eras on one endpoint.
 

@@ -1,0 +1,22 @@
+{
+  "headers": { "anthropic-beta": "mcp-client-2025-11-20" },
+  "body": {
+    "model": "<your-model>",
+    "max_tokens": 1000,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Check this place with TastePolicy before suggesting it."
+      }
+    ],
+    "mcp_servers": [
+      {
+        "type": "url",
+        "url": "https://<your-host>/api/mcp",
+        "name": "tastepolicy",
+        "authorization_token": "<TASTEPOLICY_API_KEY from a private variable>"
+      }
+    ],
+    "tools": [{ "type": "mcp_toolset", "mcp_server_name": "tastepolicy" }]
+  }
+}

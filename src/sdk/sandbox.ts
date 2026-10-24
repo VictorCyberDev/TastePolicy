@@ -54,10 +54,15 @@ export function createSandbox() {
     if (request.headers.get("authorization") !== `Bearer ${SANDBOX_CREDENTIAL}`)
       return fail("AUTH_REQUIRED");
     const op = new URL(request.url).pathname.split("/").at(-1);
-    const body = (await request.json().catch(() => ({}))) as Record<
-      string,
-      any
-    >;
+    const body = (await request.json().catch(() => ({}))) as {
+      passportRef?: string;
+      idempotencyKey?: string;
+      evaluationRef?: string;
+      proposal?: {
+        expectedStateVersion?: number;
+        candidate?: { name?: string };
+      };
+    };
     if (op === "capabilities")
       return ok({
         schemaVersion: "tastepolicy-capabilities-v1",

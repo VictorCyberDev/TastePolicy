@@ -1,4 +1,12 @@
-import { errorSpec } from "../lib/platform/errors";
+// Kept in step with the shared error catalog by tests/sdk-sandbox.test.ts. The
+// SDK imports nothing at runtime so plain Node can load it.
+const RETRYABLE = new Set([
+  "BODY_READ_TIMEOUT",
+  "RATE_LIMITED",
+  "NOT_CONFIGURED",
+  "PROVIDER_UNAVAILABLE",
+  "INTERNAL_ERROR",
+]);
 import type {
   PassportSummary,
   EvaluationRequest,
@@ -78,7 +86,7 @@ export class TastePolicyClient {
       throw new TastePolicyError(
         code,
         response.status,
-        errorSpec(code).retryable,
+        RETRYABLE.has(code),
         typeof result.requestId === "string" ? result.requestId : undefined,
       );
     }

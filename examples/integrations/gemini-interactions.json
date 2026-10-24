@@ -1,0 +1,14 @@
+{
+  "model": "<a model that supports remote MCP>",
+  "input": "Check this place against my TastePolicy authority.",
+  "tools": [
+    {
+      "type": "mcp_server",
+      "name": "tastepolicy",
+      "url": "https://<your-host>/api/mcp",
+      "headers": {
+        "Authorization": "Bearer <TASTEPOLICY_API_KEY from a private variable>"
+      }
+    }
+  ]
+}

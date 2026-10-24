@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "tastepolicy": {
+      "type": "http",
+      "url": "https://<your-host>/api/mcp",
+      "headers": { "Authorization": "Bearer ${TASTEPOLICY_API_KEY}" }
+    }
+  }
+}
