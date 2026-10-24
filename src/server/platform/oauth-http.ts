@@ -19,7 +19,7 @@ export function oauthOrigin(request: Request): string | null {
   return o === new URL(pinned).origin ? o : null;
 }
 export const status = (e: OAuthError) =>
-  e.error === "invalid_client" && !e.direct
+  e.error === "login_required" || (e.error === "invalid_client" && !e.direct)
     ? 401
     : e.error === "server_error"
       ? 500

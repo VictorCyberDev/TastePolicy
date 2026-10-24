@@ -44,7 +44,9 @@ export async function GET() {
     ? "configured"
     : "unconfigured";
   const origin = process.env.TASTEPOLICY_PUBLIC_ORIGIN;
-  checks.public_origin = /^https:\/\//.test(origin ?? "")
+  checks.public_origin = /^(https:\/\/|http:\/\/localhost(:|\/|$))/.test(
+    origin ?? "",
+  )
     ? "configured"
     : "unconfigured";
   checks.oauth =
