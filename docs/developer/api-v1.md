@@ -12,13 +12,14 @@ API credentials identify an account. They cannot create grants, issue keys, expo
 
 ## Routes
 
-| Method / route                                 | Required key scope | Shared grant scope    | Contract                                                  |
-| ---------------------------------------------- | ------------------ | --------------------- | --------------------------------------------------------- |
-| GET or POST `/api/v1/passport`                 | PASSPORT_READ      | READ_PASSPORT_SUMMARY | passportRef, optional grantId → taste-passport-v1 summary |
-| POST `/api/v1/passport` with stateSummary=true | PASSPORT_READ      | READ_STATE_SUMMARY    | counts only; no raw anchors/constraints                   |
-| POST `/api/v1/evaluate`                        | TASTE_EVALUATE     | EVALUATE_TASTE_ACTION | current state + action → structured response              |
-| GET or POST `/api/v1/receipt`                  | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → sanitized captured preference evidence    |
-| GET or POST `/api/v1/status`                   | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → completed decision/status                 |
+| Method / route                                 | Required key scope | Shared grant scope    | Contract                                                                         |
+| ---------------------------------------------- | ------------------ | --------------------- | -------------------------------------------------------------------------------- |
+| GET or POST `/api/v1/passport`                 | PASSPORT_READ      | READ_PASSPORT_SUMMARY | passportRef, optional grantId → taste-passport-v1 summary                        |
+| POST `/api/v1/passport` with stateSummary=true | PASSPORT_READ      | READ_STATE_SUMMARY    | counts only; no raw anchors/constraints                                          |
+| POST `/api/v1/evaluate`                        | TASTE_EVALUATE     | EVALUATE_TASTE_ACTION | current state + action → structured response                                     |
+| GET or POST `/api/v1/policy`                   | PASSPORT_READ      | READ_PASSPORT_SUMMARY | passportRef, optional grantId/agentId → resolved autonomy, limit, freshness (M7) |
+| GET or POST `/api/v1/receipt`                  | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → sanitized captured preference evidence                           |
+| GET or POST `/api/v1/status`                   | RECEIPT_READ       | READ_RECEIPT          | evaluationRef → completed decision/status                                        |
 
 GET parameters are query parameters; POST bodies are JSON. There is no raw Qloo endpoint or arbitrary-profile endpoint. Own access needs no grantId. Shared receipt/status requires the original grantee and relevant active grant; summary access does not imply receipt access.
 

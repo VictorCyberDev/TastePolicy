@@ -153,6 +153,13 @@ export default function PlatformPanel() {
       <p role="status" aria-live="polite">
         {notice}
       </p>
+      {account?.passport && (
+        <p>
+          <Link href="/account/rules">
+            Your rules: how much agents may do →
+          </Link>
+        </p>
+      )}
       {!account ? (
         <fieldset disabled={busy}>
           <legend>Account · real authentication</legend>

@@ -1,4 +1,5 @@
 // @vitest-environment node
+/* eslint-disable @typescript-eslint/no-explicit-any -- test assertions over loosely typed JSON responses */
 import { beforeAll, afterAll, it, expect } from "vitest";
 import {
   platformDatabase,
