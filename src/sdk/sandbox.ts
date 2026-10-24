@@ -26,6 +26,10 @@ function scenarioOf(name: unknown): SandboxScenario {
     if (n.includes(s)) return s;
   return "ALLOW";
 }
+const clarify = (name: unknown) =>
+  String(name ?? "")
+    .toUpperCase()
+    .includes("CLARIFY");
 const hex = (s: string) => {
   let x = 0;
   for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0;
@@ -107,6 +111,11 @@ export function createSandbox() {
         const decision = String(e.decision);
         if (decision !== "ALLOW" && decision !== "ASK")
           return fail("LEASE_NOT_PERMITTED");
+        if (
+          (e.ask as { kind?: string } | undefined)?.kind ===
+          "CLARIFICATION_REQUIRED"
+        )
+          return fail("CLARIFICATION_REQUIRED");
         for (const l of leases.values())
           if (
             l.evaluationRef === e.evaluationRef &&
@@ -183,6 +192,24 @@ export function createSandbox() {
               : "SANDBOX_SCENARIO",
           unresolvedFactors:
             decision === "ASK" ? ["sandbox-unresolved-factor"] : [],
+          // A candidate whose name says CLARIFY needs a missing fact; any
+          // other sandbox ASK is the owner's own rule asking first.
+          ...(decision === "ASK"
+            ? {
+                ask: clarify(p.candidate.name)
+                  ? {
+                      kind: "CLARIFICATION_REQUIRED",
+                      reasons: ["REQUIRED_PRICE:sandbox"],
+                      question: "What is the price?",
+                    }
+                  : {
+                      kind: "AUTHORITY_CONFIRMATION",
+                      reasons: ["AUTONOMY:OBSERVE"],
+                      question:
+                        "Your rule says to ask you before your agent continues.",
+                    },
+              }
+            : {}),
           receiptRef: ref,
           status: "COMPLETED",
           continuation: {

@@ -54,6 +54,7 @@ type Row = {
   data: {
     fingerprint: LeaseState["fingerprint"];
     reasons: LeaseState["reasons"];
+    ask?: LeaseState["ask"];
     checkpointSeconds: number;
     candidateName: string;
   };
@@ -82,6 +83,7 @@ function rec(r: Row): LeaseRecord {
       checkpointDueAt: iso(r.checkpoint_due_at),
       fingerprint: r.data.fingerprint,
       reasons: r.data.reasons,
+      ask: r.data.ask ?? null,
     },
   };
 }
@@ -109,6 +111,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
           {
             fingerprint: l.state.fingerprint,
             reasons: l.state.reasons,
+            ask: l.state.ask,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
           },
@@ -136,6 +139,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
           {
             fingerprint: l.state.fingerprint,
             reasons: l.state.reasons,
+            ask: l.state.ask,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
           },

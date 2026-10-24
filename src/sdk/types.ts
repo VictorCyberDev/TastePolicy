@@ -44,6 +44,13 @@ export interface AuthorizationResponse {
   decision: StateDecision["outcome"];
   decisionBasis: StateDecision["basis"];
   unresolvedFactors: string[];
+  // Present only for ASK. A CLARIFICATION_REQUIRED cannot be approved or
+  // leased: supply the fact and evaluate again.
+  ask?: {
+    kind: "AUTHORITY_CONFIRMATION" | "CLARIFICATION_REQUIRED";
+    reasons: string[];
+    question: string;
+  };
   receiptRef: string;
   status: "COMPLETED";
   continuation: {

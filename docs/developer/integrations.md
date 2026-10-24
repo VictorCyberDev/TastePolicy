@@ -22,7 +22,7 @@ A2A skill `preference_authorization`: `SendMessage` with one `data` part `{passp
 
 ## Leases
 
-After an ALLOW (or an ASK the person may answer) an agent can request a short **lease** and keep verifying it while it works. See `docs/product/m8-preference-authority-leases.md`. A lease is never a purchase or booking authority.
+After an ALLOW (or an ASK whose `ask.kind` is `AUTHORITY_CONFIRMATION`; a `CLARIFICATION_REQUIRED` ASK cannot be leased) an agent can request a short **lease** and keep verifying it while it works. See `docs/product/m8-preference-authority-leases.md`. A lease is never a purchase or booking authority.
 
 ## Vendor routes
 

@@ -1,5 +1,6 @@
 // @vitest-environment node
 /* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON responses */
+import { randomUUID } from "node:crypto";
 import { beforeAll, afterAll, it, expect } from "vitest";
 import {
   platformDatabase,
@@ -12,6 +13,8 @@ import { LeaseService } from "@/server/platform/lease-service";
 import { DEFAULT_POLICY, type PolicyDocument } from "@/lib/policy/types";
 import { proposal, reqId } from "./interactive-fixtures";
 import type { Principal } from "@/lib/platform/types";
+import { stateHash } from "@/server/state/service";
+import type { StateEntry } from "@/lib/state/types";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
 let now = Date.now();
@@ -163,17 +166,20 @@ it("ASK runtime resume: pending until the owner approves with a fresh sign-in; a
   await expect(
     svc.leaseApprove(stale, {
       idempotencyKey: "ap-1-key-0",
+      confirm: true,
       leaseRef: l.leaseRef,
     }),
   ).rejects.toMatchObject({ code: "RECENT_AUTH_REQUIRED" });
   await expect(
     svc.leaseApprove(w.agent, {
       idempotencyKey: "ap-2-key-0",
+      confirm: true,
       leaseRef: l.leaseRef,
     }),
   ).rejects.toMatchObject({ code: "ACCESS_DENIED" });
   const ok: any = await svc.leaseApprove(w.a.principal, {
     idempotencyKey: "ap-3-key-0",
+    confirm: true,
     leaseRef: l.leaseRef,
     ttlSeconds: 120,
   });
@@ -182,6 +188,7 @@ it("ASK runtime resume: pending until the owner approves with a fresh sign-in; a
   expect(
     await svc.leaseApprove(w.a.principal, {
       idempotencyKey: "ap-3-key-0",
+      confirm: true,
       leaseRef: l.leaseRef,
       ttlSeconds: 120,
     }),
@@ -195,6 +202,7 @@ it("ASK runtime resume: pending until the owner approves with a fresh sign-in; a
   await expect(
     svc.leaseApprove(w2.a.principal, {
       idempotencyKey: "ap-4-key-0",
+      confirm: true,
       leaseRef: l2.leaseRef,
     }),
   ).rejects.toMatchObject({ code: "STATE_VERSION_CONFLICT" });
@@ -335,6 +343,7 @@ it("audit timeline records every transition with actor and reason codes; replay 
     l = await w.lease(e.evaluationRef);
   await svc.leaseApprove(w.a.principal, {
     idempotencyKey: "at-key-0001",
+    confirm: true,
     leaseRef: l.leaseRef,
   });
   tick(400);
@@ -398,3 +407,212 @@ it("deleting the Passport removes its leases and events", async () => {
   expect(left.rows[0]).toEqual({ l: 0, e: 0 });
 }, 40000);
 void future;
+
+// ---- R1: typed ASK ----
+async function addPriceRule(w: Awaited<ReturnType<typeof world>>, max = 50) {
+  await d.store.transaction(async (r) => {
+    const passport = (await r.platform.passport(w.ref))!;
+    const cur = (await r.states.version(
+      passport.profileId,
+      passport.stateVersion,
+    ))!;
+    const entry: StateEntry = {
+      signalId: randomUUID(),
+      kind: "CONSTRAINT",
+      scope: "CONTEXT",
+      persistence: "CONTEXT_SCOPED",
+      contextKey: "trip",
+      constraint: { kind: "MAX_PRICE", amount: max, currency: "USD" },
+      category: "TOO_EXPENSIVE",
+      source: "USER",
+      sourceEventId: randomUUID(),
+      createdAt: clock(),
+    };
+    const entries = [...cur.entries, entry];
+    const mutationId = randomUUID(),
+      next = {
+        ...cur,
+        stateVersion: cur.stateVersion + 1,
+        parentVersion: cur.stateVersion,
+        mutationId,
+        entries,
+        stateHash: stateHash(entries),
+        createdAt: clock(),
+      };
+    await r.states.insertVersion(next);
+    await r.mutations.insert({
+      profileId: passport.profileId,
+      key: "test-rule-" + mutationId,
+      payloadHash: next.stateHash,
+      result: { state: next, mutationId },
+    });
+    await r.states.advance(passport.profileId, cur.stateVersion + 1);
+  });
+  const sum: any = await svc.read(w.a.principal, { passportRef: w.ref });
+  await svc.update(w.a.principal, {
+    idempotencyKey: "pu" + ++n + "-key",
+    passportRef: w.ref,
+    expectedPassportVersion: sum.passportVersion,
+    displayLabel: "SYNTHETIC TEST DATA Passport",
+  });
+}
+const withContext = (price?: number) => ({
+  agentId: "Agent-A",
+  candidate: proposal(1).candidate,
+  context: {
+    key: "trip",
+    domain: "destination" as const,
+    ...(price === undefined
+      ? {}
+      : { price: { amount: price, currency: "USD" } }),
+  },
+});
+
+const cooked = (
+  w: Awaited<ReturnType<typeof world>>,
+  version: number,
+  price?: number,
+) =>
+  svc.evaluate(
+    w.agent,
+    {
+      idempotencyKey: "e" + ++n,
+      passportRef: w.ref,
+      proposal: { ...withContext(price), expectedStateVersion: version },
+    },
+    () => w.q.q,
+    reqId,
+  ) as Promise<Record<string, any>>;
+const approve = (p: Principal, leaseRef: string, extra: object = {}) =>
+  svc.leaseApprove(p, {
+    idempotencyKey: "ap" + ++n + "-key-0",
+    leaseRef,
+    confirm: true,
+    ...extra,
+  }) as Promise<Record<string, any>>;
+
+it("ASK is typed: an autonomy rule is an AUTHORITY_CONFIRMATION and carries a machine-readable ask", async () => {
+  const w = await world();
+  await w.publish(observe, 0);
+  const e = await w.evaluate();
+  expect(e.ask).toMatchObject({
+    kind: "AUTHORITY_CONFIRMATION",
+    reasons: ["AUTONOMY:OBSERVE"],
+  });
+  const l = await w.lease(e.evaluationRef);
+  expect(l.ask).toMatchObject({ kind: "AUTHORITY_CONFIRMATION" });
+  expect(l.ask.question).toMatch(/ask you/i);
+  // approval must be explicit
+  await expect(
+    svc.leaseApprove(w.a.principal, {
+      idempotencyKey: "ap-noconfirm-0",
+      leaseRef: l.leaseRef,
+    }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  const ok = await approve(w.a.principal, l.leaseRef);
+  expect([ok.status, ok.valid]).toEqual(["ACTIVE", true]);
+  // the approval is recorded as an owner authority event bound to the exact choice
+  const list: any = await svc.leaseList(w.a.principal, { passportRef: w.ref });
+  expect(
+    list.timeline.some(
+      (t: any) => t.kind === "APPROVED" && t.actor === "OWNER",
+    ),
+  ).toBe(true);
+}, 40000);
+
+it("a missing price is a CLARIFICATION_REQUIRED: no lease, no approval path; clarification → fresh evaluation → ALLOW → lease", async () => {
+  const w = await world();
+  await addPriceRule(w, 50);
+  const ask = await cooked(w, 2);
+  expect(ask.decision).toBe("ASK");
+  expect(ask.ask).toMatchObject({ kind: "CLARIFICATION_REQUIRED" });
+  expect(ask.ask.question).toBe("What is the price?");
+  await expect(w.lease(ask.evaluationRef)).rejects.toMatchObject({
+    code: "CLARIFICATION_REQUIRED",
+  });
+  // nothing was created for the owner to approve
+  const list: any = await svc.leaseList(w.a.principal, { passportRef: w.ref });
+  expect(list.pending).toEqual([]);
+  // the fact is supplied, the choice is evaluated again, and only an ALLOW leases
+  const over = await cooked(w, 2, 80);
+  expect(over.decision).toBe("REJECT");
+  await expect(w.lease(over.evaluationRef)).rejects.toMatchObject({
+    code: "LEASE_NOT_PERMITTED",
+  });
+  const fresh = await cooked(w, 2, 40);
+  expect(fresh.decision).toBe("ALLOW");
+  expect(fresh.ask).toBeUndefined();
+  const l = await w.lease(fresh.evaluationRef);
+  expect([l.status, l.ask]).toEqual(["ACTIVE", null]);
+}, 40000);
+
+it("autonomy with an unknown price is a clarification; a known price above the limit is a confirmation", async () => {
+  const w = await world();
+  await w.publish(
+    {
+      ...DEFAULT_POLICY,
+      autonomy: {
+        default: "CONFIRM_ABOVE_LIMIT",
+        byDomain: {},
+        byAgent: {},
+        limit: { amount: 100, currency: "USD" },
+      },
+    },
+    0,
+  );
+  const unknown = await cooked(w, 1);
+  expect(unknown.ask).toMatchObject({
+    kind: "CLARIFICATION_REQUIRED",
+    reasons: ["AUTONOMY:PRICE_UNKNOWN"],
+  });
+  await expect(w.lease(unknown.evaluationRef)).rejects.toMatchObject({
+    code: "CLARIFICATION_REQUIRED",
+  });
+  const above = await cooked(w, 1, 250);
+  expect(above.ask).toMatchObject({
+    kind: "AUTHORITY_CONFIRMATION",
+    reasons: ["AUTONOMY:ABOVE_LIMIT"],
+  });
+  const l = await w.lease(above.evaluationRef);
+  expect(l.status).toBe("ASK_PENDING");
+  const within = await cooked(w, 1, 60);
+  expect(within.decision).toBe("ALLOW");
+}, 40000);
+
+it("a pending confirmation is refused when state, policy, candidate-visible facts or the grant changed; hard rules can never be approved", async () => {
+  // policy changed
+  const a = await world();
+  await a.publish(observe, 0);
+  const la = await a.lease((await a.evaluate()).evaluationRef);
+  await a.publish({ ...observe, freshness: { EXPLICIT_POSITIVE: 30 } }, 1);
+  await expect(approve(a.a.principal, la.leaseRef)).rejects.toMatchObject({
+    code: "STATE_VERSION_CONFLICT",
+  });
+  // state changed (a hard price rule appears) — the question no longer holds
+  const b = await world();
+  await b.publish(observe, 0);
+  const lb = await b.lease((await b.evaluate()).evaluationRef);
+  await addPriceRule(b, 10);
+  await expect(approve(b.a.principal, lb.leaseRef)).rejects.toMatchObject({
+    code: "STATE_VERSION_CONFLICT",
+  });
+  // nothing became active
+  const view: any = await status(b.agent, lb.leaseRef);
+  expect(view.valid).toBe(false);
+  // approval cannot be replayed onto a terminal lease
+  await svc.leaseDecline(b.a.principal, { leaseRef: lb.leaseRef });
+  await expect(approve(b.a.principal, lb.leaseRef)).rejects.toMatchObject({
+    code: "LEASE_STATE_CONFLICT",
+  });
+}, 60000);
+
+it("REJECT and UNAVAILABLE never lease and never carry an ask", async () => {
+  const w = await world();
+  await addPriceRule(w, 50);
+  const rej = await cooked(w, 2, 99);
+  expect(rej.decision).toBe("REJECT");
+  expect(rej.ask).toBeUndefined();
+  await expect(w.lease(rej.evaluationRef)).rejects.toMatchObject({
+    code: "LEASE_NOT_PERMITTED",
+  });
+}, 40000);

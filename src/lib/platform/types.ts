@@ -87,6 +87,7 @@ export class PlatformFailure extends Error {
       | "PROVIDER_UNAVAILABLE"
       | "LEASE_NOT_FOUND"
       | "LEASE_NOT_PERMITTED"
+      | "CLARIFICATION_REQUIRED"
       | "LEASE_STATE_CONFLICT",
   ) {
     super(code);

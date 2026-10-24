@@ -1,3 +1,4 @@
+import type { AskKind } from "./ask";
 // Pure lease state machine. No clock, no I/O: the service feeds it events with
 // explicit times, and the same events always rebuild the same state (replay).
 export const LEASE_STATUSES = [
@@ -34,6 +35,8 @@ export type DriftReason =
   | "CHECKPOINT_OVERDUE";
 export interface LeaseState {
   status: LeaseStatus;
+  // Why the owner is being asked; null unless the lease began as an ASK.
+  ask: { kind: AskKind; reasons: string[] } | null;
   rev: number;
   expiresAt: string;
   checkpointDueAt: string;
@@ -47,6 +50,8 @@ export type LeaseEvent =
       actor: "AGENT";
       // ALLOW starts ACTIVE; ASK waits for the owner.
       decision: "ALLOW" | "ASK";
+      // Required (and only valid) for ASK: why the owner is being asked.
+      ask?: { kind: AskKind; reasons: string[] };
       expiresAt: string;
       checkpointDueAt: string;
       fingerprint: Fingerprint;
@@ -55,6 +60,8 @@ export type LeaseEvent =
       kind: "APPROVED";
       at: string;
       actor: "OWNER";
+      // What the owner explicitly allowed, once: recorded, not inferred.
+      scope: { candidateId: string; contextKey: string; permitted: string[] };
       fingerprint: Fingerprint;
       expiresAt: string;
       checkpointDueAt: string;
@@ -98,7 +105,13 @@ const bad = (s: LeaseState | null, e: LeaseEvent): never => {
 export function reduce(s: LeaseState | null, e: LeaseEvent): LeaseState {
   if (e.kind === "ISSUED") {
     if (s) bad(s, e);
+    // A clarification can never become a lease: the missing fact has to be
+    // supplied and the choice evaluated again.
+    if (e.decision === "ASK" && e.ask?.kind !== "AUTHORITY_CONFIRMATION")
+      return bad(s, e);
+    if (e.decision === "ALLOW" && e.ask) return bad(s, e);
     return {
+      ask: e.decision === "ASK" ? e.ask! : null,
       status: e.decision === "ALLOW" ? "ACTIVE" : "ASK_PENDING",
       rev: 1,
       expiresAt: e.expiresAt,
@@ -115,7 +128,11 @@ export function reduce(s: LeaseState | null, e: LeaseEvent): LeaseState {
   });
   switch (e.kind) {
     case "APPROVED":
-      if (s.status !== "ASK_PENDING") return bad(s, e);
+      if (
+        s.status !== "ASK_PENDING" ||
+        s.ask?.kind !== "AUTHORITY_CONFIRMATION"
+      )
+        return bad(s, e);
       return next({
         status: "ACTIVE",
         fingerprint: e.fingerprint,

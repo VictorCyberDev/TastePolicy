@@ -21,6 +21,7 @@ import {
   type Fingerprint,
   type LeaseEvent,
 } from "@/lib/lease/machine";
+import { describeAsk } from "@/lib/lease/ask";
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 
 const LEASE_REF = /^tl_[a-f0-9]{48}$/;
@@ -126,6 +127,17 @@ export class LeaseService extends PolicyService {
       valid,
       permitted: valid ? l.permitted : [],
       reasons: l.state.reasons,
+      ask: l.state.ask
+        ? {
+            ...describeAsk(
+              l.state.ask.kind === "AUTHORITY_CONFIRMATION"
+                ? "AUTONOMY_CEILING"
+                : "",
+              l.state.ask.reasons,
+            ),
+            kind: l.state.ask.kind,
+          }
+        : null,
       passportRef: l.passportRef,
       evaluationRef: l.evaluationRef,
       agentId: l.agentId,
@@ -221,9 +233,20 @@ export class LeaseService extends PolicyService {
         if (old.hash !== h) fail("IDEMPOTENCY_KEY_CONFLICT");
         return old.result;
       }
-      const { fp, outcome } = await this.fingerprintOf(r, e);
+      const { pd, fp, outcome } = await this.fingerprintOf(r, e);
       if (outcome !== "ALLOW" && outcome !== "ASK") fail("LEASE_NOT_PERMITTED");
       await this.requireCurrent(r, e, fp);
+      // A typed ASK. Only an authority confirmation can wait for the owner; a
+      // missing fact has to be captured and the choice evaluated again.
+      const ask =
+        outcome === "ASK"
+          ? describeAsk(
+              pd ? pd.basis : e.evaluation.decision.basis,
+              pd ? pd.rules : e.evaluation.decision.rules,
+            )
+          : null;
+      if (ask && ask.kind !== "AUTHORITY_CONFIRMATION")
+        fail("CLARIFICATION_REQUIRED");
       const passport = (await r.platform.passport(e.passportRef))!;
       const ctx = e.evaluation.context.key,
         cand = e.evaluation.action.candidate.id,
@@ -245,6 +268,7 @@ export class LeaseService extends PolicyService {
           at: now,
           actor: "AGENT",
           decision: outcome,
+          ...(ask ? { ask: { kind: ask.kind, reasons: ask.reasons } } : {}),
           expiresAt: plus(now, ttl),
           checkpointDueAt: plus(now, Math.min(cps, ttl)),
           fingerprint: fp,
@@ -441,11 +465,18 @@ export class LeaseService extends PolicyService {
     return l;
   }
   async leaseApprove(p: Principal, raw: unknown) {
-    const v = object(raw, ["idempotencyKey", "leaseRef", "ttlSeconds"]),
+    const v = object(raw, [
+        "idempotencyKey",
+        "leaseRef",
+        "ttlSeconds",
+        "confirm",
+      ]),
       k = key(v.idempotencyKey),
       ref = leaseRef(v.leaseRef),
       ttl = v.ttlSeconds === undefined ? undefined : integer(v.ttlSeconds);
     if (ttl !== undefined && (ttl < 60 || ttl > 86400)) fail("INVALID_INPUT");
+    // Approval is an explicit act on one exact choice, never a default.
+    if (v.confirm !== true) fail("INVALID_INPUT");
     const h = hash(v);
     return this.ownerTx(p, true, async (r) => {
       const old = await r.platform.op(p.userId, "lease.approve", k);
@@ -456,9 +487,24 @@ export class LeaseService extends PolicyService {
       const l0 = await this.ownedLease(r, p, ref),
         l = await this.settle(r, l0);
       if (l.state.status !== "ASK_PENDING") fail("LEASE_STATE_CONFLICT");
-      // Approving a question that no longer matches reality is refused.
+      // Only a confirmation of the owner's own rule can be approved. A missing
+      // fact cannot: it needs a captured clarification and a new evaluation.
+      if (l.state.ask?.kind !== "AUTHORITY_CONFIRMATION")
+        fail("CLARIFICATION_REQUIRED");
+      // The pending question must still be the one that was asked.
       const e = await r.platform.getEvaluation(l.evaluationRef);
       if (!e) fail("LEASE_NOT_FOUND");
+      const { pd, outcome } = await this.fingerprintOf(r, e);
+      const again = describeAsk(
+        pd ? pd.basis : e.evaluation.decision.basis,
+        pd ? pd.rules : e.evaluation.decision.rules,
+      );
+      if (
+        outcome !== "ASK" ||
+        again.kind !== "AUTHORITY_CONFIRMATION" ||
+        hash(again.reasons) !== hash(l.state.ask.reasons)
+      )
+        fail("LEASE_STATE_CONFLICT");
       await this.requireCurrentLoose(r, l);
       const now = this.clock(),
         expiresAt =
@@ -470,6 +516,11 @@ export class LeaseService extends PolicyService {
           kind: "APPROVED",
           at: now,
           actor: "OWNER",
+          scope: {
+            candidateId: l.candidateId,
+            contextKey: l.contextKey,
+            permitted: l.permitted,
+          },
           fingerprint: l.state.fingerprint,
           expiresAt,
           checkpointDueAt: min(plus(now, l.checkpointSeconds), expiresAt),

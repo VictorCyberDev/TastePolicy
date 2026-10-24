@@ -17,7 +17,7 @@ A **lease** is a short-lived, revocable, auditable record that the cultural cont
 ### Where leases come from
 
 - An evaluation whose **final** decision (policy applied) is `ALLOW` can be leased: the lease starts `ACTIVE`.
-- An evaluation whose final decision is `ASK` can be leased: the lease starts `ASK_PENDING`, the owner sees one plain question and approves or declines. Approval needs a fresh sign-in, can only shorten the lifetime, and is refused if the Passport state changed since the question (the person would be approving something that no longer exists).
+- **Amended by ADR 0019.** Only an `ASK` of kind `AUTHORITY_CONFIRMATION` can be leased; a `CLARIFICATION_REQUIRED` cannot. An evaluation whose final decision is an authority-confirmation `ASK` can be leased: the lease starts `ASK_PENDING`, the owner sees one plain question and approves or declines. Approval needs a fresh sign-in, can only shorten the lifetime, and is refused if the Passport state changed since the question (the person would be approving something that no longer exists).
 - `REJECT` and `UNAVAILABLE` cannot be leased. UNAVAILABLE is not a rejection and is not a permission.
 
 ### Fingerprint and drift
