@@ -83,6 +83,8 @@ export interface MemberAuthorization {
     | StateDecision["basis"]
     | "STALE_EVIDENCE"
     | "AUTONOMY_CEILING"
+    | "ACTION_CEILING"
+    | "SENSITIVE_DOMAIN"
     | "USER_TEMPORARY_OVERRIDE";
   evidenceAvailability: "available" | "unavailable";
   // Present only when the member's own policy layer took part. It records what

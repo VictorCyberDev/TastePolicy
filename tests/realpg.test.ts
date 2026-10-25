@@ -313,6 +313,10 @@ suite("real PostgreSQL: migrations and concurrency", () => {
       connectionString: (d.pool as any).options.connectionString,
       max: 4,
     });
+    // Every client needs an error listener: dropping the database with FORCE
+    // terminates idle clients, and an unhandled 'error' would fail the run.
+    second.on("error", () => {});
+    second.on("connect", (c) => c.on("error", () => {}));
     const other = new (
       await import("@/server/state/postgres")
     ).PostgresStateStore(second);

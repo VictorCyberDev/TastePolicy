@@ -4,6 +4,9 @@ import {
   FRESHNESS_CLASSES,
   OVERRIDE_EFFECTS,
   POLICY_SCHEMA,
+  SUBJECTIVE_ACTIONS,
+  type SensitiveRules,
+  type SubjectiveAction,
   type AutonomyLevel,
   type OverrideEffect,
   type PolicyDocument,
@@ -26,8 +29,62 @@ function level(v: unknown): AutonomyLevel {
   if (!AUTONOMY_LEVELS.includes(v as AutonomyLevel)) fail("INVALID_INPUT");
   return v as AutonomyLevel;
 }
+export function subjectiveAction(v: unknown): SubjectiveAction {
+  if (!SUBJECTIVE_ACTIONS.includes(v as SubjectiveAction))
+    fail("INVALID_INPUT");
+  return v as SubjectiveAction;
+}
+function actionCeilings(raw: unknown): PolicyDocument["actions"] {
+  const a = plain(raw, ["default", "byDomain", "byAgent"]),
+    byDomain: NonNullable<PolicyDocument["actions"]>["byDomain"] = {},
+    byAgent: NonNullable<PolicyDocument["actions"]>["byAgent"] = {};
+  for (const [k, l] of Object.entries(plain(a.byDomain ?? {}, DOMAINS)))
+    byDomain[k as TargetType] = subjectiveAction(l);
+  const agents = Object.entries(
+    plain(a.byAgent ?? {}, Object.keys((a.byAgent as object) ?? {})),
+  );
+  if (agents.length > 20) fail("INVALID_INPUT");
+  for (const [k, l] of agents) {
+    if (!AGENT.test(k)) fail("INVALID_INPUT");
+    byAgent[k] = subjectiveAction(l);
+  }
+  return { default: subjectiveAction(a.default), byDomain, byAgent };
+}
+function sensitiveRules(raw: unknown): SensitiveRules {
+  const out: SensitiveRules = {};
+  for (const [k, r] of Object.entries(plain(raw, DOMAINS))) {
+    const x = plain(r, [
+      "alwaysAsk",
+      "maxAction",
+      "freshExplicitDays",
+      "noOverride",
+    ]);
+    for (const f of ["alwaysAsk", "noOverride"])
+      if (x[f] !== undefined && typeof x[f] !== "boolean")
+        fail("INVALID_INPUT");
+    const rule: SensitiveRules[TargetType] = {};
+    if (x.alwaysAsk !== undefined) rule.alwaysAsk = x.alwaysAsk as boolean;
+    if (x.noOverride !== undefined) rule.noOverride = x.noOverride as boolean;
+    if (x.maxAction !== undefined)
+      rule.maxAction = subjectiveAction(x.maxAction);
+    if (x.freshExplicitDays !== undefined) {
+      const d = x.freshExplicitDays;
+      if (!Number.isInteger(d) || (d as number) < 1 || (d as number) > 3650)
+        fail("INVALID_INPUT");
+      rule.freshExplicitDays = d as number;
+    }
+    out[k as TargetType] = rule;
+  }
+  return out;
+}
 export function policyDocument(raw: unknown): PolicyDocument {
-  const v = plain(raw, ["schemaVersion", "freshness", "autonomy"]);
+  const v = plain(raw, [
+    "schemaVersion",
+    "freshness",
+    "autonomy",
+    "actions",
+    "sensitive",
+  ]);
   if (v.schemaVersion !== POLICY_SCHEMA) fail("INVALID_INPUT");
   const f = plain(v.freshness ?? {}, [...FRESHNESS_CLASSES]),
     freshness: PolicyDocument["freshness"] = {};
@@ -77,6 +134,9 @@ export function policyDocument(raw: unknown): PolicyDocument {
     ...Object.values(byAgent),
   ].includes("CONFIRM_ABOVE_LIMIT");
   if (usesLimit && !doc.autonomy.limit) fail("INVALID_INPUT");
+  // Additive and optional: a document without them keeps the legacy contract.
+  if (v.actions !== undefined) doc.actions = actionCeilings(v.actions);
+  if (v.sensitive !== undefined) doc.sensitive = sensitiveRules(v.sensitive);
   return doc;
 }
 export interface OverrideRequest {

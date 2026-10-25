@@ -23,6 +23,13 @@ import {
   type LeaseEvent,
 } from "@/lib/lease/machine";
 import { describeAsk } from "@/lib/lease/ask";
+import {
+  actionLevel,
+  LEGACY_ACTION_MAP,
+  LEGACY_PERMITTED_ACTIONS,
+  SUBJECTIVE_ACTIONS,
+  type SubjectiveAction,
+} from "@/lib/policy/types";
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 
 const LEASE_REF = /^tl_[a-f0-9]{48}$/;
@@ -30,7 +37,12 @@ export const leaseRef = (v: unknown): string => {
   if (typeof v !== "string" || !LEASE_REF.test(v)) fail("INVALID_INPUT");
   return v as string;
 };
-const PERMITTED = ["recommend", "add_to_draft"];
+// Legacy continuation words implied by a ladder (LEGACY_ACTION_MAP): the word
+// is present when the ladder reaches the rung it maps to.
+const legacyWords = (a: readonly SubjectiveAction[]) =>
+  (Object.entries(LEGACY_ACTION_MAP) as [string, SubjectiveAction][])
+    .filter(([, rung]) => a.includes(rung))
+    .map(([word]) => word);
 export const MAX_LIVE_LEASES = 50;
 const plus = (iso: string, seconds: number) =>
   new Date(Date.parse(iso) + seconds * 1000).toISOString();
@@ -139,13 +151,18 @@ export class LeaseService extends PolicyService {
       status: l.state.status,
       valid,
       permitted: valid ? l.permitted : [],
+      permittedActions: valid ? l.permittedActions : [],
       reasons: l.state.reasons,
       ask: l.state.ask
         ? {
             ...describeAsk(
-              l.state.ask.kind === "AUTHORITY_CONFIRMATION"
-                ? "AUTONOMY_CEILING"
-                : "",
+              l.state.ask.kind !== "AUTHORITY_CONFIRMATION"
+                ? ""
+                : l.state.ask.reasons.every((x) => x.startsWith("ACTION:"))
+                  ? "ACTION_CEILING"
+                  : l.state.ask.reasons.every((x) => x.startsWith("SENSITIVE:"))
+                    ? "SENSITIVE_DOMAIN"
+                    : "AUTONOMY_CEILING",
               l.state.ask.reasons,
             ),
             kind: l.state.ask.kind,
@@ -164,7 +181,7 @@ export class LeaseService extends PolicyService {
       cacheable: false,
       ttlMs: 0,
       authorityBoundary: AUTHORITY_BOUNDARY,
-      continuation: valid ? continuation("ALLOW") : null,
+      continuation: valid ? continuation("ALLOW", l.permittedActions) : null,
     };
   }
   // Lock order is always accounts first, then the lease row (owner operations
@@ -280,6 +297,17 @@ export class LeaseService extends PolicyService {
       if (ask && ask.kind !== "AUTHORITY_CONFIRMATION")
         fail("CLARIFICATION_REQUIRED");
       const passport = (await r.platform.passport(e.passportRef))!;
+      // What the owner's policy let the agent do at decision time. An ASK that
+      // the owner confirms is bounded by the action that was requested.
+      const ladder: SubjectiveAction[] = pd?.action
+        ? pd.action.permitted.length
+          ? pd.action.permitted
+          : e.requestedAction
+            ? SUBJECTIVE_ACTIONS.filter(
+                (a) => actionLevel(a) <= actionLevel(e.requestedAction!),
+              )
+            : LEGACY_PERMITTED_ACTIONS
+        : LEGACY_PERMITTED_ACTIONS;
       const ctx = e.evaluation.context.key,
         cand = e.evaluation.action.candidate.id,
         agent = e.evaluation.agentId;
@@ -319,7 +347,8 @@ export class LeaseService extends PolicyService {
         agentId: agent,
         candidateId: cand,
         contextKey: ctx,
-        permitted: PERMITTED,
+        permitted: legacyWords(ladder),
+        permittedActions: ladder,
         issuedAt: now,
         checkpointSeconds: cps,
         candidateName: e.evaluation.action.candidate.name,

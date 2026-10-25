@@ -28,7 +28,11 @@ import {
 } from "@/server/state/evaluate-profile";
 import { replayEvaluation } from "@/server/subjects/common";
 import type { QlooProvider } from "@/server/qloo/contracts";
-import type { PolicyDecision } from "@/lib/policy/types";
+import {
+  LEGACY_PERMITTED_ACTIONS,
+  type PolicyDecision,
+} from "@/lib/policy/types";
+import { subjectiveAction } from "@/lib/policy/validation";
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 const ref = () => "tp_" + randomBytes(24).toString("hex");
 export function reference(v: unknown): string {
@@ -55,11 +59,16 @@ function grantSummary(g: Grant) {
 }
 export function continuation(
   decision: import("@/lib/state/types").StateDecision["outcome"],
+  ladder?: readonly import("@/lib/policy/types").SubjectiveAction[],
 ) {
   const actions = CONTINUATION_ACTIONS;
   return {
     schemaVersion: "taste-continuation-v1",
     permitted: actions[decision],
+    // The same permission on the subjective-action ladder. A legacy ALLOW
+    // (no ladder configured) is SUGGEST..ADD_TO_DRAFT; see LEGACY_ACTION_MAP.
+    permittedActions:
+      decision === "ALLOW" ? [...(ladder ?? LEGACY_PERMITTED_ACTIONS)] : [],
     automaticRetry: false,
     authorityBoundary: AUTHORITY_BOUNDARY,
   };
@@ -612,14 +621,16 @@ export class PlatformService {
         : {}),
       receiptRef: e.evaluationRef,
       status: "COMPLETED",
-      continuation: continuation(outcome),
+      continuation: continuation(outcome, pd?.action?.permitted),
       createdAt: e.evaluation.evaluatedAt,
+      ...(e.requestedAction ? { requestedAction: e.requestedAction } : {}),
       ...(pd
         ? {
             policy: {
               version: pd.policyVersion,
               baseDecision: pd.baseOutcome,
               trace: pd.trace,
+              ...(pd.action ? { action: pd.action } : {}),
             },
           }
         : {}),
@@ -661,8 +672,13 @@ export class PlatformService {
         "passportRef",
         "grantId",
         "proposal",
+        "requestedAction",
       ]),
       pr = reference(v.passportRef),
+      requestedAction =
+        v.requestedAction === undefined
+          ? undefined
+          : subjectiveAction(v.requestedAction),
       input = evaluationInput(v.proposal),
       k = key(v.idempotencyKey);
     if (!input) fail("INVALID_INPUT");
@@ -750,6 +766,7 @@ export class PlatformService {
         stateVersion: state.stateVersion,
         stateHash: state.stateHash,
         evaluation,
+        ...(requestedAction ? { requestedAction } : {}),
       };
       await r.platform.evaluation(e);
       const pd = await this.policyDecide(r, e, state);

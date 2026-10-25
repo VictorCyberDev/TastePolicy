@@ -17,6 +17,7 @@ import {
   classifyPolicyChange,
   widensAuthority,
 } from "@/lib/policy/composition";
+import { organizationCeiling } from "@/lib/policy/organization";
 import { counterfactuals, impactAnalysis } from "@/lib/policy/analysis";
 import { overrideRequest, policyDocument } from "@/lib/policy/validation";
 import {
@@ -51,6 +52,8 @@ export class PolicyService extends PlatformService {
       policy,
       policyVersion,
       overrides,
+      ...(e.requestedAction ? { requestedAction: e.requestedAction } : {}),
+      organization: organizationCeiling(process.env),
     };
   }
   protected override async policyDecide(
@@ -60,7 +63,9 @@ export class PolicyService extends PlatformService {
   ): Promise<PolicyDecision | null> {
     const active = await r.policy.active(e.passportRef),
       overrides = await r.policy.overrides(e.passportRef);
-    if (!active && !overrides.length) return null;
+    const organization = organizationCeiling(process.env);
+    if (!active && !overrides.length && !e.requestedAction && !organization)
+      return null;
     const d = evaluateWithPolicy({
       state,
       candidate: e.evaluation.action.candidate,
@@ -71,6 +76,8 @@ export class PolicyService extends PlatformService {
       policy: active?.document ?? null,
       policyVersion: active?.version ?? null,
       overrides,
+      ...(e.requestedAction ? { requestedAction: e.requestedAction } : {}),
+      organization,
     });
     // The wrapped evaluator must agree with what was just recorded.
     if (

@@ -20,6 +20,18 @@ export const evaluateInput = z.object({
   idempotencyKey: z.string().min(8).max(128),
   passportRef: ref,
   grantId: ref.optional(),
+  requestedAction: z
+    .enum([
+      "SUGGEST",
+      "RANK",
+      "SHORTLIST",
+      "ADD_TO_DRAFT",
+      "PRESENT_AS_SELECTED",
+    ])
+    .optional()
+    .describe(
+      "The subjective action you intend to take if allowed, from least to most consequential. Omit it to keep the legacy contract (SUGGEST through ADD_TO_DRAFT). If it goes further than the owner lets this agent go, the answer is ASK (AUTHORITY_CONFIRMATION).",
+    ),
   proposal: z
     .object({
       agentId: z.string().min(1).max(80),
@@ -143,7 +155,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "evaluate",
     title: "Evaluate a proposed choice",
     description:
-      "Ask whether a proposed brand/place/destination matches the user's cultural preference authority. Returns ALLOW, ASK, REJECT or UNAVAILABLE. UNAVAILABLE is not a rejection. The result never authorizes purchase, payment or booking.",
+      "Use this before you select, rank, recommend, shortlist, add to a draft, present as selected, or otherwise continue a subjective preference-sensitive choice for a person. Do not call it for objective operations unrelated to preference. Say how far you intend to go with requestedAction (SUGGEST, RANK, SHORTLIST, ADD_TO_DRAFT, PRESENT_AS_SELECTED); if that is further than the owner lets you go on your own, the answer is ASK. Returns ALLOW, ASK, REJECT or UNAVAILABLE, and the actions you may take now (continuation.permittedActions). UNAVAILABLE is not a rejection. The result never authorizes purchase, payment, booking or any execution.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: true,
@@ -175,7 +187,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "lease",
     title: "Request a preference authority lease",
     description:
-      "After an ALLOW or ASK evaluation, request a short-lived lease for that exact choice. ALLOW starts active; ASK waits for the person to answer. The lease permits only recommend/add_to_draft and never any purchase, payment or booking. Verify before relying on it and checkpoint before it is due.",
+      "After an ALLOW or ASK evaluation, request a short-lived lease for that exact choice. ALLOW starts active; ASK waits for the person to answer. The lease permits only the subjective actions in permittedActions (never beyond what the owner allowed) and never any purchase, payment or booking. Verify before relying on it and checkpoint before it is due.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: true,

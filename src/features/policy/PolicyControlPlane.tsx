@@ -11,6 +11,7 @@ import {
   type PolicyOverride,
 } from "@/lib/policy/types";
 import RuleBoundary from "./RuleBoundary";
+import ActionLadder from "./ActionLadder";
 import { usePolicyApi } from "./usePolicyApi";
 import { EFFECT_COPY, FRESHNESS_COPY, LEVEL_COPY } from "./copy";
 import "./policy.css";
@@ -295,6 +296,8 @@ export default function PolicyControlPlane() {
           </p>
         ))}
       </section>
+
+      <ActionLadder draft={draft} setDraft={setDraft} />
 
       <section aria-labelledby="fresh">
         <h2 id="fresh">When is your taste information too old?</h2>

@@ -1,6 +1,10 @@
 import "server-only";
 import type { PoolClient } from "pg";
 import type { LeaseEvent, LeaseState } from "@/lib/lease/machine";
+import {
+  LEGACY_PERMITTED_ACTIONS,
+  type SubjectiveAction,
+} from "@/lib/policy/types";
 
 export interface LeaseRecord {
   leaseRef: string;
@@ -12,7 +16,10 @@ export interface LeaseRecord {
   agentId: string;
   candidateId: string;
   contextKey: string;
+  // Legacy continuation words (compatibility view of the ladder).
   permitted: string[];
+  // Authoritative: what the owner's policy let the agent do, on the ladder.
+  permittedActions: SubjectiveAction[];
   issuedAt: string;
   checkpointSeconds: number;
   candidateName: string;
@@ -59,6 +66,7 @@ type Row = {
     epoch?: LeaseState["epoch"];
     checkpointSeconds: number;
     candidateName: string;
+    permittedActions?: SubjectiveAction[];
   };
 };
 function rec(r: Row): LeaseRecord {
@@ -73,6 +81,7 @@ function rec(r: Row): LeaseRecord {
     candidateId: r.candidate_id,
     contextKey: r.context_key,
     permitted: r.permitted,
+    permittedActions: r.data.permittedActions ?? LEGACY_PERMITTED_ACTIONS,
     issuedAt: iso(r.issued_at),
     checkpointSeconds: r.data.checkpointSeconds,
     candidateName: r.data.candidateName,
@@ -118,6 +127,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
             epoch: l.state.epoch,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
+            permittedActions: l.permittedActions,
           },
         ],
       );
@@ -147,6 +157,7 @@ export function leaseRepository(c: PoolClient): LeaseRepository {
             epoch: l.state.epoch,
             checkpointSeconds: l.checkpointSeconds,
             candidateName: l.candidateName,
+            permittedActions: l.permittedActions,
           },
         ],
       );

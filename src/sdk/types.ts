@@ -23,10 +23,14 @@ export interface PassportSummary {
   stateSummary?: { entryCounts: Record<string, number> };
   semanticHash: string;
 }
+export type SubjectiveAction =
+  "SUGGEST" | "RANK" | "SHORTLIST" | "ADD_TO_DRAFT" | "PRESENT_AS_SELECTED";
 export interface EvaluationRequest {
   passportRef: string;
   grantId?: string;
   idempotencyKey: string;
+  // Omit for the legacy contract. A request above the owner's ceiling is ASK.
+  requestedAction?: SubjectiveAction;
   proposal: {
     agentId: string;
     candidate: QlooEntity;
@@ -56,6 +60,8 @@ export interface AuthorizationResponse {
   continuation: {
     schemaVersion: "taste-continuation-v1";
     permitted: string[];
+    // The same permission on the subjective-action ladder.
+    permittedActions: SubjectiveAction[];
     automaticRetry: false;
     authorityBoundary: string;
   };

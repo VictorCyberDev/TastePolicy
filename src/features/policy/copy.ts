@@ -41,6 +41,8 @@ export const BASIS_COPY: Record<PolicyBasis, string> = {
   REQUIRED_EVIDENCE_MISSING: "Taste evidence was unavailable",
   STALE_EVIDENCE: "Your taste information is older than you allowed",
   AUTONOMY_CEILING: "Your autonomy setting asks first",
+  ACTION_CEILING: "This goes further than you let this agent go on its own",
+  SENSITIVE_DOMAIN: "You marked this kind of choice as sensitive",
   USER_TEMPORARY_OVERRIDE: "A temporary permission you gave",
 };
 export const STEP_COPY: Record<PolicyStep, string> = {
@@ -48,6 +50,8 @@ export const STEP_COPY: Record<PolicyStep, string> = {
   HARD_RULES: "Hard rules",
   FRESHNESS: "How recent your information is",
   AUTONOMY: "Autonomy setting",
+  SENSITIVE: "Sensitive choices",
+  ACTION: "How far the agent may go",
   OVERRIDE: "Temporary permissions",
 };
 export const OUTCOME_COPY = {
@@ -61,4 +65,30 @@ export const CHANGE_COPY: Record<string, string> = {
   RAISE_AUTONOMY: "Let this agent decide without asking",
   IGNORE_FRESHNESS: "Stop treating older information as stale",
   REMOVE_ENTRY: "Remove one of your saved rules",
+};
+import type { SubjectiveAction } from "@/lib/policy/types";
+export const ACTION_COPY: Record<
+  SubjectiveAction,
+  { label: string; help: string }
+> = {
+  SUGGEST: {
+    label: "Suggest",
+    help: "Mention it as one idea. Nothing is chosen for you.",
+  },
+  RANK: {
+    label: "Rank",
+    help: "Order several options by how well they fit you.",
+  },
+  SHORTLIST: {
+    label: "Shortlist",
+    help: "Narrow the options down to a few for you to look at.",
+  },
+  ADD_TO_DRAFT: {
+    label: "Add to a draft",
+    help: "Put it in a plan you can still change. Nothing is booked or bought.",
+  },
+  PRESENT_AS_SELECTED: {
+    label: "Present as your choice",
+    help: "Show it as the choice made for you. You can still say no. Nothing is booked or bought.",
+  },
 };

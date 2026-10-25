@@ -68,6 +68,9 @@ export interface PlatformEvaluation {
   stateVersion: number;
   stateHash: string;
   evaluation: StateEvaluation;
+  // The subjective action the agent said it intends to take. Not part of the
+  // M1-M5 evaluation (which is replayed and hashed); absent on older rows.
+  requestedAction?: import("@/lib/policy/types").SubjectiveAction;
 }
 export class PlatformFailure extends Error {
   constructor(

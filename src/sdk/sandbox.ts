@@ -215,6 +215,10 @@ export function createSandbox() {
           continuation: {
             schemaVersion: "taste-continuation-v1",
             permitted: CONTINUATION[decision],
+            permittedActions:
+              decision === "ALLOW"
+                ? ["SUGGEST", "RANK", "SHORTLIST", "ADD_TO_DRAFT"]
+                : [],
             automaticRetry: false,
           },
           createdAt: "2026-01-01T00:00:00.000Z",
