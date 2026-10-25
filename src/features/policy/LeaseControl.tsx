@@ -54,6 +54,8 @@ const REASON: Record<string, string> = {
   POLICY_CHANGED: "your rules changed",
   GRANT_UNAVAILABLE: "a share was ended or expired",
   OVERRIDE_ENDED: "a temporary permission ended",
+  CANDIDATE_CHANGED: "the choice itself changed",
+  CONTEXT_CHANGED: "the situation changed, such as the price",
   PASSPORT_UNAVAILABLE: "the Passport is no longer available",
   CHECKPOINT_OVERDUE: "the agent did not check in on time",
 };

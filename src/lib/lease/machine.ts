@@ -25,12 +25,19 @@ export interface Fingerprint {
   grantId: string | null;
   // Temporary overrides the decision relied on.
   overrideIds: string[];
+  // Canonical commitments to the material candidate and context the decision
+  // was about (taste-commitments-v1). Absent on leases issued before they
+  // existed; those leases are not checked against a presented commitment.
+  candidateCommitment?: string;
+  contextCommitment?: string;
 }
 export type DriftReason =
   | "STATE_CHANGED"
   | "POLICY_CHANGED"
   | "GRANT_UNAVAILABLE"
   | "OVERRIDE_ENDED"
+  | "CANDIDATE_CHANGED"
+  | "CONTEXT_CHANGED"
   | "PASSPORT_UNAVAILABLE"
   | "CHECKPOINT_OVERDUE";
 export interface LeaseState {
@@ -211,6 +218,11 @@ export interface CurrentFacts {
   grantUsable: boolean;
   passportUsable: boolean;
   activeOverrideIds: string[];
+  // What the relying agent says the candidate / context is NOW, as
+  // commitments. The server cannot observe the outside world: a change it was
+  // never told about cannot be detected, only one that is presented.
+  presentedCandidateCommitment?: string;
+  presentedContextCommitment?: string;
 }
 export function driftReasons(
   issued: Fingerprint,
@@ -223,5 +235,17 @@ export function driftReasons(
   if (issued.policyVersion !== now.policyVersion) r.push("POLICY_CHANGED");
   if (issued.overrideIds.some((id) => !now.activeOverrideIds.includes(id)))
     r.push("OVERRIDE_ENDED");
+  if (
+    issued.candidateCommitment &&
+    now.presentedCandidateCommitment &&
+    issued.candidateCommitment !== now.presentedCandidateCommitment
+  )
+    r.push("CANDIDATE_CHANGED");
+  if (
+    issued.contextCommitment &&
+    now.presentedContextCommitment &&
+    issued.contextCommitment !== now.presentedContextCommitment
+  )
+    r.push("CONTEXT_CHANGED");
   return r.sort();
 }

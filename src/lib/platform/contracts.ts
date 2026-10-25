@@ -66,14 +66,40 @@ export const leaseRequestInput = z.object({
   ttlSeconds: z.number().int().min(60).max(86400).optional(),
   checkpointSeconds: z.number().int().min(30).max(86400).optional(),
 });
+// What the relying agent says the choice is right now. The server compares it
+// with the commitments the authority was issued for; a mismatch suspends the
+// lease (CANDIDATE_CHANGED / CONTEXT_CHANGED). A change the server is never told
+// about cannot be detected. Unknown fields (images, layout) are ignored.
+const commitmentField = z
+  .string()
+  .regex(/^sha-256:[A-Za-z0-9_-]{43}$/)
+  .describe("taste-commitments-v1 commitment");
+const presentedFields = {
+  candidate: z
+    .looseObject({ id: z.string(), name: z.string(), type: z.string() })
+    .optional()
+    .describe("The candidate as it is now; only its material fields count"),
+  context: z
+    .looseObject({ key: z.string(), domain: z.string() })
+    .optional()
+    .describe("The context as it is now; only key, domain and price count"),
+  candidateCommitment: commitmentField.optional(),
+  contextCommitment: commitmentField.optional(),
+};
 export const leaseRefInput = z.object({
   leaseRef: leaseRefField,
   expectedRev: z.number().int().min(0).optional(),
+});
+export const leaseCheckInput = z.object({
+  leaseRef: leaseRefField,
+  expectedRev: z.number().int().min(0).optional(),
+  ...presentedFields,
 });
 export const leaseResumeInput = z.object({
   idempotencyKey: z.string().min(8).max(80),
   leaseRef: leaseRefField,
   evaluationRef: ref,
+  ...presentedFields,
 });
 export const attestationInput = z.object({
   leaseRef: leaseRefField,
@@ -198,22 +224,22 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "lease-verify",
     title: "Verify a lease",
     description:
-      "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked.",
+      "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked. Pass the candidate and context as they are now (or their commitments): TastePolicy cannot see the outside world, so a change you do not present is not detected, and a mismatch suspends the lease.",
     scope: "RECEIPT_READ",
     readOnly: true,
     idempotent: true,
-    input: leaseRefInput,
+    input: leaseCheckInput,
   },
   {
     name: "tastepolicy_checkpoint_lease",
     op: "lease-checkpoint",
     title: "Checkpoint a lease",
     description:
-      "Confirm nothing the lease relied on has changed and push the next checkpoint forward. If anything changed the lease is suspended instead of extended.",
+      "Confirm nothing the lease relied on has changed and push the next checkpoint forward. TastePolicy checks its own facts (state, rules, grant, overrides) itself; for the candidate and context it compares what you present. If anything changed the lease is suspended instead of extended.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: false,
-    input: leaseRefInput,
+    input: leaseCheckInput,
   },
   {
     name: "tastepolicy_resume_lease",

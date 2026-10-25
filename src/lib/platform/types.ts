@@ -94,6 +94,7 @@ export class PlatformFailure extends Error {
       | "LEASE_NOT_FOUND"
       | "LEASE_NOT_PERMITTED"
       | "CLARIFICATION_REQUIRED"
+      | "COMMITMENT_MISMATCH"
       | "LEASE_STATE_CONFLICT",
   ) {
     super(code);

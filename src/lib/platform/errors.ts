@@ -56,6 +56,11 @@ export const ERROR_CATALOG: Record<string, ErrorSpec> = {
     false,
     "A fact is missing. Capture it and evaluate again; approving cannot supply it.",
   ),
+  COMMITMENT_MISMATCH: spec(
+    409,
+    false,
+    "The candidate or context you presented is not the one this authority was evaluated for. Evaluate the current choice again.",
+  ),
   LEASE_STATE_CONFLICT: spec(
     409,
     false,

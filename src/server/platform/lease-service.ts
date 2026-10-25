@@ -24,6 +24,14 @@ import {
 } from "@/lib/lease/machine";
 import { describeAsk } from "@/lib/lease/ask";
 import {
+  candidateMaterial,
+  COMMITMENT_FORMAT,
+  commitCandidate,
+  commitContext,
+  contextMaterial,
+  evaluationCommitments,
+} from "@/lib/commit/commitments";
+import {
   actionLevel,
   LEGACY_ACTION_MAP,
   LEGACY_PERMITTED_ACTIONS,
@@ -48,9 +56,70 @@ const plus = (iso: string, seconds: number) =>
   new Date(Date.parse(iso) + seconds * 1000).toISOString();
 const min = (a: string, b: string) => (a < b ? a : b);
 
+interface Presented {
+  candidate?: string;
+  context?: string;
+}
+// What the relying agent says the choice is right now. Either the material
+// itself (we compute the commitment) or the commitment (privacy: the agent
+// need not hand the object over). Both given must agree. A malformed value is
+// rejected, never ignored: silence must not look like "nothing changed".
+function presentedOf(v: Record<string, unknown>): Presented {
+  const out: Presented = {};
+  const pick = (
+    material: unknown,
+    commitment: unknown,
+    normalize: (m: unknown) => string | null,
+    set: (c: string) => void,
+  ) => {
+    let c: string | undefined;
+    if (material !== undefined) {
+      const x = normalize(material);
+      if (!x) fail("INVALID_INPUT");
+      c = x;
+    }
+    if (commitment !== undefined) {
+      if (typeof commitment !== "string" || !COMMITMENT_FORMAT.test(commitment))
+        fail("INVALID_INPUT");
+      if (c !== undefined && c !== commitment) fail("INVALID_INPUT");
+      c = commitment as string;
+    }
+    if (c !== undefined) set(c);
+  };
+  pick(
+    v.candidate,
+    v.candidateCommitment,
+    (m) => {
+      const c = candidateMaterial(m);
+      return c ? commitCandidate(c) : null;
+    },
+    (c) => (out.candidate = c),
+  );
+  pick(
+    v.context,
+    v.contextCommitment,
+    (m) => {
+      const c = contextMaterial(m);
+      return c ? commitContext(c) : null;
+    },
+    (c) => (out.context = c),
+  );
+  return out;
+}
+const PRESENT_KEYS = [
+  "candidate",
+  "context",
+  "candidateCommitment",
+  "contextCommitment",
+];
+
 export class LeaseService extends PolicyService {
   protected readonly maxLive: number = MAX_LIVE_LEASES;
-  private async facts(r: Repositories, l: LeaseRecord): Promise<CurrentFacts> {
+  private async facts(
+    r: Repositories,
+    l: LeaseRecord,
+    presented?: Presented,
+  ): Promise<CurrentFacts> {
     const now = this.clock(),
       passport = await r.platform.passport(l.passportRef),
       active = await r.policy.active(l.passportRef);
@@ -71,6 +140,8 @@ export class LeaseService extends PolicyService {
       activeOverrideIds: (await r.policy.overrides(l.passportRef))
         .filter((o) => !o.revokedAt && o.expiresAt > now && o.createdAt <= now)
         .map((o) => o.overrideId),
+      presentedCandidateCommitment: presented?.candidate,
+      presentedContextCommitment: presented?.context,
     };
   }
   // Apply events in order, persisting each and the projection with an
@@ -102,6 +173,7 @@ export class LeaseService extends PolicyService {
   protected async settle(
     r: Repositories,
     l: LeaseRecord,
+    presented?: Presented,
   ): Promise<LeaseRecord> {
     await this.checked(r, l);
     if (isTerminal(l.state.status)) return l;
@@ -114,7 +186,10 @@ export class LeaseService extends PolicyService {
     if (l.state.status === "ACTIVE") {
       const reasons = [
         ...new Set([
-          ...driftReasons(l.state.fingerprint, await this.facts(r, l)),
+          ...driftReasons(
+            l.state.fingerprint,
+            await this.facts(r, l, presented),
+          ),
           ...obs.reasons,
         ]),
       ].sort();
@@ -174,6 +249,13 @@ export class LeaseService extends PolicyService {
       candidateId: l.candidateId,
       candidateName: l.candidateName,
       contextKey: l.contextKey,
+      commitments: l.state.fingerprint.candidateCommitment
+        ? {
+            schemaVersion: "taste-commitments-v1",
+            candidate: l.state.fingerprint.candidateCommitment,
+            context: l.state.fingerprint.contextCommitment,
+          }
+        : null,
       issuedAt: l.issuedAt,
       expiresAt: l.state.expiresAt,
       checkpointDueAt: l.state.checkpointDueAt,
@@ -220,7 +302,13 @@ export class LeaseService extends PolicyService {
     >,
   ) {
     const pd = await r.policy.decision(e.evaluationRef);
+    const c = evaluationCommitments(
+      e.evaluation.action.candidate,
+      e.evaluation.context,
+    );
     const fp: Fingerprint = {
+      candidateCommitment: c.candidate,
+      contextCommitment: c.context,
       stateHash: e.stateHash,
       policyVersion: pd?.policyVersion ?? null,
       grantId: e.grantId,
@@ -362,23 +450,25 @@ export class LeaseService extends PolicyService {
     });
   }
   async leaseVerify(p: Principal, raw: unknown) {
-    const v = object(raw, ["leaseRef"]),
-      ref = leaseRef(v.leaseRef);
+    const v = object(raw, ["leaseRef", ...PRESENT_KEYS]),
+      ref = leaseRef(v.leaseRef),
+      presented = presentedOf(v);
     return this.store.transaction(async (r) => {
       const l0 = await this.agentLease(r, p, ref, "RECEIPT_READ", false);
-      const l = await this.settle(r, l0);
+      const l = await this.settle(r, l0, presented);
       return this.leaseView(l);
     });
   }
   async leaseCheckpoint(p: Principal, raw: unknown) {
-    const v = object(raw, ["leaseRef", "expectedRev"]),
+    const v = object(raw, ["leaseRef", "expectedRev", ...PRESENT_KEYS]),
       ref = leaseRef(v.leaseRef),
+      presented = presentedOf(v),
       rev = v.expectedRev === undefined ? undefined : integer(v.expectedRev);
     return this.store.transaction(async (r) => {
       const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       if (rev !== undefined && rev !== l0.state.rev)
         fail("LEASE_STATE_CONFLICT");
-      let l = await this.settle(r, l0);
+      let l = await this.settle(r, l0, presented);
       if (l.state.status === "ACTIVE") {
         const now = this.clock();
         l = await this.advance(r, l, [
@@ -398,8 +488,14 @@ export class LeaseService extends PolicyService {
   }
   // A suspended lease resumes only on a new ALLOW under the current fingerprint.
   async leaseResume(p: Principal, raw: unknown) {
-    const v = object(raw, ["leaseRef", "evaluationRef", "idempotencyKey"]),
+    const v = object(raw, [
+        "leaseRef",
+        "evaluationRef",
+        "idempotencyKey",
+        ...PRESENT_KEYS,
+      ]),
       ref = leaseRef(v.leaseRef),
+      presented = presentedOf(v),
       er = reference(v.evaluationRef);
     key(v.idempotencyKey);
     return this.store.transaction(async (r) => {
@@ -432,6 +528,15 @@ export class LeaseService extends PolicyService {
         fail("STATE_VERSION_CONFLICT");
       const { fp, outcome } = await this.fingerprintOf(r, e);
       if (outcome !== "ALLOW") fail("LEASE_NOT_PERMITTED");
+      // Resuming re-establishes authority for the choice that was just
+      // evaluated. If the agent says the choice is something else now, that
+      // evaluation is not about it and cannot carry the authority.
+      if (
+        (presented.candidate &&
+          presented.candidate !== fp.candidateCommitment) ||
+        (presented.context && presented.context !== fp.contextCommitment)
+      )
+        fail("COMMITMENT_MISMATCH");
       await this.requireCurrent(r, e, fp);
       const now = this.clock();
       l = await this.advance(r, { ...l, grantId: e.grantId }, [

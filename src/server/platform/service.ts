@@ -33,6 +33,7 @@ import {
   type PolicyDecision,
 } from "@/lib/policy/types";
 import { subjectiveAction } from "@/lib/policy/validation";
+import { evaluationCommitments } from "@/lib/commit/commitments";
 import { AUTHORITY_BOUNDARY } from "@/lib/subjects/types";
 const ref = () => "tp_" + randomBytes(24).toString("hex");
 export function reference(v: unknown): string {
@@ -624,6 +625,10 @@ export class PlatformService {
       continuation: continuation(outcome, pd?.action?.permitted),
       createdAt: e.evaluation.evaluatedAt,
       ...(e.requestedAction ? { requestedAction: e.requestedAction } : {}),
+      commitments: evaluationCommitments(
+        e.evaluation.action.candidate,
+        e.evaluation.context,
+      ),
       ...(pd
         ? {
             policy: {
