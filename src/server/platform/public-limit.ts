@@ -1,14 +1,27 @@
 import "server-only";
+import { createHmac } from "node:crypto";
+import type { StateStore } from "@/server/state/repositories";
 
-// Best-effort admission for unauthenticated endpoints. It is per instance
-// (serverless instances do not share memory), so it bounds abuse of one
-// instance and never replaces edge protection. It is separate from the
-// authenticated budget, and each public route has its own pool, so anonymous
-// traffic can starve neither credential holders nor the other public route.
+// Admission for unauthenticated endpoints, in two tiers.
+//  1. Per instance: a concurrency cap and a short window per client. Cheap, no
+//     I/O, and it bounds what one instance does even if the database is slow.
+//  2. Shared (PostgreSQL): an atomic counter every instance increments, per
+//     client and per pool. This is the limit that holds across instances; it
+//     also caps the pool's total, so the cryptographic and database work the
+//     public verifier can be made to do is bounded no matter how many clients
+//     (or instances) there are. Counters are keyed by an HMAC of the caller,
+//     never an address, and old minutes are deleted as new ones are written.
+// Each public route has its own pool, separate from the authenticated budget,
+// so anonymous traffic cannot starve credential holders or the other route.
+// If the shared tier is unavailable the per-instance tier still applies (it
+// never opens the endpoint).
 export type Pool = "verify" | "status";
 const WINDOW_MS = 60_000,
   PER_IP = 60,
   CONCURRENT: Record<Pool, number> = { verify: 8, status: 16 },
+  // Shared per-minute budgets: per client, and for the whole pool.
+  SHARED_PER_CLIENT: Record<Pool, number> = { verify: 60, status: 120 },
+  SHARED_POOL_TOTAL: Record<Pool, number> = { verify: 1200, status: 6000 },
   MAX_TRACKED = 5000;
 const hits: Record<Pool, Map<string, number[]>> = {
   verify: new Map(),
@@ -48,4 +61,41 @@ export function admitPublic(
       active[pool]--;
     }
   };
+}
+
+// Both tiers. Returns a release function, or null when the caller must wait.
+export async function admitPublicShared(
+  request: Request,
+  pool: Pool,
+  store: StateStore | null,
+  now = Date.now(),
+): Promise<(() => void) | null> {
+  const release = admitPublic(request, pool, now);
+  if (!release) return null;
+  if (!store) return release;
+  const secret = process.env.BETTER_AUTH_SECRET ?? "unconfigured",
+    minute = new Date(now).toISOString().slice(0, 16),
+    keyOf = (k: string) =>
+      createHmac("sha256", secret).update(`public|${pool}|${k}`).digest("hex");
+  try {
+    // One transaction, two atomic counters. The client's own budget is
+    // spent first, so a single caller can use at most its own budget of the
+    // pool and cannot exhaust it for everyone else.
+    const ok = await store.transaction(async (r) => {
+      const clientOk = await r.oauth.admit(
+        keyOf(clientKey(request)),
+        minute,
+        SHARED_PER_CLIENT[pool],
+      );
+      if (!clientOk) return false;
+      return r.oauth.admit(keyOf("*"), minute, SHARED_POOL_TOTAL[pool]);
+    });
+    if (!ok) {
+      release();
+      return null;
+    }
+  } catch {
+    // Shared tier unavailable: the per-instance tier above already applied.
+  }
+  return release;
 }

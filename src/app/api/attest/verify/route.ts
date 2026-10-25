@@ -1,6 +1,6 @@
 import { getStateStore } from "@/server/state/postgres";
 import { AttestationService } from "@/server/platform/attest-service";
-import { admitPublic } from "@/server/platform/public-limit";
+import { admitPublicShared } from "@/server/platform/public-limit";
 import { safePlatformError } from "@/server/platform/http";
 import { platformFail } from "@/lib/platform/types";
 import { readJsonBody } from "@/server/taste/read-body";
@@ -9,7 +9,7 @@ const NO_STORE = { "Cache-Control": "no-store" };
 // Public relying-party verifier. No credential; bounded body; best-effort limit.
 export async function POST(request: Request) {
   const requestId = crypto.randomUUID(),
-    release = admitPublic(request, "verify");
+    release = await admitPublicShared(request, "verify", getStateStore());
   if (!release)
     return Response.json(
       { status: "error", code: "RATE_LIMITED", requestId },

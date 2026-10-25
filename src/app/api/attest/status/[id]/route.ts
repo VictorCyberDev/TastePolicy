@@ -1,6 +1,6 @@
 import { getStateStore } from "@/server/state/postgres";
 import { AttestationService } from "@/server/platform/attest-service";
-import { admitPublic } from "@/server/platform/public-limit";
+import { admitPublicShared } from "@/server/platform/public-limit";
 import { safePlatformError } from "@/server/platform/http";
 import { platformFail } from "@/lib/platform/types";
 // Token Status List (draft-ietf-oauth-status-list). Public by design: it holds
@@ -10,7 +10,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> },
 ) {
   const requestId = crypto.randomUUID(),
-    release = admitPublic(request, "status");
+    release = await admitPublicShared(request, "status", getStateStore());
   if (!release)
     return Response.json(
       { status: "error", code: "RATE_LIMITED", requestId },
