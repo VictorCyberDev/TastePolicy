@@ -106,6 +106,22 @@ export function platformRepository(c: PoolClient): PlatformRepository {
         "INSERT INTO tastepolicy.passport_access_events VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
         [g.grantId, g.grantorUserId, { kind: "GRANT_REVOKED", at }],
       ),
+    revocations: async (u) => {
+      const g = await c.query(
+        "SELECT grant_id, data->>'at' AS at FROM tastepolicy.passport_access_events WHERE user_id=$1",
+        [u],
+      );
+      const k = await c.query(
+        "SELECT credential_id, data->>'at' AS at FROM tastepolicy.developer_credential_events WHERE user_id=$1",
+        [u],
+      );
+      return {
+        grants: Object.fromEntries(g.rows.map((r) => [r.grant_id, r.at])),
+        credentials: Object.fromEntries(
+          k.rows.map((r) => [r.credential_id, r.at]),
+        ),
+      };
+    },
     grantRevoked: async (id) =>
       !!(
         await c.query(

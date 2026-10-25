@@ -197,3 +197,45 @@
   flex: 1 0 6.5rem;
   white-space: nowrap;
 }
+/* Authority timeline */
+.policyPlane ol.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  border-left: 2px solid var(--line);
+}
+.policyPlane ol.timeline > li {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.6rem 0 0.6rem 0.9rem;
+  position: relative;
+}
+.policyPlane ol.timeline .mark {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.policyPlane ol.timeline li[data-kind="PAUSED"] .mark,
+.policyPlane ol.timeline li[data-kind="PROOFS_INVALIDATED"] .mark {
+  border-color: var(--ask);
+}
+.policyPlane ol.timeline p {
+  margin: 0.1rem 0;
+}
+.policyPlane ol.timeline pre {
+  overflow-x: auto;
+  font-size: 0.8rem;
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .policyPlane * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

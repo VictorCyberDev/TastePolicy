@@ -163,6 +163,8 @@ export default function PlatformPanel() {
           <Link href="/account/rules">
             Your rules: how much agents may do →
           </Link>
+          {" · "}
+          <Link href="/account/timeline">What happened, in order →</Link>
         </p>
       )}
       {!account ? (

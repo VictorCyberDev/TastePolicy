@@ -8,6 +8,7 @@ import { object } from "@/server/subjects/common";
 import { epochCommitment, epochRef } from "./attest-epoch";
 import { issueAttestation, newJti, signStatusList } from "@/lib/attest/issue";
 import { STATUS } from "@/lib/attest/status-list";
+import { buildAuthorityTimeline } from "@/lib/timeline/authority-timeline";
 import { presentedCommitments } from "@/lib/commit/commitments";
 import { verifyPresentation, type VerifyResult } from "@/lib/attest/verify";
 import { safeFetchText } from "@/lib/attest/safe-fetch";
@@ -208,6 +209,140 @@ export class AttestationService extends LeaseService {
           list,
         },
         cfg.signer,
+      );
+    });
+  }
+  // The owner's unified authority timeline: a derived, privacy-redacted read
+  // over append-only records. It decides nothing and can be rebuilt any time.
+  async authorityTimeline(p: Principal, raw: unknown) {
+    const v = object(raw, ["passportRef", "limit"]),
+      ref = typeof v.passportRef === "string" ? v.passportRef : "",
+      limit = v.limit === undefined ? 200 : Number(v.limit);
+    if (
+      !/^tp_[a-f0-9]{48}$/.test(ref) ||
+      !Number.isInteger(limit) ||
+      limit < 1 ||
+      limit > 500
+    )
+      fail("INVALID_INPUT");
+    return this.store.transaction(async (r) => {
+      await this.locked(r, p, [], undefined, false);
+      if (p.kind !== "SESSION") fail("ACCESS_DENIED");
+      const passport = await r.platform.passport(ref);
+      if (!passport || passport.userId !== p.userId) fail("PASSPORT_NOT_FOUND");
+      const now = this.clock();
+      const [
+        states,
+        policies,
+        overrides,
+        evals,
+        leases,
+        atts,
+        grants,
+        creds,
+        revs,
+        families,
+      ] = await Promise.all([
+        r.platform.versions(passport.profileId),
+        r.policy.versions(ref, 50),
+        r.policy.overrides(ref),
+        r.policy.evaluations(ref, 80),
+        r.leases.forPassport(ref, 30),
+        r.attest.forPassport(ref),
+        r.platform.grants(p.userId),
+        r.platform.credentials(p.userId),
+        r.platform.revocations(p.userId),
+        r.oauth.families(p.userId),
+      ]);
+      const decisions = new Map(
+        await Promise.all(
+          evals.map(
+            async (e) =>
+              [
+                e.evaluationRef,
+                await r.policy.decision(e.evaluationRef),
+              ] as const,
+          ),
+        ),
+      );
+      return buildAuthorityTimeline(
+        {
+          now,
+          passportCreatedAt: passport.createdAt,
+          states: states.map((s) => ({
+            version: s.stateVersion,
+            createdAt: s.createdAt,
+          })),
+          policies: policies.map((x) => ({
+            version: x.version,
+            createdAt: x.createdAt,
+            note: x.note,
+          })),
+          overrides: overrides.map((o) => ({
+            overrideId: o.overrideId,
+            effect: o.effect,
+            scope: o.scope,
+            createdAt: o.createdAt,
+            expiresAt: o.expiresAt,
+            revokedAt: o.revokedAt,
+          })),
+          evaluations: evals.map((e) => {
+            const pd = decisions.get(e.evaluationRef) ?? null;
+            return {
+              evaluationRef: e.evaluationRef,
+              at: e.evaluation.evaluatedAt,
+              agentId: e.evaluation.agentId,
+              candidateName: e.evaluation.action.candidate.name,
+              outcome: pd ? pd.outcome : e.evaluation.decision.outcome,
+              baseOutcome: pd?.baseOutcome,
+              basis: pd ? pd.basis : e.evaluation.decision.basis,
+              rules: pd ? pd.rules : e.evaluation.decision.rules,
+              policyVersion: pd?.policyVersion ?? null,
+              requestedAction: e.requestedAction,
+            };
+          }),
+          leases: await Promise.all(
+            leases.map(async (l) => ({
+              leaseRef: l.leaseRef,
+              agentId: l.agentId,
+              candidateName: l.candidateName,
+              events: await r.leases.events(l.leaseRef),
+            })),
+          ),
+          attestations: atts.map((a) => ({
+            leaseRef: a.leaseRef,
+            jti: a.jti,
+            audience: a.audience,
+            issuedAt: a.issuedAt,
+            holderBound: a.holderBound,
+            delegatedTo: a.delegatedTo,
+            epoch: a.epoch,
+          })),
+          grants: grants
+            .filter((g) => g.passportRef === ref)
+            .map((g) => ({
+              grantId: g.grantId,
+              issuedAt: g.issuedAt,
+              expiresAt: g.expiresAt,
+              purpose: g.purpose,
+              revokedAt: revs.grants[g.grantId],
+            })),
+          credentials: creds
+            .filter((c) => !c.oauth)
+            .map((c) => ({
+              credentialId: c.credentialId,
+              displayLabel: c.displayLabel,
+              createdAt: c.createdAt,
+              revokedAt: revs.credentials[c.credentialId],
+            })),
+          assistants: families.map((f) => ({
+            familyId: f.familyId,
+            clientName: f.clientName,
+            connectedAt: f.createdAt,
+            revokedAt: f.revokedAt ?? undefined,
+          })),
+        },
+        limit,
       );
     });
   }

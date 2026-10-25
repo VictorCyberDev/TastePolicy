@@ -15,6 +15,9 @@ const layerOf = (f: string): number => {
   const p = rel(f);
   if (
     /^src\/lib\/attest\//.test(p) ||
+    /^src\/lib\/timeline\//.test(p) ||
+    /^src\/app\/account\/timeline\//.test(p) ||
+    p === "src/features/policy/AuthorityTimeline.tsx" ||
     /^src\/server\/platform\/(attest-|public-limit)/.test(p) ||
     /^src\/sdk\/attest/.test(p) ||
     /^src\/app\/(api\/attest|verify|api\/ready)\//.test(p) ||

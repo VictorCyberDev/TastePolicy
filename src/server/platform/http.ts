@@ -125,6 +125,8 @@ export async function handlePlatform(
         data = await service.evaluate(p, body, factory, requestId);
       else if (op === "policy") data = await service.policySummary(p, body);
       else if (op === "lease-list") data = await service.leaseList(p, body);
+      else if (op === "timeline")
+        data = await service.authorityTimeline(p, body);
       else if (op === "lease-approve")
         data = await service.leaseApprove(p, body);
       else if (op === "lease-decline")

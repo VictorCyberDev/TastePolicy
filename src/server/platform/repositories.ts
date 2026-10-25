@@ -21,6 +21,11 @@ export interface PlatformRepository {
   findCredential(id: string, hash: string): Promise<Credential | null>;
   credentials(user: string): Promise<Credential[]>;
   revokeCredential(c: Credential, at: string): Promise<void>;
+  // When the owner's grants and credentials were revoked (append-only events).
+  revocations(user: string): Promise<{
+    grants: Record<string, string>;
+    credentials: Record<string, string>;
+  }>;
   credentialRevoked(id: string): Promise<boolean>;
   op(
     user: string,
