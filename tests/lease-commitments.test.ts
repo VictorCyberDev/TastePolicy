@@ -88,9 +88,6 @@ it("evaluation and lease carry canonical commitments; presentation fields never 
       type: proposal(1).candidate.type,
       name: proposal(1).candidate.name,
       id: proposal(1).candidate.id,
-      ...(proposal(1).candidate.address
-        ? { address: proposal(1).candidate.address }
-        : {}),
       ...(proposal(1).candidate.releaseYear
         ? { releaseYear: proposal(1).candidate.releaseYear }
         : {}),

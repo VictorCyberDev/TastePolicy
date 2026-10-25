@@ -12,6 +12,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   expect(paths).toEqual(
     [
       "attestation",
+      "attestation-verify",
       "capabilities",
       "evaluate",
       "lease",
@@ -32,6 +33,7 @@ it("OpenAPI is generated from the shared contract and covers every REST operatio
   expect(new Set(PLATFORM_TOOLS.map((t) => t.op))).toEqual(
     new Set([
       "attestation",
+      "attestation-verify",
       "capabilities",
       "evaluate",
       "lease",

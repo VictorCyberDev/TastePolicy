@@ -64,6 +64,7 @@ export async function gatewayInvoke(
   if (tool.op === "lease-resume") return s.leaseResume(p, input);
   if (tool.op === "lease-release") return s.leaseRelease(p, input);
   if (tool.op === "attestation") return s.attestationIssue(p, input);
+  if (tool.op === "attestation-verify") return s.attestationVerify(input);
   if (tool.op === "evaluate")
     return s.evaluate(p, input, deps.factory, requestId);
   return s.receipt(p, input, tool.op === "status");

@@ -88,3 +88,15 @@ export type ReceiptResponse = AuthorizationResponse & {
     | "source"
   >;
 };
+
+// The choice as it is now: the material fields, or their commitments
+// (taste-commitments-v1). Unknown fields such as images are ignored.
+export interface CurrentChoice {
+  candidate?: { id: string; name: string; type: string } & Record<
+    string,
+    unknown
+  >;
+  context?: { key: string; domain: string } & Record<string, unknown>;
+  candidateCommitment?: string;
+  contextCommitment?: string;
+}

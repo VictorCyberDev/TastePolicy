@@ -42,6 +42,9 @@ export type Reason =
   | "KB_NONCE_MISMATCH"
   | "KB_AUDIENCE_MISMATCH"
   | "KB_SD_HASH_MISMATCH"
+  | "CANDIDATE_COMMITMENT_MISMATCH"
+  | "CONTEXT_COMMITMENT_MISMATCH"
+  | "COMMITMENT_NOT_DISCLOSED"
   | "LIFETIME_TOO_LONG"
   | "REPLAY";
 export const ATTESTATION_TYP = "dc+sd-jwt";
@@ -76,6 +79,11 @@ export interface VerifierConfig {
   allowSuspended?: boolean;
   // Longest accepted exp - iat (default 3600). Bounds replay-store retention.
   maxLifetimeSeconds?: number;
+  // The commitments this verifier computed itself (taste-commitments-v1) for
+  // the choice and situation it is about to act on. When set, the proof must
+  // disclose the matching commitment and it must be equal; otherwise the proof
+  // says nothing about THIS choice or situation and is refused.
+  expect?: { candidateCommitment?: string; contextCommitment?: string };
 }
 export interface VerifyResult {
   valid: boolean;
@@ -84,6 +92,22 @@ export interface VerifyResult {
   claims?: Record<string, unknown>;
   issuerTrust?: IssuerTrust;
   status?: (typeof STATUS_NAMES)[number];
+  // Cryptographic validity is not authority. A proof can be genuinely signed by
+  // an issuer you have not chosen to trust (VALID here, valid:false above), and
+  // a trusted issuer's proof can be validly signed yet no longer in force.
+  signature?: "VALID" | "INVALID" | "NOT_CHECKED";
+  // True only for a valid proof from a TRUSTED issuer.
+  trustedAuthority?: boolean;
+  // Whether the proof was compared with the verifier's own commitments. A
+  // valid proof with NOT_CHECKED speaks for some choice and situation, not
+  // necessarily the one in front of the verifier.
+  commitments?: {
+    candidate: "MATCHED" | "NOT_CHECKED";
+    context: "MATCHED" | "NOT_CHECKED";
+  };
+}
+interface Trace {
+  signature: NonNullable<VerifyResult["signature"]>;
 }
 const fail = (
   reasons: Reason[],
@@ -149,6 +173,7 @@ function timeChecks(
 async function verifyInner(
   presentation: string,
   cfg: VerifierConfig,
+  trace: Trace,
 ): Promise<VerifyResult> {
   const algorithms = cfg.algorithms ?? ["ES256", "Ed25519"],
     now = (cfg.now ?? (() => Math.floor(Date.now() / 1000)))(),
@@ -175,11 +200,25 @@ async function verifyInner(
   if (
     entry.state === "UNTRUSTED" ||
     (entry.notAfter !== undefined && entry.notAfter <= now)
-  )
+  ) {
+    // Report whether the proof is genuinely signed by the keys this verifier
+    // holds for the issuer, without ever treating that as authority.
+    const peek = await verifySigned(
+      parsed.jwt,
+      entry.jwks,
+      algorithms,
+      ATTESTATION_TYP,
+    );
+    trace.signature = peek.ok
+      ? "VALID"
+      : peek.reason === "SIGNATURE_INVALID"
+        ? "INVALID"
+        : "NOT_CHECKED";
     return fail(["ISSUER_UNTRUSTED"], {
       issuer: iss,
       issuerTrust: "UNTRUSTED",
     });
+  }
   // A compromised key verifies nothing, even if it is still published.
   const revoked = new Set(entry.revokedKids ?? []);
   try {
@@ -201,7 +240,12 @@ async function verifyInner(
     algorithms,
     ATTESTATION_TYP,
   );
-  if (!sig.ok) return fail([sig.reason], { issuer: iss });
+  if (!sig.ok) {
+    trace.signature =
+      sig.reason === "SIGNATURE_INVALID" ? "INVALID" : "NOT_CHECKED";
+    return fail([sig.reason], { issuer: iss });
+  }
+  trace.signature = "VALID";
   const p = sig.payload;
   if (p.iss !== iss) return fail(["ISSUER_UNTRUSTED"]);
   const t = timeChecks(p, now, skew);
@@ -253,6 +297,32 @@ async function verifyInner(
     if (name.startsWith("_") || Object.hasOwn(claims, name))
       return fail(["DISCLOSURE_INVALID"], { issuer: iss });
     claims[name] = value;
+  }
+
+  // Commitments: compared with what the verifier computed itself.
+  const commitments: NonNullable<VerifyResult["commitments"]> = {
+    candidate: "NOT_CHECKED",
+    context: "NOT_CHECKED",
+  };
+  for (const [want, claim, mismatch, slot] of [
+    [
+      cfg.expect?.candidateCommitment,
+      claims.candidate_commitment,
+      "CANDIDATE_COMMITMENT_MISMATCH",
+      "candidate",
+    ],
+    [
+      cfg.expect?.contextCommitment,
+      claims.context_commitment,
+      "CONTEXT_COMMITMENT_MISMATCH",
+      "context",
+    ],
+  ] as const) {
+    if (want === undefined) continue;
+    if (typeof claim !== "string")
+      return fail(["COMMITMENT_NOT_DISCLOSED"], { issuer: iss });
+    if (claim !== want) return fail([mismatch], { issuer: iss });
+    commitments[slot] = "MATCHED";
   }
 
   // Key binding.
@@ -347,7 +417,14 @@ async function verifyInner(
     !(await cfg.consumeJti(`${iss}|${p.jti}`, cfg.audience))
   )
     return fail(["REPLAY"], { issuer: iss, status: name });
-  return { valid: true, reasons: [], issuer: iss, claims, status: name };
+  return {
+    valid: true,
+    reasons: [],
+    issuer: iss,
+    claims,
+    status: name,
+    commitments,
+  };
 }
 export async function jwkKid(jwk: JWK) {
   return calculateJwkThumbprint(jwk, "sha256");
@@ -357,7 +434,14 @@ export async function verifyPresentation(
   presentation: string,
   cfg: VerifierConfig,
 ): Promise<VerifyResult> {
-  const r = await verifyInner(presentation, cfg);
+  const trace: Trace = { signature: "NOT_CHECKED" };
+  const r = await verifyInner(presentation, cfg, trace);
   // Past the trust gate every result is about a trusted issuer.
-  return r.issuerTrust || !r.issuer ? r : { ...r, issuerTrust: "TRUSTED" };
+  const out =
+    r.issuerTrust || !r.issuer ? r : { ...r, issuerTrust: "TRUSTED" as const };
+  return {
+    ...out,
+    signature: trace.signature,
+    trustedAuthority: out.valid && out.issuerTrust === "TRUSTED",
+  };
 }

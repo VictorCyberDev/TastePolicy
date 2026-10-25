@@ -117,6 +117,30 @@ export const attestationInput = z.object({
     .optional()
     .describe("Hand the proof to another agent (requires holderKey)"),
 });
+export const attestationVerifyInput = z.object({
+  presentation: z
+    .string()
+    .max(16384)
+    .describe("SD-JWT presentation (with key-binding JWT when holder-bound)"),
+  audience: z
+    .string()
+    .regex(/^https:\/\/[a-z0-9.-]{1,190}(:\d{1,5})?$/)
+    .describe("Your own origin: the proof must have been issued for it"),
+  nonce: z.string().max(200).optional().describe("Your key-binding challenge"),
+  dryRun: z.boolean().optional().describe("Check without recording the proof"),
+  requireKeyBinding: z.boolean().optional(),
+  expect: z
+    .object({
+      candidate: z.looseObject({}).optional(),
+      context: z.looseObject({}).optional(),
+      candidateCommitment: commitmentField.optional(),
+      contextCommitment: commitmentField.optional(),
+    })
+    .optional()
+    .describe(
+      "The choice and situation you are about to act on (or their commitments). Without it the result says the proof was NOT compared with them.",
+    ),
+});
 export const evaluationRefInput = z.object({ evaluationRef: ref });
 export const emptyInput = z.object({});
 
@@ -134,7 +158,8 @@ export interface PlatformTool {
     | "lease-checkpoint"
     | "lease-resume"
     | "lease-release"
-    | "attestation";
+    | "attestation"
+    | "attestation-verify";
   title: string;
   description: string;
   scope: KeyScope | null;
@@ -272,6 +297,17 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     readOnly: false,
     idempotent: false,
     input: attestationInput,
+  },
+  {
+    name: "tastepolicy_verify_attestation",
+    op: "attestation-verify",
+    title: "Verify a received attestation",
+    description:
+      "Use this when another agent hands you a TastePolicy proof and you are about to rely on it. Checks signature, issuer trust, audience, status, replay, key binding and, if you pass the choice and situation you are acting on, that the proof is about them. A valid result is evidence of preference authority only, never permission to buy, book or pay, and is not trust in the issuer unless trustedAuthority is true.",
+    scope: null,
+    readOnly: false,
+    idempotent: false,
+    input: attestationVerifyInput,
   },
 ];
 export const toolByName = (name: string) =>

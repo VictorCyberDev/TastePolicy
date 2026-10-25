@@ -7,6 +7,8 @@ import {
   evaluationRefInput,
   passportInput,
   attestationInput,
+  attestationVerifyInput,
+  leaseCheckInput,
   leaseRefInput,
   leaseRequestInput,
   leaseResumeInput,
@@ -86,10 +88,10 @@ export function openApiDocument(origin: string) {
         post: op("Request a lease", "TASTE_EVALUATE", leaseRequestInput),
       },
       "/api/v1/lease-verify": {
-        post: op("Verify a lease", "RECEIPT_READ", leaseRefInput),
+        post: op("Verify a lease", "RECEIPT_READ", leaseCheckInput),
       },
       "/api/v1/lease-checkpoint": {
-        post: op("Checkpoint a lease", "TASTE_EVALUATE", leaseRefInput),
+        post: op("Checkpoint a lease", "TASTE_EVALUATE", leaseCheckInput),
       },
       "/api/v1/lease-resume": {
         post: op(
@@ -106,6 +108,13 @@ export function openApiDocument(origin: string) {
           "Issue a verifiable attestation for a lease",
           "TASTE_EVALUATE",
           attestationInput,
+        ),
+      },
+      "/api/v1/attestation-verify": {
+        post: op(
+          "Verify an attestation you received (any valid credential)",
+          null,
+          attestationVerifyInput,
         ),
       },
       "/api/v1/evaluate": {

@@ -12,8 +12,11 @@ import type {
   EvaluationRequest,
   AuthorizationResponse,
   ReceiptResponse,
+  CurrentChoice,
 } from "./types";
 export type {
+  CurrentChoice,
+  SubjectiveAction,
   PassportSummary,
   EvaluationRequest,
   AuthorizationResponse,
@@ -32,7 +35,15 @@ export interface Lease {
     | "RELEASED";
   valid: boolean;
   permitted: string[];
+  // The same permission on the subjective-action ladder.
+  permittedActions: import("./types").SubjectiveAction[];
   reasons: string[];
+  // Canonical commitments to the choice this authority was evaluated for.
+  commitments: {
+    schemaVersion: "taste-commitments-v1";
+    candidate: string;
+    context: string;
+  } | null;
   expiresAt: string;
   checkpointDueAt: string;
   rev: number;
@@ -90,6 +101,7 @@ export class TastePolicyClient {
       | "lease-checkpoint"
       | "lease-resume"
       | "lease-release"
+      | "attestation-verify"
       | "attestation"
       | "evaluate"
       | "receipt"
@@ -147,20 +159,30 @@ export class TastePolicyClient {
   }) {
     return this.call<Lease>("lease", input);
   }
-  leaseVerify(leaseRef: string) {
-    return this.call<Lease>("lease-verify", { leaseRef });
+  // Pass `current` (the candidate and context as they are now, or their
+  // commitments) so TastePolicy can notice that the choice itself changed. A
+  // change you do not present cannot be detected.
+  leaseVerify(leaseRef: string, current?: CurrentChoice) {
+    return this.call<Lease>("lease-verify", { leaseRef, ...current });
   }
-  leaseCheckpoint(leaseRef: string, expectedRev?: number) {
+  leaseCheckpoint(
+    leaseRef: string,
+    expectedRev?: number,
+    current?: CurrentChoice,
+  ) {
     return this.call<Lease>("lease-checkpoint", {
       leaseRef,
       ...(expectedRev === undefined ? {} : { expectedRev }),
+      ...current,
     });
   }
-  leaseResume(input: {
-    idempotencyKey: string;
-    leaseRef: string;
-    evaluationRef: string;
-  }) {
+  leaseResume(
+    input: {
+      idempotencyKey: string;
+      leaseRef: string;
+      evaluationRef: string;
+    } & CurrentChoice,
+  ) {
     return this.call<Lease>("lease-resume", input);
   }
   leaseRelease(leaseRef: string) {
@@ -181,6 +203,18 @@ export class TastePolicyClient {
       disclosable: string[];
       statusUri: string;
     }>("attestation", input);
+  }
+  // For a proof another agent handed you. Credential-free alternative:
+  // POST /api/attest/verify or verifyPresentation from "tastepolicy/attest".
+  verifyAttestation(input: {
+    presentation: string;
+    audience: string;
+    nonce?: string;
+    dryRun?: boolean;
+    requireKeyBinding?: boolean;
+    expect?: CurrentChoice;
+  }) {
+    return this.call<Record<string, unknown>>("attestation-verify", input);
   }
   evaluate(input: EvaluationRequest) {
     return this.call<AuthorizationResponse>("evaluate", input);

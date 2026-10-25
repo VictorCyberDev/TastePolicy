@@ -117,3 +117,44 @@ export function evaluationCommitments(
     context: commitContext(x),
   };
 }
+
+// What a relying party says the choice / situation is: the material (we compute
+// the commitment) and/or the commitment itself (the party need not hand the
+// object over). Both given must agree. Returns null for anything malformed, so
+// the caller refuses rather than treating silence as "nothing changed".
+export function presentedCommitments(
+  v: Record<string, unknown>,
+): { candidate?: string; context?: string } | null {
+  const out: { candidate?: string; context?: string } = {};
+  const one = (
+    material: unknown,
+    commitment: unknown,
+    compute: (m: unknown) => string | null,
+  ): string | undefined | null => {
+    let c: string | undefined;
+    if (material !== undefined) {
+      const x = compute(material);
+      if (!x) return null;
+      c = x;
+    }
+    if (commitment !== undefined) {
+      if (typeof commitment !== "string" || !COMMITMENT_FORMAT.test(commitment))
+        return null;
+      if (c !== undefined && c !== commitment) return null;
+      c = commitment;
+    }
+    return c;
+  };
+  const cand = one(v.candidate, v.candidateCommitment, (m) => {
+    const x = candidateMaterial(m);
+    return x ? commitCandidate(x) : null;
+  });
+  const ctx = one(v.context, v.contextCommitment, (m) => {
+    const x = contextMaterial(m);
+    return x ? commitContext(x) : null;
+  });
+  if (cand === null || ctx === null) return null;
+  if (cand !== undefined) out.candidate = cand;
+  if (ctx !== undefined) out.context = ctx;
+  return out;
+}

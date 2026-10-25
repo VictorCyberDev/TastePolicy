@@ -177,6 +177,8 @@ export async function handlePlatform(
         data = await service.leaseRelease(p, body);
       else if (op === "attestation")
         data = await service.attestationIssue(p, body);
+      else if (op === "attestation-verify")
+        data = await service.attestationVerify(body);
       else if (op === "passport") data = await service.read(p, body);
       else if (op === "evaluate")
         data = await service.evaluate(p, body, factory, requestId);

@@ -37,7 +37,7 @@ it("RFC 8785 canonical form: the published example and key ordering", () => {
   );
   expect(canonicalize({ a: undefined, b: 1 })).toBe('{"b":1}');
   expect(() => canonicalize({ a: NaN })).toThrow();
-  expect(() => canonicalize({ a: 1n })).toThrow();
+  expect(() => canonicalize({ a: BigInt(1) })).toThrow();
 });
 it("commitments are stable across equivalent serializations and ignore presentation", () => {
   const a = C(cand);

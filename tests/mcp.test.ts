@@ -76,6 +76,7 @@ for (const mode of ["auto", "legacy"] as const)
         "tastepolicy_release_lease",
         "tastepolicy_request_lease",
         "tastepolicy_resume_lease",
+        "tastepolicy_verify_attestation",
         "tastepolicy_verify_lease",
       ].sort(),
     );

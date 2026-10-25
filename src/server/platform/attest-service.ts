@@ -8,6 +8,7 @@ import { object } from "@/server/subjects/common";
 import { epochCommitment, epochRef } from "./attest-epoch";
 import { issueAttestation, newJti, signStatusList } from "@/lib/attest/issue";
 import { STATUS } from "@/lib/attest/status-list";
+import { presentedCommitments } from "@/lib/commit/commitments";
 import { verifyPresentation, type VerifyResult } from "@/lib/attest/verify";
 import { safeFetchText } from "@/lib/attest/safe-fetch";
 import type { Repositories, StateStore } from "@/server/state/repositories";
@@ -131,6 +132,13 @@ export class AttestationService extends LeaseService {
           disclosable: {
             decision: "ALLOW",
             permitted: l.permitted,
+            permitted_actions: l.permittedActions,
+            ...(l.state.fingerprint.candidateCommitment
+              ? {
+                  candidate_commitment: l.state.fingerprint.candidateCommitment,
+                  context_commitment: l.state.fingerprint.contextCommitment,
+                }
+              : {}),
             candidate_id: l.candidateId,
             candidate_name: l.candidateName,
             context_key: l.contextKey,
@@ -213,7 +221,21 @@ export class AttestationService extends LeaseService {
       "nonce",
       "dryRun",
       "requireKeyBinding",
+      "expect",
     ]);
+    // The relying party's own candidate / situation (or their commitments).
+    const expectation =
+      v.expect === undefined
+        ? undefined
+        : presentedCommitments(
+            object(v.expect, [
+              "candidate",
+              "context",
+              "candidateCommitment",
+              "contextCommitment",
+            ]),
+          );
+    if (expectation === null) fail("INVALID_INPUT");
     if (
       typeof v.presentation !== "string" ||
       v.presentation.length > 16384 ||
@@ -249,6 +271,14 @@ export class AttestationService extends LeaseService {
       clockSkewSeconds: 0,
       nonce: v.nonce as string | undefined,
       requireKeyBinding: v.requireKeyBinding === true,
+      ...(expectation
+        ? {
+            expect: {
+              candidateCommitment: expectation.candidate,
+              contextCommitment: expectation.context,
+            },
+          }
+        : {}),
       fetchStatus,
       // A separate short transaction at the very end: a rejected presentation
       // never records its jti, and nothing is nested.

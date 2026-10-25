@@ -111,11 +111,14 @@ it("issues a proof for an ACTIVE lease and the hosted verifier checks signature,
     at = await w.attest(l.leaseRef);
   expect(at.disclosable.sort()).toEqual([
     "agent_id",
+    "candidate_commitment",
     "candidate_id",
     "candidate_name",
+    "context_commitment",
     "context_key",
     "decision",
     "permitted",
+    "permitted_actions",
     "policy",
   ]);
   const full = await w.verify(at.attestation, { dryRun: true });
@@ -617,3 +620,218 @@ it("the database refuses to resurrect an invalid status entry", async () => {
       d.db.query("SELECT tastepolicy.set_status($1,$2,$3)", [list_id, idx, v]),
     ).rejects.toThrow();
 }, 40000);
+
+import { evaluationCommitments } from "@/lib/commit/commitments";
+const pricedProposal = (amount: number) =>
+  proposal(1, {
+    key: "trip",
+    domain: "destination",
+    price: { amount, currency: "USD" },
+  });
+async function pricedLease(
+  w: Awaited<ReturnType<typeof world>>,
+  amount: number,
+) {
+  const e: any = await svc.evaluate(
+    w.agent,
+    {
+      idempotencyKey: "pe" + ++n + "-key",
+      passportRef: w.ref,
+      proposal: pricedProposal(amount),
+    },
+    () => w.q.q,
+    reqId,
+  );
+  const l: any = await svc.leaseRequest(w.agent, {
+    idempotencyKey: "pl" + ++n + "-key",
+    evaluationRef: e.evaluationRef,
+  });
+  return { e, l };
+}
+
+it("the proof signs the candidate and context commitments; a verifier that recomputes its own matches, and a different price or candidate fails with a stable reason", async () => {
+  const w = await world(),
+    { e, l } = await pricedLease(w, 100),
+    at = await w.attest(l.leaseRef);
+  const mine = evaluationCommitments(
+    pricedProposal(100).candidate,
+    pricedProposal(100).context,
+  );
+  expect(mine).toMatchObject({
+    candidate: e.commitments.candidate,
+    context: e.commitments.context,
+  });
+  const share = await present(at.attestation, [
+    "decision",
+    "permitted_actions",
+    "candidate_commitment",
+    "context_commitment",
+  ]);
+  // the minimal presentation reveals digests, never the price or the account
+  expect(share).not.toMatch(/100/);
+  const ok = await w.verify(share, {
+    dryRun: true,
+    expect: {
+      candidate: pricedProposal(100).candidate,
+      context: pricedProposal(100).context,
+    },
+  });
+  expect(ok).toMatchObject({
+    valid: true,
+    signature: "VALID",
+    trustedAuthority: true,
+    commitments: { candidate: "MATCHED", context: "MATCHED" },
+  });
+  expect(ok.claims).toMatchObject({
+    decision: "ALLOW",
+    candidate_commitment: mine.candidate,
+    context_commitment: mine.context,
+    permitted_actions: ["SUGGEST", "RANK", "SHORTLIST", "ADD_TO_DRAFT"],
+  });
+  // a different current context: the authority does not apply to it
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: {
+        context: pricedProposal(450).context,
+      },
+    }),
+  ).toMatchObject({
+    valid: false,
+    reasons: ["CONTEXT_COMMITMENT_MISMATCH"],
+    signature: "VALID",
+    trustedAuthority: false,
+  });
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: {
+        candidate: { ...pricedProposal(100).candidate, name: "Another place" },
+      },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["CANDIDATE_COMMITMENT_MISMATCH"] });
+  // asking for a comparison the proof cannot support is a refusal, not a pass
+  const bare = await present(at.attestation, ["decision"]);
+  expect(
+    await w.verify(bare, {
+      dryRun: true,
+      expect: { contextCommitment: mine.context },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["COMMITMENT_NOT_DISCLOSED"] });
+  // without an expectation the result says plainly that nothing was compared
+  expect((await w.verify(share, { dryRun: true })).commitments).toEqual({
+    candidate: "NOT_CHECKED",
+    context: "NOT_CHECKED",
+  });
+  // a rejected comparison never burns the proof: the right one still verifies
+  expect(
+    await w.verify(share, {
+      expect: { contextCommitment: mine.context },
+    }),
+  ).toMatchObject({ valid: true });
+  // malformed expectations are refused
+  await expect(
+    w.verify(share, { expect: { contextCommitment: "nope" } }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+}, 60000);
+it("a context change ends the epoch: proof A stays invalid forever, a fresh evaluation resumes into a new epoch and proof B carries the new context commitment", async () => {
+  const w = await world(),
+    { e, l } = await pricedLease(w, 100);
+  const A = await w.attest(l.leaseRef);
+  expect((await w.verify(A.attestation, { dryRun: true })).valid).toBe(true);
+  now += 5_000;
+  const moved: any = await svc.leaseCheckpoint(w.agent, {
+    leaseRef: l.leaseRef,
+    context: pricedProposal(450).context,
+  });
+  expect([moved.status, moved.reasons]).toEqual([
+    "SUSPENDED",
+    ["CONTEXT_CHANGED"],
+  ]);
+  expect(await w.verify(A.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  now += 5_000;
+  const fresh: any = await svc.evaluate(
+    w.agent,
+    {
+      idempotencyKey: "pe" + ++n + "-key",
+      passportRef: w.ref,
+      proposal: pricedProposal(450),
+    },
+    () => w.q.q,
+    reqId,
+  );
+  const back: any = await svc.leaseResume(w.agent, {
+    idempotencyKey: "rs" + ++n + "-key",
+    leaseRef: l.leaseRef,
+    evaluationRef: fresh.evaluationRef,
+    context: pricedProposal(450).context,
+  });
+  expect(back.status).toBe("ACTIVE");
+  const B = await w.attest(l.leaseRef);
+  const share = await present(B.attestation, [
+    "decision",
+    "context_commitment",
+  ]);
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: { context: pricedProposal(450).context },
+    }),
+  ).toMatchObject({ valid: true });
+  // B speaks for the new context only; the old context does not match it
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: { context: pricedProposal(100).context },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["CONTEXT_COMMITMENT_MISMATCH"] });
+  // and A never comes back, even though it has not expired
+  expect(await w.verify(A.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  expect(e.commitments.context).not.toBe(fresh.commitments.context);
+}, 90000);
+it("cryptographic validity is reported apart from trust: a genuine signature by an untrusted issuer is not authority, an unknown issuer is not checked", async () => {
+  const w = await world(),
+    { l } = await pricedLease(w, 100),
+    at = await w.attest(l.leaseRef);
+  const untrusted = new AttestationService(d.store, clock, async () => ({
+    ...cfgA,
+    trusted: {
+      [cfgA.issuer]: { ...cfgA.trusted[cfgA.issuer], state: "UNTRUSTED" },
+    },
+  }));
+  expect(
+    await untrusted.attestationVerify({
+      presentation: at.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: false,
+    reasons: ["ISSUER_UNTRUSTED"],
+    issuerTrust: "UNTRUSTED",
+    signature: "VALID",
+    trustedAuthority: false,
+  });
+  const unknown = new AttestationService(d.store, clock, async () => ({
+    ...cfgA,
+    trusted: {},
+  }));
+  expect(
+    await unknown.attestationVerify({
+      presentation: at.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: false,
+    issuerTrust: "UNKNOWN",
+    signature: "NOT_CHECKED",
+    trustedAuthority: false,
+  });
+}, 60000);

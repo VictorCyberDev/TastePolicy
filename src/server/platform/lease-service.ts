@@ -24,12 +24,8 @@ import {
 } from "@/lib/lease/machine";
 import { describeAsk } from "@/lib/lease/ask";
 import {
-  candidateMaterial,
-  COMMITMENT_FORMAT,
-  commitCandidate,
-  commitContext,
-  contextMaterial,
   evaluationCommitments,
+  presentedCommitments,
 } from "@/lib/commit/commitments";
 import {
   actionLevel,
@@ -60,50 +56,10 @@ interface Presented {
   candidate?: string;
   context?: string;
 }
-// What the relying agent says the choice is right now. Either the material
-// itself (we compute the commitment) or the commitment (privacy: the agent
-// need not hand the object over). Both given must agree. A malformed value is
-// rejected, never ignored: silence must not look like "nothing changed".
+// What the relying agent says the choice is right now (material or commitment).
 function presentedOf(v: Record<string, unknown>): Presented {
-  const out: Presented = {};
-  const pick = (
-    material: unknown,
-    commitment: unknown,
-    normalize: (m: unknown) => string | null,
-    set: (c: string) => void,
-  ) => {
-    let c: string | undefined;
-    if (material !== undefined) {
-      const x = normalize(material);
-      if (!x) fail("INVALID_INPUT");
-      c = x;
-    }
-    if (commitment !== undefined) {
-      if (typeof commitment !== "string" || !COMMITMENT_FORMAT.test(commitment))
-        fail("INVALID_INPUT");
-      if (c !== undefined && c !== commitment) fail("INVALID_INPUT");
-      c = commitment as string;
-    }
-    if (c !== undefined) set(c);
-  };
-  pick(
-    v.candidate,
-    v.candidateCommitment,
-    (m) => {
-      const c = candidateMaterial(m);
-      return c ? commitCandidate(c) : null;
-    },
-    (c) => (out.candidate = c),
-  );
-  pick(
-    v.context,
-    v.contextCommitment,
-    (m) => {
-      const c = contextMaterial(m);
-      return c ? commitContext(c) : null;
-    },
-    (c) => (out.context = c),
-  );
+  const out = presentedCommitments(v);
+  if (!out) fail("INVALID_INPUT");
   return out;
 }
 const PRESENT_KEYS = [

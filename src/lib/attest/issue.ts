@@ -22,6 +22,14 @@ export interface AttestationFacts {
   disclosable: {
     decision: "ALLOW";
     permitted: string[];
+    // The same permission on the subjective-action ladder (never beyond what
+    // the owner's policy allowed this agent).
+    permitted_actions?: string[];
+    // taste-commitments-v1 of the material candidate and context this
+    // authority was evaluated for. A verifier recomputes its own and compares;
+    // they are digests, so they reveal nothing the verifier does not hold.
+    candidate_commitment?: string;
+    context_commitment?: string;
     candidate_id: string;
     candidate_name: string;
     context_key: string;

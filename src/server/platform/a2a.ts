@@ -15,6 +15,22 @@ import { BodyReadFailure, readJsonBody } from "@/server/taste/read-body";
 // synchronous skill, no streaming, no push, no stored task beyond the recorded
 // evaluation. See ADR 0013.
 export const A2A_VERSION = "1.0";
+// Opt-in extension: portable preference authority over A2A. Without it a
+// SendMessage data part is an evaluation exactly as before. See ADR 0024.
+export const AUTHORITY_EXTENSION =
+  "https://tastepolicy.dev/a2a/ext/authority-lifecycle/v1";
+export const HANDOFF_MEDIA_TYPE =
+  "application/vnd.tastepolicy.attestation+sd-jwt";
+const OPERATIONS: Record<string, string> = {
+  evaluate: "tastepolicy_evaluate_choice",
+  "lease.request": "tastepolicy_request_lease",
+  "lease.verify": "tastepolicy_verify_lease",
+  "lease.checkpoint": "tastepolicy_checkpoint_lease",
+  "lease.resume": "tastepolicy_resume_lease",
+  "lease.release": "tastepolicy_release_lease",
+  "attestation.issue": "tastepolicy_issue_attestation",
+  "attestation.verify": "tastepolicy_verify_attestation",
+};
 const HEADERS = { "Cache-Control": "no-store" };
 const DOMAIN = "a2a-protocol.org";
 
@@ -37,6 +53,22 @@ export function agentCard(origin: string) {
       streaming: false,
       pushNotifications: false,
       extendedAgentCard: false,
+      extensions: [
+        {
+          uri: AUTHORITY_EXTENSION,
+          description:
+            "Portable preference authority. Send a data part {operation, ...} with this URI in message.extensions (or the A2A-Extensions header) to request a lease, check it, resume it, issue a verifiable proof for another agent, or verify a proof you received. Preference authority only: never payment, booking or any execution authority.",
+          required: false,
+          params: {
+            operations: Object.keys(OPERATIONS),
+            handoffMediaType: HANDOFF_MEDIA_TYPE,
+            publicVerifier: `${origin}/api/attest/verify`,
+            issuerMetadata: `${origin}/.well-known/tastepolicy-issuer`,
+            commitments: "taste-commitments-v1",
+            authorityBoundary: AUTHORITY_BOUNDARY,
+          },
+        },
+      ],
     },
     securitySchemes: {
       bearer: {
@@ -56,10 +88,34 @@ export function agentCard(origin: string) {
         id: "preference_authorization",
         name: "Preference authorization",
         description:
-          "Evaluate a proposed choice against a Preference Passport. Send one data part: {passportRef, grantId?, idempotencyKey?, proposal}. The task artifact carries the taste-authorization-response. UNAVAILABLE means no judgement was possible and is not a rejection.",
+          "Use this before you select, rank, recommend, shortlist, add to a draft, present as selected, or otherwise continue a subjective preference-sensitive choice for a person (not for objective operations). Evaluate a proposed choice against a Preference Passport. Send one data part: {passportRef, grantId?, idempotencyKey?, requestedAction?, proposal}. The task artifact carries the taste-authorization-response. UNAVAILABLE means no judgement was possible and is not a rejection.",
         tags: ["authorization", "preferences", "taste"],
         examples: [
           'data part {"passportRef":"tp_…","proposal":{"agentId":"my-agent","expectedStateVersion":1,"candidate":{…},"context":{…}}}',
+        ],
+        inputModes: ["application/json"],
+        outputModes: ["application/json", "text/plain"],
+      },
+      {
+        id: "authority_lease",
+        name: "Preference authority lease",
+        description: `Extension ${AUTHORITY_EXTENSION}. After an ALLOW or an authority-confirmation ASK, hold a short-lived lease for that exact choice. Data part {operation: "lease.request"|"lease.verify"|"lease.checkpoint"|"lease.resume"|"lease.release", ...}. Verify and checkpoint accept the candidate and context as they are now; a mismatch suspends the lease. A pending owner question is TASK_STATE_INPUT_REQUIRED.`,
+        tags: ["authorization", "lease", "runtime"],
+        examples: [
+          'data part {"operation":"lease.request","evaluationRef":"tp_…","idempotencyKey":"…"}',
+          'data part {"operation":"lease.verify","leaseRef":"tl_…","context":{"key":"trip","domain":"destination","price":{"amount":100,"currency":"USD"}}}',
+        ],
+        inputModes: ["application/json"],
+        outputModes: ["application/json", "text/plain"],
+      },
+      {
+        id: "authority_attestation",
+        name: "Portable authority proof and handoff",
+        description: `Extension ${AUTHORITY_EXTENSION}. For an ACTIVE lease, issue a short-lived SD-JWT proof bound to a receiving agent's public key, then hand it over in an A2A message (media type ${HANDOFF_MEDIA_TYPE}). The receiver verifies with operation "attestation.verify" or the public verifier, passing the choice and situation it is acting on. The proof ends when the authority ends and never comes back.`,
+        tags: ["attestation", "handoff", "verification"],
+        examples: [
+          'data part {"operation":"attestation.issue","leaseRef":"tl_…","audience":"https://receiver.example","holderKey":{…},"delegateAgentId":"agent-b"}',
+          'data part {"operation":"attestation.verify","presentation":"…","audience":"https://receiver.example","nonce":"…","expect":{"context":{…}}}',
         ],
         inputModes: ["application/json"],
         outputModes: ["application/json", "text/plain"],
@@ -133,6 +189,81 @@ function mapFailure(code: string, getTask: boolean): RpcError {
   if (code === "INTERNAL_ERROR") return new RpcError(-32603, code, http);
   return new RpcError(-32020, code, http);
 }
+function leaseTask(r: Record<string, unknown>, extensions: boolean) {
+  const id = String(r.leaseRef);
+  return {
+    id,
+    contextId: String(r.passportRef),
+    status: {
+      // A pending owner question is the A2A "input required" state.
+      state:
+        r.status === "ASK_PENDING"
+          ? "TASK_STATE_INPUT_REQUIRED"
+          : "TASK_STATE_COMPLETED",
+      timestamp: String(r.issuedAt),
+    },
+    artifacts: [
+      {
+        artifactId: `${id}:lease`,
+        name: "taste-lease",
+        ...(extensions ? { extensions: [AUTHORITY_EXTENSION] } : {}),
+        parts: [
+          { data: r, mediaType: "application/json" },
+          {
+            text: `Lease ${r.status}${r.valid ? "" : " (not valid)"}. ${AUTHORITY_BOUNDARY}`,
+          },
+        ],
+      },
+    ],
+  };
+}
+function attestationTask(r: Record<string, unknown>, leaseRef: string) {
+  const id = String(r.jti);
+  return {
+    id,
+    contextId: leaseRef,
+    status: {
+      state: "TASK_STATE_COMPLETED",
+      timestamp: new Date().toISOString(),
+    },
+    artifacts: [
+      {
+        artifactId: `${id}:attestation`,
+        name: "taste-attestation",
+        extensions: [AUTHORITY_EXTENSION],
+        parts: [
+          { data: r, mediaType: HANDOFF_MEDIA_TYPE },
+          {
+            text: `Attestation for ${r.audience}. ${AUTHORITY_BOUNDARY}`,
+          },
+        ],
+      },
+    ],
+  };
+}
+function verificationTask(r: Record<string, unknown>, requestId: string) {
+  return {
+    id: `av_${requestId}`,
+    contextId: "verification",
+    status: {
+      state: "TASK_STATE_COMPLETED",
+      timestamp: new Date().toISOString(),
+    },
+    artifacts: [
+      {
+        artifactId: `av_${requestId}:verification`,
+        name: "taste-verification",
+        extensions: [AUTHORITY_EXTENSION],
+        parts: [
+          { data: r, mediaType: "application/json" },
+          {
+            text: `Proof ${r.valid ? "valid" : "not valid"}${r.valid && !r.trustedAuthority ? ", issuer not trusted" : ""}. ${AUTHORITY_BOUNDARY}`,
+          },
+        ],
+      },
+    ],
+  };
+}
 function task(response: Record<string, unknown>) {
   const id = String(response.evaluationRef);
   return {
@@ -156,7 +287,7 @@ function task(response: Record<string, unknown>) {
     ],
   };
 }
-function skillInput(message: unknown) {
+function skillInput(message: unknown, wantsIdempotency = true) {
   const m = message as {
     messageId?: unknown;
     role?: unknown;
@@ -178,7 +309,8 @@ function skillInput(message: unknown) {
     throw new RpcError(-32602, "INVALID_INPUT");
   const input = { ...(data[0].data as Record<string, unknown>) };
   // messageId is the protocol-level idempotency key (A2A §3.3.1).
-  if (input.idempotencyKey === undefined) input.idempotencyKey = m.messageId;
+  if (wantsIdempotency && input.idempotencyKey === undefined)
+    input.idempotencyKey = m.messageId;
   return input;
 }
 export async function handleA2a(
@@ -263,19 +395,74 @@ async function a2aDispatch(
     method = req.method;
     const params = (req.params ?? {}) as Record<string, unknown>;
     if (method === "SendMessage") {
-      const tool = toolByName("tastepolicy_evaluate_choice")!;
+      const message = params.message as { extensions?: unknown } | null;
+      const headerExt = (request.headers.get("a2a-extensions") ?? "")
+        .split(",")
+        .map((x) => x.trim());
+      const active =
+        headerExt.includes(AUTHORITY_EXTENSION) ||
+        (Array.isArray(message?.extensions) &&
+          message.extensions.includes(AUTHORITY_EXTENSION));
+      if (!active) {
+        const tool = toolByName("tastepolicy_evaluate_choice")!;
+        const out = (await gatewayInvoke(
+          deps,
+          p,
+          tool,
+          skillInput(params.message),
+          requestId,
+        )) as Record<string, unknown>;
+        return rpcResponse(id, { result: { task: task(out) } }, requestId);
+      }
+      // Extension active: the data part names the operation.
+      const raw = skillInput(params.message, false),
+        op = raw.operation;
+      delete raw.operation;
+      if (typeof op !== "string" || !Object.hasOwn(OPERATIONS, op))
+        throw new RpcError(-32602, "INVALID_INPUT");
+      const tool = toolByName(OPERATIONS[op])!;
+      // The message id is the idempotency key for operations that take one.
+      if (
+        raw.idempotencyKey === undefined &&
+        (op === "evaluate" || op === "lease.request" || op === "lease.resume")
+      )
+        raw.idempotencyKey = (
+          params.message as { messageId: string }
+        ).messageId;
       const out = (await gatewayInvoke(
         deps,
         p,
         tool,
-        skillInput(params.message),
+        raw,
         requestId,
       )) as Record<string, unknown>;
-      return rpcResponse(id, { result: { task: task(out) } }, requestId);
+      const shaped =
+        op === "evaluate"
+          ? task(out)
+          : op.startsWith("lease.")
+            ? leaseTask(out, true)
+            : op === "attestation.issue"
+              ? attestationTask(out, String(raw.leaseRef))
+              : verificationTask(out, requestId);
+      return rpcResponse(id, { result: { task: shaped } }, requestId, 200, {
+        "A2A-Extensions": AUTHORITY_EXTENSION,
+      });
     }
     if (method === "GetTask") {
       if (typeof params.id !== "string")
         throw new RpcError(-32602, "INVALID_INPUT");
+      // A lease task is read through the same authoritative verify as every
+      // other door; an evaluation task through the recorded status.
+      if (/^tl_[a-f0-9]{48}$/.test(params.id)) {
+        const out = (await gatewayInvoke(
+          deps,
+          p,
+          toolByName("tastepolicy_verify_lease")!,
+          { leaseRef: params.id },
+          requestId,
+        )) as Record<string, unknown>;
+        return rpcResponse(id, { result: leaseTask(out, true) }, requestId);
+      }
       const tool = toolByName("tastepolicy_get_status")!;
       const out = (await gatewayInvoke(
         deps,
@@ -289,6 +476,17 @@ async function a2aDispatch(
     if (method === "CancelTask") {
       if (typeof params.id !== "string")
         throw new RpcError(-32602, "INVALID_INPUT");
+      // Cancelling a lease task releases the lease (the agent finishes with it).
+      if (/^tl_[a-f0-9]{48}$/.test(params.id)) {
+        const out = (await gatewayInvoke(
+          deps,
+          p,
+          toolByName("tastepolicy_release_lease")!,
+          { leaseRef: params.id },
+          requestId,
+        )) as Record<string, unknown>;
+        return rpcResponse(id, { result: leaseTask(out, true) }, requestId);
+      }
       await gatewayInvoke(
         deps,
         p,
