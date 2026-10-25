@@ -119,10 +119,12 @@ export default function VerifyProof() {
     <main className="policyPlane">
       <h1>Check a TastePolicy proof</h1>
       <p className="help">
-        A proof says an agent was allowed to recommend one choice, for a short
-        time. It never means anyone may buy, book or pay, and it stops being
-        valid the moment the permission ends. Only what the holder chose to
-        share is shown.
+        A proof says an agent was allowed to take a subjective step with one
+        choice (for example suggest it or add it to a draft), for a short time.
+        It never means anyone may buy, book or pay. It stops being valid when
+        the permission ends, as the issuer records it, and a proof never becomes
+        valid again. Only what the holder chose to share is shown, and it
+        applies to your situation only if you check it against yours.
       </p>
       <p role="status" aria-live="polite">
         {notice}

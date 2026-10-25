@@ -1,5 +1,6 @@
 import Link from "next/link";
 import RuleBoundary from "./RuleBoundary";
+import CapabilityTable from "./CapabilityTable";
 import "./policy.css";
 
 const STEPS: [string, string][] = [
@@ -18,7 +19,7 @@ const STEPS: [string, string][] = [
   ],
   [
     "The agent gets a result it can prove",
-    "A short permission for one choice, which ends the moment anything it relied on changes.",
+    "A short permission for one choice. It pauses when your information, your rules or the choice itself changes, as far as TastePolicy is told.",
   ],
   [
     "Execution is a separate question",
@@ -55,12 +56,17 @@ export default function Product() {
         <h2 id="you">What you control</h2>
         <ul>
           <li>
-            <Link href="/account/rules">Your rules</Link>: when agents may act,
-            when they must ask, how fresh your taste information must be.
+            <Link href="/account/rules">Your rules</Link>: how far each agent
+            may go, when it must ask, which choices need extra care, how fresh
+            your taste information must be.
           </li>
           <li>
             <Link href="/account/leases">What agents may do now</Link>: the
             permissions in force, and one button to stop them all.
+          </li>
+          <li>
+            <Link href="/account/timeline">What happened, in order</Link>: every
+            question, rule, permission and shared proof.
           </li>
           <li>
             <Link href="/account">Connected assistants</Link>: disconnect any of
@@ -72,6 +78,7 @@ export default function Product() {
           </li>
         </ul>
       </section>
+      <CapabilityTable />
       <p>
         <Link href="/developers">For developers →</Link>
       </p>

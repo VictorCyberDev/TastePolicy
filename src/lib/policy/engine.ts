@@ -4,7 +4,6 @@ import type { EvaluationResult, QlooEntity } from "@/types/domain";
 import { applicable } from "@/server/state/policy";
 import {
   actionLevel,
-  LEGACY_PERMITTED_ACTIONS,
   SUBJECTIVE_ACTIONS,
   type ActionTrace,
   type CeilingSource,

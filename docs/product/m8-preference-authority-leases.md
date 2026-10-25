@@ -4,7 +4,7 @@ Design record: ADR 0016.
 
 ## For a person
 
-`/account/leases` shows what agents may do right now. When your own rule says "ask me first", the agent can ask you one plain question: **Allow this once** (for 5 minutes to 4 hours) or **Not this time**. If TastePolicy is missing a fact (for example the price), you are not asked to approve anything: the fact is supplied and the choice is decided again. You can end any permission, or stop every agent at once. Each permission lets an agent recommend or add one choice to a draft. It never lets an agent buy, book or pay, and it pauses itself the moment something it relied on changes.
+`/account/leases` shows what agents may do right now. When your own rule says "ask me first", the agent can ask you one plain question: **Allow this once** (for 5 minutes to 4 hours) or **Not this time**. If TastePolicy is missing a fact (for example the price), you are not asked to approve anything: the fact is supplied and the choice is decided again. You can end any permission, or stop every agent at once. Each permission lets an agent recommend or add one choice to a draft. It never lets an agent buy, book or pay, and it pauses itself when something it relied on changes and TastePolicy can see the change: your taste information, your rules, a share, a temporary permission, or, if the agent tells TastePolicy what the choice and situation are now, the choice or situation itself (a changed price, for example). A change in the outside world that nobody tells TastePolicy about cannot be noticed, so agents are expected to verify and check in with the current choice before they rely on a permission.
 
 ## For an agent
 

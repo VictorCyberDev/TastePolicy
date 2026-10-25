@@ -23,7 +23,6 @@ import {
   permitted,
   currentState,
   versionGroup,
-  signed,
   checkHash,
   replayEvaluation,
   member,

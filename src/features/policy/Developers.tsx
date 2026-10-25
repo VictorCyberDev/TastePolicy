@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CapabilityTable from "./CapabilityTable";
 import "./policy.css";
 
 const STAGES: [string, string, string][] = [
@@ -9,17 +10,17 @@ const STAGES: [string, string, string][] = [
   ],
   [
     "Control",
-    "Owner rules: freshness, autonomy ceilings, temporary permissions. Every answer carries the rule that decided it.",
+    "Owner rules: freshness, autonomy, a five-step action ladder (suggest to present as selected), sensitive-choice rules, temporary permissions. Every answer carries the rule that decided it.",
     "docs/product/m7-subjective-policy-control-plane.md",
   ],
   [
     "Enforce",
-    "Short leases for one choice. ASK is typed: an authority confirmation can wait for the owner, a missing fact needs a new evaluation.",
+    "Short leases for one choice, bound to commitments of the choice and situation. ASK is typed: an authority confirmation can wait for the owner, a missing fact needs a new evaluation.",
     "docs/product/m8-preference-authority-leases.md",
   ],
   [
     "Verify",
-    "Selective-disclosure proofs any party can check, with epochs that end when authority ends. Run the Compatible v1 suite.",
+    "Selective-disclosure proofs any party can check against its own choice and situation, with epochs that end when authority ends and never return. Explicit-trust issuers. Run the Compatible v1 suite.",
     "docs/conformance/tastepolicy-compatible.md",
   ],
 ];
@@ -58,6 +59,7 @@ export default function Developers() {
           </li>
         </ul>
       </section>
+      <CapabilityTable />
       <p>
         Authority is cultural preference only. No purchase, payment, booking or
         execution authority is ever implied.

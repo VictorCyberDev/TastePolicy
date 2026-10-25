@@ -47,12 +47,14 @@ Read the actual current stateVersion; the illustrative 1 is not permission to re
 
 The response has schemaVersion `taste-authorization-response-v1`, evaluationRef, passportRef, stateVersion/hash, decision, decisionBasis, unresolvedFactors, receiptRef, status COMPLETED, continuation and createdAt. COMPLETED means the evaluation operation finished, including an explicit UNAVAILABLE outcome; it does not mean cultural evidence was available. Receipt retrieval returns recorded captured evidence and makes no Qloo request.
 
-| Outcome     | Continuation permitted            | Automatic retry |
-| ----------- | --------------------------------- | --------------- |
-| ALLOW       | recommend, add_to_draft           | false           |
-| ASK         | request_clarification             | false           |
-| REJECT      | do_not_proceed, offer_repair      | false           |
-| UNAVAILABLE | do_not_assume_negative_preference | false           |
+| Outcome     | Continuation permitted                     | Automatic retry |
+| ----------- | ------------------------------------------ | --------------- |
+| ALLOW       | recommend, add_to_draft (see ladder below) | false           |
+| ASK         | request_clarification                      | false           |
+| REJECT      | do_not_proceed, offer_repair               | false           |
+| UNAVAILABLE | do_not_assume_negative_preference          | false           |
+
+`continuation.permittedActions` expresses the same permission on the subjective-action ladder: SUGGEST, RANK, SHORTLIST, ADD_TO_DRAFT, PRESENT_AS_SELECTED. The legacy words map as `recommend` = SHORTLIST and `add_to_draft` = ADD_TO_DRAFT, so a legacy ALLOW (no ladder configured, no `requestedAction`) permits SUGGEST, RANK, SHORTLIST and ADD_TO_DRAFT and never PRESENT_AS_SELECTED. Send `requestedAction` to say how far you intend to go; if that is beyond the ceiling the owner set for this agent and kind of choice, an ALLOW becomes an ASK of kind AUTHORITY_CONFIRMATION (the owner can allow that one exact choice). Hard blocks, saved limits, UNAVAILABLE and group vetoes are never changed by the ladder. `commitments` (`taste-commitments-v1`) are canonical digests of the candidate and context that were evaluated; present the current ones on lease verify/checkpoint to have a change noticed.
 
 These labels do not invoke clarification/repair automatically. The response always retains a cultural-only authority boundary. No confidence percentage is computed.
 

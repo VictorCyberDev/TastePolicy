@@ -133,7 +133,7 @@ Minimal by construction: proofs carry no taste data or identifiers; the holder c
 
 ## 31. Revocation
 
-Lease → status bit in the same transaction (SQL trigger), including cascade deletion; policy publish, override end, grant revoke and Passport update settle live leases in-transaction. Visible externally after the signed list is next served: HTTP cache 60 s, signed-list reuse only while unchanged and ≤30 s, verifier freshness rule `ttl` + skew. Time-based endings are covered by the proof's own `exp`. A resumed lease re-validates its unexpired proofs (documented).
+Lease → status bit in the same transaction (SQL trigger), including cascade deletion; policy publish, override end, grant revoke and Passport update settle live leases in-transaction. Visible externally after the signed list is next served: HTTP cache 60 s, signed-list reuse only while unchanged and ≤30 s, verifier freshness rule `ttl` + skew. Time-based endings are covered by the proof's own `exp`. A resumed lease does not re-validate earlier proofs: leaving ACTIVE invalidates the epoch's proofs permanently and resume starts a new epoch (ADR 0020).
 
 ## 32. Reliability
 

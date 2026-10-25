@@ -1,13 +1,11 @@
 // @vitest-environment node
 /* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON responses */
-import { randomUUID } from "node:crypto";
 import { beforeAll, afterAll, it, expect } from "vitest";
 import {
   platformDatabase,
   account,
   init,
   subjectProvider,
-  future,
 } from "./platform-fixtures";
 import { LeaseService } from "@/server/platform/lease-service";
 import {
@@ -17,8 +15,6 @@ import {
 } from "@/lib/policy/types";
 import { proposal, reqId } from "./interactive-fixtures";
 import type { Principal } from "@/lib/platform/types";
-import { stateHash } from "@/server/state/service";
-import type { StateEntry } from "@/lib/state/types";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
 let now = Date.now();

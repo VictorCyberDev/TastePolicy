@@ -1,8 +1,7 @@
 // @vitest-environment node
 import { it, expect } from "vitest";
 import { syntheticReceipt } from "./receipt-presentation-fixture";
-import { stateDecision } from "@/server/state/policy";
-import { evaluateWithPolicy, evidenceClass } from "@/lib/policy/engine";
+import { evaluateWithPolicy } from "@/lib/policy/engine";
 import { classifyPolicyChange } from "@/lib/policy/composition";
 import { policyDocument } from "@/lib/policy/validation";
 import { classifyAsk } from "@/lib/lease/ask";
@@ -18,7 +17,6 @@ import type { Context, StateEntry, StateVersion } from "@/lib/state/types";
 const now = "2026-10-20T12:00:00.000Z",
   old = "2026-01-01T00:00:00.000Z",
   allow = syntheticReceipt(0.9),
-  reject = syntheticReceipt(0.2),
   candidate = allow.candidate,
   ctx: Context = { key: "trip", domain: "destination" };
 const available = (r: typeof allow) => ({
