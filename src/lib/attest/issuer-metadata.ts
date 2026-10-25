@@ -1,4 +1,5 @@
 import { VCT } from "./issue";
+import { SUBJECTIVE_ACTIONS } from "@/lib/policy/types";
 
 // Issuer metadata (tastepolicy-issuer-metadata-v1): what a verifier can learn
 // about an issuer by fetching it. Reading this document is *discovery*; it
@@ -11,7 +12,14 @@ export interface IssuerMetadata {
   metadataVersion: number;
   vct: string[];
   authority: "CULTURAL_ONLY";
+  // Legacy continuation words (kept for existing verifiers).
   supportedActions: string[];
+  // The subjective-action ladder a proof's permitted_actions draws from.
+  supportedActionLadder?: string[];
+  // Commitment format a proof's candidate_commitment / context_commitment use.
+  commitmentSchema?: string;
+  // Optional capabilities beyond the base profile.
+  extensions?: string[];
   algorithms: string[];
   jwksUri: string;
   keys: {
@@ -44,6 +52,9 @@ export function buildIssuerMetadata(
     vct: [VCT],
     authority: "CULTURAL_ONLY",
     supportedActions: ["recommend", "add_to_draft"],
+    supportedActionLadder: [...SUBJECTIVE_ACTIONS],
+    commitmentSchema: "taste-commitments-v1",
+    extensions: ["https://tastepolicy.dev/a2a/ext/authority-lifecycle/v1"],
     algorithms: ["ES256"],
     jwksUri: `${issuer}/.well-known/jwks.json`,
     keys,
@@ -94,6 +105,14 @@ export function validateIssuerMetadata(
   if (
     !Array.isArray(d.supportedActions) ||
     d.supportedActions.some((a) => !["recommend", "add_to_draft"].includes(a))
+  )
+    p.push("ACTIONS_EXCEED_BOUNDARY");
+  if (
+    d.supportedActionLadder !== undefined &&
+    (!Array.isArray(d.supportedActionLadder) ||
+      d.supportedActionLadder.some(
+        (a) => !(SUBJECTIVE_ACTIONS as readonly string[]).includes(a),
+      ))
   )
     p.push("ACTIONS_EXCEED_BOUNDARY");
   if (

@@ -835,3 +835,136 @@ it("cryptographic validity is reported apart from trust: a genuine signature by 
     trustedAuthority: false,
   });
 }, 60000);
+
+import {
+  admitIssuer,
+  AdmissionRefused,
+  inspectIssuer,
+} from "@/lib/attest/federation";
+import { buildIssuerMetadata } from "@/lib/attest/issuer-metadata";
+it("federation: discover → inspect → explicitly trust → verify; discovery alone never trusts, and a forged kid or a flawed document cannot be admitted", async () => {
+  const b = await makeConfig("https://issuer-two.test");
+  const svcB = new AttestationService(d.store, clock, async () => b.cfg);
+  const docs: Record<string, string> = {
+    "https://issuer-two.test/.well-known/tastepolicy-issuer": JSON.stringify(
+      buildIssuerMetadata(b.cfg.issuer, b.cfg.keys),
+    ),
+    "https://issuer-two.test/.well-known/jwks.json": JSON.stringify(b.cfg.jwks),
+  };
+  const fetchText = async (u: string) => {
+    if (!(u in docs)) throw Error("404");
+    return docs[u];
+  };
+  const found = await inspectIssuer("https://issuer-two.test", fetchText);
+  expect(found).toMatchObject({
+    trust: "UNKNOWN",
+    problems: [],
+    keys: [{ state: "ACTIVE" }],
+  });
+  expect(found.metadata?.supportedActionLadder).toEqual([
+    "SUGGEST",
+    "RANK",
+    "SHORTLIST",
+    "ADD_TO_DRAFT",
+    "PRESENT_AS_SELECTED",
+  ]);
+  const w = await world(),
+    l = await w.lease();
+  const atB = (await svcB.attestationIssue(w.agent, {
+    leaseRef: l.leaseRef,
+    audience: AUD,
+  })) as Record<string, any>;
+  // inspected, yet still not trusted
+  expect(await w.verify(atB.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["ISSUER_UNTRUSTED"],
+    issuerTrust: "UNKNOWN",
+    signature: "NOT_CHECKED",
+  });
+  // admission needs the issuer and the active key id, confirmed
+  const active = found.keys.find((k) => k.state === "ACTIVE")!.kid;
+  expect(() =>
+    admitIssuer(found, { issuer: found.issuer, activeKid: "wrong" }),
+  ).toThrow(AdmissionRefused);
+  expect(() =>
+    admitIssuer(found, { issuer: "https://other.test", activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  const admitted = admitIssuer(found, {
+    issuer: found.issuer,
+    activeKid: active,
+  });
+  expect(admitted.entry.state).toBe("TRUSTED");
+  const trusting = new AttestationService(
+    d.store,
+    clock,
+    async () => ({
+      ...cfgA,
+      trusted: { ...cfgA.trusted, [admitted.issuer]: admitted.entry },
+    }),
+    async (uri) => (await svcB.statusListToken(Number(uri.split("/").pop())))!,
+  );
+  expect(
+    await trusting.attestationVerify({
+      presentation: atB.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: true,
+    trustedAuthority: true,
+    issuer: "https://issuer-two.test",
+  });
+  // a flawed document cannot be admitted
+  const flawed = {
+    ...JSON.parse(
+      docs["https://issuer-two.test/.well-known/tastepolicy-issuer"],
+    ),
+    authority: "EVERYTHING",
+  };
+  const bad = await inspectIssuer("https://issuer-two.test", async (u) =>
+    u.endsWith("tastepolicy-issuer") ? JSON.stringify(flawed) : docs[u],
+  );
+  expect(bad.problems).toContain("AUTHORITY");
+  expect(() =>
+    admitIssuer(bad, { issuer: bad.issuer, activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  // someone else's key published under the trusted key's name
+  const thief = await makeConfig("https://issuer-two.test");
+  const forgedJwks = {
+    keys: [{ ...thief.pub, kid: active }],
+  };
+  const forged = await inspectIssuer("https://issuer-two.test", async (u) =>
+    u.endsWith("jwks.json") ? JSON.stringify(forgedJwks) : docs[u],
+  );
+  expect(forged.problems).toContain("KID_NOT_THUMBPRINT");
+  expect(() =>
+    admitIssuer(forged, { issuer: forged.issuer, activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  // unreachable or off-origin documents are reported, never guessed
+  expect(
+    (await inspectIssuer("https://nowhere.test", fetchText)).problems,
+  ).toEqual(["METADATA_UNREACHABLE"]);
+  expect(
+    (await inspectIssuer("http://insecure.test", fetchText)).problems,
+  ).toEqual(["ORIGIN_INVALID"]);
+  // a revoked key is pinned out
+  const revokedKid = "revoked-kid-1";
+  const withRevoked = await inspectIssuer(
+    "https://issuer-two.test",
+    async (u) =>
+      u.endsWith("tastepolicy-issuer")
+        ? JSON.stringify(
+            buildIssuerMetadata(b.cfg.issuer, {
+              ...b.cfg.keys,
+              revoked: [revokedKid],
+            }),
+          )
+        : docs[u],
+  );
+  expect(
+    admitIssuer(withRevoked, {
+      issuer: withRevoked.issuer,
+      activeKid: active,
+    }).entry.revokedKids,
+  ).toEqual([revokedKid]);
+}, 60000);
