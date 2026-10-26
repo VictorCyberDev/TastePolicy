@@ -58,6 +58,27 @@ export function createAuthentication(
     },
   });
 }
+
+// Better Auth uses unqualified model names, so each connection must enter the
+// TastePolicy schema before Better Auth can issue its first query. Do this as a
+// normal SQL command rather than PostgreSQL's startup `options` parameter:
+// managed poolers such as Neon reject `options=...search_path...` in the
+// startup packet. The connect listener runs synchronously and queues this SET
+// before the client can be handed to Better Auth; pg then serializes following
+// queries behind it.
+export function createAuthenticationPool(connectionString: string) {
+  const pool = new Pool({
+    connectionString,
+    max: 3,
+    connectionTimeoutMillis: 5000,
+    statement_timeout: 5000,
+  });
+  pool.on("connect", (client) => {
+    void client.query("SET search_path=tastepolicy");
+  });
+  return pool;
+}
+
 let authentication: ReturnType<typeof createAuthentication> | undefined;
 export function getAuthentication() {
   if (
@@ -67,13 +88,7 @@ export function getAuthentication() {
   )
     return null;
   authentication ??= createAuthentication(
-    new Pool({
-      connectionString: process.env.DATABASE_URL,
-      options: "-c search_path=tastepolicy",
-      max: 3,
-      connectionTimeoutMillis: 5000,
-      statement_timeout: 5000,
-    }),
+    createAuthenticationPool(process.env.DATABASE_URL),
     process.env.BETTER_AUTH_SECRET,
     process.env.BETTER_AUTH_URL,
   );
