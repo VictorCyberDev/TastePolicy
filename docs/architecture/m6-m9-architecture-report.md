@@ -57,7 +57,7 @@ Twelve tools from the contract, with explicit annotations (`readOnlyHint`, `dest
 
 ## 12. A2A
 
-Hand-rolled 1.0 JSON-RPC: `SendMessage` returns a COMPLETED task with the decision artifact (UNAVAILABLE is a normal artifact, not a failure); `GetTask` is scoped to the caller and masks others' tasks; `A2A-Version` enforced; streaming, push, `ListTasks` and extended card return the A2A error for unsupported operations. Verified with the official `@a2a-js/sdk` client. Gemini Enterprise registration needs A2A 0.3 and is **not** supported.
+Hand-rolled 1.0 JSON-RPC plus the opt-in authority-lifecycle extension (leases, key-bound proof issue and verify, lease tasks with `TASK_STATE_INPUT_REQUIRED`; ADR 0026). `SendMessage` returns a COMPLETED task with the decision artifact (UNAVAILABLE is a normal artifact, not a failure); `GetTask` is scoped to the caller and masks others' tasks; `A2A-Version` enforced; streaming, push, `ListTasks` and extended card return the A2A error for unsupported operations. Verified with the official `@a2a-js/sdk` client. Gemini Enterprise registration needs A2A 0.3 and is **not** supported.
 
 ## 13. OpenAI integration
 
@@ -93,7 +93,7 @@ Base decision → hard rules final (`USER_HARD_BLOCK`, `CONTEXT_CONSTRAINT`, UNA
 
 ## 21. Progressive autonomy
 
-Levels `OBSERVE`, `CONFIRM_ABOVE_LIMIT`, `AUTONOMOUS`; agent beats kind beats default; unknown price under a limit asks. Raising autonomy needs a fresh sign-in; lowering does not. The system may suggest promotion from recorded history; it never applies it.
+Two additive layers. Autonomy levels `OBSERVE`, `CONFIRM_ABOVE_LIMIT`, `AUTONOMOUS`; agent beats kind beats default; unknown price under a limit asks. On top of that, the subjective-action ladder SUGGEST < RANK < SHORTLIST < ADD_TO_DRAFT < PRESENT_AS_SELECTED with an owner-set ceiling per agent, kind of choice and default, a `requestedAction` on evaluate, and an ASK (authority confirmation) when the request goes past the ceiling (ADR 0024). Sensitive-choice rules and a deployment-level organization ceiling can only lower. Raising autonomy or a ceiling needs a fresh sign-in; lowering does not. The system may suggest promotion from recorded history; it never applies it.
 
 ## 22. Temporary overrides
 
@@ -121,7 +121,7 @@ Issuer id is the pinned `TASTEPOLICY_PUBLIC_ORIGIN`; one ES256 key from `TASTEPO
 
 ## 28. Federation
 
-No federation protocol. A verifier holds an explicit trust list (issuer, keys, accepted `vct`); tested with a second independent issuer, which is rejected unless listed and cannot be vouched for by another issuer's key. OpenID Federation 1.0, ETSI trust lists, `did:web` and wallet protocols are out of scope (ADR 0017/0018).
+No federation protocol and no registry. A verifier holds an explicit trust list (issuer, keys, accepted `vct`). The supported path is discover → inspect → explicitly trust → verify (ADR 0027): inspection reports an issuer's documents and key states with trust UNKNOWN; admission needs a deliberate confirmation of the issuer and active key id and pins only the active and next keys. Tested with a second independent issuer, which is rejected unless admitted and cannot be vouched for by another issuer's key. OpenID Federation 1.0, ETSI trust lists, `did:web` and wallet protocols are out of scope (ADR 0017/0018).
 
 ## 29. Security threat model
 
@@ -145,7 +145,7 @@ Every response carries `X-Request-ID`; errors are catalogued codes with `retryab
 
 ## 34. Performance
 
-Bounded by design: 16 KiB bodies, 30 authenticated requests/min/account, 100 evaluations/day/subject, 200-evaluation impact windows, 32 KiB status lists, signed-list reuse. **No load or latency testing was performed**; no numeric performance claims are made.
+Bounded by design: 16 KiB bodies, 30 authenticated requests/min/account, 100 evaluations/day/subject, 200-evaluation impact windows, 32 KiB status lists, signed-list reuse. A controlled local contention probe on real PostgreSQL is recorded in `docs/evaluation/load-local.md` (evaluate p95 191 ms at concurrency 8, verify p95 82 ms at 16, with a deterministic provider and no network). It is not a capacity claim. No hosted measurement exists.
 
 ## 35. Developer experience
 
@@ -177,7 +177,7 @@ Next.js 16 on Vercel (one preview per branch), PostgreSQL via `DATABASE_URL`, mi
 
 ## 42. Known limitations
 
-Hosted persistence/auth/attestation proof on a Vercel preview not performed (needs a dedicated database and branch-scoped secrets; the same acceptance script passes against a local server on real PostgreSQL). ChatGPT/claude.ai connectors are protocol-ready but not live-tested; Gemini Enterprise A2A registration is unsupported. No vendor model-driven runs. The official MCP conformance suite was run: the protocol scenarios pass, scenarios that need the suite's reference fixture server are not applicable; no A2A TCK is installable. No metrics backend, no load testing, no push revocation notification. Signing key is an environment secret, not an HSM. SD-JWT VC and Token Status List are drafts. Public rate limiting is best-effort per instance. Flaky `trajectory.test.ts` timeout (inherited). Merge into `main` is pending the Win Gate.
+Hosted persistence/auth/attestation proof on a Vercel preview not performed (needs a dedicated database and branch-scoped secrets; the same acceptance script passes against a local server on real PostgreSQL). ChatGPT/claude.ai connectors are protocol-ready but not live-tested; Gemini Enterprise A2A registration is unsupported. No vendor model-driven runs. The official MCP conformance suite was run: the protocol scenarios pass, scenarios that need the suite's reference fixture server are not applicable; no A2A TCK is installable. No metrics backend, no load testing, no push revocation notification. Signing key is an environment secret, not an HSM. SD-JWT VC and Token Status List are drafts. Public verifier limits are shared across instances through PostgreSQL (ADR 0028); the authenticated MCP/A2A budget is still per instance. Flaky `trajectory.test.ts` timeout (inherited). Merge into `main` is pending the Win Gate.
 
 ## 43. Future expansion boundaries
 
@@ -197,3 +197,18 @@ Not authorized here (M10 and beyond): push revocation; hardware-backed keys; gro
 ## 45. Acceptance state and evidence
 
 Status: **ACCEPTANCE CANDIDATE, not PASS.** Exact-head hosted acceptance on a deployed preview is blocked by missing environment (dedicated PostgreSQL, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `TASTEPOLICY_PUBLIC_ORIGIN`, `TASTEPOLICY_ATTESTATION_KEY`, and `QLOO_API_KEY`/`QLOO_API_BASE_URL`/`QLOO_AFFINITY_SCALE` for the cultural story; variable names only). Evidence that exists: CI `Verify` green on the head (unit, integration, real PostgreSQL service, compatible suite, build, Playwright incl. axe); local live run of `scripts/acceptance/hosted-acceptance.mjs` against `next start` on real PostgreSQL 16 (9 pass, 1 skip for the missing cultural provider); official MCP conformance scenarios initialize/ping/tools-list/dns-rebinding pass; independent `@sd-jwt/sd-jwt-vc` interop; `npm audit` and secret scans per the freeze checklist. Not proven: Qloo-backed hosted story, vendor model-driven runs, live ChatGPT/claude.ai connection, load behaviour at scale, A2A TCK.
+
+## 46. Final reconciliation addendum (candidate/context commitments, A2A extension, timeline)
+
+Branch `m6-m9-final-reconciliation` on top of the M9 tip. Additions and where they are recorded:
+
+- Subjective-action ladder, sensitive choices, organization ceiling, privacy copy: ADR 0024; tests `policy-ladder`, `ladder-service`, `review-fixes`.
+- Canonical candidate and context commitments (RFC 8785, domain-separated SHA-256), `CANDIDATE_CHANGED` / `CONTEXT_CHANGED` drift, `COMMITMENT_MISMATCH` on resume, signed commitment claims, verifier comparison and signature-versus-trust reporting: ADR 0025.
+- A2A authority-lifecycle extension and a shared `tastepolicy_verify_attestation` tool on REST, MCP, A2A and the SDK: ADR 0026.
+- Federation-compatible issuer inspection and explicit admission: ADR 0027.
+- Admission control (trusted client identity, shared PostgreSQL limiter, sign-in limiter): ADR 0028.
+- Unified authority timeline: ADR 0029. Migration ledger: ADR 0030. Migrations 0009 (ladder column check) and 0010 (status-list write guard).
+- Independent security review and dispositions: `docs/security/threat-model.md`. Supply chain and SBOM: `docs/security/supply-chain.md`.
+- Corrected: earlier text said a resumed lease re-validates earlier proofs. That was wrong and is superseded: leaving ACTIVE ends the epoch; its proofs are invalid for good; a resume starts a new epoch (ADR 0020).
+
+Status after this addendum: **ENGINEERING COMPLETE for the items above; hosted acceptance and vendor connectors NOT EXECUTED/BLOCKED** (see `docs/evaluation/r6-hosted-acceptance.md`). The §45 evidence list still applies; CI is green on the reconciliation head.
