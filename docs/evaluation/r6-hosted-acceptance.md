@@ -5,7 +5,7 @@ Evidence labels: LIVE (real provider), HOSTED (deployed exact head), CONTROLLED,
 ## Environment discovery (executed)
 
 - Vercel project `tastepolicy` (team `start-up16`), linked to `VictorCyberDev/TastePolicy`. Vercel Authentication (SSO protection) is off. Previews build per branch; **no production deployment exists** (`tastepolicy.vercel.app` returns 404).
-- Previews of the M6, M7, M8, M9 heads (`c263032`, `f0211e6`, `efca97e`, `6c973f0`) built READY. Their `/api/ready` answers `not_ready` with every dependency `unconfigured`: the project's environment variables (`DATABASE_URL`, `QLOO_API_KEY`, `QLOO_API_BASE_URL`, `QLOO_AFFINITY_SCALE`, `NEXT_PUBLIC_APP_URL`) are scoped to the Win Gate branch only, and no auth, attestation or origin variables exist for any other branch.
+- Previews of the M6, M7, M8, M9 heads (`c263032`, `f0211e6`, `efca97e`, `6c973f0`) built READY. The M9 head's `/api/ready` answers `not_ready` with every dependency `unconfigured` (the others were not each probed; the variable scoping below applies to all): the project's environment variables (`DATABASE_URL`, `QLOO_API_KEY`, `QLOO_API_BASE_URL`, `QLOO_AFFINITY_SCALE`, `NEXT_PUBLIC_APP_URL`) are scoped to the Win Gate branch only, and no auth, attestation or origin variables exist for any other branch.
 - Neon project `tastepolicy` (default branch `main`, schema at migration level 0004 — Win Gate). A copy-on-write branch `m9-acceptance` was created for acceptance; it has not been migrated or connected to a deployment.
 
 ## What is BLOCKED and why
