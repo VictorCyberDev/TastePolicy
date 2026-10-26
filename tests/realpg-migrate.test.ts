@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { Pool } from "pg";
-// @ts-expect-error plain ESM script
 import { migrate } from "../scripts/migrate.mjs";
 import { REAL_URL } from "./realpg-fixture";
 
