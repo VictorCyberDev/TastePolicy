@@ -1,6 +1,6 @@
 # Final acceptance matrix
 
-Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: PASS, PARTIAL, BLOCKED_EXTERNAL, BLOCKED_HUMAN, NOT_APPLICABLE. Evidence kinds: CI (GitHub Actions `Verify`, green on the head), LOCAL (this repository's tests incl. real PostgreSQL 16 and a clean clone), CONTROLLED (synthetic, agent-to-agent inside the repository). Nothing here is HOSTED or LIVE.
+Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: PASS, PARTIAL, BLOCKED_EXTERNAL, BLOCKED_HUMAN, NOT_APPLICABLE. Evidence kinds: CI (GitHub Actions `Verify`, cited only for the exact head whose run completed green), LOCAL (this repository's tests incl. real PostgreSQL 16 and a clean clone), CONTROLLED (synthetic, agent-to-agent inside the repository). Nothing here is HOSTED or LIVE.
 
 ## M6 — Connect
 
@@ -17,7 +17,7 @@ Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: 
 | OAuth 2.1                                               | PASS          | `oauth.test.ts`, `oauth-routes.test.ts`, `realpg-m6.test.ts`; local authorization server only  |
 | A2A                                                     | PASS          | `a2a.test.ts`, `a2a-authority.test.ts` (CONTROLLED agent-to-agent); no third-party A2A product |
 | Sandbox                                                 | PASS          | `sdk-sandbox.test.ts`                                                                          |
-| Conformance                                             | PASS          | `npm run conformance:compatible`: 110 checks                                                   |
+| Conformance                                             | PASS          | `npm run conformance:compatible`: 153 checks (incl. RFC 8785 vectors)                          |
 | External connector proof                                | BLOCKED_HUMAN | not executed: no signed-in vendor session available; see R6                                    |
 
 ## M7 — Control
@@ -39,15 +39,15 @@ Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: 
 
 ## M8 — Enforce
 
-| Capability                                         | Status | Evidence                                                                                       |
-| -------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
-| Lease, TTL, checkpoint, revocation                 | PASS   | `lease.test.ts`, `realpg-m8.test.ts`                                                           |
-| ASK, clarification, approval, decline              | PASS   | typed ASK; `lease.test.ts`, vectors                                                            |
-| State, policy, grant, override drift               | PASS   | `lease.test.ts`                                                                                |
-| Candidate and context drift                        | PASS   | `lease-commitments.test.ts`; detects what the agent presents, cannot observe the outside world |
-| Resume (fresh ALLOW, new epoch, ladder recomputed) | PASS   | `lease-commitments.test.ts`, `ladder-service.test.ts`                                          |
-| Concurrency                                        | PASS   | `realpg-m8.test.ts`, `realpg-load.test.ts`                                                     |
-| Timeline                                           | PASS   | `timeline.test.ts`, `timeline.spec.ts`                                                         |
+| Capability                                         | Status | Evidence                                                                                                                                                                                         |
+| -------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Lease, TTL, checkpoint, revocation                 | PASS   | `lease.test.ts`, `realpg-m8.test.ts`                                                                                                                                                             |
+| ASK, clarification, approval, decline              | PASS   | typed ASK; `lease.test.ts`, vectors                                                                                                                                                              |
+| State, policy, grant, override drift               | PASS   | `lease.test.ts`                                                                                                                                                                                  |
+| Candidate and context drift                        | PASS   | `lease-commitments.test.ts`, `commitment-required.test.ts`; a commitment-aware lease cannot be relied on without presenting both (`COMMITMENT_REQUIRED`); still cannot observe the outside world |
+| Resume (fresh ALLOW, new epoch, ladder recomputed) | PASS   | `lease-commitments.test.ts`, `ladder-service.test.ts`                                                                                                                                            |
+| Concurrency                                        | PASS   | `realpg-m8.test.ts`, `realpg-load.test.ts`                                                                                                                                                       |
+| Timeline                                           | PASS   | `timeline.test.ts`, `timeline.spec.ts`                                                                                                                                                           |
 
 ## M9 — Verify
 
@@ -60,7 +60,7 @@ Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: 
 | Trust states and federation-compatible issuers                     | PASS   | explicit trust only; no registry or propagation                                 |
 | Cross-agent handoff, A2A handoff                                   | PASS   | CONTROLLED, `a2a-authority.test.ts`                                             |
 | Cross-surface equivalence (REST, SDK, MCP, A2A)                    | PASS   | `a2a-authority.test.ts` (service, REST, MCP, A2A); SDK shares the REST contract |
-| Conformance                                                        | PASS   | Compatible v1, 110 checks                                                       |
+| Conformance                                                        | PASS   | Compatible v1, 153 checks                                                       |
 
 ## R6 — Hosted commissioning
 
