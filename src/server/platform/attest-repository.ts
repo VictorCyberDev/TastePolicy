@@ -1,4 +1,9 @@
 import "server-only";
+import {
+  DEFAULT_DISCLOSURE,
+  parseDisclosure,
+  type ProofDisclosure,
+} from "@/lib/attest/disclosure";
 import { randomInt } from "node:crypto";
 import type { PoolClient } from "pg";
 import { LIST_SIZE } from "@/lib/attest/status-list";
@@ -27,10 +32,35 @@ export interface AttestRepository {
   forLease(leaseRef: string): Promise<AttestationRow[]>;
   forPassport(passportRef: string): Promise<AttestationRow[]>;
   consume(jti: string, audience: string, now: string): Promise<boolean>;
+  // What the owner lets a portable proof carry; the default when never set.
+  disclosure(passportRef: string): Promise<ProofDisclosure>;
+  setDisclosure(
+    passportRef: string,
+    userId: string,
+    d: ProofDisclosure,
+    at: string,
+  ): Promise<void>;
   purgeReplays(before: string): Promise<number>;
 }
 export function attestRepository(c: PoolClient): AttestRepository {
   return {
+    async disclosure(ref) {
+      const q = await c.query(
+        "SELECT mode, claims FROM tastepolicy.proof_disclosure WHERE passport_ref=$1",
+        [ref],
+      );
+      if (!q.rows[0]) return DEFAULT_DISCLOSURE;
+      return (
+        parseDisclosure({ mode: q.rows[0].mode, claims: q.rows[0].claims }) ??
+        DEFAULT_DISCLOSURE
+      );
+    },
+    async setDisclosure(ref, userId, d, at) {
+      await c.query(
+        "INSERT INTO tastepolicy.proof_disclosure(passport_ref,user_id,mode,claims,updated_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT(passport_ref) DO UPDATE SET user_id=EXCLUDED.user_id, mode=EXCLUDED.mode, claims=EXCLUDED.claims, updated_at=EXCLUDED.updated_at",
+        [ref, userId, d.mode, JSON.stringify(d.claims), at],
+      );
+    },
     async allocate(ref, value) {
       // One allocator at a time: capacity checks and new-list creation are exact.
       await c.query("SELECT pg_advisory_xact_lock(90210)");

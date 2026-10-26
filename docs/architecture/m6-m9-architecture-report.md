@@ -113,7 +113,7 @@ See §6 and ADR 0016. Request from an ALLOW (active) or from an ASK of kind `AUT
 
 ## 26. Attestation model
 
-SD-JWT, `typ: dc+sd-jwt`, always-visible `iss`, `aud`, `iat`, `exp`, `jti`, `vct`, `authority`, `status`; selectively disclosable `decision`, `permitted`, `candidate_id`, `candidate_name`, `context_key`, `agent_id`, `policy`, `delegate_agent_id`. No lease, Passport, subject or account identifier. `exp` ≤ earliest of lease expiry, next checkpoint, Passport expiry, grant expiry, 15 minutes. Optional P-256 key binding with a verifier nonce.
+SD-JWT, `typ: dc+sd-jwt`, always-visible `iss`, `aud`, `iat`, `exp`, `jti`, `vct`, `authority`, `status`; selectively disclosable: required `decision`, `permitted`, `permitted_actions`, `candidate_commitment`, `context_commitment` (and `delegate_agent_id` on a handoff), plus `candidate_id`, `candidate_name`, `context_key`, `agent_id`, `policy` only if the owner allows them (ADR 0031; default MINIMAL, none). No lease, Passport, subject or account identifier. `exp` ≤ earliest of lease expiry, next checkpoint, Passport expiry, grant expiry, 15 minutes. Optional P-256 key binding with a verifier nonce.
 
 ## 27. Issuer/verifier model
 
@@ -129,7 +129,7 @@ Assets: the person's preference state; the authority boundary; credentials; issu
 
 ## 30. Privacy model
 
-Minimal by construction: proofs carry no taste data or identifiers; the holder chooses disclosures; each proof has its own status index so relying parties cannot link proofs of one lease; lists reveal only anonymous statuses (herd privacy depends on list fill, stated). Owner sees every proof issued, to whom and until when. Credentials read only a resolved policy summary, never history or overrides. Deletion cascades and invalidates proofs. Residual: `candidate_name` is agent-supplied and, once signed, travels with the proof.
+Minimal by construction: proofs carry no taste data or identifiers; the holder chooses disclosures; each proof has its own status index so relying parties cannot link proofs of one lease; lists reveal only anonymous statuses (herd privacy depends on list fill, stated). Owner sees every proof issued, to whom and until when. Credentials read only a resolved policy summary, never history or overrides. Deletion cascades and invalidates proofs. Residual: `candidate_name`, if the owner enables it, is agent-supplied and, once signed, travels with the proof; the default proof does not carry it.
 
 ## 31. Revocation
 

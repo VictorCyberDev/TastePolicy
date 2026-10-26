@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { Credential, Grant } from "@/lib/platform/types";
 import { KEY_SCOPES, SHARE_SCOPES } from "@/lib/platform/types";
 import ConnectedAgents from "./ConnectedAgents";
+import ProofPrivacy from "./ProofPrivacy";
 import SectionBoundary from "./SectionBoundary";
 import "./PlatformPanel.css";
 type Passport = {
@@ -717,6 +718,11 @@ export default function PlatformPanel() {
           <SectionBoundary label="Connected assistants">
             <ConnectedAgents />
           </SectionBoundary>
+          {passport && (
+            <SectionBoundary label="Proof privacy">
+              <ProofPrivacy passportRef={passport.passportRef} />
+            </SectionBoundary>
+          )}
           <fieldset disabled={busy}>
             <legend>Export &amp; delete</legend>
             <p>

@@ -294,7 +294,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "attestation",
     title: "Issue a verifiable attestation",
     description:
-      "For an ACTIVE lease, issue a short-lived SD-JWT proof a third party can verify without a TastePolicy credential. Disclose only the claims the verifier needs when presenting. The proof states cultural authority only and ends with the lease.",
+      "For an ACTIVE lease, issue a short-lived SD-JWT proof a third party can verify without a TastePolicy credential. Disclose only the claims the verifier needs when presenting. The owner decides what a proof can carry at all; by default it holds only the decision, the permitted actions and the commitments to the choice and situation (no names). The proof states cultural authority only and ends with the lease.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: false,

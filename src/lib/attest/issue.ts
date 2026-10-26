@@ -30,10 +30,12 @@ export interface AttestationFacts {
     // they are digests, so they reveal nothing the verifier does not hold.
     candidate_commitment?: string;
     context_commitment?: string;
-    candidate_id: string;
-    candidate_name: string;
-    context_key: string;
-    agent_id: string;
+    // Human-readable claims exist only when the owner allowed them
+    // (disclosure.ts); the default proof carries none.
+    candidate_id?: string;
+    candidate_name?: string;
+    context_key?: string;
+    agent_id?: string;
     policy?: { version: number | null };
     // Set only on a handoff: the agent the holder key was issued to.
     delegate_agent_id?: string;

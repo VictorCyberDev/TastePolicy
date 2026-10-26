@@ -12,6 +12,17 @@ async function fixture(page: Page, initialPassport = true) {
     deleted = false,
     keyIssued = false,
     keyRevoked = false;
+  let privacy: Record<string, unknown> = {
+    mode: "MINIMAL",
+    claims: {
+      candidate_name: false,
+      candidate_id: false,
+      context_key: false,
+      agent_id: false,
+      policy: false,
+    },
+    required: ["decision", "permitted_actions"],
+  };
   const calls: { op: string; body: Record<string, unknown> }[] = [],
     errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -85,7 +96,11 @@ async function fixture(page: Page, initialPassport = true) {
         groupAuthorizations: { included: false },
         semanticHash: "synthetic-not-live",
       };
-    else if (op === "passport") data = { ...p(), passportRef: sharedRef };
+    else if (op === "proof-privacy-get") data = privacy;
+    else if (op === "proof-privacy-set") {
+      privacy = { ...privacy, mode: body.mode, claims: body.claims };
+      data = privacy;
+    } else if (op === "passport") data = { ...p(), passportRef: sharedRef };
     else if (op === "evaluate" || op === "receipt") {
       if (revoked && body.grantId)
         return r.fulfill({
@@ -339,3 +354,26 @@ for (const colorScheme of ["light", "dark"] as const)
       fullPage: true,
     });
   });
+test("proof privacy: shares nothing extra by default; each plain-language detail is a deliberate, reversible choice", async ({
+  page,
+}) => {
+  const f = await fixture(page);
+  await f.signIn();
+  const name = page.getByRole("checkbox", {
+    name: /May include the name of the choice/,
+  });
+  await expect(page.getByText("Proof privacy", { exact: true })).toBeVisible();
+  await expect(name).not.toBeChecked();
+  await name.click(); // saved on the server first, then reflected
+  await expect(page.getByRole("status").last()).toContainText("Saved");
+  const set = f.calls.filter((c) => c.op === "proof-privacy-set");
+  expect(set).toHaveLength(1);
+  expect(set[0].body).toMatchObject({
+    mode: "MINIMAL",
+    claims: { candidate_name: true, agent_id: false },
+  });
+  await expect(name).toBeChecked();
+  await page.getByRole("button", { name: "Share nothing extra" }).click();
+  await expect(name).not.toBeChecked();
+  expect(f.errors).toEqual([]);
+});

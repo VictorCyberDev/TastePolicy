@@ -7,6 +7,17 @@ import { platformFail as fail, type Principal } from "@/lib/platform/types";
 import { object } from "@/server/subjects/common";
 import { epochCommitment, epochRef } from "./attest-epoch";
 import { issueAttestation, newJti, signStatusList } from "@/lib/attest/issue";
+import {
+  applyDisclosure,
+  DISCLOSURE_SCHEMA,
+  OPTIONAL_CLAIMS,
+  REQUIRED_CLAIMS,
+  optionalEnabled,
+  parseDisclosure,
+  widensDisclosure,
+  type ProofDisclosure,
+} from "@/lib/attest/disclosure";
+import { reference } from "./service";
 import { STATUS } from "@/lib/attest/status-list";
 import { buildAuthorityTimeline } from "@/lib/timeline/authority-timeline";
 import { presentedCommitments } from "@/lib/commit/commitments";
@@ -42,6 +53,53 @@ export class AttestationService extends LeaseService {
     return `${c.issuer}/api/attest/status/${listId}`;
   }
   // Issue a presentable proof of an ACTIVE lease for one named audience.
+  private disclosureView(passportRef: string, d: ProofDisclosure) {
+    return {
+      schemaVersion: DISCLOSURE_SCHEMA,
+      passportRef,
+      mode: d.mode,
+      claims: Object.fromEntries(
+        OPTIONAL_CLAIMS.map((c) => [c, optionalEnabled(d).includes(c)]),
+      ),
+      // Not switches: a proof is unverifiable without them.
+      required: [...REQUIRED_CLAIMS],
+      note: "A proof always carries the decision, the permitted actions and the commitments to the choice and situation. The rest is yours to allow; the default shares none of it.",
+    };
+  }
+  private async ownedPassport(r: Repositories, p: Principal, ref: string) {
+    const passport = await r.platform.passport(ref);
+    if (!passport || passport.userId !== p.userId) fail("PASSPORT_NOT_FOUND");
+  }
+  // What a portable proof for this Passport is allowed to carry (owner only).
+  async proofPrivacyGet(p: Principal, raw: unknown) {
+    const v = object(raw, ["passportRef"]),
+      ref = reference(v.passportRef);
+    return this.store.transaction(async (r) => {
+      await this.locked(r, p, [], undefined, false);
+      if (p.kind !== "SESSION") fail("ACCESS_DENIED");
+      await this.ownedPassport(r, p, ref);
+      return this.disclosureView(ref, await r.attest.disclosure(ref));
+    });
+  }
+  // Narrowing is always allowed. Letting proofs say more needs a recent sign-in,
+  // like loosening a rule. Applies to proofs issued afterwards; a proof already
+  // issued is not changed, and is short-lived.
+  async proofPrivacySet(p: Principal, raw: unknown) {
+    const v = object(raw, ["passportRef", "mode", "claims", "idempotencyKey"]),
+      ref = reference(v.passportRef),
+      next = parseDisclosure({ mode: v.mode, claims: v.claims });
+    if (!next) fail("INVALID_INPUT");
+    return this.store.transaction(async (r) => {
+      await this.locked(r, p, [], undefined, false);
+      if (p.kind !== "SESSION") fail("ACCESS_DENIED");
+      await this.ownedPassport(r, p, ref);
+      const current = await r.attest.disclosure(ref);
+      if (widensDisclosure(current, next!))
+        await this.locked(r, p, [], undefined, true);
+      await r.attest.setDisclosure(ref, p.userId, next!, this.clock());
+      return this.disclosureView(ref, next!);
+    });
+  }
   async attestationIssue(p: Principal, raw: unknown) {
     const v = object(raw, [
         "leaseRef",
@@ -130,23 +188,27 @@ export class AttestationService extends LeaseService {
           statusUri: this.statusUri(cfg, entry.listId),
           statusIdx: entry.idx,
           holderKey,
-          disclosable: {
-            decision: "ALLOW",
-            permitted: legacyWords(l.permittedActions),
-            permitted_actions: l.permittedActions,
-            ...(l.state.fingerprint.candidateCommitment
-              ? {
-                  candidate_commitment: l.state.fingerprint.candidateCommitment,
-                  context_commitment: l.state.fingerprint.contextCommitment,
-                }
-              : {}),
-            candidate_id: l.candidateId,
-            candidate_name: l.candidateName,
-            context_key: l.contextKey,
-            agent_id: l.agentId,
-            policy: { version: l.state.fingerprint.policyVersion },
-            ...(delegate ? { delegate_agent_id: delegate } : {}),
-          },
+          disclosable: applyDisclosure(
+            {
+              decision: "ALLOW" as const,
+              permitted: legacyWords(l.permittedActions),
+              permitted_actions: l.permittedActions,
+              ...(l.state.fingerprint.candidateCommitment
+                ? {
+                    candidate_commitment:
+                      l.state.fingerprint.candidateCommitment,
+                    context_commitment: l.state.fingerprint.contextCommitment,
+                  }
+                : {}),
+              candidate_id: l.candidateId,
+              candidate_name: l.candidateName,
+              context_key: l.contextKey,
+              agent_id: l.agentId,
+              policy: { version: l.state.fingerprint.policyVersion },
+              ...(delegate ? { delegate_agent_id: delegate } : {}),
+            },
+            await r.attest.disclosure(l.passportRef),
+          ),
         },
         cfg.signer,
       );

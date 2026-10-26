@@ -106,8 +106,14 @@ async function world() {
 }
 
 it("issues a proof for an ACTIVE lease and the hosted verifier checks signature, audience, status and replay", async () => {
-  const w = await world(),
-    l = await w.lease(),
+  const w = await world();
+  // the default proof carries only what verification needs (see proof-privacy.test.ts)
+  await svc.proofPrivacySet(w.a.principal, {
+    passportRef: w.ref,
+    mode: "STANDARD",
+    claims: {},
+  });
+  const l = await w.lease(),
     at = await w.attest(l.leaseRef);
   expect(at.disclosable.sort()).toEqual([
     "agent_id",
@@ -273,8 +279,13 @@ it("only an ACTIVE lease of the calling actor can be attested; inputs are valida
   expect(ask).toBeDefined();
 }, 40000);
 it("handoff: a key-bound proof names the receiving agent and the delegator, needs the receiver's key and nonce, and dies with the lease", async () => {
-  const w = await world(),
-    l = await w.lease();
+  const w = await world();
+  await svc.proofPrivacySet(w.a.principal, {
+    passportRef: w.ref,
+    mode: "STANDARD",
+    claims: {},
+  });
+  const l = await w.lease();
   const { publicKey, privateKey } = await generateKeyPair("ES256", {
     extractable: true,
   });

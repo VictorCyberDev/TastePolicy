@@ -39,7 +39,6 @@ it("string serialization follows RFC 8785 section 3.2.2.2", () => {
 it("input that is not I-JSON is refused with NOT_I_JSON, never dropped, repaired or guessed", () => {
   const cyc: Record<string, unknown> = {};
   cyc.self = cyc;
-  // eslint-disable-next-line no-sparse-arrays -- the point of the case
   const sparse = [1, , 3];
   const cases: Record<string, unknown> = {
     J01: { a: undefined, b: 1 },

@@ -134,6 +134,10 @@ export async function handlePlatform(
         data = await service.leaseDecline(p, body);
       else if (op === "lease-revoke") data = await service.leaseRevoke(p, body);
       else if (op === "policy-get") data = await service.policyGet(p, body);
+      else if (op === "proof-privacy-get")
+        data = await service.proofPrivacyGet(p, body);
+      else if (op === "proof-privacy-set")
+        data = await service.proofPrivacySet(p, body);
       else if (op === "policy-publish")
         data = await service.policyPublish(p, body);
       else if (op === "override-create")

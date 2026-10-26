@@ -157,7 +157,6 @@ const refusedInputs = {
   J06: () => BigInt(1),
   J07: () => () => 1,
   J08: () => Symbol("x"),
-  // eslint-disable-next-line no-sparse-arrays -- the point of the case
   J09: () => [1, , 3],
   J10: () => "a\ud800b",
   J11: () => "a\udc00b",

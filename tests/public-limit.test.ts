@@ -6,9 +6,17 @@ import { platformDatabase } from "./platform-fixtures";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
 beforeAll(async () => {
+  // The budgets are per wall-clock minute. Pin the clock to the middle of a
+  // minute so a slow run (1300 sequential admissions under load) can never
+  // straddle a minute boundary and split a budget in two.
+  const t = Date.now();
+  vi.spyOn(Date, "now").mockReturnValue(t - (t % 60000) + 30000);
   d = await platformDatabase();
 }, 30000);
-afterAll(async () => d?.db.close());
+afterAll(async () => {
+  vi.mocked(Date.now).mockRestore();
+  await d?.db.close();
+});
 
 const req = (ip: string) =>
   new Request("https://tastepolicy.test/api/attest/verify", {
