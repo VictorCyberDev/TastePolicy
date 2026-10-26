@@ -95,7 +95,8 @@ it("a failing shared tier never opens the endpoint: the per-instance tier still 
       r();
     }
   }
-  expect(ok).toBe(60);
+  // the per-instance tier, tightened to 15 while the shared tier is down
+  expect(ok).toBe(15);
 });
 it("the concurrency cap releases: a held slot is returned exactly once", async () => {
   const lim = await instance();

@@ -23,6 +23,7 @@ import {
   type LeaseEvent,
 } from "@/lib/lease/machine";
 import { describeAsk } from "@/lib/lease/ask";
+import { organizationCeiling } from "@/lib/policy/organization";
 import {
   evaluationCommitments,
   presentedCommitments,
@@ -43,7 +44,7 @@ export const leaseRef = (v: unknown): string => {
 };
 // Legacy continuation words implied by a ladder (LEGACY_ACTION_MAP): the word
 // is present when the ladder reaches the rung it maps to.
-const legacyWords = (a: readonly SubjectiveAction[]) =>
+export const legacyWords = (a: readonly SubjectiveAction[]) =>
   (Object.entries(LEGACY_ACTION_MAP) as [string, SubjectiveAction][])
     .filter(([, rung]) => a.includes(rung))
     .map(([word]) => word);
@@ -68,6 +69,27 @@ const PRESENT_KEYS = [
   "candidateCommitment",
   "contextCommitment",
 ];
+
+// What a lease lets the agent do: what the owner's policy allowed at decision
+// time (an owner-confirmed ASK is bounded by the action that was requested),
+// never above an organization ceiling.
+function ladderFor(
+  pd: Awaited<ReturnType<PolicyService["policyLoad"]>> | null,
+  e: { requestedAction?: SubjectiveAction },
+): SubjectiveAction[] {
+  let ladder: SubjectiveAction[] = LEGACY_PERMITTED_ACTIONS;
+  if (pd?.action) {
+    if (pd.action.permitted.length) ladder = pd.action.permitted;
+    else if (e.requestedAction)
+      ladder = SUBJECTIVE_ACTIONS.filter(
+        (a) => actionLevel(a) <= actionLevel(e.requestedAction!),
+      );
+  }
+  const org = organizationCeiling(process.env);
+  return org
+    ? ladder.filter((a) => actionLevel(a) <= actionLevel(org.maxAction))
+    : ladder;
+}
 
 export class LeaseService extends PolicyService {
   protected readonly maxLive: number = MAX_LIVE_LEASES;
@@ -181,7 +203,7 @@ export class LeaseService extends PolicyService {
       leaseRef: l.leaseRef,
       status: l.state.status,
       valid,
-      permitted: valid ? l.permitted : [],
+      permitted: valid ? legacyWords(l.permittedActions) : [],
       permittedActions: valid ? l.permittedActions : [],
       reasons: l.state.reasons,
       ask: l.state.ask
@@ -341,17 +363,7 @@ export class LeaseService extends PolicyService {
       if (ask && ask.kind !== "AUTHORITY_CONFIRMATION")
         fail("CLARIFICATION_REQUIRED");
       const passport = (await r.platform.passport(e.passportRef))!;
-      // What the owner's policy let the agent do at decision time. An ASK that
-      // the owner confirms is bounded by the action that was requested.
-      const ladder: SubjectiveAction[] = pd?.action
-        ? pd.action.permitted.length
-          ? pd.action.permitted
-          : e.requestedAction
-            ? SUBJECTIVE_ACTIONS.filter(
-                (a) => actionLevel(a) <= actionLevel(e.requestedAction!),
-              )
-            : LEGACY_PERMITTED_ACTIONS
-        : LEGACY_PERMITTED_ACTIONS;
+      const ladder = ladderFor(pd, e);
       const ctx = e.evaluation.context.key,
         cand = e.evaluation.action.candidate.id,
         agent = e.evaluation.agentId;
@@ -482,7 +494,7 @@ export class LeaseService extends PolicyService {
       const events = await r.leases.events(l.leaseRef);
       if (e.evaluation.evaluatedAt < events[events.length - 1].at)
         fail("STATE_VERSION_CONFLICT");
-      const { fp, outcome } = await this.fingerprintOf(r, e);
+      const { fp, pd, outcome } = await this.fingerprintOf(r, e);
       if (outcome !== "ALLOW") fail("LEASE_NOT_PERMITTED");
       // Resuming re-establishes authority for the choice that was just
       // evaluated. If the agent says the choice is something else now, that
@@ -495,18 +507,24 @@ export class LeaseService extends PolicyService {
         fail("COMMITMENT_MISMATCH");
       await this.requireCurrent(r, e, fp);
       const now = this.clock();
-      l = await this.advance(r, { ...l, grantId: e.grantId }, [
-        {
-          kind: "RESUMED",
-          at: now,
-          actor: "AGENT",
-          fingerprint: fp,
-          checkpointDueAt: min(
-            plus(now, l.checkpointSeconds),
-            l.state.expiresAt,
-          ),
-        },
-      ]);
+      // Authority is re-established under today's rules: the ladder comes from
+      // the fresh evaluation, never the wider one the lease started with.
+      l = await this.advance(
+        r,
+        { ...l, grantId: e.grantId, permittedActions: ladderFor(pd, e) },
+        [
+          {
+            kind: "RESUMED",
+            at: now,
+            actor: "AGENT",
+            fingerprint: fp,
+            checkpointDueAt: min(
+              plus(now, l.checkpointSeconds),
+              l.state.expiresAt,
+            ),
+          },
+        ],
+      );
       return this.leaseView(l);
     });
   }
@@ -650,7 +668,7 @@ export class LeaseService extends PolicyService {
           scope: {
             candidateId: l.candidateId,
             contextKey: l.contextKey,
-            permitted: l.permitted,
+            permitted: legacyWords(l.permittedActions),
             // What the owner saw: the price the choice was evaluated at.
             price: e.evaluation.context.price ?? null,
           },

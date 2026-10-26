@@ -3,6 +3,7 @@
 // policy and the M5 group rule aggregates. There is no second group engine.)
 import {
   actionLevel,
+  own,
   AUTONOMY_LEVELS,
   DEFAULT_POLICY,
   type AutonomyLevel,
@@ -45,7 +46,7 @@ export function classifyPolicyChange(
     ...Object.keys(after.sensitive ?? {}),
   ]);
   const level = (d: PolicyDocument, agent: string, kind: string) =>
-    (agent ? d.autonomy.byAgent[agent] : undefined) ??
+    (agent ? own(d.autonomy.byAgent, agent) : undefined) ??
     (kind
       ? d.autonomy.byDomain[
           kind as keyof PolicyDocument["autonomy"]["byDomain"]
@@ -60,7 +61,7 @@ export function classifyPolicyChange(
   const ceil = (d: PolicyDocument, agent: string, kind: string) => {
     const x = d.actions;
     let c = x
-      ? ((agent ? x.byAgent[agent] : undefined) ??
+      ? ((agent ? own(x.byAgent, agent) : undefined) ??
         (kind ? x.byDomain[kind as keyof typeof x.byDomain] : undefined) ??
         x.default)
       : "ADD_TO_DRAFT";

@@ -65,13 +65,13 @@ export async function inspectIssuer(
     return { ...bad(["JWKS_UNREACHABLE"]), metadata };
   }
   const state = (kid: string): KeyState =>
-    metadata.keys.revoked.includes(kid)
+    (metadata.keys.revoked ?? []).includes(kid)
       ? "REVOKED"
       : metadata.keys.active === kid
         ? "ACTIVE"
-        : metadata.keys.next.includes(kid)
+        : (metadata.keys.next ?? []).includes(kid)
           ? "NEXT"
-          : metadata.keys.retired.includes(kid)
+          : (metadata.keys.retired ?? []).includes(kid)
             ? "RETIRED"
             : "UNLISTED";
   const keys: IssuerInspection["keys"] = [];
@@ -122,16 +122,24 @@ export function admitIssuer(
   if (why.length) throw new AdmissionRefused(why);
   // Revoked by the issuer's own declaration, published or not.
   const revoked = new Set([
-    ...inspection.metadata!.keys.revoked,
+    ...(inspection.metadata!.keys.revoked ?? []),
     ...inspection.keys.filter((k) => k.state === "REVOKED").map((k) => k.kid),
   ]);
   return {
     issuer: inspection.issuer,
     entry: {
       jwks: {
+        // Only the active key and the announced next key are pinned. A retired
+        // key does not keep verifying new proofs; proofs live for minutes, so
+        // inspect again after a rotation.
         keys: inspection
           .jwks!.keys.map((k) => ({ ...k }))
-          .filter((k) => !revoked.has(String(k.kid))),
+          .filter((k) => {
+            const st = inspection.keys.find((x) => x.kid === k.kid)?.state;
+            return (
+              (st === "ACTIVE" || st === "NEXT") && !revoked.has(String(k.kid))
+            );
+          }),
       },
       vct: inspection.metadata!.vct,
       state: "TRUSTED",

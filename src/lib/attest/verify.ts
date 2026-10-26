@@ -387,7 +387,12 @@ async function verifyInner(
     ![1, 2, 4, 8].includes(sl.bits as number) ||
     typeof sl.lst !== "string" ||
     typeof lp.iat !== "number" ||
-    (typeof lp.ttl === "number" && now > lp.iat + lp.ttl + skew) ||
+    // a list signed a moment after `now` was read is fine; one from the future is not
+    lp.iat - Math.max(skew, 5) > now ||
+    // A list must say how long it may be reused; without that a stale copy
+    // served by a cache or intermediary would look current forever.
+    typeof lp.ttl !== "number" ||
+    now > lp.iat + lp.ttl + skew ||
     (lp.exp !== undefined &&
       (typeof lp.exp !== "number" || lp.exp + skew <= now))
   )

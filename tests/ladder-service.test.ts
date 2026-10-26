@@ -193,3 +193,36 @@ it("publishing a higher ceiling is a widening change and needs recent authentica
     }),
   ).resolves.toBeTruthy();
 }, 40000);
+
+it("review fix: a resumed lease takes its ladder from the fresh evaluation, never the wider one it started with", async () => {
+  const w = await world();
+  await w.publish(ladder("PRESENT_AS_SELECTED"), 0);
+  const e1 = await w.evaluate("ADD_TO_DRAFT");
+  const l1 = await w.lease(e1.evaluationRef);
+  expect(l1.permittedActions).toEqual([
+    "SUGGEST",
+    "RANK",
+    "SHORTLIST",
+    "ADD_TO_DRAFT",
+    "PRESENT_AS_SELECTED",
+  ]);
+  // the owner tightens the rules: the lease pauses
+  await w.publish(ladder("SUGGEST"), 1);
+  tick(5);
+  expect(
+    (await svc.leaseVerify(w.agent, { leaseRef: l1.leaseRef })).status,
+  ).toBe("SUSPENDED");
+  tick(5);
+  const e2 = await w.evaluate("SUGGEST");
+  expect(e2.decision).toBe("ALLOW");
+  const back: any = await svc.leaseResume(w.agent, {
+    idempotencyKey: "rs-narrow-key",
+    leaseRef: l1.leaseRef,
+    evaluationRef: e2.evaluationRef,
+  });
+  expect([back.status, back.permittedActions, back.permitted]).toEqual([
+    "ACTIVE",
+    ["SUGGEST"],
+    [],
+  ]);
+}, 60000);

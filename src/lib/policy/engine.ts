@@ -4,6 +4,7 @@ import type { EvaluationResult, QlooEntity } from "@/types/domain";
 import { applicable } from "@/server/state/policy";
 import {
   actionLevel,
+  own,
   SUBJECTIVE_ACTIONS,
   type ActionTrace,
   type CeilingSource,
@@ -41,7 +42,7 @@ export function autonomyFor(
   domain: Context["domain"],
 ): AutonomyLevel {
   return (
-    policy.autonomy.byAgent[agentId] ??
+    own(policy.autonomy.byAgent, agentId) ??
     policy.autonomy.byDomain[domain] ??
     policy.autonomy.default
   );
@@ -117,7 +118,8 @@ export function resolveCeiling(
     source: CeilingSource = "NONE";
   const a = policy?.actions;
   if (a) {
-    if (a.byAgent[agentId]) [ceiling, source] = [a.byAgent[agentId], "AGENT"];
+    const byAgent = own(a.byAgent, agentId);
+    if (byAgent) [ceiling, source] = [byAgent, "AGENT"];
     else if (a.byDomain[domain])
       [ceiling, source] = [a.byDomain[domain]!, "DOMAIN"];
     else [ceiling, source] = [a.default, "DEFAULT"];
@@ -277,14 +279,27 @@ export function evaluateWithPolicy(i: PolicyEvaluationInput): PolicyDecision {
   if (wantsAction) {
     const req = i.requestedAction ?? null;
     escalated = req !== null && actionLevel(req) > actionLevel(ceiling);
-    if (outcome === "ALLOW" && escalated) {
-      if (source === "ORGANIZATION") {
-        // The owner cannot lift an organization ceiling by confirming.
-        outcome = "REJECT";
-        basis = "ACTION_CEILING";
-        rules = [`ORG_ACTION_CEILING:${req}>${ceiling}`];
-        orgBlocked = true;
-      } else {
+    if (
+      (outcome === "ALLOW" || outcome === "ASK") &&
+      escalated &&
+      source === "ORGANIZATION"
+    ) {
+      // The organization wins over every earlier step, including an ASK the
+      // owner could have confirmed: the owner cannot lift it by confirming or
+      // by a temporary permission.
+      outcome = "REJECT";
+      basis = "ACTION_CEILING";
+      rules = [`ORG_ACTION_CEILING:${req}>${ceiling}`];
+      orgBlocked = true;
+      trace.push({
+        step: "ACTION",
+        action: "LOWERED",
+        outcome,
+        rules,
+        note: `Requested ${req}; organization ceiling ${ceiling}.`,
+      });
+    } else if (outcome === "ALLOW" && escalated) {
+      {
         outcome = "ASK";
         basis =
           source === "SENSITIVE_DOMAIN" ? "SENSITIVE_DOMAIN" : "ACTION_CEILING";

@@ -50,6 +50,10 @@ export const LEGACY_PERMITTED_ACTIONS: SubjectiveAction[] = [
   "SHORTLIST",
   "ADD_TO_DRAFT",
 ];
+// Own-property lookup for maps keyed by an agent-chosen name: "constructor" or
+// "toString" must never resolve to an inherited function.
+export const own = <V>(m: Record<string, V>, k: string): V | undefined =>
+  Object.hasOwn(m, k) ? m[k] : undefined;
 export interface ActionCeilings {
   // The highest action the agent may take without asking the owner.
   default: SubjectiveAction;

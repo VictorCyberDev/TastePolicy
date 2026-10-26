@@ -45,7 +45,7 @@ function actionCeilings(raw: unknown): PolicyDocument["actions"] {
   );
   if (agents.length > 20) fail("INVALID_INPUT");
   for (const [k, l] of agents) {
-    if (!AGENT.test(k)) fail("INVALID_INPUT");
+    if (!AGENT.test(k) || k === "__proto__") fail("INVALID_INPUT");
     byAgent[k] = subjectiveAction(l);
   }
   return { default: subjectiveAction(a.default), byDomain, byAgent };
@@ -107,7 +107,7 @@ export function policyDocument(raw: unknown): PolicyDocument {
   );
   if (agents.length > 20) fail("INVALID_INPUT");
   for (const [k, l] of agents) {
-    if (!AGENT.test(k)) fail("INVALID_INPUT");
+    if (!AGENT.test(k) || k === "__proto__") fail("INVALID_INPUT");
     byAgent[k] = level(l);
   }
   const doc: PolicyDocument = {

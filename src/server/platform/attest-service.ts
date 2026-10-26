@@ -1,6 +1,6 @@
 import "server-only";
 import { importJWK, type JWK } from "jose";
-import { LeaseService } from "./lease-service";
+import { LeaseService, legacyWords } from "./lease-service";
 import { attestationConfig, type AttestationConfig } from "./attest-config";
 import { leaseRef as parseLeaseRef } from "./lease-service";
 import { platformFail as fail, type Principal } from "@/lib/platform/types";
@@ -132,7 +132,7 @@ export class AttestationService extends LeaseService {
           holderKey,
           disclosable: {
             decision: "ALLOW",
-            permitted: l.permitted,
+            permitted: legacyWords(l.permittedActions),
             permitted_actions: l.permittedActions,
             ...(l.state.fingerprint.candidateCommitment
               ? {
@@ -370,7 +370,12 @@ export class AttestationService extends LeaseService {
               "contextCommitment",
             ]),
           );
-    if (expectation === null) fail("INVALID_INPUT");
+    // An empty expectation would silently compare nothing: refuse it.
+    if (
+      expectation === null ||
+      (expectation && !Object.keys(expectation).length)
+    )
+      fail("INVALID_INPUT");
     if (
       typeof v.presentation !== "string" ||
       v.presentation.length > 16384 ||

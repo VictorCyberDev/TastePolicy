@@ -21,6 +21,7 @@ import { organizationCeiling } from "@/lib/policy/organization";
 import { counterfactuals, impactAnalysis } from "@/lib/policy/analysis";
 import { overrideRequest, policyDocument } from "@/lib/policy/validation";
 import {
+  own,
   type PolicyDecision,
   type PolicyDocument,
   type PolicyOverride,
@@ -180,7 +181,7 @@ export class PolicyService extends PlatformService {
         doc = active?.document;
       const level = (domain: "brand" | "place" | "destination") =>
         doc
-          ? (v.agentId && doc.autonomy.byAgent[v.agentId as string]) ||
+          ? (v.agentId && own(doc.autonomy.byAgent, v.agentId as string)) ||
             doc.autonomy.byDomain[domain] ||
             doc.autonomy.default
           : "AUTONOMOUS";

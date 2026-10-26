@@ -29,7 +29,8 @@ const CONFIRMABLE = new Set(["AUTONOMY:OBSERVE", "AUTONOMY:ABOVE_LIMIT"]);
 // A sensitive domain that needs fresher explicit evidence is a missing fact.
 const confirmable = (basis: string, r: string) =>
   (basis === "AUTONOMY_CEILING" && CONFIRMABLE.has(r)) ||
-  (basis === "ACTION_CEILING" && /^ACTION:[A-Z_]+>[A-Z_]+$/.test(r)) ||
+  ((basis === "ACTION_CEILING" || basis === "SENSITIVE_DOMAIN") &&
+    /^ACTION:[A-Z_]+>[A-Z_]+$/.test(r)) ||
   (basis === "SENSITIVE_DOMAIN" && r === "SENSITIVE:ALWAYS_ASK");
 
 export function classifyAsk(basis: string, rules: readonly string[]): AskKind {

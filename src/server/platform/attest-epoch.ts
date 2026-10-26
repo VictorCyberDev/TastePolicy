@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash, createHmac } from "node:crypto";
 import type { LeaseRecord } from "./lease-repository";
+import { legacyWords } from "./lease-service";
 
 // The authority epoch is the span during which one exact authorization held:
 // this candidate, this action, this situation, this state, this policy, these
@@ -18,7 +19,7 @@ export function epochCommitment(l: LeaseRecord): string {
         epoch: l.state.epoch.n,
         authorizedRev: l.state.epoch.rev,
         candidate: l.candidateId,
-        action: [...l.permitted].sort(),
+        action: legacyWords(l.permittedActions).sort(),
         actions: [...l.permittedActions].sort(),
         candidateCommitment: f.candidateCommitment ?? null,
         contextCommitment: f.contextCommitment ?? null,

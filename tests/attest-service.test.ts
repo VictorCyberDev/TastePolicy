@@ -968,3 +968,77 @@ it("federation: discover → inspect → explicitly trust → verify; discovery 
     }).entry.revokedKids,
   ).toEqual([revokedKid]);
 }, 60000);
+
+import { CompactSign, base64url } from "jose";
+import { verifyPresentation } from "@/lib/attest/verify";
+it("review fixes: an empty expectation is refused, a status list must carry a ttl, and status data cannot be rewritten except through set_status", async () => {
+  const w = await world(),
+    l = await w.lease(),
+    at = await w.attest(l.leaseRef);
+  await expect(w.verify(at.attestation, { expect: {} })).rejects.toMatchObject({
+    code: "INVALID_INPUT",
+  });
+  // a validly signed list without ttl is not accepted
+  const listId = Number(at.statusUri.split("/").pop());
+  const token = (await svc.statusListToken(listId))!;
+  const payload = JSON.parse(
+    Buffer.from(token.split(".")[1], "base64url").toString(),
+  );
+  delete payload.ttl;
+  delete payload.exp;
+  const stale = await new CompactSign(
+    new TextEncoder().encode(JSON.stringify(payload)),
+  )
+    .setProtectedHeader({
+      alg: "ES256",
+      typ: "statuslist+jwt",
+      kid: cfgA.signer.kid,
+    })
+    .sign(cfgA.signer.key as CryptoKey);
+  void base64url;
+  const r = await verifyPresentation(at.attestation, {
+    audience: AUD,
+    trustedIssuers: cfgA.trusted,
+    fetchStatus: async () => stale,
+  });
+  expect(r).toMatchObject({ valid: false, reasons: ["STATUS_LIST_INVALID"] });
+  // direct writes to the packed list are refused; set_status still works and
+  // still refuses to leave INVALID
+  await expect(
+    d.db.query(
+      `UPDATE tastepolicy.attestation_status_lists SET data=set_byte(data,0,255) WHERE list_id=${listId}`,
+    ),
+  ).rejects.toThrow(/only through set_status/);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  expect(await w.verify(at.attestation, { dryRun: true })).toMatchObject({
+    reasons: ["STATUS_INVALID"],
+  });
+}, 60000);
+it("review fix: admission pins only the active and announced-next keys", async () => {
+  const b = await makeConfig("https://issuer-three.test");
+  const retired = await makeConfig("https://issuer-three.test");
+  const jwks = {
+    keys: [b.pub, retired.pub],
+  };
+  const meta = buildIssuerMetadata("https://issuer-three.test", {
+    active: b.pub.kid as string,
+    next: [],
+    retired: [retired.pub.kid as string],
+    revoked: [],
+  });
+  const docs: Record<string, string> = {
+    "https://issuer-three.test/.well-known/tastepolicy-issuer":
+      JSON.stringify(meta),
+    "https://issuer-three.test/.well-known/jwks.json": JSON.stringify(jwks),
+  };
+  const found = await inspectIssuer(
+    "https://issuer-three.test",
+    async (u) => docs[u],
+  );
+  expect(found.problems).toEqual([]);
+  const admitted = admitIssuer(found, {
+    issuer: found.issuer,
+    activeKid: b.pub.kid as string,
+  });
+  expect(admitted.entry.jwks.keys.map((k) => k.kid)).toEqual([b.pub.kid]);
+});

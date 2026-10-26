@@ -19,6 +19,7 @@ import { clientKey } from "./client-key";
 export type Pool = "verify" | "status";
 const WINDOW_MS = 60_000,
   PER_IP = 60,
+  DEGRADED_PER_IP = 15,
   CONCURRENT: Record<Pool, number> = { verify: 8, status: 16 },
   // Shared per-minute budgets: per client, and for the whole pool.
   SHARED_PER_CLIENT: Record<Pool, number> = { verify: 60, status: 120 },
@@ -86,7 +87,17 @@ export async function admitPublicShared(
       return null;
     }
   } catch {
-    // Shared tier unavailable: the per-instance tier above already applied.
+    // Shared tier unavailable. The per-instance tier above already applied;
+    // while it is down the budget is also tightened, so a database under
+    // stress does not lift the limit exactly when it matters.
+    const map = hits[pool],
+      recent = (map.get(clientKey(request)) ?? []).filter(
+        (t) => now - t < WINDOW_MS,
+      );
+    if (recent.length > DEGRADED_PER_IP) {
+      release();
+      return null;
+    }
   }
   return release;
 }
