@@ -1,6 +1,7 @@
 import "server-only";
 import { createHmac } from "node:crypto";
 import type { StateStore } from "@/server/state/repositories";
+import { clientKey } from "./client-key";
 
 // Admission for unauthenticated endpoints, in two tiers.
 //  1. Per instance: a concurrency cap and a short window per client. Cheap, no
@@ -28,16 +29,6 @@ const hits: Record<Pool, Map<string, number[]>> = {
   status: new Map(),
 };
 const active: Record<Pool, number> = { verify: 0, status: 0 };
-// Only headers the platform sets are trusted: Vercel overwrites these, so a
-// client cannot choose its own bucket. Without them everyone shares "unknown".
-export function clientKey(request: Request) {
-  const h = request.headers;
-  const v =
-    h.get("x-vercel-forwarded-for") ??
-    h.get("x-real-ip") ??
-    h.get("x-forwarded-for")?.split(",").at(-1);
-  return (v ?? "unknown").trim().slice(0, 64) || "unknown";
-}
 export function admitPublic(
   request: Request,
   pool: Pool = "verify",

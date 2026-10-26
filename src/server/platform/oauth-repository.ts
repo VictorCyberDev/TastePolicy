@@ -47,6 +47,8 @@ export interface OAuthRepository {
   refreshFamily(hash: string): Promise<string | null>;
   clientCount(): Promise<number>;
   pruneClients(before: string): Promise<void>;
+  // Drops the oldest client nobody has linked or started to link; true if one went.
+  evictOldestUnlinked(): Promise<boolean>;
   families(user: string): Promise<OAuthFamily[]>;
   revokeFamily(id: string, at: string): Promise<string[]>;
   touchFamily(id: string, at: string): Promise<void>;
@@ -225,6 +227,12 @@ export function oauthRepository(c: PoolClient): OAuthRepository {
         "DELETE FROM tastepolicy.oauth_clients k WHERE k.fetched_at<$1 AND NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_families f WHERE f.client_id=k.client_id) AND NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_codes o WHERE o.client_id=k.client_id)",
         [before],
       );
+    },
+    async evictOldestUnlinked() {
+      const q = await c.query(
+        "DELETE FROM tastepolicy.oauth_clients WHERE client_id=(SELECT k.client_id FROM tastepolicy.oauth_clients k WHERE NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_families f WHERE f.client_id=k.client_id) AND NOT EXISTS(SELECT 1 FROM tastepolicy.oauth_codes o WHERE o.client_id=k.client_id) ORDER BY k.fetched_at ASC LIMIT 1 FOR UPDATE SKIP LOCKED) RETURNING 1",
+      );
+      return (q.rowCount ?? 0) > 0;
     },
     async touchFamily(id, at) {
       await c.query(

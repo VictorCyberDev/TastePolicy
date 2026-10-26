@@ -2,13 +2,13 @@ import { getAuthentication } from "@/server/platform/auth";
 import { trustedOrigin, safePlatformError } from "@/server/platform/http";
 import { readJsonBody } from "@/server/taste/read-body";
 import { platformFail } from "@/lib/platform/types";
-import { acquireDemoBudget } from "@/server/taste/budget";
+import { admitAuth } from "@/server/platform/auth-limit";
 export async function handleAuthentication(
   request: Request,
   auth = getAuthentication(),
 ) {
   const requestId = crypto.randomUUID(),
-    release = acquireDemoBudget();
+    release = admitAuth(request);
   try {
     if (!release) platformFail("RATE_LIMITED");
     if (!auth) platformFail("NOT_CONFIGURED");

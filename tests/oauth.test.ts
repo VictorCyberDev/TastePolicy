@@ -484,3 +484,69 @@ it("review fixes: a client mismatch does not spend the refresh token; the family
   await oauth.revoke("tp_live_zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz.x");
   await oauth.revoke("tp_live_00000000-0000-0000-0000-00000000000g.x");
 });
+
+it("review fixes: a registration flood evicts the oldest unlinked client instead of locking OAuth out; linked clients survive", async () => {
+  const p = await person();
+  const linked = await link(p);
+  await linked.exchange();
+  await d.db.query(
+    `INSERT INTO tastepolicy.oauth_clients(client_id,source,client_name,redirect_uris,fetched_at)
+     SELECT 'tpc_flood' || g, 'DCR', 'flood', ARRAY['https://flood.test/cb'], now() + (g || ' milliseconds')::interval
+     FROM generate_series(1, 5000) g`,
+  );
+  const total = async () =>
+    (
+      (
+        await d.db.query(
+          "SELECT count(*)::int AS n FROM tastepolicy.oauth_clients",
+        )
+      ).rows[0] as { n: number }
+    ).n;
+  const before = await total();
+  expect(before).toBeGreaterThanOrEqual(5000);
+  const fresh = await client(); // table is full; this must still succeed
+  expect(fresh).toMatch(/^tpc_/);
+  expect(await total()).toBe(before); // one made room for one
+  const survivors = await d.db.query(
+    "SELECT client_id FROM tastepolicy.oauth_clients WHERE client_id = ANY($1)",
+    [[linked.id, fresh]],
+  );
+  expect(survivors.rows.length).toBe(2); // the linked client was never a candidate
+  await d.db.query(
+    "DELETE FROM tastepolicy.oauth_clients WHERE client_id LIKE 'tpc_flood%'",
+  );
+}, 90000);
+it("review fixes: deleting the account ends every linked assistant, and a refresh token cannot outlive its person", async () => {
+  const p = await person();
+  const l = await link(p),
+    t = await l.exchange();
+  await svc.delete(
+    p,
+    {
+      idempotencyKey: "del-account-key-1",
+      confirmation: "DELETE ACCOUNT",
+    },
+    true,
+  );
+  await expect(
+    svc.credentialPrincipal(t.access_token, "mcp"),
+  ).rejects.toBeTruthy();
+  const fam = await d.db.query(
+    "SELECT revoked_at FROM tastepolicy.oauth_families WHERE client_id=$1",
+    [l.id],
+  );
+  // either revoked in place or removed with the account; never still usable
+  const row = fam.rows[0] as { revoked_at: unknown } | undefined;
+  expect(row === undefined || !!row.revoked_at).toBe(true);
+  expect(
+    await code(
+      oauth.token(
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: t.refresh_token,
+          client_id: l.id,
+        }),
+      ),
+    ),
+  ).toBe("invalid_grant");
+}, 60000);

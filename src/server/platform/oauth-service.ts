@@ -221,7 +221,13 @@ export class OAuthService {
       await r.oauth.pruneClients(
         new Date(Date.parse(this.clock()) - 86_400_000).toISOString(),
       );
-      if ((await r.oauth.clientCount()) >= MAX_CLIENTS)
+      // Full: make room by dropping the oldest client nobody linked, so a flood
+      // of registrations cannot lock real clients out. Only when every slot is
+      // in use by a linked client does registration fail.
+      if (
+        (await r.oauth.clientCount()) >= MAX_CLIENTS &&
+        !(await r.oauth.evictOldestUnlinked())
+      )
         throw new OAuthError("server_error", "Too many clients.");
       await r.oauth.saveClient(c);
     });
@@ -544,6 +550,8 @@ export class OAuthService {
           fam &&
           Date.parse(now) > Date.parse(fam.createdAt) + REFRESH_ABSOLUTE * 1000
         )
+          return new OAuthError("invalid_grant");
+        if (fam && !(await r.platform.user(fam.userId)))
           return new OAuthError("invalid_grant");
         const used = await r.oauth.useRefresh(hash(rt), now);
         if (used.state === "REUSED") {

@@ -1,4 +1,6 @@
 // @vitest-environment node
+// The client identity headers are believed only on a platform that sets them.
+process.env.VERCEL = "1";
 /* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON responses */
 import { beforeAll, afterAll, it, expect, vi } from "vitest";
 import { exportJWK, generateKeyPair } from "jose";

@@ -949,6 +949,10 @@ export class PlatformService {
           fail("PASSPORT_NOT_FOUND");
         for (const c of await r.platform.credentials(p.userId))
           await r.platform.revokeCredential(c, this.clock());
+        // Linked assistants end with the data they were linked to.
+        for (const f of await r.oauth.families(p.userId))
+          if (!f.revokedAt)
+            await r.oauth.revokeFamily(f.familyId, this.clock());
         if (passport) await r.platform.deletePassport(passport.passportRef);
         if (account) {
           await r.platform.deleteUser(
