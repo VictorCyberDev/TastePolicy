@@ -10,13 +10,13 @@ Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: 
 | Auth (Better Auth sessions, recent-auth gates)          | PASS          | `platform.test.ts`, `realpg-m6.test.ts`                                                        |
 | Grant                                                   | PASS          | `platform.test.ts`, `subjects.test.ts`                                                         |
 | Credential (hashed, scoped, expiring, rotatable)        | PASS          | `platform.test.ts`                                                                             |
-| REST                                                    | PASS          | `platform.test.ts`, `api` tests                                                                |
+| REST                                                    | PASS          | `platform.test.ts`, `attest-routes.test.ts`                                                                |
 | OpenAPI                                                 | PASS          | `openapi.test.ts`                                                                              |
-| SDK                                                     | PASS          | `sdk.test.ts`; in-repo only, not published to npm                                              |
+| SDK                                                     | PASS          | `sdk-sandbox.test.ts`; in-repo only, not published to npm                                              |
 | MCP                                                     | PASS          | `mcp.test.ts` (official client library); not tested inside a hosted assistant                  |
 | OAuth 2.1                                               | PASS          | `oauth.test.ts`, `oauth-routes.test.ts`, `realpg-m6.test.ts`; local authorization server only  |
 | A2A                                                     | PASS          | `a2a.test.ts`, `a2a-authority.test.ts` (CONTROLLED agent-to-agent); no third-party A2A product |
-| Sandbox                                                 | PASS          | `sdk` sandbox tests                                                                            |
+| Sandbox                                                 | PASS          | `sdk-sandbox.test.ts`                                                                            |
 | Conformance                                             | PASS          | `npm run conformance:compatible`: 110 checks                                                   |
 | External connector proof                                | BLOCKED_HUMAN | not executed: no signed-in vendor session available; see R6                                    |
 
