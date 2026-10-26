@@ -42,4 +42,9 @@ The suite is versioned independently of the draft specifications it uses. Groups
 | authority semantics | `conformance/authority-semantics-v1.json`      | typed ASK (authority confirmation vs clarification), continuation sets, lease/epoch transitions                                                                     |
 | issuer metadata     | `conformance/issuer-metadata-vectors-v1.json`  | boundary, algorithms, origin binding, key lifecycle, "discovery grants no trust"                                                                                    |
 
+| commitments | `conformance/commitment-vectors-v1.json` | `taste-commitments-v1`: hand-written RFC 8785 canonical forms, domain-separated SHA-256, equivalence, difference, malformed material |
+| action ladder | `conformance/action-ladder-vectors-v1.json` | ladder order, legacy mapping, typed ASK for escalation, ceiling resolution |
+
+The verifier's comparison with the verifier's own commitments (`CANDIDATE_COMMITMENT_MISMATCH`, `CONTEXT_COMMITMENT_MISMATCH`, `COMMITMENT_NOT_DISCLOSED`) and the signature-versus-trust result fields are covered by repository tests, not by portable vectors yet.
+
 Decision semantics of M6 (ALLOW/ASK/REJECT/UNAVAILABLE, UNAVAILABLE is never REJECT, hard rules final) are covered by the repository tests, not by portable vectors yet; an implementation can claim only the groups above.
