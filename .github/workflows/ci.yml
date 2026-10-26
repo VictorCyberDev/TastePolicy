@@ -11,7 +11,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     # A real PostgreSQL server for the concurrency tests (tests/realpg.test.ts).
     services:
       postgres:
@@ -39,7 +39,7 @@ jobs:
       - run: npm run tastebench:validate
       - run: npm run tastebench:contract -- .tastebench/ci
       - run: npm run tastebench:report -- .tastebench/ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()
