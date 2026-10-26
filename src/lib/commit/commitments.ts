@@ -12,7 +12,7 @@
 // either: it is not in the snapshot, and normalization drops unknown fields.
 // The context type has no occasion or party attributes, so none are committed.
 import { createHash } from "node:crypto";
-import { canonicalize } from "./jcs";
+import { canonicalize, isWellFormed } from "./jcs";
 
 export const COMMITMENT_SCHEMA = "taste-commitments-v1";
 export type CommitmentKind = "candidate" | "context" | "authority";
@@ -31,7 +31,9 @@ export interface ContextMaterial {
   price?: { amount: number; currency: string };
 }
 const text = (v: unknown, max: number) =>
-  typeof v === "string" && v.length >= 1 && v.length <= max ? v : null;
+  typeof v === "string" && v.length >= 1 && v.length <= max && isWellFormed(v)
+    ? v
+    : null;
 
 // Strict, total normalization. Returns null for anything that is not a valid
 // candidate; unknown fields are dropped (presentation can ride along unharmed).

@@ -43,6 +43,7 @@ The suite is versioned independently of the draft specifications it uses. Groups
 | issuer metadata     | `conformance/issuer-metadata-vectors-v1.json`  | boundary, algorithms, origin binding, key lifecycle, "discovery grants no trust"                                                                                    |
 
 | commitments | `conformance/commitment-vectors-v1.json` | `taste-commitments-v1`: hand-written RFC 8785 canonical forms, domain-separated SHA-256, equivalence, difference, malformed material |
+| canonical JSON | `conformance/jcs-vectors-v1.json` | RFC 8785 for the I-JSON subset: Appendix B number serializations (from the RFC text), member ordering, string forms, and the non-I-JSON inputs that MUST fail with `NOT_I_JSON` |
 | action ladder | `conformance/action-ladder-vectors-v1.json` | ladder order, legacy mapping, typed ASK for escalation, ceiling resolution |
 
 The verifier's comparison with the verifier's own commitments (`CANDIDATE_COMMITMENT_MISMATCH`, `CONTEXT_COMMITMENT_MISMATCH`, `COMMITMENT_NOT_DISCLOSED`) and the signature-versus-trust result fields are covered by repository tests, not by portable vectors yet.

@@ -127,6 +127,57 @@ cv.different.forEach((e, i) =>
 cv.malformed.forEach((e, i) =>
   record("commitments", `malformed-${i + 1}`, commit(e.kind, e.input) === null),
 );
+// 4b. canonical JSON (RFC 8785 over I-JSON)
+const jv = await load("jcs-vectors-v1.json");
+for (const v of jv.numbers) {
+  const b = Buffer.from(v.ieee754, "hex");
+  record(
+    "canonical-json",
+    v.ieee754,
+    canonicalize(b.readDoubleBE(0)) === v.canonical,
+  );
+}
+for (const v of jv.strings)
+  record("canonical-json", "string", canonicalize(v.value) === v.canonical);
+{
+  const out = canonicalize(jv.sorting.input);
+  const at = jv.sorting.memberOrder.map((k) => out.indexOf(JSON.stringify(k)));
+  record(
+    "canonical-json",
+    "member-order",
+    at.every((p, i) => p >= 0 && (i === 0 || p > at[i - 1])),
+  );
+}
+const refusedInputs = {
+  J01: () => ({ a: undefined }),
+  J02: () => [undefined],
+  J03: () => NaN,
+  J04: () => Infinity,
+  J05: () => -Infinity,
+  J06: () => BigInt(1),
+  J07: () => () => 1,
+  J08: () => Symbol("x"),
+  // eslint-disable-next-line no-sparse-arrays -- the point of the case
+  J09: () => [1, , 3],
+  J10: () => "a\ud800b",
+  J11: () => "a\udc00b",
+  J12: () => ({ ["k\ud800"]: 1 }),
+  J13: () => new Date(0),
+  J14: () => {
+    const c = {};
+    c.self = c;
+    return c;
+  },
+};
+for (const r of jv.refused) {
+  let code = null;
+  try {
+    canonicalize(refusedInputs[r.id]());
+  } catch (e) {
+    code = e.message;
+  }
+  record("canonical-json", r.id, code === jv.error, r.kind);
+}
 // 5. subjective-action ladder
 const lv = await load("action-ladder-vectors-v1.json");
 record(

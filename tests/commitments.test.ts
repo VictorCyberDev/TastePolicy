@@ -35,7 +35,7 @@ it("RFC 8785 canonical form: the published example and key ordering", () => {
   expect(canonicalize({ b: 1, a: { d: 1, c: 2 } })).toBe(
     '{"a":{"c":2,"d":1},"b":1}',
   );
-  expect(canonicalize({ a: undefined, b: 1 })).toBe('{"b":1}');
+  expect(() => canonicalize({ a: undefined, b: 1 })).toThrow("NOT_I_JSON");
   expect(() => canonicalize({ a: NaN })).toThrow();
   expect(() => canonicalize({ a: BigInt(1) })).toThrow();
 });
