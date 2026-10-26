@@ -85,6 +85,29 @@ async function intercept(page: Page) {
           },
         ],
       },
+      timeline: {
+        schemaVersion: "taste-authority-timeline-v1",
+        truncated: false,
+        events: [
+          {
+            at: "2026-10-24T12:03:00.000Z",
+            kind: "PAUSED",
+            actor: "SYSTEM",
+            title: "Authority for Agent-A was paused",
+            detail:
+              "Because the situation changed, such as the price. A fresh check is needed.",
+            ref: "cccccccc",
+            technical: { epoch: 1, reasons: ["CONTEXT_CHANGED"] },
+          },
+          {
+            at: "2026-10-24T12:00:00.000Z",
+            kind: "EVALUATED",
+            actor: "AGENT",
+            title: "Agent-A asked about “SYNTHETIC TEST DATA Cafe”: allowed",
+            ref: "aaaaaaaa",
+          },
+        ],
+      },
       "policy-explain": {
         evaluationRef: "tp_" + "d".repeat(48),
         base: { outcome: "ALLOW", basis: "CULTURAL_POLICY", rules: [] },
@@ -138,6 +161,7 @@ const pages: [string, string][] = [
   ["/account/rules", "Your rules"],
   ["/account/inspector", "Why was this the answer?"],
   ["/account/leases", "What agents may do now"],
+  ["/account/timeline", "What happened, in order"],
   ["/verify", "Check a TastePolicy proof"],
   ["/product", "Your taste. Your rules. Any agent."],
   ["/developers", "Subjective authority for your agents"],

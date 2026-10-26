@@ -119,7 +119,7 @@ export default function VerifyProof() {
     <main className="policyPlane">
       <h1>Check a TastePolicy proof</h1>
       <p className="help">
-        A proof says an agent was allowed to take a subjective step with one
+        A proof says an agent was allowed to take a taste-based step with one
         choice (for example suggest it or add it to a draft), for a short time.
         It never means anyone may buy, book or pay. It stops being valid when
         the permission ends, as the issuer records it, and a proof never becomes

@@ -186,3 +186,51 @@ for (const colorScheme of ["light", "dark"] as const)
       fullPage: true,
     });
   });
+
+test("the action ladder and sensitive-choice controls publish an additive policy and show the privacy summary", async ({
+  page,
+}) => {
+  const published: Record<string, any>[] = [];
+  await page.route("**/api/account/**", async (r) => {
+    const op = r.request().url().split("/").at(-1)!;
+    if (op === "policy-publish") published.push(r.request().postDataJSON());
+    const data: Record<string, unknown> = {
+      inspect: { passport: { passportRef: "tp_" + "a".repeat(48) } },
+      "policy-get": {
+        passportRef: "tp_" + "a".repeat(48),
+        history: [],
+        suggestions: [],
+        overrides: [],
+        active: null,
+      },
+      "policy-impact": { total: 0, changed: 0, transitions: {} },
+      "policy-publish": { version: 1 },
+    };
+    await r.fulfill({ json: { status: "available", data: data[op] ?? {} } });
+  });
+  await page.goto("/account/rules");
+  await expect(
+    page.getByRole("heading", { name: "How far may an agent go?" }),
+  ).toBeVisible();
+  await page.getByLabel("Set my own limit on how far an agent goes").check();
+  await page.getByRole("radio", { name: /^Rank/ }).check();
+  await page
+    .getByRole("group", { name: "Destination" })
+    .getByLabel("Always ask me")
+    .check();
+  await expect(
+    page.getByRole("heading", { name: "What each side can see" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/does not receive your saved taste/),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: /publish/i })
+    .first()
+    .click();
+  await expect.poll(() => published.length).toBeGreaterThan(0);
+  const doc = published[0].document;
+  expect(doc.actions).toMatchObject({ default: "RANK" });
+  expect(doc.sensitive.destination).toMatchObject({ alwaysAsk: true });
+  expect(doc.schemaVersion).toBe("taste-policy-v1");
+});
