@@ -8,7 +8,7 @@ import {
   subjectProvider,
 } from "./platform-fixtures";
 import { LeaseService } from "@/server/platform/lease-service";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import type { Principal } from "@/lib/platform/types";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
@@ -69,6 +69,11 @@ const check = (
   svc.leaseCheckpoint(w.agent, { leaseRef, ...extra }) as Promise<
     Record<string, any>
   >;
+// One half of a presentation, taken from the lease view; tests add the other.
+const cand = (l: any) => ({
+  candidateCommitment: commitOf(l).candidateCommitment,
+});
+const ctx = (l: any) => ({ contextCommitment: commitOf(l).contextCommitment });
 const statusOf = (p: Principal, leaseRef: string, extra: object = {}) =>
   svc.leaseVerify(p, { leaseRef, ...extra }) as Promise<Record<string, any>>;
 
@@ -102,6 +107,7 @@ it("a changed price is CONTEXT_CHANGED; a changed candidate field is CANDIDATE_C
   const e = await w.evaluate(priced(100)),
     l = await w.lease(e.evaluationRef);
   const moved = await check(w, l.leaseRef, {
+    ...cand(l),
     context: {
       key: "trip",
       domain: "destination",
@@ -117,6 +123,7 @@ it("a changed price is CONTEXT_CHANGED; a changed candidate field is CANDIDATE_C
   const e2 = await w2.evaluate(priced(100)),
     l2 = await w2.lease(e2.evaluationRef);
   const renamed = await check(w2, l2.leaseRef, {
+    ...ctx(l2),
     candidate: {
       ...proposal(1).candidate,
       address: "another address entirely",
@@ -161,17 +168,20 @@ it("commitments can be presented instead of the material; a malformed value is r
       code: "INVALID_INPUT",
     });
   const wrong = await statusOf(w.agent, l.leaseRef, {
+    ...cand(l),
     contextCommitment: "sha-256:" + "A".repeat(43),
   });
   expect(wrong.reasons).toEqual(["CONTEXT_CHANGED"]);
 }, 60000);
-it("what the server is never told is not detected: no presentation, no context drift", async () => {
+it("a commitment-aware lease cannot be relied on silently: no presentation is COMMITMENT_REQUIRED, never 'unchanged'", async () => {
   const w = await world();
   const e = await w.evaluate(priced(100)),
     l = await w.lease(e.evaluationRef);
   tick(30);
-  const c = await check(w, l.leaseRef, {});
-  expect([c.status, c.valid]).toEqual(["ACTIVE", true]);
+  await expect(check(w, l.leaseRef, {})).rejects.toMatchObject({
+    code: "COMMITMENT_REQUIRED",
+    missing: ["candidate", "context"],
+  });
 }, 40000);
 it("resume needs a fresh ALLOW for the current choice: the old evaluation cannot resume, a mismatched presentation cannot resume, the new commitments replace the old", async () => {
   const w = await world();
@@ -179,6 +189,7 @@ it("resume needs a fresh ALLOW for the current choice: the old evaluation cannot
     l = await w.lease(e.evaluationRef);
   tick(5);
   await check(w, l.leaseRef, {
+    ...cand(l),
     context: {
       key: "trip",
       domain: "destination",
@@ -191,6 +202,7 @@ it("resume needs a fresh ALLOW for the current choice: the old evaluation cannot
       idempotencyKey: "rs-old-key",
       leaseRef: l.leaseRef,
       evaluationRef: e.evaluationRef,
+      ...commitOf(l),
     }),
   ).rejects.toMatchObject({ code: "STATE_VERSION_CONFLICT" });
   const fresh = await w.evaluate(priced(450));
@@ -201,6 +213,7 @@ it("resume needs a fresh ALLOW for the current choice: the old evaluation cannot
       idempotencyKey: "rs-mis-key",
       leaseRef: l.leaseRef,
       evaluationRef: fresh.evaluationRef,
+      ...cand(l),
       contextCommitment: e.commitments.context,
     }),
   ).rejects.toMatchObject({ code: "COMMITMENT_MISMATCH" });
@@ -208,12 +221,14 @@ it("resume needs a fresh ALLOW for the current choice: the old evaluation cannot
     idempotencyKey: "rs-ok-key",
     leaseRef: l.leaseRef,
     evaluationRef: fresh.evaluationRef,
+    ...cand(l),
     contextCommitment: fresh.commitments.context,
   });
   expect([back.status, back.valid]).toEqual(["ACTIVE", true]);
   expect(back.commitments).toEqual(fresh.commitments);
   // and it is now bound to the new context: the old one is a mismatch again
   const again = await check(w, l.leaseRef, {
+    ...cand(l),
     contextCommitment: e.commitments.context,
   });
   expect(again.reasons).toEqual(["CONTEXT_CHANGED"]);

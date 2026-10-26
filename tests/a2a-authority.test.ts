@@ -25,7 +25,7 @@ import { handleMcp } from "@/server/platform/mcp";
 import { AttestationService } from "@/server/platform/attest-service";
 import { present, type Signer } from "@/lib/attest/sdjwt";
 import { VCT } from "@/lib/attest/issue";
-import { proposal } from "./interactive-fixtures";
+import { proposal, commitOf } from "./interactive-fixtures";
 import {
   Client,
   StreamableHTTPClientTransport,
@@ -239,6 +239,7 @@ it("issue, hand off and verify over A2A: evaluate → lease → key-bound proof 
   const moved = await w.send(w.agentA, {
     operation: "lease.checkpoint",
     leaseRef: lease.leaseRef,
+    candidateCommitment: commitOf(lease).candidateCommitment,
     context: priced(450).context,
   });
   expect(art(moved)).toMatchObject({
@@ -263,6 +264,7 @@ it("issue, hand off and verify over A2A: evaluate → lease → key-bound proof 
       operation: "lease.resume",
       leaseRef: lease.leaseRef,
       evaluationRef: e2.evaluationRef,
+      candidateCommitment: commitOf(lease).candidateCommitment,
       context: priced(450).context,
     }),
   );
@@ -290,7 +292,13 @@ it("issue, hand off and verify over A2A: evaluate → lease → key-bound proof 
   ).toEqual(["STATUS_INVALID"]);
   // 7. GetTask reads the lease through the same authoritative verify; Cancel releases it
   const got = await w.rpc(w.agentA, "GetTask", { id: lease.leaseRef });
-  expect(got.result.artifacts[0].parts[0].data.status).toBe("ACTIVE");
+  // GetTask cannot say what the choice is, so it never carries authority
+  expect(got.result.artifacts[0].parts[0].data).toMatchObject({
+    status: "ACTIVE",
+    valid: false,
+    unconfirmed: true,
+    permittedActions: [],
+  });
   const gone = await w.rpc(w.agentA, "CancelTask", { id: lease.leaseRef });
   expect(gone.result.artifacts[0].parts[0].data.status).toBe("RELEASED");
   expect((await verify(shareB, "b1", priced(450).context)).valid).toBe(false);

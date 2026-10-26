@@ -13,7 +13,7 @@ import {
   type PolicyDocument,
   type SubjectiveAction,
 } from "@/lib/policy/types";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import type { Principal } from "@/lib/platform/types";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
@@ -210,7 +210,8 @@ it("review fix: a resumed lease takes its ladder from the fresh evaluation, neve
   await w.publish(ladder("SUGGEST"), 1);
   tick(5);
   expect(
-    (await svc.leaseVerify(w.agent, { leaseRef: l1.leaseRef })).status,
+    (await svc.leaseVerify(w.agent, { leaseRef: l1.leaseRef, ...commitOf(l1) }))
+      .status,
   ).toBe("SUSPENDED");
   tick(5);
   const e2 = await w.evaluate("SUGGEST");
@@ -219,6 +220,7 @@ it("review fix: a resumed lease takes its ladder from the fresh evaluation, neve
     idempotencyKey: "rs-narrow-key",
     leaseRef: l1.leaseRef,
     evaluationRef: e2.evaluationRef,
+    ...commitOf(l1),
   });
   expect([back.status, back.permittedActions, back.permitted]).toEqual([
     "ACTIVE",

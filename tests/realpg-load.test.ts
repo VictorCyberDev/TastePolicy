@@ -13,7 +13,7 @@ import { beforeAll, afterAll, describe, expect, it } from "vitest";
 import { calculateJwkThumbprint, exportJWK, generateKeyPair } from "jose";
 import { realDatabase, REAL_URL } from "./realpg-fixture";
 import { init, subjectProvider } from "./platform-fixtures";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import { AttestationService } from "@/server/platform/attest-service";
 import type { AttestationConfig } from "@/server/platform/attest-config";
 import { VCT } from "@/lib/attest/issue";
@@ -175,29 +175,42 @@ suite("local load and contention on real PostgreSQL", () => {
       evaluationRef: e.evaluationRef,
     });
     const v = await drive("lease verify", 100, 16, () =>
-      svc.leaseVerify(w.agent, { leaseRef: lease.leaseRef }),
+      svc.leaseVerify(w.agent, {
+        leaseRef: lease.leaseRef,
+        ...commitOf(lease),
+      }),
     );
     expect(v.results.filter((r) => r instanceof Error)).toEqual([]);
     expect(v.stat.p95Ms).toBeLessThan(5000);
     const c = await drive("lease checkpoint (same lease)", 40, 16, () =>
-      svc.leaseCheckpoint(w.agent, { leaseRef: lease.leaseRef }),
+      svc.leaseCheckpoint(w.agent, {
+        leaseRef: lease.leaseRef,
+        ...commitOf(lease),
+      }),
     );
     expect(c.results.filter((r) => r instanceof Error)).toEqual([]);
     // revoke in the middle of a burst of checkpoints
     const burst = Array.from({ length: 30 }, () =>
       svc
-        .leaseCheckpoint(w.agent, { leaseRef: lease.leaseRef })
+        .leaseCheckpoint(w.agent, {
+          leaseRef: lease.leaseRef,
+          ...commitOf(lease),
+        })
         .catch((x: any) => x),
     );
     const revoke = svc.leaseRevoke(w.o, { leaseRef: lease.leaseRef });
     await Promise.all([...burst, revoke]);
     const after: any = await svc.leaseVerify(w.agent, {
       leaseRef: lease.leaseRef,
+      ...commitOf(lease),
     });
     expect([after.status, after.valid]).toEqual(["REVOKED", false]);
     // and nothing can extend it afterwards
     const late: any = await svc
-      .leaseCheckpoint(w.agent, { leaseRef: lease.leaseRef })
+      .leaseCheckpoint(w.agent, {
+        leaseRef: lease.leaseRef,
+        ...commitOf(lease),
+      })
       .catch((x) => x);
     expect(late.valid ?? false).toBe(false);
   }, 180000);

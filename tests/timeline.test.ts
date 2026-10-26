@@ -12,7 +12,7 @@ import {
 import { AttestationService } from "@/server/platform/attest-service";
 import type { AttestationConfig } from "@/server/platform/attest-config";
 import { VCT } from "@/lib/attest/issue";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 
 let d: Awaited<ReturnType<typeof platformDatabase>>;
 let svc: AttestationService;
@@ -95,6 +95,7 @@ it("one timeline shows the whole story in order, in plain words, with no identif
   now += 1000;
   await svc.leaseCheckpoint(agent, {
     leaseRef: lease.leaseRef,
+    candidateCommitment: commitOf(lease).candidateCommitment,
     context: priced(450).context,
   });
   now += 1000;
@@ -103,6 +104,8 @@ it("one timeline shows the whole story in order, in plain words, with no identif
     idempotencyKey: "tr-1-key-aa",
     leaseRef: lease.leaseRef,
     evaluationRef: e2.evaluationRef,
+    candidateCommitment: commitOf(lease).candidateCommitment,
+    context: priced(450).context,
   });
   now += 1000;
   await svc.leaseRevoke(a.principal, { leaseRef: lease.leaseRef });

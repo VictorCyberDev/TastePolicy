@@ -19,7 +19,7 @@ import { present, type Signer } from "@/lib/attest/sdjwt";
 import { VCT } from "@/lib/attest/issue";
 import { DEFAULT_POLICY, type PolicyDocument } from "@/lib/policy/types";
 import { decodeList, getStatus } from "@/lib/attest/status-list";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import {
   Client,
   StreamableHTTPClientTransport,
@@ -584,6 +584,7 @@ it("authority epochs: drift ends the epoch for good; a fresh ALLOW starts a new 
     idempotencyKey: "ep-res-0001",
     leaseRef: l.leaseRef,
     evaluationRef: e2.evaluationRef,
+    ...commitOf(l),
   });
   expect(resumed.status).toBe("ACTIVE");
   // the old proof stays dead although the lease is ACTIVE again
@@ -742,6 +743,7 @@ it("a context change ends the epoch: proof A stays invalid forever, a fresh eval
   now += 5_000;
   const moved: any = await svc.leaseCheckpoint(w.agent, {
     leaseRef: l.leaseRef,
+    candidateCommitment: commitOf(l).candidateCommitment,
     context: pricedProposal(450).context,
   });
   expect([moved.status, moved.reasons]).toEqual([
@@ -767,6 +769,7 @@ it("a context change ends the epoch: proof A stays invalid forever, a fresh eval
     idempotencyKey: "rs" + ++n + "-key",
     leaseRef: l.leaseRef,
     evaluationRef: fresh.evaluationRef,
+    candidateCommitment: commitOf(l).candidateCommitment,
     context: pricedProposal(450).context,
   });
   expect(back.status).toBe("ACTIVE");

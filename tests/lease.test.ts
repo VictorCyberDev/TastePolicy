@@ -11,7 +11,12 @@ import {
 } from "./platform-fixtures";
 import { LeaseService } from "@/server/platform/lease-service";
 import { DEFAULT_POLICY, type PolicyDocument } from "@/lib/policy/types";
-import { proposal, reqId } from "./interactive-fixtures";
+import {
+  proposal,
+  reqId,
+  rememberLease,
+  presentFor,
+} from "./interactive-fixtures";
 import type { Principal } from "@/lib/platform/types";
 import { stateHash } from "@/server/state/service";
 import type { StateEntry } from "@/lib/state/types";
@@ -55,11 +60,13 @@ async function world() {
       reqId,
     ) as Promise<Record<string, any>>;
   const lease = (evaluationRef: string, extra: object = {}) =>
-    svc.leaseRequest(agent, {
-      idempotencyKey: "l" + ++n + "-key",
-      evaluationRef,
-      ...extra,
-    }) as Promise<Record<string, any>>;
+    svc
+      .leaseRequest(agent, {
+        idempotencyKey: "l" + ++n + "-key",
+        evaluationRef,
+        ...extra,
+      })
+      .then(rememberLease) as Promise<Record<string, any>>;
   const publish = (document: PolicyDocument, expectedVersion: number) =>
     svc.policyPublish(a.principal, {
       idempotencyKey: "p" + ++n + "-key",
@@ -70,7 +77,9 @@ async function world() {
   return { a, q, agent, ref, evaluate, lease, publish, key };
 }
 const status = (p: Principal, leaseRef: string) =>
-  svc.leaseVerify(p, { leaseRef }) as Promise<Record<string, any>>;
+  svc.leaseVerify(p, { leaseRef, ...presentFor(leaseRef) }) as Promise<
+    Record<string, any>
+  >;
 
 it("ALLOW is leased ACTIVE, verified uncacheably, permits only continuation actions, and checkpoints extend only the due time", async () => {
   const w = await world();
@@ -89,7 +98,10 @@ it("ALLOW is leased ACTIVE, verified uncacheably, permits only continuation acti
     l.permitted.every((a: string) => ["recommend", "add_to_draft"].includes(a)),
   ).toBe(true);
   tick(60);
-  const c = await svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef });
+  const c = await svc.leaseCheckpoint(w.agent, {
+    leaseRef: l.leaseRef,
+    ...presentFor(l.leaseRef),
+  });
   expect(c.valid).toBe(true);
   expect(c.expiresAt).toBe(l.expiresAt); // never extended
   expect(c.checkpointDueAt > l.checkpointDueAt).toBe(true);
@@ -117,6 +129,7 @@ it("missed checkpoints suspend the lease; a new ALLOW evaluation resumes it", as
     svc.leaseResume(w.agent, {
       idempotencyKey: "r1-key-0",
       leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
       evaluationRef: e.evaluationRef,
     }),
   ).rejects.toMatchObject({ code: "STATE_VERSION_CONFLICT" }); // an evaluation from before the suspension is not a fresh check
@@ -124,6 +137,7 @@ it("missed checkpoints suspend the lease; a new ALLOW evaluation resumes it", as
   const r = await svc.leaseResume(w.agent, {
     idempotencyKey: "r2-key-0",
     leaseRef: l.leaseRef,
+    ...presentFor(l.leaseRef),
     evaluationRef: e2.evaluationRef,
   });
   expect([r.status, r.valid]).toEqual(["ACTIVE", true]);
@@ -141,6 +155,7 @@ it("drift: a policy change suspends; resuming needs ALLOW under the new rules; a
     svc.leaseResume(w.agent, {
       idempotencyKey: "r3-key-0",
       leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
       evaluationRef: e2.evaluationRef,
     }),
   ).rejects.toMatchObject({ code: "LEASE_NOT_PERMITTED" });
@@ -218,13 +233,21 @@ it("REJECT and UNAVAILABLE cannot be leased; foreign callers cannot see or use a
     l = await w.lease(e.evaluationRef);
   const other = await world();
   await expect(
-    svc.leaseVerify(other.agent, { leaseRef: l.leaseRef }),
+    svc.leaseVerify(other.agent, {
+      leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
+    }),
   ).rejects.toMatchObject({ code: "LEASE_NOT_FOUND" });
   await expect(
-    svc.leaseCheckpoint(other.agent, { leaseRef: l.leaseRef }),
+    svc.leaseCheckpoint(other.agent, {
+      leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
+    }),
   ).rejects.toMatchObject({ code: "LEASE_NOT_FOUND" });
   await expect(
-    svc.leaseRevoke(other.a.principal, { leaseRef: l.leaseRef }),
+    svc.leaseRevoke(other.a.principal, {
+      leaseRef: l.leaseRef,
+    }),
   ).rejects.toMatchObject({ code: "LEASE_NOT_FOUND" });
   await expect(other.lease(e.evaluationRef)).rejects.toMatchObject({
     code: "LEASE_NOT_FOUND",
@@ -245,11 +268,16 @@ it("owner revocation takes effect on the next verify, one lease or all; terminal
   const w = await world();
   const e = await w.evaluate(),
     l = await w.lease(e.evaluationRef);
-  const r: any = await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  const r: any = await svc.leaseRevoke(w.a.principal, {
+    leaseRef: l.leaseRef,
+  });
   expect(r.status).toBe("REVOKED");
   expect((await status(w.agent, l.leaseRef)).valid).toBe(false);
   await expect(
-    svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef }),
+    svc.leaseCheckpoint(w.agent, {
+      leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
+    }),
   ).resolves.toMatchObject({ status: "REVOKED", valid: false });
   const e2 = await w.evaluate(),
     l2 = await w.lease(e2.evaluationRef);
@@ -297,6 +325,7 @@ it("a revoked or expired grant propagates: the delegated agent's lease is suspen
     idempotencyKey: "gl" + ++n + "-key",
     evaluationRef: e.evaluationRef,
   })) as Record<string, any>;
+  rememberLease(l);
   expect((await status(delegate, l.leaseRef)).valid).toBe(true);
   await svc.revokeGrant(w.a.principal, {
     idempotencyKey: "rg-key-0001",
@@ -322,9 +351,13 @@ it("concurrent requests for one choice create exactly one live lease; concurrent
   const ok = (
     results.find((r) => r.status === "fulfilled") as PromiseFulfilledResult<any>
   ).value;
+  rememberLease(ok);
   const cps = await Promise.allSettled(
     [1, 2, 3].map(() =>
-      svc.leaseCheckpoint(w.agent, { leaseRef: ok.leaseRef }),
+      svc.leaseCheckpoint(w.agent, {
+        leaseRef: ok.leaseRef,
+        ...presentFor(ok.leaseRef),
+      }),
     ),
   );
   expect(cps.every((c) => c.status === "fulfilled")).toBe(true);
@@ -332,7 +365,11 @@ it("concurrent requests for one choice create exactly one live lease; concurrent
   expect(final.rev).toBe(1 + 3);
   expect(
     await svc
-      .leaseCheckpoint(w.agent, { leaseRef: ok.leaseRef, expectedRev: 1 })
+      .leaseCheckpoint(w.agent, {
+        leaseRef: ok.leaseRef,
+        expectedRev: 1,
+        ...presentFor(ok.leaseRef),
+      })
       .catch((x) => x.code),
   ).toBe("LEASE_STATE_CONFLICT");
 }, 40000);
@@ -379,7 +416,9 @@ it("the database refuses lease extension, terminal revival and event edits", asy
       [l.leaseRef],
     ),
   ).rejects.toThrow(/Immutable/);
-  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  await svc.leaseRevoke(w.a.principal, {
+    leaseRef: l.leaseRef,
+  });
   await expect(
     d.db.query(
       "UPDATE tastepolicy.platform_leases SET status='ACTIVE', rev=rev+1 WHERE lease_ref=$1",
@@ -673,7 +712,10 @@ it("absolute lifetime: repeated checkpoints never move the end; the lease expire
   const end = l.expiresAt;
   for (let i = 0; i < 5; i++) {
     tick(100);
-    const c: any = await svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef });
+    const c: any = await svc.leaseCheckpoint(w.agent, {
+      leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
+    });
     expect(c.status).toBe("ACTIVE");
     expect(c.expiresAt).toBe(end);
     expect(Date.parse(c.checkpointDueAt)).toBeLessThanOrEqual(Date.parse(end));
@@ -682,7 +724,10 @@ it("absolute lifetime: repeated checkpoints never move the end; the lease expire
   const gone: any = await status(w.agent, l.leaseRef);
   expect([gone.status, gone.valid]).toEqual(["EXPIRED", false]);
   await expect(
-    svc.leaseCheckpoint(w.agent, { leaseRef: l.leaseRef }),
+    svc.leaseCheckpoint(w.agent, {
+      leaseRef: l.leaseRef,
+      ...presentFor(l.leaseRef),
+    }),
   ).resolves.toMatchObject({ status: "EXPIRED" });
   // a pending question cannot outlive its lifetime either
   const p = await world();

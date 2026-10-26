@@ -24,10 +24,11 @@ Rules an agent must follow:
 - `ASK_PENDING` means wait for the person; poll `lease-verify`. Never assume an answer.
 - `SUSPENDED` includes the reasons (`STATE_CHANGED`, `POLICY_CHANGED`, `GRANT_UNAVAILABLE`, `OVERRIDE_ENDED`, `CHECKPOINT_OVERDUE`, `PASSPORT_UNAVAILABLE`). Run a new evaluation; only a new ALLOW resumes the lease.
 - Lifetime 60 s–24 h (default 15 min). Approval can shorten it, never extend it.
+- **Say what the choice is now.** A lease whose view has `commitmentRequired: true` is bound to one candidate and one situation. `lease-verify`, `lease-checkpoint` and `lease-resume` must present both: material (`candidate`, `context`), commitments (`candidateCommitment`, `contextCommitment`), or both for one field (recomputed and confirmed; disagreement is `INVALID_INPUT`). Leaving either out is `COMMITMENT_REQUIRED` (HTTP 428) with `missing: ["candidate"|"context"]`; the lease is neither relied on nor extended. A2A `GetTask` cannot present a choice and reports status only (`valid:false`, `unconfirmed:true`). Leases created before commitments existed carry none and keep the earlier behaviour.
 - Idempotent by `idempotencyKey`. `expectedRev` on checkpoint detects concurrent changes (`LEASE_STATE_CONFLICT`).
 - One live lease per agent, choice and situation.
 
-Errors: `CLARIFICATION_REQUIRED` (a fact is missing; not approvable), `LEASE_NOT_FOUND` (also for leases belonging to someone else), `LEASE_NOT_PERMITTED` (REJECT or UNAVAILABLE decisions cannot be leased), `LEASE_STATE_CONFLICT`, `STATE_VERSION_CONFLICT` (the evaluation is stale).
+Errors: `CLARIFICATION_REQUIRED` (a fact is missing; not approvable), `LEASE_NOT_FOUND` (also for leases belonging to someone else), `LEASE_NOT_PERMITTED` (REJECT or UNAVAILABLE decisions cannot be leased), `LEASE_STATE_CONFLICT`, `STATE_VERSION_CONFLICT` (the evaluation is stale), `COMMITMENT_REQUIRED` (candidate and/or context not presented), `COMMITMENT_MISMATCH` (resume presented a different choice than the fresh evaluation).
 
 ## Account operations (session only)
 

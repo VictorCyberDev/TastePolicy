@@ -58,6 +58,9 @@ const op = (
     "403": errorResponse("ACCESS_DENIED and grant/credential states"),
     "404": errorResponse("PASSPORT_NOT_FOUND"),
     "409": errorResponse("STATE_VERSION_CONFLICT or IDEMPOTENCY_KEY_CONFLICT"),
+    "428": errorResponse(
+      "COMMITMENT_REQUIRED: a commitment-aware lease needs the candidate and the context presented; `missing` names what was left out",
+    ),
     "429": errorResponse("RATE_LIMITED"),
     "503": errorResponse("NOT_CONFIGURED or PROVIDER_UNAVAILABLE"),
   },

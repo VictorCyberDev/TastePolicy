@@ -34,6 +34,9 @@ export interface Lease {
     | "EXPIRED"
     | "RELEASED";
   valid: boolean;
+  // true when the lease is bound to commitments: verify, checkpoint and resume
+  // must then present the candidate and the context (COMMITMENT_REQUIRED).
+  commitmentRequired: boolean;
   permitted: string[];
   // The same permission on the subjective-action ladder.
   permittedActions: import("./types").SubjectiveAction[];
@@ -58,6 +61,8 @@ export class TastePolicyError extends Error {
     readonly status: number,
     readonly retryable: boolean,
     readonly requestId?: string,
+    // For COMMITMENT_REQUIRED: which of "candidate" / "context" was left out.
+    readonly missing?: ("candidate" | "context")[],
   ) {
     super(code);
     this.name = "TastePolicyError";
@@ -132,6 +137,12 @@ export class TastePolicyClient {
         response.status,
         RETRYABLE.has(code),
         typeof result.requestId === "string" ? result.requestId : undefined,
+        Array.isArray(result.missing)
+          ? result.missing.filter(
+              (m: unknown): m is "candidate" | "context" =>
+                m === "candidate" || m === "context",
+            )
+          : undefined,
       );
     }
     return result.data as T;
@@ -160,8 +171,10 @@ export class TastePolicyClient {
     return this.call<Lease>("lease", input);
   }
   // Pass `current` (the candidate and context as they are now, or their
-  // commitments) so TastePolicy can notice that the choice itself changed. A
-  // change you do not present cannot be detected.
+  // commitments). A lease whose view has `commitmentRequired: true` is bound to
+  // one candidate and one situation: leaving either out rejects with
+  // TastePolicyError code COMMITMENT_REQUIRED and `missing`. Only a lease
+  // issued before commitments existed can be verified without them.
   leaseVerify(leaseRef: string, current?: CurrentChoice) {
     return this.call<Lease>("lease-verify", { leaseRef, ...current });
   }

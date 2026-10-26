@@ -219,8 +219,9 @@ export interface CurrentFacts {
   passportUsable: boolean;
   activeOverrideIds: string[];
   // What the relying agent says the candidate / context is NOW, as
-  // commitments. The server cannot observe the outside world: a change it was
-  // never told about cannot be detected, only one that is presented.
+  // commitments. The server cannot observe the outside world; the service
+  // refuses (COMMITMENT_REQUIRED) to rely on a commitment-aware lease when the
+  // relying agent presents nothing, so absence here only occurs for legacy leases.
   presentedCandidateCommitment?: string;
   presentedContextCommitment?: string;
 }

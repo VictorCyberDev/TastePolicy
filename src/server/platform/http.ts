@@ -44,9 +44,10 @@ export function safePlatformError(e: unknown, requestId: string) {
       e instanceof StateFailure ||
       e instanceof SubjectFailure ||
       e instanceof BodyReadFailure,
-    code = typed ? e.code : "INTERNAL_ERROR";
+    code = typed ? e.code : "INTERNAL_ERROR",
+    missing = e instanceof PlatformFailure ? e.missing : undefined;
   return Response.json(
-    { status: "error", code, requestId },
+    { status: "error", code, ...(missing ? { missing } : {}), requestId },
     {
       status: errorSpec(code).http,
       headers: { "Cache-Control": "no-store", "X-Request-ID": requestId },

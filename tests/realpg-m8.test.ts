@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import { beforeAll, afterAll, describe, expect, it } from "vitest";
 import { realDatabase, REAL_URL } from "./realpg-fixture";
 import { init, subjectProvider } from "./platform-fixtures";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import { LeaseService } from "@/server/platform/lease-service";
 import { DEFAULT_POLICY, type PolicyDocument } from "@/lib/policy/types";
 import type { Principal } from "@/lib/platform/types";
@@ -112,8 +112,18 @@ suite("M8 on real PostgreSQL: leases, ASK and lock ordering", () => {
     const lease = await w.lease(e.evaluationRef);
     const ops: Promise<unknown>[] = [];
     for (let i = 0; i < 10; i++) {
-      ops.push(svc.leaseVerify(w.agent, { leaseRef: lease.leaseRef }));
-      ops.push(svc.leaseCheckpoint(w.agent, { leaseRef: lease.leaseRef }));
+      ops.push(
+        svc.leaseVerify(w.agent, {
+          leaseRef: lease.leaseRef,
+          ...commitOf(lease),
+        }),
+      );
+      ops.push(
+        svc.leaseCheckpoint(w.agent, {
+          leaseRef: lease.leaseRef,
+          ...commitOf(lease),
+        }),
+      );
       ops.push(svc.leaseList(w.owner, { passportRef: w.ref }));
     }
     ops.push(w.publish(observe, 0));

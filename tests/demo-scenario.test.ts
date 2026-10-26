@@ -17,7 +17,7 @@ import { present, type Signer } from "@/lib/attest/sdjwt";
 import { VCT } from "@/lib/attest/issue";
 import { verifyPresentation } from "@/lib/attest/verify";
 import { DEFAULT_POLICY } from "@/lib/policy/types";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 void attestationConfig;
 
 // The whole story in one place: a person sets rules, an agent asks, the person
@@ -168,7 +168,12 @@ it("rules → ask → approval → lease → proof → handoff → verification 
   // 7. The person changes their mind: everything stops, at once, for everyone.
   await svc.leaseRevoke(person.principal, { passportRef: ref });
   expect(
-    ((await svc.leaseVerify(agent, { leaseRef: lease.leaseRef })) as any).valid,
+    (
+      (await svc.leaseVerify(agent, {
+        leaseRef: lease.leaseRef,
+        ...commitOf(lease),
+      })) as any
+    ).valid,
   ).toBe(false);
   for (const [p, aud, extra] of [
     [shown, "https://merchant.test", {}],

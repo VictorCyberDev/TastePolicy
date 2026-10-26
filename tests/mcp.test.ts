@@ -245,10 +245,22 @@ it("lease tools round-trip over MCP: request, verify, checkpoint, release; verif
     0,
   ]);
   expect(
-    (await call("tastepolicy_verify_lease", { leaseRef: l.leaseRef })).valid,
+    (
+      await call("tastepolicy_verify_lease", {
+        leaseRef: l.leaseRef,
+        candidateCommitment: l.commitments.candidate,
+        contextCommitment: l.commitments.context,
+      })
+    ).valid,
   ).toBe(true);
   expect(
-    (await call("tastepolicy_checkpoint_lease", { leaseRef: l.leaseRef })).rev,
+    (
+      await call("tastepolicy_checkpoint_lease", {
+        leaseRef: l.leaseRef,
+        candidateCommitment: l.commitments.candidate,
+        contextCommitment: l.commitments.context,
+      })
+    ).rev,
   ).toBe(2);
   expect(
     (await call("tastepolicy_release_lease", { leaseRef: l.leaseRef })).status,

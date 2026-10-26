@@ -95,13 +95,16 @@ export class PlatformFailure extends Error {
       | "LEASE_NOT_PERMITTED"
       | "CLARIFICATION_REQUIRED"
       | "COMMITMENT_MISMATCH"
+      | "COMMITMENT_REQUIRED"
       | "LEASE_STATE_CONFLICT",
+    readonly missing?: ("candidate" | "context")[],
   ) {
     super(code);
   }
 }
 export function platformFail(
   code: ConstructorParameters<typeof PlatformFailure>[0],
+  missing?: ("candidate" | "context")[],
 ): never {
-  throw new PlatformFailure(code);
+  throw new PlatformFailure(code, missing);
 }

@@ -68,8 +68,10 @@ export const leaseRequestInput = z.object({
 });
 // What the relying agent says the choice is right now. The server compares it
 // with the commitments the authority was issued for; a mismatch suspends the
-// lease (CANDIDATE_CHANGED / CONTEXT_CHANGED). A change the server is never told
-// about cannot be detected. Unknown fields (images, layout) are ignored.
+// lease (CANDIDATE_CHANGED / CONTEXT_CHANGED). The server cannot see the
+// outside world, so a commitment-aware lease cannot be relied on without
+// presenting both: leaving either out is COMMITMENT_REQUIRED, never "unchanged".
+// Unknown fields (images, layout) are ignored.
 const commitmentField = z
   .string()
   .regex(/^sha-256:[A-Za-z0-9_-]{43}$/)
@@ -249,7 +251,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "lease-verify",
     title: "Verify a lease",
     description:
-      "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked. Pass the candidate and context as they are now (or their commitments): TastePolicy cannot see the outside world, so a change you do not present is not detected, and a mismatch suspends the lease.",
+      "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked. Pass the candidate and context as they are now (or their commitments). A lease whose response says commitmentRequired is bound to one candidate and one situation: if you leave either out the call fails with COMMITMENT_REQUIRED (naming what is missing) and the lease is not usable. A mismatch suspends the lease.",
     scope: "RECEIPT_READ",
     readOnly: true,
     idempotent: true,
@@ -260,7 +262,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "lease-checkpoint",
     title: "Checkpoint a lease",
     description:
-      "Confirm nothing the lease relied on has changed and push the next checkpoint forward. TastePolicy checks its own facts (state, rules, grant, overrides) itself; for the candidate and context it compares what you present. If anything changed the lease is suspended instead of extended.",
+      "Confirm nothing the lease relied on has changed and push the next checkpoint forward. TastePolicy checks its own facts (state, rules, grant, overrides) itself; for the candidate and context you must present them as they are now (material or commitments); a commitment-aware lease checkpointed without both fails with COMMITMENT_REQUIRED and is not extended. If anything changed the lease is suspended instead of extended.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: false,
@@ -271,7 +273,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     op: "lease-resume",
     title: "Resume a suspended lease",
     description:
-      "Resume a suspended lease with a new evaluation of the same choice that is ALLOW under the current state and rules.",
+      "Resume a suspended lease with a new evaluation of the same choice that is ALLOW under the current state and rules. For a commitment-aware lease also present the candidate and context the new evaluation was about; omitting them fails with COMMITMENT_REQUIRED and a different choice fails with COMMITMENT_MISMATCH.",
     scope: "TASTE_EVALUATE",
     readOnly: false,
     idempotent: true,

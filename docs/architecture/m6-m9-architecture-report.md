@@ -203,7 +203,7 @@ Status: **ACCEPTANCE CANDIDATE, not PASS.** Exact-head hosted acceptance on a de
 Branch `m6-m9-final-reconciliation` on top of the M9 tip. Additions and where they are recorded:
 
 - Subjective-action ladder, sensitive choices, organization ceiling, privacy copy: ADR 0024; tests `policy-ladder`, `ladder-service`, `review-fixes`.
-- Canonical candidate and context commitments (RFC 8785, domain-separated SHA-256), `CANDIDATE_CHANGED` / `CONTEXT_CHANGED` drift, `COMMITMENT_MISMATCH` on resume, signed commitment claims, verifier comparison and signature-versus-trust reporting: ADR 0025.
+- Canonical candidate and context commitments (RFC 8785, domain-separated SHA-256), `CANDIDATE_CHANGED` / `CONTEXT_CHANGED` drift, `COMMITMENT_MISMATCH` on resume, `COMMITMENT_REQUIRED` (omission fails closed on verify, checkpoint and resume), signed commitment claims, verifier comparison and signature-versus-trust reporting: ADR 0025.
 - A2A authority-lifecycle extension and a shared `tastepolicy_verify_attestation` tool on REST, MCP, A2A and the SDK: ADR 0026.
 - Federation-compatible issuer inspection and explicit admission: ADR 0027.
 - Admission control (trusted client identity, shared PostgreSQL limiter, sign-in limiter): ADR 0028.

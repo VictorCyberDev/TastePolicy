@@ -6,7 +6,12 @@ import {
 } from "./gateway";
 import { toolByName, AUTHORITY_BOUNDARY } from "@/lib/platform/contracts";
 import { errorSpec } from "@/lib/platform/errors";
-import { PlatformFailure, type Principal } from "@/lib/platform/types";
+import {
+  PlatformFailure,
+  platformFail,
+  type Principal,
+} from "@/lib/platform/types";
+import { AttestationService } from "./attest-service";
 import { StateFailure } from "@/lib/state/types";
 import { SubjectFailure } from "@/lib/subjects/types";
 import { BodyReadFailure, readJsonBody } from "@/server/taste/read-body";
@@ -128,6 +133,7 @@ class RpcError extends Error {
     readonly rpc: number,
     readonly reason: string,
     readonly http = 200,
+    readonly missing?: string[],
   ) {
     super(reason);
   }
@@ -153,7 +159,12 @@ function rpcResponse(
                 "@type": "type.googleapis.com/google.rpc.ErrorInfo",
                 reason: body.error.reason,
                 domain: DOMAIN,
-                metadata: { requestId },
+                metadata: {
+                  requestId,
+                  ...(body.error.missing
+                    ? { missing: body.error.missing.join(",") }
+                    : {}),
+                },
               },
             ],
           },
@@ -171,7 +182,11 @@ function codeOf(e: unknown) {
     e instanceof BodyReadFailure;
   return typed ? e.code : "INTERNAL_ERROR";
 }
-function mapFailure(code: string, getTask: boolean): RpcError {
+function mapFailure(
+  code: string,
+  getTask: boolean,
+  missing?: string[],
+): RpcError {
   const http = errorSpec(code).http;
   if (code === "INVALID_INPUT") return new RpcError(-32602, code);
   // A2A §13.1: never reveal the existence of another caller's task.
@@ -187,7 +202,7 @@ function mapFailure(code: string, getTask: boolean): RpcError {
   )
     return new RpcError(-32001, "TASK_NOT_FOUND");
   if (code === "INTERNAL_ERROR") return new RpcError(-32603, code, http);
-  return new RpcError(-32020, code, http);
+  return new RpcError(-32020, code, http, missing);
 }
 function leaseTask(r: Record<string, unknown>, extensions: boolean) {
   const id = String(r.leaseRef);
@@ -454,13 +469,11 @@ async function a2aDispatch(
       // A lease task is read through the same authoritative verify as every
       // other door; an evaluation task through the recorded status.
       if (/^tl_[a-f0-9]{48}$/.test(params.id)) {
-        const out = (await gatewayInvoke(
-          deps,
-          p,
-          toolByName("tastepolicy_verify_lease")!,
-          { leaseRef: params.id },
-          requestId,
-        )) as Record<string, unknown>;
+        if (!p.scopes?.includes("RECEIPT_READ")) platformFail("ACCESS_DENIED");
+        if (!deps.store) platformFail("NOT_CONFIGURED");
+        const out = (await new AttestationService(deps.store).leaseStatus(p, {
+          leaseRef: params.id,
+        })) as Record<string, unknown>;
         return rpcResponse(id, { result: leaseTask(out, true) }, requestId);
       }
       const tool = toolByName("tastepolicy_get_status")!;
@@ -512,6 +525,7 @@ async function a2aDispatch(
     const err = mapFailure(
       code,
       method === "GetTask" || method === "CancelTask",
+      e instanceof PlatformFailure ? e.missing : undefined,
     );
     return rpcResponse(id, { error: err }, requestId, err.http);
   }

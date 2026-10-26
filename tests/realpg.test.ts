@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { beforeAll, afterAll, describe, expect, it } from "vitest";
 import { realDatabase, REAL_URL } from "./realpg-fixture";
 import { init, subjectProvider } from "./platform-fixtures";
-import { proposal, reqId } from "./interactive-fixtures";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
 import { AttestationService } from "@/server/platform/attest-service";
 import { OAuthService, OAuthError } from "@/server/platform/oauth-service";
 import { PlatformService } from "@/server/platform/service";
@@ -255,8 +255,18 @@ suite("real PostgreSQL: migrations and concurrency", () => {
     });
     const ops: Promise<unknown>[] = [];
     for (let i = 0; i < 8; i++) {
-      ops.push(svc.leaseVerify(w.agent, { leaseRef: lease.leaseRef }));
-      ops.push(svc.leaseCheckpoint(w.agent, { leaseRef: lease.leaseRef }));
+      ops.push(
+        svc.leaseVerify(w.agent, {
+          leaseRef: lease.leaseRef,
+          ...commitOf(lease),
+        }),
+      );
+      ops.push(
+        svc.leaseCheckpoint(w.agent, {
+          leaseRef: lease.leaseRef,
+          ...commitOf(lease),
+        }),
+      );
       ops.push(
         svc.attestationIssue(w.agent, {
           leaseRef: lease.leaseRef,

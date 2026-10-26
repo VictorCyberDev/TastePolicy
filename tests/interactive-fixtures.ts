@@ -178,3 +178,23 @@ export const exclusion: FeedbackInput = {
   persistence: "DURABLE",
   candidateId: entities[5].id,
 };
+
+// What a relying agent presents when it verifies, checkpoints or resumes a
+// commitment-aware lease: the commitments the lease view carries, i.e. "the
+// choice is still the one I was issued this lease for".
+export const commitOf = (lease: {
+  commitments?: { candidate: string; context: string } | null;
+}) => ({
+  candidateCommitment: lease.commitments?.candidate,
+  contextCommitment: lease.commitments?.context,
+});
+// Registry for helpers that only know a leaseRef.
+const issued = new Map<string, ReturnType<typeof commitOf>>();
+export const rememberLease = <T>(view: T): T => {
+  const v = view as unknown as Parameters<typeof commitOf>[0] & {
+    leaseRef: string;
+  };
+  issued.set(v.leaseRef, commitOf(v));
+  return view;
+};
+export const presentFor = (leaseRef: string) => issued.get(leaseRef) ?? {};

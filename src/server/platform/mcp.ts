@@ -80,6 +80,9 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
               code,
               retryable: spec.retryable,
               message: spec.message,
+              ...(e instanceof PlatformFailure && e.missing
+                ? { missing: e.missing }
+                : {}),
               requestId,
             };
           return {

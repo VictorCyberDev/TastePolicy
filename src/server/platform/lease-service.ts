@@ -63,6 +63,20 @@ function presentedOf(v: Record<string, unknown>): Presented {
   if (!out) fail("INVALID_INPUT");
   return out;
 }
+// A lease issued with commitments (taste-commitments-v1) is bound to one
+// candidate and one situation. Relying on it means saying what they are now:
+// leaving that out must never read as "unchanged". Legacy leases carry no
+// commitments (explicit version detection), so they keep the old behaviour.
+export const isCommitmentAware = (l: LeaseRecord) =>
+  !!l.state.fingerprint.candidateCommitment &&
+  !!l.state.fingerprint.contextCommitment;
+export function requirePresented(l: LeaseRecord, presented: Presented) {
+  if (!isCommitmentAware(l)) return;
+  const missing: ("candidate" | "context")[] = [];
+  if (!presented.candidate) missing.push("candidate");
+  if (!presented.context) missing.push("context");
+  if (missing.length) fail("COMMITMENT_REQUIRED", missing);
+}
 const PRESENT_KEYS = [
   "candidate",
   "context",
@@ -227,6 +241,7 @@ export class LeaseService extends PolicyService {
       candidateId: l.candidateId,
       candidateName: l.candidateName,
       contextKey: l.contextKey,
+      commitmentRequired: isCommitmentAware(l),
       commitments: l.state.fingerprint.candidateCommitment
         ? {
             schemaVersion: "taste-commitments-v1",
@@ -424,7 +439,31 @@ export class LeaseService extends PolicyService {
     return this.store.transaction(async (r) => {
       const l0 = await this.agentLease(r, p, ref, "RECEIPT_READ", false);
       const l = await this.settle(r, l0, presented);
+      if (l.state.status === "ACTIVE") requirePresented(l, presented);
       return this.leaseView(l);
+    });
+  }
+  // Status only, for readers that cannot say what the choice is (the A2A
+  // GetTask poll). It reports where the lease stands and never carries
+  // authority: a commitment-aware ACTIVE lease reads as unconfirmed until the
+  // relying agent verifies it with the choice it is about to act on.
+  async leaseStatus(p: Principal, raw: unknown) {
+    const v = object(raw, ["leaseRef"]),
+      ref = leaseRef(v.leaseRef);
+    return this.store.transaction(async (r) => {
+      const l0 = await this.agentLease(r, p, ref, "RECEIPT_READ", false);
+      const l = await this.settle(r, l0);
+      const view = this.leaseView(l);
+      if (l.state.status !== "ACTIVE" || !isCommitmentAware(l)) return view;
+      return {
+        ...view,
+        valid: false,
+        unconfirmed: true,
+        requires: ["candidate", "context"],
+        permitted: [],
+        permittedActions: [],
+        continuation: null,
+      };
     });
   }
   async leaseCheckpoint(p: Principal, raw: unknown) {
@@ -437,6 +476,7 @@ export class LeaseService extends PolicyService {
       if (rev !== undefined && rev !== l0.state.rev)
         fail("LEASE_STATE_CONFLICT");
       let l = await this.settle(r, l0, presented);
+      if (l.state.status === "ACTIVE") requirePresented(l, presented);
       if (l.state.status === "ACTIVE") {
         const now = this.clock();
         l = await this.advance(r, l, [
@@ -469,6 +509,8 @@ export class LeaseService extends PolicyService {
     return this.store.transaction(async (r) => {
       const l0 = await this.agentLease(r, p, ref, "TASTE_EVALUATE", true);
       let l = await this.settle(r, l0);
+      if (l.state.status === "ACTIVE" || l.state.status === "SUSPENDED")
+        requirePresented(l, presented);
       if (l.state.status === "ACTIVE") return this.leaseView(l);
       if (l.state.status !== "SUSPENDED") fail("LEASE_STATE_CONFLICT");
       const e = await r.platform.getEvaluation(er);
