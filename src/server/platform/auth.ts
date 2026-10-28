@@ -1,6 +1,7 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
+import { configuredOrigin } from "@/lib/config/origin";
 export function createAuthentication(
   database: Pool,
   secret: string,
@@ -83,16 +84,13 @@ export function createAuthenticationPool(connectionString: string) {
 
 let authentication: ReturnType<typeof createAuthentication> | undefined;
 export function getAuthentication() {
-  if (
-    !process.env.DATABASE_URL ||
-    !process.env.BETTER_AUTH_SECRET ||
-    !process.env.BETTER_AUTH_URL
-  )
+  const origin = configuredOrigin();
+  if (!process.env.DATABASE_URL || !process.env.BETTER_AUTH_SECRET || !origin)
     return null;
   authentication ??= createAuthentication(
     createAuthenticationPool(process.env.DATABASE_URL),
     process.env.BETTER_AUTH_SECRET,
-    process.env.BETTER_AUTH_URL,
+    origin,
   );
   return authentication;
 }

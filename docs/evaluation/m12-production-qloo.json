@@ -1,0 +1,250 @@
+{
+  "kind": "LIVE_PRODUCTION",
+  "origin": "https://tastepolicy.vercel.app",
+  "at": "2026-10-28T13:53:19.131Z",
+  "results": [
+    {
+      "step": "resolve",
+      "status": "PASS",
+      "selected": [
+        {
+          "id": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+          "name": "Nils Frahm",
+          "type": "artist"
+        },
+        {
+          "id": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+          "name": "Perfect Days",
+          "type": "movie",
+          "releaseYear": 2023
+        },
+        {
+          "id": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+          "name": "Muji",
+          "type": "brand"
+        },
+        {
+          "id": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+          "name": "Piranesi",
+          "type": "book"
+        },
+        {
+          "id": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+          "name": "Severance",
+          "type": "tv_show",
+          "releaseYear": 2022
+        }
+      ]
+    },
+    {
+      "step": "discover",
+      "status": "PASS",
+      "provenance": {
+        "provider": "qloo",
+        "endpoint": "/v2/insights",
+        "host": "https://hackathon.api.qloo.com",
+        "fetchedAt": "2026-10-28T13:53:26.266Z",
+        "signalIds": [
+          "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+          "b30db61e-707c-421e-a1c4-1a912b7f067d",
+          "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+          "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+          "569f8294-72da-4935-b9f2-4fc697ab2a1e"
+        ],
+        "targetType": "place"
+      },
+      "candidates": [
+        {
+          "entity": {
+            "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+            "name": "HOUSE OF FINN JUHL HAKUBA",
+            "type": "place",
+            "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+          },
+          "score": 0.9233086745343598
+        },
+        {
+          "entity": {
+            "id": "b3963dac-8929-4c5e-9988-2793cf154837",
+            "name": "HOTEL CYCLE",
+            "type": "place",
+            "address": "5-11 Nishigoshocho Onomichi, Hiroshima 722-0037 Japan"
+          },
+          "score": 0.921948789731937
+        },
+        {
+          "entity": {
+            "id": "701b1c14-0d84-469d-aa79-178eada518e7",
+            "name": "Izuyasu",
+            "type": "place",
+            "address": "272 Sasayacho Shimogyo Ward, Kyoto, 600-8156 Japan"
+          },
+          "score": 0.9202351111044059
+        },
+        {
+          "entity": {
+            "id": "a5ee6950-1a25-4d9a-ba5e-4961ebdf8d7a",
+            "name": "Benesse House Beach",
+            "type": "place",
+            "address": "\u5bae\u30ce\u6d66 Naoshima, Kagawa District, Kagawa 761-3110 Japan"
+          },
+          "score": 0.9197370251837511
+        },
+        {
+          "entity": {
+            "id": "72cc0a8d-c41b-468f-9504-e506ac553462",
+            "name": "\u8fd1\u6c5f\u516b\u5e61\u307e\u3061\u3084\u5036\u697d\u90e8",
+            "type": "place",
+            "address": "Japan \u3012523-0862 Shiga, Omihachiman, Suwaicho, 21 \u307e\u3061\u3084\u5036\u697d\u90e8 1F"
+          },
+          "score": 0.919580890308093
+        },
+        {
+          "entity": {
+            "id": "ede6b7ab-a838-4a65-a962-8bd0128593e5",
+            "name": "My Spanishsteps Guest House Rome Italy",
+            "type": "place",
+            "address": "Via Gregoriana, 25 00187 Roma RM Italy"
+          },
+          "score": 0.9195617127491102
+        },
+        {
+          "entity": {
+            "id": "1eb47699-753d-4ea8-9b19-297da60e7ed6",
+            "name": "Shiretoko Villa Hotel Freeze",
+            "type": "place",
+            "address": "63-27 Toyosato Shari, Shari District, Hokkaido 099-4134 Japan"
+          },
+          "score": 0.9191538970341474
+        },
+        {
+          "entity": {
+            "id": "dc337db4-f408-497f-a391-40b6e4bb2f31",
+            "name": "\u30f4\u30a3\u30e9\u767d\u6d5c",
+            "type": "place",
+            "address": "Japan \u3012415-0012 Shizuoka, Shimoda, Shirahama, 2416-10"
+          },
+          "score": 0.918360621401574
+        }
+      ]
+    },
+    {
+      "step": "evaluate",
+      "status": "PASS",
+      "receipt": {
+        "receiptId": "e7c4d665-1ea3-4371-933a-17c8b5170186",
+        "schemaVersion": "cultural-receipt-v1",
+        "normalizationVersion": "affinity-explicit-scale-v1",
+        "policyVersion": "tastepolicy-v1-experimental",
+        "decision": {
+          "outcome": "ALLOW",
+          "reasonCode": "STRONG_ALIGNMENT"
+        },
+        "action": {
+          "kind": "SELECT_ENTITY",
+          "targetEntity": {
+            "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+            "name": "HOUSE OF FINN JUHL HAKUBA",
+            "type": "place",
+            "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+          },
+          "context": "Public production commissioning using reviewed public anchors"
+        },
+        "candidate": {
+          "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+          "name": "HOUSE OF FINN JUHL HAKUBA",
+          "type": "place",
+          "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+        },
+        "inputSignals": [
+          {
+            "id": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+            "name": "Nils Frahm",
+            "type": "artist"
+          },
+          {
+            "id": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+            "name": "Perfect Days",
+            "type": "movie",
+            "releaseYear": 2023
+          },
+          {
+            "id": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+            "name": "Muji",
+            "type": "brand"
+          },
+          {
+            "id": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+            "name": "Piranesi",
+            "type": "book"
+          },
+          {
+            "id": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+            "name": "Severance",
+            "type": "tv_show",
+            "releaseYear": 2022
+          }
+        ],
+        "alignmentScore": 0.9233086745343598,
+        "qlooEvidence": {
+          "rawAffinity": 0.9233086745343598,
+          "scale": "unit",
+          "provenance": {
+            "provider": "qloo",
+            "endpoint": "/v2/insights",
+            "host": "https://hackathon.api.qloo.com",
+            "fetchedAt": "2026-10-28T13:53:27.878Z",
+            "signalIds": [
+              "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+              "b30db61e-707c-421e-a1c4-1a912b7f067d",
+              "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+              "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+              "569f8294-72da-4935-b9f2-4fc697ab2a1e"
+            ],
+            "targetType": "place",
+            "specificCandidateId": "85fda07d-0245-4445-a495-7d53df8950fb"
+          }
+        },
+        "explainability": {
+          "status": "complete",
+          "contributions": [
+            {
+              "signalId": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+              "score": 0.24247254451055075
+            },
+            {
+              "signalId": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+              "score": 0.2316769078799444
+            },
+            {
+              "signalId": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+              "score": 0.19243708834488626
+            },
+            {
+              "signalId": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+              "score": 0.17690522839409517
+            },
+            {
+              "signalId": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+              "score": 0.15650823087052343
+            }
+          ],
+          "missingSignalIds": [],
+          "omittedSignalIds": [],
+          "omission": "none",
+          "issues": []
+        },
+        "policy": {
+          "allowAbove": 0.8,
+          "rejectBelow": 0.5,
+          "calibration": "provisional_not_live_calibrated"
+        },
+        "requestId": "6299b481-1e62-4a66-960d-3371800b2318",
+        "evaluatedAt": "2026-10-28T13:53:27.879Z"
+      }
+    }
+  ],
+  "status": "PASS",
+  "exact_sha": "c8da03c766c05e7f7d15ed618ba542d20dab232c",
+  "deployment": "dpl_CTk3Vr9drAKM87SM3EDJ1YNXCqQa"
+}

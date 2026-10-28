@@ -117,6 +117,32 @@ for (const mode of ["auto", "legacy"] as const)
       openWorldHint: false,
     });
     expect(tools.tools.every((t) => t.outputSchema)).toBe(true);
+    const evaluateTool = tools.tools.find(
+      (t) => t.name === "tastepolicy_evaluate_choice",
+    );
+    expect(evaluateTool?._meta?.ui).toMatchObject({
+      resourceUri: "ui://tastepolicy/authority-card.html",
+    });
+    expect(
+      tools.tools.find((t) => t.name === "tastepolicy_verify_lease")
+        ?.annotations,
+    ).toMatchObject({ readOnlyHint: false, destructiveHint: true });
+    const resources = await client.listResources();
+    expect(
+      resources.resources.some(
+        (r) => r.uri === "ui://tastepolicy/authority-card.html",
+      ),
+    ).toBe(true);
+    const resource = await client.readResource({
+      uri: "ui://tastepolicy/authority-card.html",
+    });
+    const uiContent = resource.contents[0];
+    if (!("text" in uiContent)) throw Error("Expected text UI resource");
+    expect(uiContent.mimeType).toBe("text/html;profile=mcp-app");
+    expect(uiContent.text).toContain("Verification is not authorization");
+    expect(uiContent.text).toContain("Inspect captured receipt");
+    expect(uiContent.text).not.toContain(s.secret);
+
     const caps = await client.callTool({
       name: "tastepolicy_capabilities",
       arguments: {},

@@ -6,6 +6,9 @@ export function GET() {
       headers: {
         "X-Request-ID": createRequestId(),
         "Cache-Control": "no-store",
+        ...(process.env.VERCEL_GIT_COMMIT_SHA
+          ? { "X-TastePolicy-Revision": process.env.VERCEL_GIT_COMMIT_SHA }
+          : {}),
       },
     },
   );

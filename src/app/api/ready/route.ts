@@ -1,3 +1,5 @@
+import { migrationLedgerIsCurrent } from "@/server/migration-status";
+import { configuredOrigin } from "@/lib/config/origin";
 import { createRequestId } from "@/lib/logging/request-id";
 import { getStateStore } from "@/server/state/postgres";
 import { getAuthentication } from "@/server/platform/auth";
@@ -18,18 +20,16 @@ export async function GET() {
     const store = getStateStore();
     if (store) {
       database = "down";
-      const version = await Promise.race([
-        // Newest migration (attestations) and the OAuth tables both exist.
-        store.transaction(async (r) => {
-          await r.oauth.client("readiness-probe");
-          return r.attest.listVersion(1);
-        }),
+      const ledger = await Promise.race([
+        store.pool.query(
+          "SELECT version, checksum FROM public.tastepolicy_schema_migrations",
+        ),
         new Promise<never>((_, rej) =>
           setTimeout(() => rej(new Error("timeout")), 4000),
         ),
       ]);
       database = "up";
-      migrations = version === null ? "behind" : "current";
+      migrations = migrationLedgerIsCurrent(ledger.rows) ? "current" : "behind";
     }
   } catch {
     // "down" or "behind" are reported without detail.
@@ -43,12 +43,7 @@ export async function GET() {
   checks.cultural_provider = process.env.QLOO_API_KEY
     ? "configured"
     : "unconfigured";
-  const origin = process.env.TASTEPOLICY_PUBLIC_ORIGIN;
-  checks.public_origin = /^(https:\/\/|http:\/\/localhost(:|\/|$))/.test(
-    origin ?? "",
-  )
-    ? "configured"
-    : "unconfigured";
+  checks.public_origin = configuredOrigin() ? "configured" : "unconfigured";
   checks.oauth =
     checks.public_origin === "configured" && database === "up"
       ? "up"

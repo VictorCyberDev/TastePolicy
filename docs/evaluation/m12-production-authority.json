@@ -1,0 +1,82 @@
+{
+  "kind": "LIVE_PRODUCTION",
+  "origin": "https://tastepolicy.vercel.app",
+  "at": "2026-10-28T14:00:12.079Z",
+  "status": "PASS",
+  "rows": [
+    {
+      "name": "fresh signup and signin",
+      "status": "PASS",
+      "evidence": {
+        "signup": 200,
+        "signin": 200
+      }
+    },
+    {
+      "name": "real Qloo Passport enrollment",
+      "status": "PASS",
+      "evidence": {
+        "passportRef": "tp_638f7ed67428e4da715b9d9ffd7b757e2496536f37b85bb8",
+        "stateVersion": 1
+      }
+    },
+    {
+      "name": "fresh developer credential",
+      "status": "PASS",
+      "evidence": {
+        "scopes": ["PASSPORT_READ", "RECEIPT_READ", "TASTE_EVALUATE"]
+      }
+    },
+    {
+      "name": "independent SDK passport read",
+      "status": "PASS",
+      "evidence": {
+        "schemaVersion": "taste-passport-v1",
+        "stateVersion": 1
+      }
+    },
+    {
+      "name": "independent SDK live cultural decision",
+      "status": "PASS",
+      "evidence": {
+        "evaluationRef": "tp_05760b8dfe435a101eb03d55a12f4daacfffa4621e77fbea",
+        "decision": "ALLOW",
+        "receiptRef": "tp_05760b8dfe435a101eb03d55a12f4daacfffa4621e77fbea",
+        "continuation": {
+          "schemaVersion": "taste-continuation-v1",
+          "permitted": ["recommend", "add_to_draft"],
+          "permittedActions": ["SUGGEST", "RANK", "SHORTLIST", "ADD_TO_DRAFT"],
+          "automaticRetry": false,
+          "authorityBoundary": "Cultural authorization only. No purchase, payment, booking, legal, account, communication, execution or physical-consent authority."
+        }
+      }
+    },
+    {
+      "name": "independent A2A live invocation",
+      "status": "PASS",
+      "evidence": {
+        "taskId": "tp_affaed8a57d33d9951aaafbc1c83ba3b31d90b1d08b576c3",
+        "decision": "ALLOW",
+        "evaluationRef": "tp_affaed8a57d33d9951aaafbc1c83ba3b31d90b1d08b576c3"
+      }
+    },
+    {
+      "name": "account export",
+      "status": "PASS",
+      "evidence": {
+        "exportId": "0a3488cc-495d-412f-8928-c2838abb1378",
+        "semanticHash": "c92600faa5c9cfb5a7244a643799019f1067ee1cec0d34dbdd009a5d23aafed3"
+      }
+    },
+    {
+      "name": "disposable account deletion and credential invalidation",
+      "status": "PASS",
+      "evidence": {
+        "deleted": true,
+        "credentialHTTP": 401
+      }
+    }
+  ],
+  "exact_sha": "c8da03c766c05e7f7d15ed618ba542d20dab232c",
+  "deployment": "dpl_CTk3Vr9drAKM87SM3EDJ1YNXCqQa"
+}

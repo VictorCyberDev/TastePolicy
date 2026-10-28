@@ -117,7 +117,7 @@ export default function Arena() {
   return (
     <main className="arena">
       <header className="arenaTop">
-        <Link href="/">TastePolicy · full engineering demo</Link>
+        <Link href="/demo">TastePolicy · full engineering demo</Link>
         <span>DECISION ARENA</span>
       </header>
       <section className="arenaHero">
@@ -627,7 +627,7 @@ export default function Arena() {
           process through the existing M1.6 local interface. Browser policy
           presentation is not a separate-agent execution claim.
         </p>
-        <Link href="/">Open the complete engineering demo</Link>
+        <Link href="/demo">Open the complete engineering demo</Link>
       </footer>
     </main>
   );

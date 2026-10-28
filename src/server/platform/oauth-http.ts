@@ -1,7 +1,7 @@
 import "server-only";
 import { createHmac } from "node:crypto";
 import { OAuthError, OAuthService } from "./oauth-service";
-import { publicOrigin } from "./origin";
+import { configuredOrigin } from "@/lib/config/origin";
 import { clientKey } from "./client-key";
 import { sessionPrincipal, trustedOrigin } from "./http";
 import { readJsonBody } from "@/server/taste/read-body";
@@ -17,8 +17,8 @@ const JSON_HEADERS = {
 export function oauthOrigin(request: Request): string | null {
   const pinned = process.env.TASTEPOLICY_PUBLIC_ORIGIN;
   if (!pinned) return null;
-  const o = publicOrigin(request);
-  return o === new URL(pinned).origin ? o : null;
+  void request;
+  return configuredOrigin();
 }
 export const status = (e: OAuthError) =>
   e.error === "login_required" || (e.error === "invalid_client" && !e.direct)

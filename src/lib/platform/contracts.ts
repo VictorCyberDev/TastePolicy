@@ -253,7 +253,7 @@ export const PLATFORM_TOOLS: PlatformTool[] = [
     description:
       "Authoritative, uncacheable check that a lease is still valid. Always verify immediately before acting; a lease may have been suspended or revoked since you last looked. Pass the candidate and context as they are now (or their commitments). A lease whose response says commitmentRequired is bound to one candidate and one situation: if you leave either out the call fails with COMMITMENT_REQUIRED (naming what is missing) and the lease is not usable. A mismatch suspends the lease.",
     scope: "RECEIPT_READ",
-    readOnly: true,
+    readOnly: false,
     idempotent: true,
     input: leaseCheckInput,
   },

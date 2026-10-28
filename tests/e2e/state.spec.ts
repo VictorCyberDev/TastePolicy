@@ -7,7 +7,7 @@ test("credential-free persistence is explicitly unavailable and mobile keyboard 
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
+  await page.goto("/demo");
   const start = page.getByRole("button", {
     name: "Start / resume demo profile",
   });
@@ -76,7 +76,7 @@ test("state UI presents synthetic snapshot, scope confirmation, version diff and
       },
     });
   });
-  await page.goto("/");
+  await page.goto("/demo");
   await page
     .getByRole("button", { name: "Start / resume demo profile" })
     .click();
@@ -208,7 +208,7 @@ test("synthetic state flow exposes feedback version transition, agent B, replay 
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)

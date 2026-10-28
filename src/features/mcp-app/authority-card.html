@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TastePolicy Authority Card</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f4f3ec;
+        --fg: #182622;
+        --muted: #52605a;
+        --line: #bfc8bf;
+        --accent: #006459;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+        overflow-wrap: anywhere;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 14px;
+      }
+      h1 {
+        font:
+          400 32px/1.2 Georgia,
+          serif;
+        margin: 16px 0;
+      }
+      header strong {
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
+      .boundary {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      #decision {
+        border-left: 4px solid var(--accent);
+        padding-left: 14px;
+      }
+      #decision[data-decision="REJECT"] {
+        border-color: #a13134;
+      }
+      #decision[data-decision="ASK"] {
+        border-color: #95611e;
+      }
+      #decision[data-decision="UNAVAILABLE"] {
+        border-color: var(--muted);
+      }
+      dl {
+        margin: 20px 0;
+      }
+      dl > div {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 16px;
+        border-bottom: 1px solid var(--line);
+        padding: 10px 0;
+      }
+      dt {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      dd {
+        margin: 0;
+        white-space: pre-wrap;
+        font-size: 12px;
+      }
+      details {
+        border: 1px solid var(--line);
+        padding: 12px;
+        margin: 12px 0;
+      }
+      summary {
+        cursor: pointer;
+        font-size: 12px;
+      }
+      pre {
+        font-size: 11px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      button {
+        background: var(--fg);
+        color: var(--bg);
+        border: 0;
+        padding: 12px 16px;
+        border-radius: 4px;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      :is(button, summary):focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 20px;
+        padding-top: 14px;
+        font-size: 11px;
+      }
+      #notice {
+        font-size: 12px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #101a17;
+          --fg: #edf1e8;
+          --muted: #b0beb4;
+          --line: #4b6256;
+          --accent: #9be2cb;
+        }
+      }
+      @media (max-width: 380px) {
+        body {
+          padding: 14px;
+        }
+        dl > div {
+          grid-template-columns: 86px 1fr;
+          gap: 10px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>TASTEPOLICY [ │ ]</strong
+      ><span class="boundary">AUTHORITY CARD</span>
+    </header>
+    <main>
+      <h1 id="decision" aria-live="polite">Waiting for a tool result</h1>
+      <p class="boundary">Qloo cultural evidence is not user authorization.</p>
+      <dl>
+        <div>
+          <dt>Requested action</dt>
+          <dd id="requested">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Agent</dt>
+          <dd id="agent">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Subject / Passport</dt>
+          <dd id="subject">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Candidate</dt>
+          <dd id="candidate">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Context</dt>
+          <dd id="context">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Allowed ceiling</dt>
+          <dd id="ceiling">Not supplied</dd>
+        </div>
+        <div>
+          <dt>ASK / stop reason</dt>
+          <dd id="explanation">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Cultural Receipt</dt>
+          <dd id="receipt">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Lease status</dt>
+          <dd id="lease">Not supplied</dd>
+        </div>
+        <div>
+          <dt>Proof status</dt>
+          <dd id="proof">Not supplied</dd>
+        </div>
+      </dl>
+      <button id="inspect" disabled>Inspect captured receipt</button>
+      <p id="notice" role="status">Waiting for an MCP Apps host connection.</p>
+      <details>
+        <summary>Qloo cultural evidence</summary>
+        <pre id="qloo">No evidence supplied</pre>
+      </details>
+      <details>
+        <summary>User policy and rule trace</summary>
+        <pre id="rules">No policy supplied</pre>
+      </details>
+      <details>
+        <summary>Full accessible tool result</summary>
+        <pre id="raw">No result supplied</pre>
+      </details>
+    </main>
+    <footer>
+      Preference authority only. No payment, purchase, booking, messaging,
+      account, private-data or legal authority. Verification is not
+      authorization. This view cannot approve an ASK or expand a user’s action
+      ceiling.
+    </footer>
+    <!--APP_SCRIPT-->
+  </body>
+</html>

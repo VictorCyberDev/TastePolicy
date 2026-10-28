@@ -196,7 +196,7 @@ async function fixture(page: Page, decision = "REJECT", failure = "") {
       },
     });
   });
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page
     .getByRole("button", { name: "Start / resume demo profile" })

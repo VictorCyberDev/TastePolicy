@@ -5,3 +5,6 @@ next-env.d.ts
 playwright-report
 test-results
 coverage
+
+public/mcp/authority-app.html
+.work-evidence/

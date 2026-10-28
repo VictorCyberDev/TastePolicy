@@ -1,0 +1,43 @@
+{
+  "name": "@victorcyberdev/tastepolicy-sdk",
+  "version": "0.2.0",
+  "description": "Server-side TypeScript client, offline sandbox and portable-proof verification kit for TastePolicy",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VictorCyberDev/TastePolicy.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://tastepolicy.vercel.app/developers",
+  "bugs": "https://github.com/VictorCyberDev/TastePolicy/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/sdk/index.d.ts",
+      "import": "./dist/sdk/index.js"
+    },
+    "./sandbox": {
+      "types": "./dist/sdk/sandbox.d.ts",
+      "import": "./dist/sdk/sandbox.js"
+    },
+    "./attest": {
+      "types": "./dist/sdk/attest.d.ts",
+      "import": "./dist/sdk/attest.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "dependencies": {
+    "jose": "6.2.13"
+  }
+}

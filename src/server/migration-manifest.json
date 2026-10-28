@@ -1,0 +1,13 @@
+{
+  "0001_taste_state.sql": "6490982bd3d9d41e95753d44cfdaebb30be4a80a0c0278c0947f3d9cdce6e9af",
+  "0002_interactive_authorization.sql": "3fcc1e310c5fc76050813d0cd38b3e17bf7051312aff9299fecef5365151130a",
+  "0003_taste_trajectory.sql": "ffd51ff3e28aa47ceb4fb5510ef2e7c448ff66ba809b67f7e9f38d6055934a63",
+  "0004_taste_proxy_group.sql": "64cea562f93b10fcd98c00236d69531e83eef6cf1ed318bdf012a3fd932f6d50",
+  "0005_platformization.sql": "edf0d3ac293476f032cc577b9f96c57c76b6c81aca98923ad9c6c9a4e8b2b0c6",
+  "0006_policy_control_plane.sql": "172d209ee06aeabd382e557968d9c3184e43f1291eaa0a31867509ba3607662c",
+  "0007_preference_authority_leases.sql": "6330a3beff067c3a3cb5e16a55a75ed82c12fba9be5b96e0f93841b288d91207",
+  "0008_verifiable_attestations.sql": "b1f5e38b5d36543893fee85de910af645d607428f7a80a4c730ba209450e8b4f",
+  "0009_action_ladder.sql": "07090d96348beaff404c668374814cc6e8edb87cda9517cfd85b710552abe8c4",
+  "0010_status_list_guard.sql": "070181d7dfc262791d0adee514b3324cab43ea1543c8c701f9149ac91bb6a80c",
+  "0011_proof_disclosure.sql": "0156974276cb26bccd8c963acc6799b525f830f4ee73d207477e0006f5cb2523"
+}

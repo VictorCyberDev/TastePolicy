@@ -1,4 +1,5 @@
 import "server-only";
+import { configuredOrigin } from "@/lib/config/origin";
 import { hkdfSync } from "node:crypto";
 import {
   calculateJwkThumbprint,
@@ -36,6 +37,8 @@ export async function attestationConfig(): Promise<AttestationConfig | null> {
   const env = process.env,
     raw = [
       env.TASTEPOLICY_PUBLIC_ORIGIN,
+      env.BETTER_AUTH_URL,
+      env.NEXT_PUBLIC_APP_URL,
       env.TASTEPOLICY_ATTESTATION_KEY,
       env.TASTEPOLICY_ATTESTATION_PREVIOUS_PUBLIC_KEYS,
       env.TASTEPOLICY_TRUSTED_ISSUERS,
@@ -46,7 +49,9 @@ export async function attestationConfig(): Promise<AttestationConfig | null> {
   let value: AttestationConfig | null = null;
   try {
     if (env.TASTEPOLICY_PUBLIC_ORIGIN && env.TASTEPOLICY_ATTESTATION_KEY) {
-      const origin = new URL(env.TASTEPOLICY_PUBLIC_ORIGIN);
+      const canonical = configuredOrigin();
+      if (!canonical) throw Error("inconsistent origins");
+      const origin = new URL(canonical);
       if (origin.protocol !== "https:" && origin.hostname !== "localhost")
         throw Error("origin");
       const jwk = JSON.parse(env.TASTEPOLICY_ATTESTATION_KEY) as JWK;
