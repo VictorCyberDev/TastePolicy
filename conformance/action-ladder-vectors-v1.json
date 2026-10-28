@@ -1,0 +1,121 @@
+{
+  "version": "tastepolicy-action-ladder-vectors-v1",
+  "description": "The subjective-action ladder: order, the legacy continuation mapping, typed ASK for escalation, and how a ceiling is resolved. Data only.",
+  "ladder": [
+    "SUGGEST",
+    "RANK",
+    "SHORTLIST",
+    "ADD_TO_DRAFT",
+    "PRESENT_AS_SELECTED"
+  ],
+  "legacyMapping": { "recommend": "SHORTLIST", "add_to_draft": "ADD_TO_DRAFT" },
+  "legacyAllowPermits": ["SUGGEST", "RANK", "SHORTLIST", "ADD_TO_DRAFT"],
+  "askClassification": [
+    {
+      "id": "L01",
+      "basis": "ACTION_CEILING",
+      "rules": ["ACTION:ADD_TO_DRAFT>SHORTLIST"],
+      "kind": "AUTHORITY_CONFIRMATION"
+    },
+    {
+      "id": "L02",
+      "basis": "SENSITIVE_DOMAIN",
+      "rules": ["SENSITIVE:ALWAYS_ASK"],
+      "kind": "AUTHORITY_CONFIRMATION"
+    },
+    {
+      "id": "L03",
+      "basis": "SENSITIVE_DOMAIN",
+      "rules": ["SENSITIVE:FRESH_EXPLICIT_EVIDENCE_REQUIRED"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "L04",
+      "basis": "ACTION_CEILING",
+      "rules": ["ORG_ACTION_CEILING:PRESENT_AS_SELECTED>SUGGEST"],
+      "kind": "CLARIFICATION_REQUIRED"
+    }
+  ],
+  "ceilings": [
+    {
+      "id": "K01",
+      "policy": null,
+      "agent": "a",
+      "domain": "place",
+      "organization": null,
+      "ceiling": "ADD_TO_DRAFT",
+      "source": "NONE"
+    },
+    {
+      "id": "K02",
+      "policy": { "default": "SHORTLIST", "byDomain": {}, "byAgent": {} },
+      "agent": "a",
+      "domain": "place",
+      "organization": null,
+      "ceiling": "SHORTLIST",
+      "source": "DEFAULT"
+    },
+    {
+      "id": "K03",
+      "policy": {
+        "default": "SHORTLIST",
+        "byDomain": { "place": "RANK" },
+        "byAgent": {}
+      },
+      "agent": "a",
+      "domain": "place",
+      "organization": null,
+      "ceiling": "RANK",
+      "source": "DOMAIN"
+    },
+    {
+      "id": "K04",
+      "policy": {
+        "default": "SHORTLIST",
+        "byDomain": { "place": "RANK" },
+        "byAgent": { "a": "PRESENT_AS_SELECTED" }
+      },
+      "agent": "a",
+      "domain": "place",
+      "organization": null,
+      "ceiling": "PRESENT_AS_SELECTED",
+      "source": "AGENT"
+    },
+    {
+      "id": "K05",
+      "policy": {
+        "default": "PRESENT_AS_SELECTED",
+        "byDomain": {},
+        "byAgent": {},
+        "sensitive": { "place": { "maxAction": "RANK" } }
+      },
+      "agent": "a",
+      "domain": "place",
+      "organization": null,
+      "ceiling": "RANK",
+      "source": "SENSITIVE_DOMAIN"
+    },
+    {
+      "id": "K06",
+      "policy": {
+        "default": "PRESENT_AS_SELECTED",
+        "byDomain": {},
+        "byAgent": {}
+      },
+      "agent": "a",
+      "domain": "place",
+      "organization": "SUGGEST",
+      "ceiling": "SUGGEST",
+      "source": "ORGANIZATION"
+    },
+    {
+      "id": "K07",
+      "policy": { "default": "SUGGEST", "byDomain": {}, "byAgent": {} },
+      "agent": "constructor",
+      "domain": "place",
+      "organization": "SHORTLIST",
+      "ceiling": "SUGGEST",
+      "source": "DEFAULT"
+    }
+  ]
+}

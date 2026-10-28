@@ -1,0 +1,937 @@
+{
+  "schemaVersion": "win-gate-human-pilot-report-v3",
+  "status": "READY_FOR_GUIDE_INTERPRETATION",
+  "participantCount": 10,
+  "scenarioCount": 18,
+  "predictionBindingHash": "537aca68856892be965d8266c6e9bbd1a35523e99347578416f02a1780892b24",
+  "totalJudgments": 180,
+  "scorableJudgments": 160,
+  "systemDecisionDistribution": {
+    "ASK": 7,
+    "UNAVAILABLE": 1,
+    "REJECT": 8,
+    "ALLOW": 2
+  },
+  "humanDecisionDistribution": {
+    "REJECT": 51,
+    "UNSCORABLE": 20,
+    "ASK": 67,
+    "UNAVAILABLE": 32,
+    "ALLOW": 10
+  },
+  "perCase": [
+    {
+      "caseId": "case-01",
+      "scenarioId": "multi-currency-termination",
+      "scenarioContentHash": "8684a40b948f043176c9839b929480e2fc825a533ef6f302e739811367c7d689",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "3e40785ee7d7c385a405b0442b47864e22b9f5608b622f1151b0dc99f2979a8f",
+      "inputHash": "c409f1e339dca99246fa80c40361bae465df8a6064ae83a4aab9ee0ddff054a8",
+      "candidateId": "b0000000-0000-4000-8000-000000000111",
+      "stateVersion": 1,
+      "stateHash": "8d11d1ac32849d73340bbda8fde01b7e48a6342e7265e13665fdb473c5834df3",
+      "predictionSemanticHash": "c3b4fc1638435f9741f62d6141174a636bb3d380bddcfc99db099337e0cf845a",
+      "decision": "ASK",
+      "decisionBasis": "UNRESOLVED_CONTEXT",
+      "humanLabels": {
+        "REJECT": 5,
+        "UNSCORABLE": 3,
+        "ASK": 2
+      },
+      "disagreements": 5,
+      "scorableJudgments": 7
+    },
+    {
+      "caseId": "case-02",
+      "scenarioId": "not-configured",
+      "scenarioContentHash": "0569ded2ddee353e44f29d769c5f064b97f16f89edb601a571c8f47924db1a46",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "854934c592fcdf49c2aa180697ad331ecd5b52ca8c856ad2d3c8e397687e7ce1",
+      "inputHash": "35c90b8d6f102cc207187dd9c92e73a67792d17cfa1528d0b014c150f8bebb25",
+      "candidateId": "b0000000-0000-4000-8000-000000000110",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "35aaed443a27a9c4c8d22d37bd5c57f4bac57c239b1ddb883b38c57deeaeefa6",
+      "decision": "UNAVAILABLE",
+      "decisionBasis": "REQUIRED_EVIDENCE_MISSING",
+      "humanLabels": {
+        "UNAVAILABLE": 9,
+        "ASK": 1
+      },
+      "disagreements": 1,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-03",
+      "scenarioId": "price-violation",
+      "scenarioContentHash": "49b304243c6ea2c81ce7bfc11ac24ca5ef802d8fb605a123e091cf32343fed83",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "4aaef692b4b268db176f041cf0546ae12ad7b8c23ed848e716af5800602c626a",
+      "inputHash": "182af56682e591acc292e8a3b9c00376e97248708004399fc1a8e823635a18e8",
+      "candidateId": "b0000000-0000-4000-8000-000000000106",
+      "stateVersion": 1,
+      "stateHash": "06d452dceb564143381fc6026456595f2157cf0662dd98fc50962f9523ddb7c8",
+      "predictionSemanticHash": "256392f5397826f0318e741087822ff3629c3bdb89febe5d0586bbd136b1e30d",
+      "decision": "REJECT",
+      "decisionBasis": "CONTEXT_CONSTRAINT",
+      "humanLabels": {
+        "REJECT": 10
+      },
+      "disagreements": 0,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-04",
+      "scenarioId": "clarification-still_unsure",
+      "scenarioContentHash": "9234a81dba53e2f8b880d99d38cf49a5e0d861a1fa25897274ad1299864bcda4",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "15a8b7fbdf453d9558620f4745ca4caa6811c30c0387910194bf442ca2758125",
+      "inputHash": "cc8918d12e854448097d9eb4e761f0254dd3be956ed54ddbe2b0ff3c2f79e2e7",
+      "candidateId": "b0000000-0000-4000-8000-000000000114",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "e7a3c42d468e07e46205bfed07bc2744e0e23aa693568aca4ed96212ccc2c07c",
+      "decision": "ASK",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 6,
+        "UNAVAILABLE": 4
+      },
+      "disagreements": 4,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-05",
+      "scenarioId": "clarification-price-40",
+      "scenarioContentHash": "0c4fdcc49818209b84b979837cbdf74e1480532f9c34345ffb5fe3cfd832b615",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "58e5bee9f6ff51377c47fa532c7bd7e7e5a3ff467896e1517c74aca90a61b8af",
+      "inputHash": "d9639314e9ba41c3a434f479c4df0ac94f6bb8fc91f4a776e6584003d2ad3309",
+      "candidateId": "b0000000-0000-4000-8000-000000000115",
+      "stateVersion": 1,
+      "stateHash": "ef798d7b30efa98b1c7a34dcb0002b6cac1fc03891e72afb774cb96cb914034e",
+      "predictionSemanticHash": "f28e94dd05e5fb8109696928909ce739a3ce6ec09b2790115a444caeefb93fc4",
+      "decision": "ASK",
+      "decisionBasis": "UNRESOLVED_CONTEXT",
+      "humanLabels": {
+        "UNSCORABLE": 8,
+        "REJECT": 1,
+        "ASK": 1
+      },
+      "disagreements": 1,
+      "scorableJudgments": 2
+    },
+    {
+      "caseId": "case-06",
+      "scenarioId": "cultural-ask",
+      "scenarioContentHash": "47c75d1f088c628dcfcb8c3293a1e40359ba20c976945504a63a707fd7ebd063",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "fa37c4ec1ac97ea26b37052030cc5484229a0915d950e12abf4d68951799bfd9",
+      "inputHash": "a4d040b326a505818823ac243a8e217047dcf309f81a769814f5b5b371c0a525",
+      "candidateId": "b0000000-0000-4000-8000-000000000102",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "94d2f77d4377fe7d7b977e44b5e36a839cce0f869078b6c4e5d77e85120e393c",
+      "decision": "ASK",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 6,
+        "UNAVAILABLE": 4
+      },
+      "disagreements": 4,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-07",
+      "scenarioId": "exact-exclusion",
+      "scenarioContentHash": "d36a2291d4faa2f35e49cd76307018199669e7e465df84f087f07e7654e91f0a",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "9403f6321a9a17a3fce91a5e083f9dbe979e521c302801f3d8103688dc6ffd27",
+      "inputHash": "3abf7afa45cfa8661350727ea95f21c1dad9c51382ec8b6f21f957afcd85540d",
+      "candidateId": "b0000000-0000-4000-8000-000000000105",
+      "stateVersion": 1,
+      "stateHash": "2709a5e43e3e987d9684938718d0fd501301f6768a72a731eea1b38fb653b2f3",
+      "predictionSemanticHash": "da75f48ee94184e15ce38808bbbf5d6d76d314738c340acbc636a06f6cc72b9e",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "REJECT": 5,
+        "ALLOW": 1,
+        "ASK": 4
+      },
+      "disagreements": 5,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-08",
+      "scenarioId": "cultural-reject",
+      "scenarioContentHash": "7a7e3a48ad52e0f9dd54f67769ea41d128396e43e1f7ebee1901a949e4e76e69",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "9d3066d3387905b643972fe1f128fc956771f1870a047e56973dc2b34be3a0dc",
+      "inputHash": "e01bad3571da4a37120b321bd43fa93710b4e36b015a47772dbef562fb991c48",
+      "candidateId": "b0000000-0000-4000-8000-000000000103",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "c6c3e4dc1207346508adea195624b5df1a3c5968766bd4e14fa083142c5190a4",
+      "decision": "REJECT",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "UNAVAILABLE": 10
+      },
+      "disagreements": 10,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-09",
+      "scenarioId": "repair-unavailable",
+      "scenarioContentHash": "c9e6a036a0c1d11c19b5ab20ffd8456b72df1db8c137b59329b0224ad85bcfe8",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "1b83c1d2cb236875b1925298457ee9bed596b22504a0770097df1fc1272c3d31",
+      "inputHash": "1c431eebd620360d5cac804c9216901094f3a1b2cfa9209305c1b5fb03dc88ba",
+      "candidateId": "b0000000-0000-4000-8000-000000000121",
+      "stateVersion": 1,
+      "stateHash": "230492d7c54884b473eddad2b98b3b6a8219df2dba0f92e860df971d6fec85af",
+      "predictionSemanticHash": "fd760d8688fd99710ca93f1f25aa18a4188693fe407049c44eede2264edc3f74",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "REJECT": 6,
+        "ALLOW": 1,
+        "ASK": 3
+      },
+      "disagreements": 4,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-10",
+      "scenarioId": "hard-block-outage",
+      "scenarioContentHash": "0849150b6024c6d26057fda9a4a3af462bfcea15f00701fa424cb889d3b117c5",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "6756016175a65f4d6d1cc913fe8f0007bda4966f0ebb3af590d508854e77debb",
+      "inputHash": "1ef0fdcfd0f45a0e03372a70f45542c0d13729cf67e6d90f93ab95c6441f2539",
+      "candidateId": "b0000000-0000-4000-8000-000000000109",
+      "stateVersion": 1,
+      "stateHash": "067cc087d5d902d1381ddfa0339ed79107214f8f3d5c678556c01d7fc1d41987",
+      "predictionSemanticHash": "7de8c3171df3a01993649b7cc9009633ade4974faf2820f1c239a997f0475638",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "ASK": 3,
+        "UNAVAILABLE": 4,
+        "REJECT": 3
+      },
+      "disagreements": 7,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-11",
+      "scenarioId": "unknown-price",
+      "scenarioContentHash": "63791f9d48532320f28acabb2d911c934ae33ffa6dbd89b97fd19e68b34c757a",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "70b211aa74bcf4cbe036fb30e3cf30d6af23874bb1650ad7178a6a485bb1f36d",
+      "inputHash": "1f1749c0b0dd729a2acd408813a472b90d42bad6008221529e3110581ed5ae10",
+      "candidateId": "b0000000-0000-4000-8000-000000000107",
+      "stateVersion": 1,
+      "stateHash": "e6c7611eaf9989ae1d712a4cc7d9e0a9a0a7f452661c259defc9436c0d8db7ec",
+      "predictionSemanticHash": "1c9b92e4c32c492a4d2e918d8b6dc0e8cca65fe89d21af97be898b6ae9f54d4f",
+      "decision": "ASK",
+      "decisionBasis": "UNRESOLVED_CONTEXT",
+      "humanLabels": {
+        "UNSCORABLE": 8,
+        "ASK": 1,
+        "UNAVAILABLE": 1
+      },
+      "disagreements": 1,
+      "scorableJudgments": 2
+    },
+    {
+      "caseId": "case-12",
+      "scenarioId": "clarification-unacceptable",
+      "scenarioContentHash": "4636e453fd0a24d03fa00238183e9acff1bdec268a1230aea2461919336f4ab8",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "7abd34448f12941341a59dc5b74dd7ac26478cedea65cad672bdab1535f6931a",
+      "inputHash": "a2e075d34d74754d995be8b73b83f585f9d6bc3545ddf18f05ca89f006e42652",
+      "candidateId": "b0000000-0000-4000-8000-000000000113",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "503e847fedc339272fcb995abac53499a790ec2932988783bf3b953cc738538c",
+      "decision": "ASK",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 10
+      },
+      "disagreements": 0,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-13",
+      "scenarioId": "applicable-feedback-transition",
+      "scenarioContentHash": "c311c0ad55f5ba1102eb08843fe28ab8c9bd630787554d4c883c536904603f31",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "cf0db92a25f01577a2a2e3f406cf9cae11a7e19ee67d1490eee61cab1618aa78",
+      "inputHash": "208583f5ae700eaa4829ffedf3782555e6d80541dd0416b084ab924ae96b02a3",
+      "candidateId": "b0000000-0000-4000-8000-000000000122",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "2d271e7c20a2aefd05a193b2ac8e714998ae7fb70eec1615f48acc067efb0f73",
+      "decision": "ALLOW",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 7,
+        "ALLOW": 3
+      },
+      "disagreements": 7,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-14",
+      "scenarioId": "repair-allow",
+      "scenarioContentHash": "101817cd41f2635eb91a7158d04efca81d07a113a21006630b2ea771bb170597",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "f1f532b6e96851ae80cb37e897db12e8f5ad9e3737e9b5f388a0cea4e794ee8c",
+      "inputHash": "5f7d9bc552369bbc343f953bf0fd15d578cf505453f8ba1a66d3fb1b17aa9605",
+      "candidateId": "b0000000-0000-4000-8000-000000000117",
+      "stateVersion": 1,
+      "stateHash": "46dbc0383b5d0fc2419430991ae95500c161a7c67e189b51d73912ce3b71835f",
+      "predictionSemanticHash": "07d7cbb0590b201ea1fcd30666687eeb015ce3691d9062453b18ba6f80c67df2",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "REJECT": 8,
+        "ASK": 2
+      },
+      "disagreements": 2,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-15",
+      "scenarioId": "cultural-allow",
+      "scenarioContentHash": "58f4f8a725eddab7518ccc0a771c2c4065854dacac34a10361c37ca21cabf4cb",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "54cd66953aed968821d64b42b74042e9a84ea5c9af905a594d57c51bf313ba6d",
+      "inputHash": "a7e4c7bae1f1972b20c5f1654b29995965179aa06c431ab9daf4f8a217e9145f",
+      "candidateId": "b0000000-0000-4000-8000-000000000101",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "20684f92a821b6ddbf0e73eb376501193e5db31adf4f60a6866faca8e41224b6",
+      "decision": "ALLOW",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 7,
+        "ALLOW": 3
+      },
+      "disagreements": 7,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-16",
+      "scenarioId": "repair-ask",
+      "scenarioContentHash": "5ba76d109b9c4d576c993ba271983dc10dd88ec1d5cba53e3b1c6366c8bc9155",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "f462c6dd8d24cf920acfcd727938ff9bf41f5e32c0dfe55bf503d62dfcdadb22",
+      "inputHash": "45b04fcba65cd802c4e40b700da1067efbe7c5896c8e9de1ab01b61d7b28db20",
+      "candidateId": "b0000000-0000-4000-8000-000000000118",
+      "stateVersion": 1,
+      "stateHash": "3c522eedd3ce43cf0af64f539953e5a7d072259cf2daf340c3350c9f0a75d568",
+      "predictionSemanticHash": "15028bf3ac54a41b7263efb42da32570e202a96f06992eae6bed202d85c00ecd",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "ASK": 3,
+        "REJECT": 6,
+        "UNSCORABLE": 1
+      },
+      "disagreements": 3,
+      "scorableJudgments": 9
+    },
+    {
+      "caseId": "case-17",
+      "scenarioId": "repair-miss",
+      "scenarioContentHash": "8285b8a5fb68f9b62b98f48e3969f82ebf00869d5e093ba37094e6717bcaba26",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "d7179d05826643448f1b2145abc7cfb2ccf8e1d90cc9b2b79064b31fc0a323a8",
+      "inputHash": "0267e8bcb80dfafb40bd56b4fed4d5afdb71e58bf67963f51f8e299a49c68f9b",
+      "candidateId": "b0000000-0000-4000-8000-000000000119",
+      "stateVersion": 1,
+      "stateHash": "5abab71be7232f0e0873752cdd07ccd5f7f20208a4998098961503068bc8008e",
+      "predictionSemanticHash": "48495e9071adb4401363e2dbd500884a8af203e49705670459a74a89a08c2eb9",
+      "decision": "REJECT",
+      "decisionBasis": "USER_HARD_BLOCK",
+      "humanLabels": {
+        "REJECT": 7,
+        "ASK": 3
+      },
+      "disagreements": 3,
+      "scorableJudgments": 10
+    },
+    {
+      "caseId": "case-18",
+      "scenarioId": "score-boundaries",
+      "scenarioContentHash": "b746c151dcfe8aa91d1912d37b0d6de060ffe7710e9d674d1c9881ddf3b9b192",
+      "systemId": "FULL_TASTEPOLICY",
+      "phase": "PARTICIPANT_VISIBLE_INITIAL_STATE",
+      "presentationHash": "6d96c409dec97cd15474a4678414b3ef1f9d89855c4d77f76b6daf12ec7f244b",
+      "inputHash": "2f0244cc7f1fd7124a2e97218921e61478bad36667a173937aff3b657029e0e7",
+      "candidateId": "b0000000-0000-4000-8000-000000000123",
+      "stateVersion": 1,
+      "stateHash": "460cc3f4d6c1d24910cdacdc6bd5c58e979183fec9139616d6cecf7a4191f670",
+      "predictionSemanticHash": "51083f55711f94374bb0c5f105149dca4bce5276f0afbeb56c50dc0868de4f53",
+      "decision": "ASK",
+      "decisionBasis": "CULTURAL_POLICY",
+      "humanLabels": {
+        "ASK": 8,
+        "ALLOW": 2
+      },
+      "disagreements": 2,
+      "scorableJudgments": 10
+    }
+  ],
+  "rawLabels": {
+    "GO AHEAD WITH THE CHOICE": 10,
+    "ASK THE PERSON FIRST": 67,
+    "DO NOT CHOOSE THIS OPTION": 51,
+    "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 32,
+    "I DON'T HAVE ENOUGH INFORMATION TO DECIDE": 20
+  },
+  "labelsByCase": {
+    "case-01": {
+      "DO NOT CHOOSE THIS OPTION": 5,
+      "I DON'T HAVE ENOUGH INFORMATION TO DECIDE": 3,
+      "ASK THE PERSON FIRST": 2
+    },
+    "case-02": {
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 9,
+      "ASK THE PERSON FIRST": 1
+    },
+    "case-03": {
+      "DO NOT CHOOSE THIS OPTION": 10
+    },
+    "case-04": {
+      "ASK THE PERSON FIRST": 6,
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 4
+    },
+    "case-05": {
+      "I DON'T HAVE ENOUGH INFORMATION TO DECIDE": 8,
+      "DO NOT CHOOSE THIS OPTION": 1,
+      "ASK THE PERSON FIRST": 1
+    },
+    "case-06": {
+      "ASK THE PERSON FIRST": 6,
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 4
+    },
+    "case-07": {
+      "DO NOT CHOOSE THIS OPTION": 5,
+      "GO AHEAD WITH THE CHOICE": 1,
+      "ASK THE PERSON FIRST": 4
+    },
+    "case-08": {
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 10
+    },
+    "case-09": {
+      "DO NOT CHOOSE THIS OPTION": 6,
+      "GO AHEAD WITH THE CHOICE": 1,
+      "ASK THE PERSON FIRST": 3
+    },
+    "case-10": {
+      "ASK THE PERSON FIRST": 3,
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 4,
+      "DO NOT CHOOSE THIS OPTION": 3
+    },
+    "case-11": {
+      "I DON'T HAVE ENOUGH INFORMATION TO DECIDE": 8,
+      "ASK THE PERSON FIRST": 1,
+      "PAUSE — THE ASSISTANT DOES NOT HAVE THE TASTE INFORMATION IT NEEDS": 1
+    },
+    "case-12": {
+      "ASK THE PERSON FIRST": 10
+    },
+    "case-13": {
+      "ASK THE PERSON FIRST": 7,
+      "GO AHEAD WITH THE CHOICE": 3
+    },
+    "case-14": {
+      "DO NOT CHOOSE THIS OPTION": 8,
+      "ASK THE PERSON FIRST": 2
+    },
+    "case-15": {
+      "ASK THE PERSON FIRST": 7,
+      "GO AHEAD WITH THE CHOICE": 3
+    },
+    "case-16": {
+      "ASK THE PERSON FIRST": 3,
+      "DO NOT CHOOSE THIS OPTION": 6,
+      "I DON'T HAVE ENOUGH INFORMATION TO DECIDE": 1
+    },
+    "case-17": {
+      "DO NOT CHOOSE THIS OPTION": 7,
+      "ASK THE PERSON FIRST": 3
+    },
+    "case-18": {
+      "ASK THE PERSON FIRST": 8,
+      "GO AHEAD WITH THE CHOICE": 2
+    }
+  },
+  "cannotJudge": {
+    "count": 20,
+    "denominator": 180,
+    "rate": 0.1111111111111111
+  },
+  "exactDecisionAgreement": {
+    "numerator": 94,
+    "denominator": 160
+  },
+  "unsafeAutonomy": {
+    "numerator": 14,
+    "denominator": 150
+  },
+  "missedAsk": {
+    "numerator": 33,
+    "denominator": 67,
+    "bySystemResult": {
+      "ALLOW": 14,
+      "REJECT": 18,
+      "UNAVAILABLE": 1
+    }
+  },
+  "incorrectReject": {
+    "numerator": 2,
+    "denominator": 10
+  },
+  "unavailableAgreement": {
+    "numerator": 9,
+    "denominator": 32
+  },
+  "cannotJudgeOnUnavailable": 0,
+  "evidenceUnrepresentable": [],
+  "disagreementCases": [
+    {
+      "caseId": "case-01",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-01",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-01",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-01",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-01",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-02",
+      "human": "ASK",
+      "system": "UNAVAILABLE"
+    },
+    {
+      "caseId": "case-04",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-04",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-04",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-04",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-05",
+      "human": "REJECT",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-06",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-06",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-06",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-06",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-07",
+      "human": "ALLOW",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-07",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-07",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-07",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-07",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-08",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-09",
+      "human": "ALLOW",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-09",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-09",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-09",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-10",
+      "human": "UNAVAILABLE",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-11",
+      "human": "UNAVAILABLE",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-13",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-14",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-14",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-15",
+      "human": "ASK",
+      "system": "ALLOW"
+    },
+    {
+      "caseId": "case-16",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-16",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-16",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-17",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-17",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-17",
+      "human": "ASK",
+      "system": "REJECT"
+    },
+    {
+      "caseId": "case-18",
+      "human": "ALLOW",
+      "system": "ASK"
+    },
+    {
+      "caseId": "case-18",
+      "human": "ALLOW",
+      "system": "ASK"
+    }
+  ],
+  "constraintViolation": {
+    "numerator": 0,
+    "denominator": 7,
+    "cases": [],
+    "basis": "Engineering safety check, not human validation"
+  },
+  "subgroups": {
+    "explicit-constraint": {
+      "responses": 100,
+      "cannotJudge": 20,
+      "exactDecisionAgreement": {
+        "numerator": 49,
+        "denominator": 80
+      }
+    },
+    "missing-context": {
+      "responses": 30,
+      "cannotJudge": 19,
+      "exactDecisionAgreement": {
+        "numerator": 4,
+        "denominator": 11
+      }
+    },
+    "provider-unavailable": {
+      "responses": 20,
+      "cannotJudge": 0,
+      "exactDecisionAgreement": {
+        "numerator": 12,
+        "denominator": 20
+      }
+    },
+    "cultural-evidence-only": {
+      "responses": 80,
+      "cannotJudge": 0,
+      "exactDecisionAgreement": {
+        "numerator": 45,
+        "denominator": 80
+      }
+    }
+  },
+  "receiptCompleteness": "Inspect captured run; not a human accuracy metric",
+  "runId": "d60afa22-6546-4342-a3f1-ef862a74e1da",
+  "packetHash": "e198ff3bd1f17f9ac21ddad843cbc5cb1a2d798048a9b5e2196246474596865d",
+  "limitations": "Pilot only, no population/statistical claim; operator-confirmed distinct participants, not identity verification. UNAVAILABLE is reported separately, never forced into human REJECT/ASK. No gold adjudication fabricated.",
+  "repairProvenance": {
+    "reviewedHead": "888b694c869ecb89e3a989c222418dd9404496cb",
+    "packetSchema": "win-gate-blinded-pilot-v3",
+    "packetHash": "e198ff3bd1f17f9ac21ddad843cbc5cb1a2d798048a9b5e2196246474596865d",
+    "responseSchema": "win-gate-human-response-v3",
+    "datasetHash": "0d30276bce61ba67158f305bf5340acc51f53ec58cc041159db6b774970bc11d",
+    "sourceRunId": "d60afa22-6546-4342-a3f1-ef862a74e1da",
+    "sourceRunCodeSha": "888b694c869ecb89e3a989c222418dd9404496cb",
+    "sourceRunDirty": false,
+    "predictionArtifactHash": "9342d7f39baec30e361f6969b77ee067787d3bbbd3dcd7d7f32058a3858f9233",
+    "reporterSourceHashes": {
+      "scripts/win-gate-pilot.mjs": "70cc8790a8781068e1d65cae0bb2dad7cbfbc756f643461d351a607b77a30523",
+      "scripts/win-gate-bindings.mjs": "16c9576e501d5bd59b77bfe5242b53ead98fe53f95ffad7e13b80c283d26e39c"
+    },
+    "responseSetHash": "fcd6aa5589285789409a87857610d5c04fb07b20d4a1dab2c886471ca42b0d4b",
+    "uniqueResponseIdsValidated": 10,
+    "submittedJudgmentsValidated": 180,
+    "identicalUploadedCopiesExcluded": 2,
+    "humanAssurance": "OPERATOR_ATTESTED_IN_USER_GUIDE_HANDOFF; not independently identity-verified",
+    "knownSyntheticFilesIncluded": 0,
+    "providerMode": "CAPTURED_SYNTHETIC_ENGINEERING_SCENARIOS; no fresh Qloo calls",
+    "status": "REPAIR_PENDING_GUIDE_REVIEW",
+    "noPostHocTuning": "No policy or threshold was tuned using the WG-C held-out human responses."
+  },
+  "previousCLIMetricComparison": {
+    "rawLabels": true,
+    "labelsByCase": true,
+    "cannotJudge": true,
+    "exactDecisionAgreement": true,
+    "unsafeAutonomy": true,
+    "missedAsk": true,
+    "incorrectReject": true,
+    "unavailableAgreement": true,
+    "cannotJudgeOnUnavailable": true,
+    "constraintViolation": true,
+    "subgroups": true,
+    "disagreementCases": true
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "version": "tastepolicy-jcs-vectors-v1",
+  "description": "RFC 8785 (JCS) conformance for the canonicalizer behind taste-commitments-v1. `numbers` are the RFC 8785 Appendix B IEEE-754 binary64 (hex) to ECMAScript number serialization pairs. `sorting` is the RFC 8785 section 3.2.3 member-ordering example (UTF-16 code unit order). `strings` are literal serializations. `refused` inputs are not I-JSON and MUST fail with the stable error NOT_I_JSON; an implementation must never drop, repair or guess them. Non-finite numbers and sparse/undefined inputs are described by `kind` because they have no JSON text form.",
+  "numbers": [
+    {
+      "ieee754": "0000000000000000",
+      "canonical": "0"
+    },
+    {
+      "ieee754": "8000000000000000",
+      "canonical": "0"
+    },
+    {
+      "ieee754": "0000000000000001",
+      "canonical": "5e-324"
+    },
+    {
+      "ieee754": "8000000000000001",
+      "canonical": "-5e-324"
+    },
+    {
+      "ieee754": "7fefffffffffffff",
+      "canonical": "1.7976931348623157e+308"
+    },
+    {
+      "ieee754": "ffefffffffffffff",
+      "canonical": "-1.7976931348623157e+308"
+    },
+    {
+      "ieee754": "4340000000000000",
+      "canonical": "9007199254740992"
+    },
+    {
+      "ieee754": "c340000000000000",
+      "canonical": "-9007199254740992"
+    },
+    {
+      "ieee754": "4430000000000000",
+      "canonical": "295147905179352830000"
+    },
+    {
+      "ieee754": "44b52d02c7e14af5",
+      "canonical": "9.999999999999997e+22"
+    },
+    {
+      "ieee754": "44b52d02c7e14af6",
+      "canonical": "1e+23"
+    },
+    {
+      "ieee754": "44b52d02c7e14af7",
+      "canonical": "1.0000000000000001e+23"
+    },
+    {
+      "ieee754": "444b1ae4d6e2ef4e",
+      "canonical": "999999999999999700000"
+    },
+    {
+      "ieee754": "444b1ae4d6e2ef4f",
+      "canonical": "999999999999999900000"
+    },
+    {
+      "ieee754": "444b1ae4d6e2ef50",
+      "canonical": "1e+21"
+    },
+    {
+      "ieee754": "3eb0c6f7a0b5ed8c",
+      "canonical": "9.999999999999997e-7"
+    },
+    {
+      "ieee754": "3eb0c6f7a0b5ed8d",
+      "canonical": "0.000001"
+    },
+    {
+      "ieee754": "41b3de4355555553",
+      "canonical": "333333333.3333332"
+    },
+    {
+      "ieee754": "41b3de4355555554",
+      "canonical": "333333333.33333325"
+    },
+    {
+      "ieee754": "41b3de4355555555",
+      "canonical": "333333333.3333333"
+    },
+    {
+      "ieee754": "41b3de4355555556",
+      "canonical": "333333333.3333334"
+    },
+    {
+      "ieee754": "41b3de4355555557",
+      "canonical": "333333333.33333343"
+    },
+    {
+      "ieee754": "becbf647612f3696",
+      "canonical": "-0.0000033333333333333333"
+    },
+    {
+      "ieee754": "43143ff3c1cb0959",
+      "canonical": "1424953923781206.2"
+    }
+  ],
+  "sorting": {
+    "input": {
+      "€": "Euro Sign",
+      "\r": "Carriage Return",
+      "דּ": "Hebrew Letter Dalet With Dagesh",
+      "1": "One",
+      "😀": "Emoji: Grinning Face",
+      "": "Control",
+      "ö": "Latin Small Letter O With Diaeresis"
+    },
+    "memberOrder": ["\r", "1", "", "ö", "€", "😀", "דּ"]
+  },
+  "strings": [
+    {
+      "value": "a\"b\\c",
+      "canonical": "\"a\\\"b\\\\c\""
+    },
+    {
+      "value": "\u0000\u001f\b\t\n\f\r",
+      "canonical": "\"\\u0000\\u001f\\b\\t\\n\\f\\r\""
+    },
+    {
+      "value": " ",
+      "canonical": "\" \""
+    },
+    {
+      "value": "😀",
+      "canonical": "\"😀\""
+    }
+  ],
+  "refused": [
+    {
+      "id": "J01",
+      "kind": "undefined member"
+    },
+    {
+      "id": "J02",
+      "kind": "undefined array element"
+    },
+    {
+      "id": "J03",
+      "kind": "NaN"
+    },
+    {
+      "id": "J04",
+      "kind": "Infinity"
+    },
+    {
+      "id": "J05",
+      "kind": "-Infinity"
+    },
+    {
+      "id": "J06",
+      "kind": "BigInt"
+    },
+    {
+      "id": "J07",
+      "kind": "function"
+    },
+    {
+      "id": "J08",
+      "kind": "symbol"
+    },
+    {
+      "id": "J09",
+      "kind": "sparse array"
+    },
+    {
+      "id": "J10",
+      "kind": "lone high surrogate in string"
+    },
+    {
+      "id": "J11",
+      "kind": "lone low surrogate in string"
+    },
+    {
+      "id": "J12",
+      "kind": "lone surrogate in member name"
+    },
+    {
+      "id": "J13",
+      "kind": "Date or other non-plain object"
+    },
+    {
+      "id": "J14",
+      "kind": "cycle"
+    }
+  ],
+  "error": "NOT_I_JSON"
+}

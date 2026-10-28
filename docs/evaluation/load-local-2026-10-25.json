@@ -1,0 +1,70 @@
+{
+  "note": "Local controlled probe; synthetic data; deterministic provider; not a capacity claim.",
+  "at": "2026-10-25T15:30:30.527Z",
+  "scenarios": {
+    "evaluate (distinct)": {
+      "n": 40,
+      "concurrency": 8,
+      "p50Ms": 129,
+      "p95Ms": 191,
+      "maxMs": 207,
+      "perSecond": 61
+    },
+    "evaluate (same key x20)": {
+      "n": 20,
+      "concurrency": 20,
+      "p50Ms": 169,
+      "p95Ms": 189,
+      "maxMs": 189,
+      "perSecond": 105
+    },
+    "lease verify": {
+      "n": 100,
+      "concurrency": 16,
+      "p50Ms": 65,
+      "p95Ms": 82,
+      "maxMs": 84,
+      "perSecond": 229
+    },
+    "lease checkpoint (same lease)": {
+      "n": 40,
+      "concurrency": 16,
+      "p50Ms": 79,
+      "p95Ms": 120,
+      "maxMs": 126,
+      "perSecond": 166
+    },
+    "attestation verify (valid)": {
+      "n": 100,
+      "concurrency": 16,
+      "p50Ms": 21,
+      "p95Ms": 76,
+      "maxMs": 81,
+      "perSecond": 556
+    },
+    "attestation verify (malformed)": {
+      "n": 200,
+      "concurrency": 16,
+      "p50Ms": 0,
+      "p95Ms": 1,
+      "maxMs": 1,
+      "perSecond": 44056
+    },
+    "status list token": {
+      "n": 100,
+      "concurrency": 16,
+      "p50Ms": 2,
+      "p95Ms": 9,
+      "maxMs": 12,
+      "perSecond": 3857
+    },
+    "oauth protected-resource md": {
+      "n": 200,
+      "concurrency": 16,
+      "p50Ms": 1,
+      "p95Ms": 1,
+      "maxMs": 5,
+      "perSecond": 14954
+    }
+  }
+}

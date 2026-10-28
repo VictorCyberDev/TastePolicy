@@ -1,5 +1,7 @@
 # Architecture overview
 
+The flow and module-status table below record the historical M1 checkpoint. Current milestone boundaries are documented in the canonical journey, README and [M6 Interoperable Preference Authority](../product/m6-interoperable-preference-authority.md); later implemented surfaces do not rewrite the original M1 provider boundary.
+
 Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested and **live Qloo acceptance passed** on the exact reviewed M1 head. The bounded event contract established real entity resolution, cross-domain discovery, candidate-specific evidence, unit affinity scale, explainability handling, deterministic repeat behavior, Cultural Receipts and an unmocked production-build browser flow. Thresholds remain experimental rather than human-calibrated. See the [historical live investigation](../evaluation/milestone-1-live-verification.md) and [final acceptance report](../evaluation/milestone-1-live-acceptance-2026-10-13.md).
 
 ## Implemented flow
@@ -8,9 +10,9 @@ Client UI submits five queries to /api/demo/resolve. The server-only Qloo adapte
 
 Transport (qloo/client.ts) owns fixed-origin HTTP, key header, timeout/body bounds and safe error states. Adapter normalization owns provider schemas. Taste service owns five-distinct-ID, multi-domain, resolved-entity and separate-candidate invariants even for direct callers. Generic validation sits in src/lib/validation.ts. Policy normalization/thresholds/evaluate owns inspectable decisions. Receipts owns versioned machine-readable evidence, validates consistency and snapshots allowlisted nested inputs. UI only presents normalized server results, never raw HTML or provider credentials. Test doubles stay in tests; no production fallback exists.
 
-See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md), [final live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) and the [canonical architecture journey](canonical-architecture-v2.md).
+See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md), [final live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) and the [Canonical Architecture v3](canonical-architecture-v3.md).
 
-## Module responsibilities and later expansion
+## Module responsibilities and later expansion — M1 checkpoint
 
 | Module                | Responsibility                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------- |
@@ -33,12 +35,16 @@ The LLM may assist interpretation/orchestration but must not silently become the
 
 Presentation/HTTP entry points call orchestration, which depends on domain contracts and injected adapters. Domain types do not import framework, provider SDK or persistence models. Vendor payloads terminate at adapters. Missing services return explicit unavailable states, never fabricated success.
 
-The larger canonical flow is agent gateway → evaluation orchestration → persistent Taste State/action context → Qloo cultural evidence → explicit policy + bounded stability analysis → ALLOW / ASK / REJECT / UNAVAILABLE → Cultural Authorization Receipt → Agent Continuation Contract. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; M2 adds a private PostgreSQL persistence adapter behind explicit repository interfaces. No remote database project is connected by this implementation. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed. See [Canonical Architecture & Milestone Journey v2](canonical-architecture-v2.md).
+The larger canonical flow is agent gateway → evaluation orchestration → persistent Taste State/action context → Qloo cultural evidence → explicit policy + bounded stability analysis → ALLOW / ASK / REJECT / UNAVAILABLE → Cultural Authorization Receipt → Agent Continuation Contract. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; M2 adds a private PostgreSQL persistence adapter behind explicit repository interfaces. No remote database project is connected by this implementation. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed. See [Canonical Architecture v3](canonical-architecture-v3.md).
 
 ## M2 persistent-state boundary
 
 The bounded state demo wraps the unchanged M1 evaluator and Cultural Receipt v1 inside a state-linked M2 envelope. Session capability binds one temporary subject; logical agents share it only within that authorization boundary. Atomic immutable snapshots, scoped feedback, contextual policy and captured replay live in src/server/state. ContextGraph is a deterministic typed projection with separate current-state and historical-decision views. See [M2 design](../decisions/0006-persistent-state-boundary.md) and [contracts/security](../product/m2-persistent-state.md). Neither the original CLI nor Stability-lite depends on persistence. M2.5 adds a separate interactive layer described below.
 
-## Interactive authorization boundary (M2.5)
+## Interactive authorization boundary (historical M2.5 checkpoint)
 
 `src/server/interactive` owns pure clarification planning, strict structured answers and bounded repair orchestration. Separate transaction-scoped repositories persist interactive audit records through migration 0002. It delegates candidate verification to the accepted evaluator and state policy, preserving original receipt truth. The browser requests each operation explicitly; replay is captured-only, and adopting a replacement requires a new normal evaluation. See [M2.5 contracts](../product/m2-5-interactive-authorization.md). M3 is not implemented.
+
+## Current future direction
+
+[Canonical Architecture v3](canonical-architecture-v3.md) supersedes conflicting V2 future positioning/M6+ direction while preserving accepted M1–M5 truth. TastePolicy owns preference authority, not generic IAM, memory, payment, booking, tool or enterprise governance. TastePolicy Passport uses opaque subjectRef separate from internal profileId. Existing authentication/API/SDK/MCP/export/deletion wrap the same evaluator. WIN GATE is not implemented or completed; A2A is remaining M6G work after that gate, not current runtime. M7–M9 are future; M10 is not authorized. V2 and the checkpoint sections above remain historical evidence.

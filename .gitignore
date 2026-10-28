@@ -18,3 +18,7 @@ next-env.d.ts
 *.log
 
 .tastebench/
+
+# Human pilot responses must stay private, never source-controlled.
+win-gate-responses/
+anonymous-response-*.json

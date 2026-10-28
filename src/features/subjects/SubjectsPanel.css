@@ -21,6 +21,28 @@
   gap: 0.65rem;
   align-items: start;
 }
+
+.subjects-panel :is(label, legend) {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+/* WebKit counts a select's longest <option> as scrollable overflow of its
+   label even though the select box is clamped; clip it at the label. */
+.subjects-panel label {
+  overflow: clip;
+}
+.subjects-panel .check {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.subjects-panel .check > input {
+  flex: 0 0 auto;
+}
+.subjects-panel select {
+  text-overflow: ellipsis;
+}
 .subjects-panel :is(input:not([type="checkbox"]), select) {
   width: 100%;
   min-width: 0;
@@ -59,4 +81,28 @@
 .subjects-panel :focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
+}
+
+/* WebKit mobile: native controls and disclosure content must not contribute
+   min-content widths wider than the responsive subject panel. */
+.subjects-panel :is(fieldset, article, details, summary, table, pre, button) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.subjects-panel :is(button, summary) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.subjects-panel .check > input[type="checkbox"] {
+  width: 1rem;
+  min-width: 1rem;
+  max-width: 1rem;
+  flex-basis: 1rem;
+}
+.subjects-panel pre {
+  width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

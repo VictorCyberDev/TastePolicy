@@ -211,7 +211,10 @@ export function subjectRepositories(c: PoolClient): {
               m.candidate.id,
               m.candidate.type,
               m.contextHash,
-              m.decision,
+              // The column is the recorded evidence-level decision (it is
+              // foreign-keyed to that evidence); the member's final, policy-aware
+              // decision is part of the captured member document.
+              m.policy?.baseDecision ?? m.decision,
               m,
             ],
           );

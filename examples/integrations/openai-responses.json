@@ -1,0 +1,20 @@
+{
+  "model": "<your-model>",
+  "input": "Is this restaurant a good fit for me? Ask TastePolicy before recommending it.",
+  "tools": [
+    {
+      "type": "mcp",
+      "server_label": "tastepolicy",
+      "server_url": "https://<your-host>/api/mcp",
+      "authorization": "<TASTEPOLICY_API_KEY from a private variable>",
+      "allowed_tools": [
+        "tastepolicy_capabilities",
+        "tastepolicy_get_authority",
+        "tastepolicy_evaluate_choice",
+        "tastepolicy_get_receipt",
+        "tastepolicy_get_status"
+      ],
+      "require_approval": "never"
+    }
+  ]
+}

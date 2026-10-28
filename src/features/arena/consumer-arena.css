@@ -1,0 +1,1176 @@
+/* ===== TastePolicy visual system: "Taste is plural. Permission is precise." =====
+   Discovery is expressive and image-led; authorization collapses to structure.
+   THE BOUNDARY (taste | permission) carries the journey between them. */
+
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/instrument-serif-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/instrument-serif-latin-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+
+.consumerArena {
+  /* neutrals */
+  --ink: #14110f;
+  --bone: #f3eee4;
+  --mist: #dfe3e1;
+  --slate: #3a4650;
+  /* Taste Spectrum */
+  --vermilion: #ef3b1d;
+  --cobalt: #2140d8;
+  --violet: #6b2df2;
+  --saffron: #f7aa16;
+  --aqua: #14b8a6;
+  --lime: #c5ee2a;
+  --rose: #e94a78;
+  --coral: #ff7b5a;
+  /* theme */
+  --bg: var(--bone);
+  --fg: var(--ink);
+  --muted: #585d59;
+  --line: #cbc4b6;
+  --surface: #fbf8f1;
+  --rule: var(--ink);
+  --a: var(--vermilion);
+  --b: var(--saffron);
+  --allow: #0b7a62;
+  --ask: #8a5a00;
+  --reject: #b8321a;
+  --display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --sans:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  /* aliases for the shared sub-components */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --accent: var(--fg);
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  transition: background-color 0.5s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .consumerArena {
+    --bg: #12100e;
+    --fg: var(--bone);
+    --muted: #a8aba6;
+    --line: #3a3630;
+    --surface: #1c1916;
+    --rule: var(--bone);
+    --allow: #6fe3c4;
+    --ask: #f6c25a;
+    --reject: #ff8b72;
+  }
+}
+
+.consumerArena[data-spectrum="0"] {
+  --a: var(--vermilion);
+  --b: var(--saffron);
+}
+.consumerArena[data-spectrum="1"] {
+  --a: var(--cobalt);
+  --b: var(--aqua);
+}
+.consumerArena[data-spectrum="2"] {
+  --a: var(--violet);
+  --b: var(--rose);
+}
+.consumerArena[data-spectrum="3"] {
+  --a: var(--saffron);
+  --b: var(--coral);
+}
+.consumerArena[data-spectrum="4"] {
+  --a: var(--aqua);
+  --b: var(--lime);
+}
+.consumerArena[data-spectrum="5"] {
+  --a: var(--rose);
+  --b: var(--violet);
+}
+.consumerArena[data-spectrum="6"] {
+  --a: var(--coral);
+  --b: var(--cobalt);
+}
+.consumerArena[data-spectrum="7"] {
+  --a: var(--lime);
+  --b: var(--violet);
+}
+
+/* Discovery: colour wash from the candidate's two spectrum hues. */
+.consumerArena[data-mode="discovery"] {
+  background:
+    radial-gradient(
+      120% 62% at 90% -8%,
+      color-mix(in srgb, var(--a) 30%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      90% 56% at -10% 108%,
+      color-mix(in srgb, var(--b) 24%, transparent),
+      transparent 58%
+    ),
+    var(--bg);
+}
+
+[data-tone="vermilion"] {
+  --tone: var(--vermilion);
+  --on: #fff;
+}
+[data-tone="cobalt"] {
+  --tone: var(--cobalt);
+  --on: #fff;
+}
+[data-tone="violet"] {
+  --tone: var(--violet);
+  --on: #fff;
+}
+[data-tone="saffron"] {
+  --tone: var(--saffron);
+  --on: var(--ink);
+}
+[data-tone="aqua"] {
+  --tone: var(--aqua);
+  --on: var(--ink);
+}
+
+.consumerShell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 24px 40px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.consumerTop {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.8rem;
+}
+.consumerTop > :first-child {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+.consumerTop > :last-child {
+  justify-self: end;
+}
+.consumerTop > span {
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+}
+
+/* ---------- progress ---------- */
+.stageProgress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.stageProgress li {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 64px;
+}
+.stageProgress li > span {
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line);
+}
+.stageProgress li[data-state="done"] > span {
+  background: linear-gradient(90deg, var(--a), var(--b));
+}
+.stageProgress li[data-state="current"] > span {
+  background: var(--fg);
+}
+.stageProgress em {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.stageProgress li[data-state="current"] em {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+/* ---------- THE BOUNDARY ---------- */
+.boundary {
+  --split: 66%;
+  display: flex;
+  height: 32px;
+  overflow: hidden;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  font: 700 0.6rem/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.boundary em {
+  font-style: normal;
+}
+.bTaste {
+  display: flex;
+  flex: 0 0 var(--split);
+  align-items: center;
+  padding-left: 14px;
+  background: linear-gradient(90deg, var(--a), var(--b));
+  color: var(--ink);
+  transition: flex-basis 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bLine {
+  flex: 0 0 6px;
+  background: var(--rule);
+  transition: flex-basis 0.5s ease;
+}
+.bPermission {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--rule) 32%, transparent) 11px 12px
+  );
+  color: var(--muted);
+}
+.boundary[data-boundary="taste"] {
+  --split: 80%;
+}
+.boundary[data-boundary="checking"] .bTaste {
+  animation: boundarySweep 1.5s ease-in-out infinite alternate;
+}
+@keyframes boundarySweep {
+  to {
+    flex-basis: 30%;
+  }
+}
+.boundary[data-boundary="allow"] {
+  --split: 52%;
+}
+.boundary[data-boundary="allow"] .bLine,
+.boundary[data-boundary="handoff"] .bLine {
+  background: linear-gradient(
+    to bottom,
+    var(--rule) 0 28%,
+    transparent 28% 72%,
+    var(--rule) 72%
+  );
+}
+.boundary[data-boundary="allow"] .bPermission {
+  background: color-mix(in srgb, var(--allow) 22%, transparent);
+}
+.boundary[data-boundary="ask"] {
+  --split: 50%;
+}
+.boundary[data-boundary="ask"] .bLine {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--rule) 0 5px,
+    transparent 5px 9px
+  );
+}
+.boundary[data-boundary="reject"] {
+  --split: 20%;
+}
+.boundary[data-boundary="reject"] .bLine {
+  flex-basis: 12px;
+}
+.boundary[data-boundary="reject"] .bPermission {
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--rule) 26%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+}
+.boundary[data-boundary="pause"] {
+  --split: 50%;
+}
+.boundary[data-boundary="pause"] .bTaste {
+  background: linear-gradient(90deg, var(--mist), var(--slate));
+}
+.boundary[data-boundary="pause"] .bLine {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--rule) 0 2px,
+    transparent 2px 6px
+  );
+}
+.boundary[data-boundary="handoff"] {
+  --split: 58%;
+}
+.boundary[data-boundary="handoff"] .bPermission em {
+  visibility: hidden;
+}
+.boundary[data-boundary="handoff"] .bPermission {
+  background: linear-gradient(90deg, var(--rule) 50%, transparent 50%) center /
+    16px 2px repeat-x;
+}
+
+/* ---------- shared type ---------- */
+.stageEyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.stageScreen,
+.choiceStage {
+  animation: stageIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes stageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stageScreen {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 6vh 0 4vh;
+  text-align: center;
+}
+.stageScreen h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.stageScreen h1:focus-visible,
+.placeContent > h3:focus-visible {
+  outline: none;
+}
+
+.stageLead {
+  max-width: 34ch;
+  font-size: clamp(1.15rem, 3.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.stageSupport {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.stageFine {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.stageActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+.stageActions.stacked {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.consumerArena button,
+.consumerArena select,
+.consumerArena input:not([type="checkbox"]) {
+  min-height: 48px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg);
+  color: inherit;
+  font-family: var(--sans);
+}
+.consumerArena button {
+  padding: 11px 22px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.consumerArena button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.consumerArena button.primaryAction {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 700;
+}
+.consumerArena[data-mode="discovery"] button.primaryAction {
+  box-shadow: 4px 4px 0 var(--a);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.consumerArena[data-mode="discovery"]
+  button.primaryAction:not(:disabled):hover {
+  box-shadow: 2px 2px 0 var(--a);
+  transform: translate(2px, 2px);
+}
+.stageActions .primaryAction {
+  min-width: min(100%, 280px);
+  min-height: 54px;
+}
+.consumerArena button.quietAction {
+  border-color: transparent;
+  background: transparent;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---------- TASTE ---------- */
+.stageScreen[data-stage="taste"] {
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 40px;
+  max-width: none;
+  padding: 4vh 0;
+  text-align: left;
+}
+.heroText {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+}
+.stageScreen[data-stage="taste"] h1 {
+  font-family: var(--display);
+  font-size: clamp(3rem, 9vw, 6.4rem);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+}
+.stageScreen[data-stage="taste"] .stageActions {
+  justify-content: flex-start;
+}
+.tasteTiles {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tasteTiles li {
+  padding: 16px 22px;
+  border-radius: 22px;
+  background: var(--tone);
+  color: var(--on);
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 3.4vw, 1.9rem);
+  line-height: 1.1;
+}
+.tasteTiles li:nth-child(odd) {
+  margin-right: 36px;
+}
+.tasteTiles li:nth-child(even) {
+  margin-left: 36px;
+}
+
+/* ---------- confirm ---------- */
+.stageScreen[data-stage="confirm"] {
+  max-width: 900px;
+}
+.stageScreen[data-stage="confirm"] h1 {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1;
+}
+.resolvedGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 880px);
+}
+.resolvedItem {
+  min-width: 0;
+  padding: 14px 10px;
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--tone);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.resolvedItem strong,
+.resolvedItem small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.resolvedItem strong {
+  font-size: 0.92rem;
+}
+.resolvedItem small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.identityDetails {
+  width: min(100%, 520px);
+  text-align: left;
+}
+.identityDetails summary,
+.stageEvidence summary,
+.demoBoundaries summary,
+.consumerDeveloper summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+.identityDetails label {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+}
+.identityDetails select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+}
+.confirmTaste {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.confirmTaste input {
+  width: 22px;
+  min-height: 22px;
+}
+
+/* ---------- DISCOVER: editorial, image-led ---------- */
+.choiceStage {
+  display: grid;
+  justify-items: center;
+  padding: 22px 0 30px;
+}
+.placeCard {
+  width: min(100%, 540px);
+  overflow: hidden;
+  border: 1.5px solid var(--rule);
+  border-radius: 30px;
+  background: var(--surface);
+  box-shadow: 0 44px 70px -36px color-mix(in srgb, var(--a) 75%, transparent);
+  touch-action: pan-y;
+  user-select: none;
+}
+.choiceStage[data-entry="card"] .placeCard {
+  animation: lockIn 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+.choiceStage[data-entry="proposal"] .placeCard {
+  animation: slideNew 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes lockIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95) rotate(-1.2deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes slideNew {
+  from {
+    opacity: 0;
+    transform: translateX(70px) rotate(2.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.placePortrait {
+  position: relative;
+  aspect-ratio: 4 / 4.3;
+  min-height: 360px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--a) 45%, #14110f);
+}
+.tasteImage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.portraitScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 8, 6, 0.5), transparent 42%);
+  pointer-events: none;
+}
+.portraitCopy {
+  position: absolute;
+  z-index: 2;
+  bottom: 14px;
+  left: 16px;
+  right: 16px;
+}
+.portraitCopy span {
+  display: inline-block;
+  max-width: 100%;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(12, 10, 8, 0.58);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.3;
+  backdrop-filter: blur(8px);
+}
+/* The line between the taste image and the permission controls. */
+.cardBoundary {
+  position: relative;
+  height: 8px;
+  background: var(--rule);
+}
+.cardBoundary i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 66%;
+  background: linear-gradient(90deg, var(--a), var(--b));
+  animation: drawLine 0.9s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.cardBoundary::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  bottom: -7px;
+  left: 66%;
+  width: 6px;
+  background: var(--rule);
+}
+@keyframes drawLine {
+  from {
+    width: 0;
+  }
+}
+.placeContent {
+  padding: 22px 24px 24px;
+}
+.placeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.placeContent > h3 {
+  margin: 8px 0 6px;
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 7vw, 3.1rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.framing {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.tasteCues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tasteCues li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 3px 11px 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.tasteCues li[data-tone]::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+.cardActions {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.cardActions[data-proposal="true"] {
+  grid-template-columns: auto 1fr;
+}
+.cardActions > .primaryAction {
+  min-height: 54px;
+  padding-inline: 16px;
+  white-space: nowrap;
+}
+.cardActions > .quietAction {
+  padding-inline: 8px;
+  white-space: nowrap;
+}
+.whyPanel {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+.whyPanel p {
+  margin: 0 0 8px;
+}
+.whyPanel ul {
+  padding-left: 20px;
+}
+.technicalNote {
+  color: var(--muted);
+  font-family: monospace;
+  font-size: 0.74rem;
+}
+.demoBoundaries {
+  width: min(100%, 540px);
+  margin-top: 6px;
+  text-align: center;
+}
+.demoBoundaries[open] {
+  padding: 4px 16px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 20px;
+}
+
+/* ---------- CHECKING: the boundary becomes the screen ---------- */
+.stageScreen[data-stage="checking"] {
+  max-width: 560px;
+  padding-top: 8vh;
+}
+.stageScreen[data-stage="checking"] h1 {
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.checkingPlane {
+  display: flex;
+  width: 100%;
+  height: 128px;
+  overflow: hidden;
+  border: 1.5px solid var(--rule);
+  border-radius: 22px;
+}
+.cpTaste {
+  flex: 0 0 62%;
+  background: linear-gradient(120deg, var(--a), var(--b));
+  animation: planeSweep 1.5s ease-in-out infinite alternate;
+}
+.cpLine {
+  flex: 0 0 8px;
+  background: var(--rule);
+}
+.cpPermission {
+  flex: 1;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--rule) 30%, transparent) 11px 12px
+  );
+}
+@keyframes planeSweep {
+  to {
+    flex-basis: 26%;
+  }
+}
+
+/* ---------- AUTHORIZATION: quiet, exact, structured ---------- */
+.stageScreen[data-stage="allow"],
+.stageScreen[data-stage="ask"],
+.stageScreen[data-stage="reject"],
+.stageScreen[data-stage="noRepair"],
+.stageScreen[data-stage="pause"],
+.stageScreen[data-stage="handoff"] {
+  justify-items: start;
+  max-width: 720px;
+  margin-inline: 0;
+  text-align: left;
+}
+.stageScreen[data-stage="allow"] .stageActions,
+.stageScreen[data-stage="ask"] .stageActions,
+.stageScreen[data-stage="reject"] .stageActions,
+.stageScreen[data-stage="noRepair"] .stageActions,
+.stageScreen[data-stage="pause"] .stageActions,
+.stageScreen[data-stage="handoff"] .stageActions {
+  justify-content: flex-start;
+}
+.stageScreen[data-stage="allow"] h1,
+.stageScreen[data-stage="ask"] h1,
+.stageScreen[data-stage="reject"] h1,
+.stageScreen[data-stage="noRepair"] h1,
+.stageScreen[data-stage="pause"] h1,
+.stageScreen[data-stage="handoff"] h1 {
+  font-size: clamp(2.3rem, 8vw, 4rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.humanDecision {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+  width: 100%;
+  padding-top: 22px;
+  border-top: 2px solid var(--rule);
+  --sig: var(--fg);
+}
+.humanDecision[data-decision="ALLOW"] {
+  --sig: var(--allow);
+}
+.humanDecision[data-decision="ASK"] {
+  --sig: var(--ask);
+}
+.humanDecision[data-decision="REJECT"] {
+  --sig: var(--reject);
+}
+.humanDecision[data-decision="UNAVAILABLE"] {
+  --sig: var(--muted);
+}
+.markGlyph {
+  display: inline-grid;
+  place-items: center;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.28em;
+  border-radius: 50%;
+  background: var(--sig);
+  color: var(--bg);
+  font-size: 0.8em;
+  font-weight: 700;
+  vertical-align: 0.04em;
+}
+.machineOutcome {
+  margin-top: 6px;
+  color: var(--muted);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.72rem;
+}
+.consumerRehearsal {
+  margin: 14px 0 0;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  text-align: center;
+}
+.consumerRehearsal h2 {
+  font-weight: 600;
+}
+.chosenPlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 5px 16px 5px 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.86rem;
+}
+.chosenImage {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.chosenPlace strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.clarifyPanel {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 440px);
+}
+.questionTitle {
+  margin: 0;
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.clarifyPanel form {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+}
+.clarifyPanel label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.clarifyPanel input {
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  padding: 12px 18px;
+  border-radius: 16px !important;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 1.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- HANDOFF: where TastePolicy ends ---------- */
+.handoffBoundary {
+  display: grid;
+  grid-template-columns: 1fr 56px 1fr;
+  align-items: stretch;
+  width: 100%;
+}
+.handoffBoundary > div {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 18px;
+  border: 1.5px solid var(--rule);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.handoffBoundary > div[data-side="done"] {
+  padding-top: 28px;
+  background:
+    linear-gradient(90deg, var(--a), var(--b)) top / 100% 9px no-repeat,
+    var(--surface);
+}
+.handoffBoundary > div[data-side="next"] {
+  border-style: dashed;
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--rule) 10%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+}
+.handoffBoundary > i {
+  align-self: center;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--rule) 0 10px,
+    transparent 10px 16px
+  );
+}
+.handoffBoundary span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.handoffBoundary strong {
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.handoffBoundary small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.stageEvidence {
+  width: min(100%, 520px);
+}
+.stageScreen[data-stage="allow"] .stageEvidence summary,
+.stageScreen[data-stage="ask"] .stageEvidence summary,
+.stageScreen[data-stage="reject"] .stageEvidence summary,
+.stageScreen[data-stage="noRepair"] .stageEvidence summary,
+.stageScreen[data-stage="pause"] .stageEvidence summary {
+  justify-content: flex-start;
+}
+.stageScreen .stageActions .quietAction,
+.stageBack .quietAction {
+  padding-left: 0;
+}
+.stageEvidence[open] {
+  text-align: left;
+}
+.consumerDeveloper {
+  margin-top: 8px;
+}
+.consumerDeveloper pre {
+  max-height: 340px;
+  overflow: auto;
+  font-size: 0.72rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.consumerNotice {
+  max-width: 560px;
+  margin: 8px auto 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.stageBack {
+  margin-top: 6px;
+  text-align: left;
+}
+.stageFooter {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+.consumerArena :focus-visible {
+  outline: 3px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 760px) {
+  .consumerShell {
+    padding: 14px 16px 32px;
+  }
+  .consumerTop {
+    grid-template-columns: 1fr 1fr;
+  }
+  .consumerTop > span {
+    display: none;
+  }
+  .stageProgress {
+    margin-top: 14px;
+  }
+  .stageProgress li {
+    flex: 1;
+    min-width: 0;
+  }
+  .stageScreen {
+    padding-top: 4vh;
+  }
+  .stageScreen[data-stage="taste"] {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .tasteTiles li:nth-child(odd) {
+    margin-right: 18px;
+  }
+  .tasteTiles li:nth-child(even) {
+    margin-left: 18px;
+  }
+  .resolvedGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .placePortrait {
+    min-height: 330px;
+  }
+  .placeContent {
+    padding: 18px;
+  }
+  .cardActions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cardActions > .primaryAction {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+  .cardActions[data-proposal="true"] {
+    grid-template-columns: 1fr;
+  }
+  .handoffBoundary {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 28px auto;
+  }
+  .handoffBoundary > i {
+    width: 6px;
+    height: 100%;
+    justify-self: center;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--rule) 0 8px,
+      transparent 8px 13px
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consumerArena * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,1058 @@
+// @vitest-environment node
+/* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON responses */
+import { beforeAll, afterAll, it, expect } from "vitest";
+import {
+  calculateJwkThumbprint,
+  exportJWK,
+  generateKeyPair,
+  type JWK,
+} from "jose";
+import {
+  platformDatabase,
+  account,
+  init,
+  subjectProvider,
+} from "./platform-fixtures";
+import { AttestationService } from "@/server/platform/attest-service";
+import type { AttestationConfig } from "@/server/platform/attest-config";
+import { present, type Signer } from "@/lib/attest/sdjwt";
+import { VCT } from "@/lib/attest/issue";
+import { DEFAULT_POLICY, type PolicyDocument } from "@/lib/policy/types";
+import { decodeList, getStatus } from "@/lib/attest/status-list";
+import { proposal, reqId, commitOf } from "./interactive-fixtures";
+import {
+  Client,
+  StreamableHTTPClientTransport,
+} from "@modelcontextprotocol/client";
+import { handleMcp } from "@/server/platform/mcp";
+import { compactVerify, importJWK } from "jose";
+
+let d: Awaited<ReturnType<typeof platformDatabase>>;
+let svc: AttestationService, cfgA: AttestationConfig;
+let now = Date.now();
+const clock = () => new Date(now).toISOString();
+const AUD = "https://merchant.test";
+async function makeConfig(
+  issuer: string,
+): Promise<{ cfg: AttestationConfig; pub: JWK; privJwk: JWK }> {
+  const { publicKey, privateKey } = await generateKeyPair("ES256", {
+    extractable: true,
+  });
+  const pub = await exportJWK(publicKey),
+    kid = await calculateJwkThumbprint(pub);
+  const privJwk = await exportJWK(privateKey);
+  const jwks = { keys: [{ ...pub, kid, alg: "ES256", use: "sig" }] };
+  return {
+    cfg: {
+      issuer,
+      signer: { key: privateKey, alg: "ES256", kid },
+      jwks,
+      epochKey: new Uint8Array(32).fill(7),
+      keys: { active: kid, next: [], retired: [], revoked: [] },
+      trusted: { [issuer]: { jwks, vct: [VCT] } },
+    },
+    pub: jwks.keys[0],
+    privJwk,
+  };
+}
+beforeAll(async () => {
+  d = await platformDatabase();
+  cfgA = (await makeConfig("https://tastepolicy.test")).cfg;
+  svc = new AttestationService(d.store, clock, async () => cfgA);
+}, 30000);
+afterAll(async () => d?.db.close());
+
+const observe: PolicyDocument = {
+  ...DEFAULT_POLICY,
+  autonomy: { default: "OBSERVE", byDomain: {}, byAgent: {} },
+};
+let n = 0;
+async function world() {
+  now = Date.now();
+  const a = await account(d),
+    q = subjectProvider(),
+    passport = await svc.initialize(a.principal, init(), () => q.q);
+  const key = await svc.issueKey(a.principal, {
+    idempotencyKey: "k" + ++n,
+    displayLabel: "SYNTHETIC TEST DATA",
+    scopes: ["PASSPORT_READ", "TASTE_EVALUATE", "RECEIPT_READ"],
+    expiresAt: new Date(now + 20 * 86400000).toISOString(),
+  });
+  const agent = await svc.credentialPrincipal(key.secret!);
+  const ref = passport.passportRef;
+  const evaluate = () =>
+    svc.evaluate(
+      agent,
+      { idempotencyKey: "e" + ++n, passportRef: ref, proposal: proposal(1) },
+      () => q.q,
+      reqId,
+    ) as Promise<Record<string, any>>;
+  const lease = async () =>
+    (await svc.leaseRequest(agent, {
+      idempotencyKey: "l" + ++n + "-key",
+      evaluationRef: (await evaluate()).evaluationRef,
+    })) as Record<string, any>;
+  const attest = (leaseRef: string, extra: object = {}) =>
+    svc.attestationIssue(agent, {
+      leaseRef,
+      audience: AUD,
+      ...extra,
+    }) as Promise<Record<string, any>>;
+  const verify = (presentation: string, extra: object = {}) =>
+    svc.attestationVerify({ presentation, audience: AUD, ...extra }) as Promise<
+      Record<string, any>
+    >;
+  return { a, agent, ref, lease, attest, verify, evaluate, q };
+}
+
+it("issues a proof for an ACTIVE lease and the hosted verifier checks signature, audience, status and replay", async () => {
+  const w = await world();
+  // the default proof carries only what verification needs (see proof-privacy.test.ts)
+  await svc.proofPrivacySet(w.a.principal, {
+    passportRef: w.ref,
+    mode: "STANDARD",
+    claims: {},
+  });
+  const l = await w.lease(),
+    at = await w.attest(l.leaseRef);
+  expect(at.disclosable.sort()).toEqual([
+    "agent_id",
+    "candidate_commitment",
+    "candidate_id",
+    "candidate_name",
+    "context_commitment",
+    "context_key",
+    "decision",
+    "permitted",
+    "permitted_actions",
+    "policy",
+  ]);
+  const full = await w.verify(at.attestation, { dryRun: true });
+  expect(full).toMatchObject({ valid: true, status: "VALID", dryRun: true });
+  expect(full.claims).toMatchObject({
+    decision: "ALLOW",
+    candidate_id: l.candidateId,
+    authority: "CULTURAL_ONLY",
+  });
+  const minimal = await present(at.attestation, ["decision", "candidate_id"]);
+  const r = await w.verify(minimal);
+  expect(r.valid).toBe(true);
+  expect(JSON.stringify(r)).not.toMatch(
+    /subject_ref|agent_id|lease_ref|context_key|candidate_name/,
+  );
+  expect(await w.verify(minimal)).toMatchObject({
+    valid: false,
+    reasons: ["REPLAY"],
+  });
+  expect(await w.verify(at.attestation, { dryRun: true })).toMatchObject({
+    valid: true,
+  }); // dry runs never consume
+  expect(
+    await svc.attestationVerify({
+      presentation: at.attestation,
+      audience: "https://other.test",
+    }),
+  ).toMatchObject({ valid: false, reasons: ["AUDIENCE_MISMATCH"] });
+  expect(Date.parse(at.expiresAt) - now).toBeLessThanOrEqual(900_000);
+}, 40000);
+it("status follows the lease at once: owner revoke, policy change, grant revoke and Passport deletion", async () => {
+  const w = await world();
+  const l1 = await w.lease(),
+    a1 = await w.attest(l1.leaseRef);
+  expect((await w.verify(a1.attestation, { dryRun: true })).status).toBe(
+    "VALID",
+  );
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l1.leaseRef });
+  expect(await w.verify(a1.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+
+  const l2 = await w.lease(),
+    a2 = await w.attest(l2.leaseRef);
+  // no verify call happens between the change and the check: propagation is eager
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "pp-key-0001",
+    passportRef: w.ref,
+    document: observe,
+    expectedVersion: 0,
+  });
+  expect(await w.verify(a2.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+
+  const w2 = await world(),
+    other = await account(d);
+  const grant = await svc.grant(w2.a.principal, {
+    idempotencyKey: "gr-key-0002",
+    passportRef: w2.ref,
+    granteeUserId: other.principal.userId,
+    scopes: ["EVALUATE_TASTE_ACTION", "READ_RECEIPT"],
+    purpose: "Test",
+    expiresAt: new Date(now + 86400000).toISOString(),
+  });
+  const gk = await svc.issueKey(other.principal, {
+    idempotencyKey: "gk" + ++n,
+    displayLabel: "SYNTHETIC TEST DATA",
+    scopes: ["TASTE_EVALUATE", "RECEIPT_READ"],
+    expiresAt: new Date(now + 5 * 86400000).toISOString(),
+  });
+  const delegate = await svc.credentialPrincipal(gk.secret!);
+  const ev = (await svc.evaluate(
+    delegate,
+    {
+      idempotencyKey: "ge" + ++n,
+      passportRef: w2.ref,
+      grantId: grant.grantId,
+      proposal: proposal(1),
+    },
+    () => w2.q.q,
+    reqId,
+  )) as Record<string, any>;
+  const dl = (await svc.leaseRequest(delegate, {
+    idempotencyKey: "gl" + ++n + "-key",
+    evaluationRef: ev.evaluationRef,
+  })) as Record<string, any>;
+  const da = (await svc.attestationIssue(delegate, {
+    leaseRef: dl.leaseRef,
+    audience: AUD,
+  })) as Record<string, any>;
+  expect((await w.verify(da.attestation, { dryRun: true })).valid).toBe(true);
+  await svc.revokeGrant(w2.a.principal, {
+    idempotencyKey: "rg-key-0002",
+    grantId: grant.grantId,
+  });
+  expect(await w.verify(da.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+
+  const w3 = await world(),
+    l3 = await w3.lease(),
+    a3 = await w3.attest(l3.leaseRef);
+  await svc.delete(
+    w3.a.principal,
+    {
+      idempotencyKey: "dl-key-0003",
+      passportRef: w3.ref,
+      confirmation: "DELETE PASSPORT",
+    },
+    false,
+  );
+  expect(await w.verify(a3.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+}, 60000);
+it("only an ACTIVE lease of the calling actor can be attested; inputs are validated", async () => {
+  const w = await world(),
+    l = await w.lease(),
+    other = await world();
+  await expect(other.attest(l.leaseRef)).rejects.toMatchObject({
+    code: "LEASE_NOT_FOUND",
+  });
+  await expect(
+    w.attest(l.leaseRef, { audience: "http://insecure.test" }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  await expect(
+    w.attest(l.leaseRef, { audience: "https://a.test/path" }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  await expect(
+    w.attest(l.leaseRef, {
+      holderKey: { kty: "EC", crv: "P-256", x: "x", y: "y", d: "secret" },
+    }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  await expect(
+    w.attest(l.leaseRef, { delegateAgentId: "Agent-B" }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" }); // needs a holder key
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "pq-key-0001",
+    passportRef: w.ref,
+    document: observe,
+    expectedVersion: 0,
+  });
+  await expect(w.attest(l.leaseRef)).rejects.toMatchObject({
+    code: "LEASE_STATE_CONFLICT",
+  }); // suspended
+  const ask = await w.lease().catch((e) => e);
+  expect(ask).toBeDefined();
+}, 40000);
+it("handoff: a key-bound proof names the receiving agent and the delegator, needs the receiver's key and nonce, and dies with the lease", async () => {
+  const w = await world();
+  await svc.proofPrivacySet(w.a.principal, {
+    passportRef: w.ref,
+    mode: "STANDARD",
+    claims: {},
+  });
+  const l = await w.lease();
+  const { publicKey, privateKey } = await generateKeyPair("ES256", {
+    extractable: true,
+  });
+  const pub = await exportJWK(publicKey),
+    kid = await calculateJwkThumbprint(pub);
+  const receiver: Signer = { key: privateKey, alg: "ES256", kid };
+  const at = await w.attest(l.leaseRef, {
+    holderKey: pub,
+    delegateAgentId: "Agent-B",
+  });
+  expect(at.holderBound).toBe(true);
+  const ts = Math.floor(now / 1000);
+  const pres = await present(
+    at.attestation,
+    ["decision", "agent_id", "delegate_agent_id", "candidate_id"],
+    { signer: receiver, nonce: "challenge-1", aud: AUD, iat: ts },
+  );
+  const ok = await w.verify(pres, { nonce: "challenge-1", dryRun: true });
+  expect(ok.valid).toBe(true);
+  // the lease's own agent stays agent_id; the receiver is a separate, key-bound claim
+  expect(ok.claims).toMatchObject({
+    agent_id: l.agentId,
+    delegate_agent_id: "Agent-B",
+    decision: "ALLOW",
+  });
+  expect(ok.claims).not.toHaveProperty("act");
+  expect(
+    await w.verify(await present(at.attestation, ["decision"]), {
+      nonce: "challenge-1",
+      dryRun: true,
+    }),
+  ).toMatchObject({ reasons: ["KB_REQUIRED"] });
+  expect(await w.verify(pres, { nonce: "other", dryRun: true })).toMatchObject({
+    reasons: ["KB_NONCE_MISMATCH"],
+  });
+  expect(await w.verify(pres, { dryRun: true })).toMatchObject({
+    valid: false,
+  });
+  // a different holder key cannot present it
+  const thief = await generateKeyPair("ES256", { extractable: true });
+  const forged = await present(at.attestation, ["decision"], {
+    signer: { key: thief.privateKey, alg: "ES256", kid: "x" },
+    nonce: "challenge-1",
+    aud: AUD,
+    iat: ts,
+  });
+  expect(
+    await w.verify(forged, { nonce: "challenge-1", dryRun: true }),
+  ).toMatchObject({ reasons: ["KB_INVALID"] });
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  expect(
+    await w.verify(pres, { nonce: "challenge-1", dryRun: true }),
+  ).toMatchObject({ valid: false, reasons: ["STATUS_INVALID"] });
+}, 40000);
+it("status list: served signed, matches the database, random never-reused indices", async () => {
+  const w = await world(),
+    l = await w.lease(),
+    at = await w.attest(l.leaseRef);
+  const token = (await svc.statusListToken(1))!;
+  const { payload } = await compactVerify(
+    token,
+    await importJWK(cfgA.jwks.keys[0], "ES256"),
+  );
+  const body = JSON.parse(new TextDecoder().decode(payload));
+  expect(body).toMatchObject({
+    iss: cfgA.issuer,
+    sub: "https://tastepolicy.test/api/attest/status/1",
+    ttl: 60,
+    status_list: { bits: 2 },
+  });
+  const list = decodeList(body.status_list.lst);
+  expect(list.length).toBe(32768);
+  const idx = Number(
+    JSON.parse(
+      Buffer.from(
+        at.attestation.split("~")[0].split(".")[1],
+        "base64url",
+      ).toString(),
+    ).status.status_list.idx,
+  );
+  expect(getStatus(list, idx, 2)).toBe(0);
+  expect(await svc.statusListToken(99)).toBeNull();
+  const used = await d.db.query(
+    "SELECT count(*)::int AS n, count(DISTINCT idx)::int AS d FROM tastepolicy.attestation_status_used",
+  );
+  expect((used.rows[0] as any).n).toBe((used.rows[0] as any).d);
+  // used indices are never freed, even after the lease is gone
+  const before = (used.rows[0] as any).n;
+  await svc.delete(
+    w.a.principal,
+    {
+      idempotencyKey: "dl-key-0004",
+      passportRef: w.ref,
+      confirmation: "DELETE PASSPORT",
+    },
+    false,
+  );
+  const after = await d.db.query(
+    "SELECT count(*)::int AS n FROM tastepolicy.attestation_status_used",
+  );
+  expect((after.rows[0] as any).n).toBe(before);
+  await expect(
+    d.db.query("SELECT tastepolicy.set_status(1, 999999999, 1)"),
+  ).rejects.toThrow(/out of range/);
+  await expect(
+    d.db.query("SELECT tastepolicy.set_status(1, 0, 3)"),
+  ).rejects.toThrow(/out of range/);
+}, 40000);
+it("a second issuer verifies only when explicitly trusted, using its own keys and list", async () => {
+  const b = await makeConfig("https://issuer-two.test");
+  const svcB = new AttestationService(d.store, clock, async () => b.cfg);
+  const w = await world(),
+    l = await w.lease();
+  const atB = (await svcB.attestationIssue(w.agent, {
+    leaseRef: l.leaseRef,
+    audience: AUD,
+  })) as Record<string, any>;
+  expect((await w.verify(atB.attestation, { dryRun: true })).reasons).toEqual([
+    "ISSUER_UNTRUSTED",
+  ]);
+  const trusting: AttestationConfig = {
+    ...cfgA,
+    trusted: {
+      ...cfgA.trusted,
+      [b.cfg.issuer]: { jwks: b.cfg.jwks, vct: [VCT] },
+    },
+  };
+  const svcA2 = new AttestationService(
+    d.store,
+    clock,
+    async () => trusting,
+    async (uri) => {
+      expect(uri.startsWith("https://issuer-two.test/api/attest/status/")).toBe(
+        true,
+      );
+      return (await svcB.statusListToken(Number(uri.split("/").pop())))!;
+    },
+  );
+  expect(
+    await svcA2.attestationVerify({
+      presentation: atB.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({ valid: true, issuer: "https://issuer-two.test" });
+}, 40000);
+it("without configuration the issuer is NOT_CONFIGURED; there is no fallback key", async () => {
+  const off = new AttestationService(d.store, clock, async () => null);
+  const w = await world(),
+    l = await w.lease();
+  await expect(
+    off.attestationIssue(w.agent, { leaseRef: l.leaseRef, audience: AUD }),
+  ).rejects.toMatchObject({ code: "NOT_CONFIGURED" });
+  await expect(
+    off.attestationVerify({ presentation: "a~", audience: AUD }),
+  ).rejects.toMatchObject({ code: "NOT_CONFIGURED" });
+  await expect(off.statusListToken(1)).rejects.toMatchObject({
+    code: "NOT_CONFIGURED",
+  });
+});
+it("MCP exposes the issuer tool and issues from environment-configured keys", async () => {
+  const { privJwk, pub } = await makeConfig("https://tastepolicy.test");
+  void pub;
+  process.env.TASTEPOLICY_PUBLIC_ORIGIN = "https://tastepolicy.test";
+  process.env.TASTEPOLICY_ATTESTATION_KEY = JSON.stringify(privJwk);
+  try {
+    const w = await world(),
+      l = await w.lease();
+    const key = await svc.issueKey(w.a.principal, {
+      idempotencyKey: "mk" + ++n,
+      displayLabel: "SYNTHETIC TEST DATA",
+      scopes: ["TASTE_EVALUATE"],
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    });
+    const deps = { store: d.store, factory: () => w.q.q };
+    const client = new Client(
+      { name: "t", version: "1" },
+      { versionNegotiation: { mode: "auto" } },
+    );
+    await client.connect(
+      new StreamableHTTPClientTransport(
+        new URL("https://tastepolicy.test/api/mcp"),
+        {
+          fetch: ((i: string | URL | Request, o?: RequestInit) =>
+            handleMcp(new Request(i as URL, o), deps)) as typeof fetch,
+          requestInit: { headers: { Authorization: `Bearer ${key.secret}` } },
+        },
+      ),
+    );
+    const out = (
+      await client.callTool({
+        name: "tastepolicy_issue_attestation",
+        arguments: { leaseRef: l.leaseRef, audience: AUD },
+      })
+    ).structuredContent as Record<string, any>;
+    expect(out.attestation).toContain("~");
+    const { attestationConfig } =
+      await import("@/server/platform/attest-config");
+    const c = await attestationConfig();
+    expect(c?.issuer).toBe("https://tastepolicy.test");
+    expect(JSON.stringify(c?.jwks)).not.toContain('"d"');
+    await client.close();
+  } finally {
+    delete process.env.TASTEPOLICY_PUBLIC_ORIGIN;
+    delete process.env.TASTEPOLICY_ATTESTATION_KEY;
+  }
+}, 40000);
+
+it("each proof gets its own status index (proofs of one lease cannot be linked), and indices are all distinct", async () => {
+  const w = await world(),
+    l = await w.lease();
+  const read = (a: Record<string, any>) =>
+    JSON.parse(
+      Buffer.from(
+        a.attestation.split("~")[0].split(".")[1],
+        "base64url",
+      ).toString(),
+    ).status.status_list.idx as number;
+  const a1 = await w.attest(l.leaseRef),
+    a2 = await w.attest(l.leaseRef),
+    a3 = await w.attest(l.leaseRef);
+  expect(new Set([read(a1), read(a2), read(a3)]).size).toBe(3);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  for (const a of [a1, a2, a3])
+    expect(await w.verify(a.attestation, { dryRun: true })).toMatchObject({
+      reasons: ["STATUS_INVALID"],
+    });
+}, 40000);
+it("a proof never outlives the next checkpoint, so a skipped check-in cannot leave it valid", async () => {
+  const w = await world(),
+    e = await w.evaluate(),
+    l = (await svc.leaseRequest(w.agent, {
+      idempotencyKey: "cp" + ++n + "-key",
+      evaluationRef: e.evaluationRef,
+      ttlSeconds: 3600,
+      checkpointSeconds: 60,
+    })) as Record<string, any>;
+  const at = await w.attest(l.leaseRef);
+  expect(Date.parse(at.expiresAt)).toBeLessThanOrEqual(
+    Date.parse(l.checkpointDueAt),
+  );
+});
+it("holder keys: P-256 only, public only; the hosted verifier can insist on key binding", async () => {
+  const w = await world(),
+    l = await w.lease();
+  await expect(
+    w.attest(l.leaseRef, {
+      holderKey: {
+        kty: "OKP",
+        crv: "Ed25519",
+        x: "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo",
+      },
+    }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+  const at = await w.attest(l.leaseRef);
+  expect(
+    await w.verify(at.attestation, { dryRun: true, requireKeyBinding: true }),
+  ).toMatchObject({ valid: false, reasons: ["KB_REQUIRED"] });
+  expect((await w.verify(at.attestation, { dryRun: true })).valid).toBe(true);
+});
+
+// ---- R2: authority epochs ----
+const decodeClaims = (compact: string) =>
+  JSON.parse(
+    Buffer.from(compact.split("~")[0].split(".")[1], "base64url").toString(),
+  );
+it("authority epochs: drift ends the epoch for good; a fresh ALLOW starts a new one; old proofs never come back", async () => {
+  const w = await world();
+  const l = await w.lease();
+  const a1 = await w.attest(l.leaseRef);
+  expect((await w.verify(a1.attestation, { dryRun: true })).status).toBe(
+    "VALID",
+  );
+  const c1 = decodeClaims(a1.attestation);
+  expect(typeof c1.authority_epoch).toBe("string");
+  // no raw identifiers inside the proof
+  expect(JSON.stringify(c1)).not.toContain(l.leaseRef);
+  // a second proof of the same epoch for another audience is not linkable by epoch
+  const other = (await svc.attestationIssue(w.agent, {
+    leaseRef: l.leaseRef,
+    audience: "https://other.test",
+  })) as Record<string, any>;
+  expect(decodeClaims(other.attestation).authority_epoch).not.toBe(
+    c1.authority_epoch,
+  );
+  // policy change ends epoch 1
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "ep-pp-0001",
+    passportRef: w.ref,
+    document: observe,
+    expectedVersion: 0,
+  });
+  expect(await w.verify(a1.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  // a fresh evaluation that is ALLOW again (override-free): relax the policy
+  await svc.policyPublish(w.a.principal, {
+    idempotencyKey: "ep-pp-0002",
+    passportRef: w.ref,
+    document: DEFAULT_POLICY,
+    expectedVersion: 1,
+  });
+  const e2: any = await w.evaluate();
+  expect(e2.decision).toBe("ALLOW");
+  const resumed: any = await svc.leaseResume(w.agent, {
+    idempotencyKey: "ep-res-0001",
+    leaseRef: l.leaseRef,
+    evaluationRef: e2.evaluationRef,
+    ...commitOf(l),
+  });
+  expect(resumed.status).toBe("ACTIVE");
+  // the old proof stays dead although the lease is ACTIVE again
+  expect(await w.verify(a1.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  const a2 = await w.attest(l.leaseRef);
+  expect((await w.verify(a2.attestation, { dryRun: true })).status).toBe(
+    "VALID",
+  );
+  expect(decodeClaims(a2.attestation).authority_epoch).not.toBe(
+    c1.authority_epoch,
+  );
+  // bookkeeping: epochs 1 and 2, distinct commitments
+  const rows = await d.store.transaction((r) => r.attest.forLease(l.leaseRef));
+  expect(new Set(rows.map((x) => x.epoch))).toEqual(new Set([1, 2]));
+  const commits = new Map(rows.map((x) => [x.epoch, x.epochCommitment]));
+  expect(commits.get(1)).not.toBe(commits.get(2));
+}, 60000);
+
+it("the database refuses to resurrect an invalid status entry", async () => {
+  const w = await world();
+  const l = await w.lease();
+  await w.attest(l.leaseRef);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  const entry = await d.db.query(
+    "SELECT list_id,idx FROM tastepolicy.lease_status_entries WHERE lease_ref=$1",
+    [l.leaseRef],
+  );
+  const { list_id, idx } = entry.rows[0] as any;
+  for (const v of [0, 2])
+    await expect(
+      d.db.query("SELECT tastepolicy.set_status($1,$2,$3)", [list_id, idx, v]),
+    ).rejects.toThrow();
+}, 40000);
+
+import { evaluationCommitments } from "@/lib/commit/commitments";
+const pricedProposal = (amount: number) =>
+  proposal(1, {
+    key: "trip",
+    domain: "destination",
+    price: { amount, currency: "USD" },
+  });
+async function pricedLease(
+  w: Awaited<ReturnType<typeof world>>,
+  amount: number,
+) {
+  const e: any = await svc.evaluate(
+    w.agent,
+    {
+      idempotencyKey: "pe" + ++n + "-key",
+      passportRef: w.ref,
+      proposal: pricedProposal(amount),
+    },
+    () => w.q.q,
+    reqId,
+  );
+  const l: any = await svc.leaseRequest(w.agent, {
+    idempotencyKey: "pl" + ++n + "-key",
+    evaluationRef: e.evaluationRef,
+  });
+  return { e, l };
+}
+
+it("the proof signs the candidate and context commitments; a verifier that recomputes its own matches, and a different price or candidate fails with a stable reason", async () => {
+  const w = await world(),
+    { e, l } = await pricedLease(w, 100),
+    at = await w.attest(l.leaseRef);
+  const mine = evaluationCommitments(
+    pricedProposal(100).candidate,
+    pricedProposal(100).context,
+  );
+  expect(mine).toMatchObject({
+    candidate: e.commitments.candidate,
+    context: e.commitments.context,
+  });
+  const share = await present(at.attestation, [
+    "decision",
+    "permitted_actions",
+    "candidate_commitment",
+    "context_commitment",
+  ]);
+  // the minimal presentation reveals digests, never the price or the account
+  expect(share).not.toMatch(/100/);
+  const ok = await w.verify(share, {
+    dryRun: true,
+    expect: {
+      candidate: pricedProposal(100).candidate,
+      context: pricedProposal(100).context,
+    },
+  });
+  expect(ok).toMatchObject({
+    valid: true,
+    signature: "VALID",
+    trustedAuthority: true,
+    commitments: { candidate: "MATCHED", context: "MATCHED" },
+  });
+  expect(ok.claims).toMatchObject({
+    decision: "ALLOW",
+    candidate_commitment: mine.candidate,
+    context_commitment: mine.context,
+    permitted_actions: ["SUGGEST", "RANK", "SHORTLIST", "ADD_TO_DRAFT"],
+  });
+  // a different current context: the authority does not apply to it
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: {
+        context: pricedProposal(450).context,
+      },
+    }),
+  ).toMatchObject({
+    valid: false,
+    reasons: ["CONTEXT_COMMITMENT_MISMATCH"],
+    signature: "VALID",
+    trustedAuthority: false,
+  });
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: {
+        candidate: { ...pricedProposal(100).candidate, name: "Another place" },
+      },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["CANDIDATE_COMMITMENT_MISMATCH"] });
+  // asking for a comparison the proof cannot support is a refusal, not a pass
+  const bare = await present(at.attestation, ["decision"]);
+  expect(
+    await w.verify(bare, {
+      dryRun: true,
+      expect: { contextCommitment: mine.context },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["COMMITMENT_NOT_DISCLOSED"] });
+  // without an expectation the result says plainly that nothing was compared
+  expect((await w.verify(share, { dryRun: true })).commitments).toEqual({
+    candidate: "NOT_CHECKED",
+    context: "NOT_CHECKED",
+  });
+  // a rejected comparison never burns the proof: the right one still verifies
+  expect(
+    await w.verify(share, {
+      expect: { contextCommitment: mine.context },
+    }),
+  ).toMatchObject({ valid: true });
+  // malformed expectations are refused
+  await expect(
+    w.verify(share, { expect: { contextCommitment: "nope" } }),
+  ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+}, 60000);
+it("a context change ends the epoch: proof A stays invalid forever, a fresh evaluation resumes into a new epoch and proof B carries the new context commitment", async () => {
+  const w = await world(),
+    { e, l } = await pricedLease(w, 100);
+  const A = await w.attest(l.leaseRef);
+  expect((await w.verify(A.attestation, { dryRun: true })).valid).toBe(true);
+  now += 5_000;
+  const moved: any = await svc.leaseCheckpoint(w.agent, {
+    leaseRef: l.leaseRef,
+    candidateCommitment: commitOf(l).candidateCommitment,
+    context: pricedProposal(450).context,
+  });
+  expect([moved.status, moved.reasons]).toEqual([
+    "SUSPENDED",
+    ["CONTEXT_CHANGED"],
+  ]);
+  expect(await w.verify(A.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  now += 5_000;
+  const fresh: any = await svc.evaluate(
+    w.agent,
+    {
+      idempotencyKey: "pe" + ++n + "-key",
+      passportRef: w.ref,
+      proposal: pricedProposal(450),
+    },
+    () => w.q.q,
+    reqId,
+  );
+  const back: any = await svc.leaseResume(w.agent, {
+    idempotencyKey: "rs" + ++n + "-key",
+    leaseRef: l.leaseRef,
+    evaluationRef: fresh.evaluationRef,
+    candidateCommitment: commitOf(l).candidateCommitment,
+    context: pricedProposal(450).context,
+  });
+  expect(back.status).toBe("ACTIVE");
+  const B = await w.attest(l.leaseRef);
+  const share = await present(B.attestation, [
+    "decision",
+    "context_commitment",
+  ]);
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: { context: pricedProposal(450).context },
+    }),
+  ).toMatchObject({ valid: true });
+  // B speaks for the new context only; the old context does not match it
+  expect(
+    await w.verify(share, {
+      dryRun: true,
+      expect: { context: pricedProposal(100).context },
+    }),
+  ).toMatchObject({ valid: false, reasons: ["CONTEXT_COMMITMENT_MISMATCH"] });
+  // and A never comes back, even though it has not expired
+  expect(await w.verify(A.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["STATUS_INVALID"],
+  });
+  expect(e.commitments.context).not.toBe(fresh.commitments.context);
+}, 90000);
+it("cryptographic validity is reported apart from trust: a genuine signature by an untrusted issuer is not authority, an unknown issuer is not checked", async () => {
+  const w = await world(),
+    { l } = await pricedLease(w, 100),
+    at = await w.attest(l.leaseRef);
+  const untrusted = new AttestationService(d.store, clock, async () => ({
+    ...cfgA,
+    trusted: {
+      [cfgA.issuer]: { ...cfgA.trusted[cfgA.issuer], state: "UNTRUSTED" },
+    },
+  }));
+  expect(
+    await untrusted.attestationVerify({
+      presentation: at.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: false,
+    reasons: ["ISSUER_UNTRUSTED"],
+    issuerTrust: "UNTRUSTED",
+    signature: "VALID",
+    trustedAuthority: false,
+  });
+  const unknown = new AttestationService(d.store, clock, async () => ({
+    ...cfgA,
+    trusted: {},
+  }));
+  expect(
+    await unknown.attestationVerify({
+      presentation: at.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: false,
+    issuerTrust: "UNKNOWN",
+    signature: "NOT_CHECKED",
+    trustedAuthority: false,
+  });
+}, 60000);
+
+import {
+  admitIssuer,
+  AdmissionRefused,
+  inspectIssuer,
+} from "@/lib/attest/federation";
+import { buildIssuerMetadata } from "@/lib/attest/issuer-metadata";
+it("federation: discover → inspect → explicitly trust → verify; discovery alone never trusts, and a forged kid or a flawed document cannot be admitted", async () => {
+  const b = await makeConfig("https://issuer-two.test");
+  const svcB = new AttestationService(d.store, clock, async () => b.cfg);
+  const docs: Record<string, string> = {
+    "https://issuer-two.test/.well-known/tastepolicy-issuer": JSON.stringify(
+      buildIssuerMetadata(b.cfg.issuer, b.cfg.keys),
+    ),
+    "https://issuer-two.test/.well-known/jwks.json": JSON.stringify(b.cfg.jwks),
+  };
+  const fetchText = async (u: string) => {
+    if (!(u in docs)) throw Error("404");
+    return docs[u];
+  };
+  const found = await inspectIssuer("https://issuer-two.test", fetchText);
+  expect(found).toMatchObject({
+    trust: "UNKNOWN",
+    problems: [],
+    keys: [{ state: "ACTIVE" }],
+  });
+  expect(found.metadata?.supportedActionLadder).toEqual([
+    "SUGGEST",
+    "RANK",
+    "SHORTLIST",
+    "ADD_TO_DRAFT",
+    "PRESENT_AS_SELECTED",
+  ]);
+  const w = await world(),
+    l = await w.lease();
+  const atB = (await svcB.attestationIssue(w.agent, {
+    leaseRef: l.leaseRef,
+    audience: AUD,
+  })) as Record<string, any>;
+  // inspected, yet still not trusted
+  expect(await w.verify(atB.attestation, { dryRun: true })).toMatchObject({
+    valid: false,
+    reasons: ["ISSUER_UNTRUSTED"],
+    issuerTrust: "UNKNOWN",
+    signature: "NOT_CHECKED",
+  });
+  // admission needs the issuer and the active key id, confirmed
+  const active = found.keys.find((k) => k.state === "ACTIVE")!.kid;
+  expect(() =>
+    admitIssuer(found, { issuer: found.issuer, activeKid: "wrong" }),
+  ).toThrow(AdmissionRefused);
+  expect(() =>
+    admitIssuer(found, { issuer: "https://other.test", activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  const admitted = admitIssuer(found, {
+    issuer: found.issuer,
+    activeKid: active,
+  });
+  expect(admitted.entry.state).toBe("TRUSTED");
+  const trusting = new AttestationService(
+    d.store,
+    clock,
+    async () => ({
+      ...cfgA,
+      trusted: { ...cfgA.trusted, [admitted.issuer]: admitted.entry },
+    }),
+    async (uri) => (await svcB.statusListToken(Number(uri.split("/").pop())))!,
+  );
+  expect(
+    await trusting.attestationVerify({
+      presentation: atB.attestation,
+      audience: AUD,
+      dryRun: true,
+    }),
+  ).toMatchObject({
+    valid: true,
+    trustedAuthority: true,
+    issuer: "https://issuer-two.test",
+  });
+  // a flawed document cannot be admitted
+  const flawed = {
+    ...JSON.parse(
+      docs["https://issuer-two.test/.well-known/tastepolicy-issuer"],
+    ),
+    authority: "EVERYTHING",
+  };
+  const bad = await inspectIssuer("https://issuer-two.test", async (u) =>
+    u.endsWith("tastepolicy-issuer") ? JSON.stringify(flawed) : docs[u],
+  );
+  expect(bad.problems).toContain("AUTHORITY");
+  expect(() =>
+    admitIssuer(bad, { issuer: bad.issuer, activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  // someone else's key published under the trusted key's name
+  const thief = await makeConfig("https://issuer-two.test");
+  const forgedJwks = {
+    keys: [{ ...thief.pub, kid: active }],
+  };
+  const forged = await inspectIssuer("https://issuer-two.test", async (u) =>
+    u.endsWith("jwks.json") ? JSON.stringify(forgedJwks) : docs[u],
+  );
+  expect(forged.problems).toContain("KID_NOT_THUMBPRINT");
+  expect(() =>
+    admitIssuer(forged, { issuer: forged.issuer, activeKid: active }),
+  ).toThrow(AdmissionRefused);
+  // unreachable or off-origin documents are reported, never guessed
+  expect(
+    (await inspectIssuer("https://nowhere.test", fetchText)).problems,
+  ).toEqual(["METADATA_UNREACHABLE"]);
+  expect(
+    (await inspectIssuer("http://insecure.test", fetchText)).problems,
+  ).toEqual(["ORIGIN_INVALID"]);
+  // a revoked key is pinned out
+  const revokedKid = "revoked-kid-1";
+  const withRevoked = await inspectIssuer(
+    "https://issuer-two.test",
+    async (u) =>
+      u.endsWith("tastepolicy-issuer")
+        ? JSON.stringify(
+            buildIssuerMetadata(b.cfg.issuer, {
+              ...b.cfg.keys,
+              revoked: [revokedKid],
+            }),
+          )
+        : docs[u],
+  );
+  expect(
+    admitIssuer(withRevoked, {
+      issuer: withRevoked.issuer,
+      activeKid: active,
+    }).entry.revokedKids,
+  ).toEqual([revokedKid]);
+}, 60000);
+
+import { CompactSign, base64url } from "jose";
+import { verifyPresentation } from "@/lib/attest/verify";
+it("review fixes: an empty expectation is refused, a status list must carry a ttl, and status data cannot be rewritten except through set_status", async () => {
+  const w = await world(),
+    l = await w.lease(),
+    at = await w.attest(l.leaseRef);
+  await expect(w.verify(at.attestation, { expect: {} })).rejects.toMatchObject({
+    code: "INVALID_INPUT",
+  });
+  // a validly signed list without ttl is not accepted
+  const listId = Number(at.statusUri.split("/").pop());
+  const token = (await svc.statusListToken(listId))!;
+  const payload = JSON.parse(
+    Buffer.from(token.split(".")[1], "base64url").toString(),
+  );
+  delete payload.ttl;
+  delete payload.exp;
+  const stale = await new CompactSign(
+    new TextEncoder().encode(JSON.stringify(payload)),
+  )
+    .setProtectedHeader({
+      alg: "ES256",
+      typ: "statuslist+jwt",
+      kid: cfgA.signer.kid,
+    })
+    .sign(cfgA.signer.key as CryptoKey);
+  void base64url;
+  const r = await verifyPresentation(at.attestation, {
+    audience: AUD,
+    trustedIssuers: cfgA.trusted,
+    fetchStatus: async () => stale,
+  });
+  expect(r).toMatchObject({ valid: false, reasons: ["STATUS_LIST_INVALID"] });
+  // direct writes to the packed list are refused; set_status still works and
+  // still refuses to leave INVALID
+  await expect(
+    d.db.query(
+      `UPDATE tastepolicy.attestation_status_lists SET data=set_byte(data,0,255) WHERE list_id=${listId}`,
+    ),
+  ).rejects.toThrow(/only through set_status/);
+  await svc.leaseRevoke(w.a.principal, { leaseRef: l.leaseRef });
+  expect(await w.verify(at.attestation, { dryRun: true })).toMatchObject({
+    reasons: ["STATUS_INVALID"],
+  });
+}, 60000);
+it("review fix: admission pins only the active and announced-next keys", async () => {
+  const b = await makeConfig("https://issuer-three.test");
+  const retired = await makeConfig("https://issuer-three.test");
+  const jwks = {
+    keys: [b.pub, retired.pub],
+  };
+  const meta = buildIssuerMetadata("https://issuer-three.test", {
+    active: b.pub.kid as string,
+    next: [],
+    retired: [retired.pub.kid as string],
+    revoked: [],
+  });
+  const docs: Record<string, string> = {
+    "https://issuer-three.test/.well-known/tastepolicy-issuer":
+      JSON.stringify(meta),
+    "https://issuer-three.test/.well-known/jwks.json": JSON.stringify(jwks),
+  };
+  const found = await inspectIssuer(
+    "https://issuer-three.test",
+    async (u) => docs[u],
+  );
+  expect(found.problems).toEqual([]);
+  const admitted = admitIssuer(found, {
+    issuer: found.issuer,
+    activeKid: b.pub.kid as string,
+  });
+  expect(admitted.entry.jwks.keys.map((k) => k.kid)).toEqual([b.pub.kid]);
+});

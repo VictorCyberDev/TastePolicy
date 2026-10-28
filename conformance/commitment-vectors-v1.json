@@ -1,0 +1,228 @@
+{
+  "version": "tastepolicy-commitment-vectors-v1",
+  "description": "taste-commitments-v1: SHA-256 over the domain-separated RFC 8785 canonical form of the material candidate / context. `preimage` is the exact byte string hashed; `commitment` is `sha-256:` + base64url (no padding) of its digest.",
+  "vectors": [
+    {
+      "id": "C01",
+      "kind": "candidate",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "destination"
+      },
+      "canonical": "{\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"type\":\"destination\"}",
+      "preimage": "tastepolicy/candidate/v1\n{\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"type\":\"destination\"}",
+      "commitment": "sha-256:TV7BU9t8WcJhcvfoYKuX3R7gs2v2DwetIHaZXEU0PRA"
+    },
+    {
+      "id": "C02",
+      "kind": "candidate",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "destination",
+        "address": "Rua 1"
+      },
+      "canonical": "{\"address\":\"Rua 1\",\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"type\":\"destination\"}",
+      "preimage": "tastepolicy/candidate/v1\n{\"address\":\"Rua 1\",\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"type\":\"destination\"}",
+      "commitment": "sha-256:-bwB3pT8joNWA7h4zjnh5Is8YXNx09xg3xE6bojZQR8"
+    },
+    {
+      "id": "C03",
+      "kind": "candidate",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "destination",
+        "releaseYear": 2001
+      },
+      "canonical": "{\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"releaseYear\":2001,\"type\":\"destination\"}",
+      "preimage": "tastepolicy/candidate/v1\n{\"id\":\"c-1\",\"name\":\"Hotel Lisboa\",\"releaseYear\":2001,\"type\":\"destination\"}",
+      "commitment": "sha-256:gfamOG4qetBdy-nthudlKfgsUAApAQEO7QMHTeuVs2U"
+    },
+    {
+      "id": "X01",
+      "kind": "context",
+      "input": {
+        "key": "trip",
+        "domain": "destination"
+      },
+      "canonical": "{\"domain\":\"destination\",\"key\":\"trip\"}",
+      "preimage": "tastepolicy/context/v1\n{\"domain\":\"destination\",\"key\":\"trip\"}",
+      "commitment": "sha-256:V9tmGGx7-2uMZMu72U9mYqWFjQci7pl0gqLoklcJGw8"
+    },
+    {
+      "id": "X02",
+      "kind": "context",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": 120,
+          "currency": "USD"
+        }
+      },
+      "canonical": "{\"domain\":\"destination\",\"key\":\"trip\",\"price\":{\"amount\":120,\"currency\":\"USD\"}}",
+      "preimage": "tastepolicy/context/v1\n{\"domain\":\"destination\",\"key\":\"trip\",\"price\":{\"amount\":120,\"currency\":\"USD\"}}",
+      "commitment": "sha-256:rk_-Y_wntXK217IKojjRzU3iFAwb4V5r1MPkvt1FgEQ"
+    },
+    {
+      "id": "X03",
+      "kind": "context",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": 99.5,
+          "currency": "EUR"
+        }
+      },
+      "canonical": "{\"domain\":\"destination\",\"key\":\"trip\",\"price\":{\"amount\":99.5,\"currency\":\"EUR\"}}",
+      "preimage": "tastepolicy/context/v1\n{\"domain\":\"destination\",\"key\":\"trip\",\"price\":{\"amount\":99.5,\"currency\":\"EUR\"}}",
+      "commitment": "sha-256:p2Ynz-noJMlPEcFhArIMKxJYl5Y2uITFYWk5iFjZnXw"
+    }
+  ],
+  "equivalent": [
+    {
+      "as": "C01",
+      "input": {
+        "type": "destination",
+        "name": "Hotel Lisboa",
+        "id": "c-1",
+        "imageUrl": "https://cdn.example/x.png",
+        "displayRank": 3
+      }
+    },
+    {
+      "as": "X02",
+      "input": {
+        "price": {
+          "currency": "USD",
+          "amount": 120
+        },
+        "domain": "destination",
+        "key": "trip",
+        "cardLayout": "wide"
+      }
+    },
+    {
+      "as": "X02",
+      "rawJson": "{\"key\":\"trip\",\"domain\":\"destination\",\"price\":{\"amount\":1.2e2,\"currency\":\"USD\"}}"
+    }
+  ],
+  "different": [
+    {
+      "from": "C01",
+      "input": {
+        "id": "c-2",
+        "name": "Hotel Lisboa",
+        "type": "destination"
+      }
+    },
+    {
+      "from": "C01",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Porto",
+        "type": "destination"
+      }
+    },
+    {
+      "from": "C01",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "place"
+      }
+    },
+    {
+      "from": "X02",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": 121,
+          "currency": "USD"
+        }
+      }
+    },
+    {
+      "from": "X02",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": 120,
+          "currency": "EUR"
+        }
+      }
+    },
+    {
+      "from": "X02",
+      "input": {
+        "key": "trip2",
+        "domain": "destination",
+        "price": {
+          "amount": 120,
+          "currency": "USD"
+        }
+      }
+    }
+  ],
+  "malformed": [
+    {
+      "kind": "candidate",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "movie"
+      }
+    },
+    {
+      "kind": "candidate",
+      "input": {
+        "id": "",
+        "name": "Hotel Lisboa",
+        "type": "destination"
+      }
+    },
+    {
+      "kind": "candidate",
+      "input": {
+        "id": "c-1",
+        "name": "Hotel Lisboa",
+        "type": "destination",
+        "releaseYear": 1.5
+      }
+    },
+    {
+      "kind": "context",
+      "input": {
+        "key": "a b",
+        "domain": "place"
+      }
+    },
+    {
+      "kind": "context",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": -1,
+          "currency": "USD"
+        }
+      }
+    },
+    {
+      "kind": "context",
+      "input": {
+        "key": "trip",
+        "domain": "destination",
+        "price": {
+          "amount": 1,
+          "currency": "usd"
+        }
+      }
+    }
+  ]
+}

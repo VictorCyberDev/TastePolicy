@@ -1,0 +1,455 @@
+{
+  "version": "tastepolicy-authority-semantics-v1",
+  "description": "Behaviour a TastePolicy Compatible implementation must reproduce. Data only; each suite is executed by an adapter.",
+  "askClassification": [
+    {
+      "id": "A01",
+      "basis": "AUTONOMY_CEILING",
+      "rules": ["AUTONOMY:OBSERVE"],
+      "kind": "AUTHORITY_CONFIRMATION"
+    },
+    {
+      "id": "A02",
+      "basis": "AUTONOMY_CEILING",
+      "rules": ["AUTONOMY:ABOVE_LIMIT"],
+      "kind": "AUTHORITY_CONFIRMATION"
+    },
+    {
+      "id": "A03",
+      "basis": "AUTONOMY_CEILING",
+      "rules": ["AUTONOMY:PRICE_UNKNOWN"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A04",
+      "basis": "UNRESOLVED_CONTEXT",
+      "rules": ["REQUIRED_PRICE:s1"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A05",
+      "basis": "STALE_EVIDENCE",
+      "rules": ["STALE:EXPLICIT_POSITIVE"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A06",
+      "basis": "CULTURAL_POLICY",
+      "rules": ["ASK_BAND"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A07",
+      "basis": "AUTONOMY_CEILING",
+      "rules": [],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A08",
+      "basis": "AUTONOMY_CEILING",
+      "rules": ["AUTONOMY:OBSERVE", "AUTONOMY:PRICE_UNKNOWN"],
+      "kind": "CLARIFICATION_REQUIRED"
+    },
+    {
+      "id": "A09",
+      "basis": "SOMETHING_NEW",
+      "rules": ["AUTONOMY:OBSERVE"],
+      "kind": "CLARIFICATION_REQUIRED"
+    }
+  ],
+  "continuation": [
+    {
+      "decision": "ALLOW",
+      "permitted": ["recommend", "add_to_draft"]
+    },
+    {
+      "decision": "ASK",
+      "permitted": ["request_clarification"]
+    },
+    {
+      "decision": "REJECT",
+      "permitted": ["do_not_proceed", "offer_repair"]
+    },
+    {
+      "decision": "UNAVAILABLE",
+      "permitted": ["do_not_assume_negative_preference"]
+    }
+  ],
+  "leaseSequences": [
+    {
+      "id": "L01",
+      "description": "ALLOW starts an active lease in epoch 1",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        }
+      ],
+      "expect": {
+        "status": "ACTIVE",
+        "epoch": 1
+      }
+    },
+    {
+      "id": "L02",
+      "description": "An authority-confirmation ASK waits; approval starts epoch 1",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ASK",
+          "ask": {
+            "kind": "AUTHORITY_CONFIRMATION",
+            "reasons": ["AUTONOMY:OBSERVE"]
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "APPROVED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER",
+          "scope": {
+            "candidateId": "c",
+            "contextKey": "k",
+            "permitted": ["recommend"]
+          },
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "status": "ACTIVE",
+        "epoch": 1
+      }
+    },
+    {
+      "id": "L03",
+      "description": "A clarification can never be issued as a lease",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ASK",
+          "ask": {
+            "kind": "CLARIFICATION_REQUIRED",
+            "reasons": ["REQUIRED_PRICE:x"]
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L04",
+      "description": "A pending ASK without a type is refused",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ASK",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L05",
+      "description": "Drift suspends; resume starts epoch 2",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "DRIFT",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "SYSTEM",
+          "reasons": ["POLICY_CHANGED"]
+        },
+        {
+          "kind": "RESUMED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "status": "ACTIVE",
+        "epoch": 2
+      }
+    },
+    {
+      "id": "L06",
+      "description": "Approval is only legal for an ASK_PENDING lease",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "APPROVED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER",
+          "scope": {
+            "candidateId": "c",
+            "contextKey": "k",
+            "permitted": ["recommend"]
+          },
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L07",
+      "description": "A suspended lease cannot be approved",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "DRIFT",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "SYSTEM",
+          "reasons": ["POLICY_CHANGED"]
+        },
+        {
+          "kind": "APPROVED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER",
+          "scope": {
+            "candidateId": "c",
+            "contextKey": "k",
+            "permitted": ["recommend"]
+          },
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L08",
+      "description": "A terminal lease never revives",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "REVOKED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER"
+        },
+        {
+          "kind": "RESUMED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L09",
+      "description": "Resume needs a prior suspension",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ALLOW",
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "RESUMED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    },
+    {
+      "id": "L10",
+      "description": "A declined question is terminal",
+      "events": [
+        {
+          "kind": "ISSUED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "AGENT",
+          "decision": "ASK",
+          "ask": {
+            "kind": "AUTHORITY_CONFIRMATION",
+            "reasons": ["AUTONOMY:OBSERVE"]
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z",
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          }
+        },
+        {
+          "kind": "DECLINED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER"
+        },
+        {
+          "kind": "APPROVED",
+          "at": "2026-10-24T10:00:00.000Z",
+          "actor": "OWNER",
+          "scope": {
+            "candidateId": "c",
+            "contextKey": "k",
+            "permitted": ["recommend"]
+          },
+          "fingerprint": {
+            "stateHash": "h1",
+            "policyVersion": 1,
+            "grantId": null,
+            "overrideIds": []
+          },
+          "expiresAt": "2026-10-24T10:15:00.000Z",
+          "checkpointDueAt": "2026-10-24T10:05:00.000Z"
+        }
+      ],
+      "expect": {
+        "rejected": true
+      }
+    }
+  ]
+}

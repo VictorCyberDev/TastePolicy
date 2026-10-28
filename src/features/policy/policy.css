@@ -1,0 +1,241 @@
+.policyPlane {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  overflow-wrap: anywhere;
+  color: var(--foreground);
+}
+.policyPlane h1,
+.policyPlane h2 {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+}
+.policyPlane h1 {
+  font-size: 2.4rem;
+  margin: 0.25rem 0;
+}
+.policyPlane section,
+.policyPlane fieldset {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-block: 1.25rem;
+  min-width: 0;
+}
+.policyPlane label {
+  display: grid;
+  gap: 0.35rem;
+  margin-block: 0.7rem;
+}
+.policyPlane .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+.policyPlane .row > label {
+  flex: 1 1 12rem;
+}
+.policyPlane input:not([type="checkbox"]):not([type="radio"]),
+.policyPlane select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.4rem 0.6rem;
+  background: var(--background);
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+.policyPlane button,
+.policyPlane a.button {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-bg);
+  color: var(--foreground);
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.policyPlane button.quiet {
+  background: transparent;
+  border-color: var(--line);
+}
+.policyPlane button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.policyPlane :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.policyPlane .help {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.policyPlane .choice {
+  display: flex;
+  gap: 0.65rem;
+  align-items: start;
+  min-height: 44px;
+}
+.policyPlane ul {
+  padding-left: 1.1rem;
+}
+.policyPlane li {
+  margin-block: 0.4rem;
+}
+.policyPlane .tag {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+.policyPlane .tag[data-outcome="ALLOW"] {
+  color: var(--allow);
+  border-color: var(--allow);
+}
+.policyPlane .tag[data-outcome="ASK"] {
+  color: var(--ask);
+  border-color: var(--ask);
+}
+.policyPlane .tag[data-outcome="REJECT"] {
+  color: var(--reject);
+  border-color: var(--reject);
+}
+/* THE BOUNDARY (control plane form) */
+.ruleBoundary {
+  --split: 50%;
+  display: flex;
+  height: 32px;
+  overflow: hidden;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  font:
+    700 0.6rem/1 system-ui,
+    sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.ruleBoundary em {
+  font-style: normal;
+}
+.rbTaste {
+  display: flex;
+  align-items: center;
+  flex: 0 0 var(--split);
+  padding-left: 14px;
+  background: linear-gradient(90deg, var(--accent-bg), var(--accent));
+  color: var(--foreground);
+}
+.rbLine {
+  flex: 0 0 6px;
+  background: var(--foreground);
+}
+.rbPermission {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  color: var(--muted);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--line) 60%, transparent) 11px 12px
+  );
+}
+.ruleBoundary[data-level="OBSERVE"] {
+  --split: 34%;
+}
+.ruleBoundary[data-level="CONFIRM_ABOVE_LIMIT"] {
+  --split: 58%;
+}
+.ruleBoundary[data-level="AUTONOMOUS"] {
+  --split: 82%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rbTaste {
+    transition: flex-basis 0.6s ease;
+  }
+}
+.policyPlane input[type="radio"],
+.policyPlane input[type="checkbox"] {
+  flex: none;
+  width: 1.4rem;
+  height: 1.4rem;
+  min-height: 0;
+  margin: 0.15rem 0 0;
+  accent-color: var(--accent);
+}
+.policyPlane .choice > span {
+  font-weight: 400;
+  text-align: left;
+}
+.policyPlane .choice strong {
+  font-weight: 600;
+}
+.policyPlane label {
+  font-weight: 600;
+}
+.policyPlane label.choice {
+  font-weight: 400;
+}
+.policyPlane legend {
+  font-weight: 600;
+  padding-inline: 0.4rem;
+}
+.rbTaste {
+  flex: 0 1 var(--split);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.rbPermission {
+  flex: 1 0 6.5rem;
+  white-space: nowrap;
+}
+/* Authority timeline */
+.policyPlane ol.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  border-left: 2px solid var(--line);
+}
+.policyPlane ol.timeline > li {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.6rem 0 0.6rem 0.9rem;
+  position: relative;
+}
+.policyPlane ol.timeline .mark {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.policyPlane ol.timeline li[data-kind="PAUSED"] .mark,
+.policyPlane ol.timeline li[data-kind="PROOFS_INVALIDATED"] .mark {
+  border-color: var(--ask);
+}
+.policyPlane ol.timeline p {
+  margin: 0.1rem 0;
+}
+.policyPlane ol.timeline pre {
+  overflow-x: auto;
+  font-size: 0.8rem;
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .policyPlane * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
