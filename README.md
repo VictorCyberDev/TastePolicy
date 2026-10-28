@@ -1,3 +1,5 @@
+> Release authority: [M10–M26 execution ledger](docs/evaluation/company-build-m10-m26.md). Canonical M6–M10 candidate: `m10-m26-company-build`; [tree/lineage audit](docs/evaluation/m11-release-reconciliation.md). Green CI and hosted preview acceptance do not establish production or real ChatGPT/Claude commissioning.
+
 # TastePolicy
 
 **The subjective authority layer for AI agents.**

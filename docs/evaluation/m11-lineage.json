@@ -1,0 +1,117 @@
+{
+  "candidate": "06a0cda8dd75ed5de312ee3ec3bd8421532a3184",
+  "main": "35ceed937ef0bebb88b200af6f21bcc362210cb8",
+  "divergence": "0\t115",
+  "lineage": [
+    {
+      "pr": 11,
+      "branch": "win-gate-hackathon-hardening",
+      "sha": "f7fbbc024d24128bc06bf1ab34bbe87b531449c3",
+      "tree": "fea63a712d8aa036cb4121c0ca66b8a11dd41176",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 256 files changed, 45696 insertions(+), 416 deletions(-)"]
+    },
+    {
+      "pr": 10,
+      "branch": "milestone-6-platformization",
+      "sha": "c263032859ff43fb5e521eb8f5d005f13947e50b",
+      "tree": "0a47976d0db38ca4903ab22f7609588d93b2d947",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 201 files changed, 34283 insertions(+), 257 deletions(-)"]
+    },
+    {
+      "pr": 12,
+      "branch": "m7-subjective-policy-control-plane",
+      "sha": "f0211e621c00b97d7583be451b75b7a48c6a2342",
+      "tree": "4ca2f70a34ffe458a18c810531935b98ff05ed29",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 181 files changed, 30185 insertions(+), 228 deletions(-)"]
+    },
+    {
+      "pr": 13,
+      "branch": "m8-runtime-preference-authority",
+      "sha": "efca97ee076fb23114ef5f3fd8b8821e8f642cbf",
+      "tree": "5df20ce8bf3467b9b46081077c777d1e75f96588",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 172 files changed, 26810 insertions(+), 282 deletions(-)"]
+    },
+    {
+      "pr": 14,
+      "branch": "m9-interoperable-preference-authorization-network",
+      "sha": "6c973f07eeae29e882b0ed5814f31519aee80b4f",
+      "tree": "f3bf0a6f0ae1c0ae9f53b05b9723bec049e7f5af",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 132 files changed, 19009 insertions(+), 344 deletions(-)"]
+    },
+    {
+      "pr": 15,
+      "branch": "m6-m9-final-reconciliation",
+      "sha": "9185e44507bd3f7e27dd989e9068e190075b0890",
+      "tree": "509a2c6de273bc1025c47bf92f05654ab6f71ee7",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": [" 15 files changed, 240 insertions(+), 39 deletions(-)"]
+    },
+    {
+      "pr": 16,
+      "branch": "m10-m26-company-build",
+      "sha": "06a0cda8dd75ed5de312ee3ec3bd8421532a3184",
+      "tree": "133c94a596253fe303a44ba77deeb386b38fbf42",
+      "ancestor": true,
+      "deleted_paths": [],
+      "diff_stat": []
+    }
+  ],
+  "migrations": [
+    {
+      "file": "0001_taste_state.sql",
+      "sha256": "6490982bd3d9d41e95753d44cfdaebb30be4a80a0c0278c0947f3d9cdce6e9af"
+    },
+    {
+      "file": "0002_interactive_authorization.sql",
+      "sha256": "3fcc1e310c5fc76050813d0cd38b3e17bf7051312aff9299fecef5365151130a"
+    },
+    {
+      "file": "0003_taste_trajectory.sql",
+      "sha256": "ffd51ff3e28aa47ceb4fb5510ef2e7c448ff66ba809b67f7e9f38d6055934a63"
+    },
+    {
+      "file": "0004_taste_proxy_group.sql",
+      "sha256": "64cea562f93b10fcd98c00236d69531e83eef6cf1ed318bdf012a3fd932f6d50"
+    },
+    {
+      "file": "0005_platformization.sql",
+      "sha256": "edf0d3ac293476f032cc577b9f96c57c76b6c81aca98923ad9c6c9a4e8b2b0c6"
+    },
+    {
+      "file": "0006_policy_control_plane.sql",
+      "sha256": "172d209ee06aeabd382e557968d9c3184e43f1291eaa0a31867509ba3607662c"
+    },
+    {
+      "file": "0007_preference_authority_leases.sql",
+      "sha256": "6330a3beff067c3a3cb5e16a55a75ed82c12fba9be5b96e0f93841b288d91207"
+    },
+    {
+      "file": "0008_verifiable_attestations.sql",
+      "sha256": "b1f5e38b5d36543893fee85de910af645d607428f7a80a4c730ba209450e8b4f"
+    },
+    {
+      "file": "0009_action_ladder.sql",
+      "sha256": "07090d96348beaff404c668374814cc6e8edb87cda9517cfd85b710552abe8c4"
+    },
+    {
+      "file": "0010_status_list_guard.sql",
+      "sha256": "070181d7dfc262791d0adee514b3324cab43ea1543c8c701f9149ac91bb6a80c"
+    },
+    {
+      "file": "0011_proof_disclosure.sql",
+      "sha256": "0156974276cb26bccd8c963acc6799b525f830f4ee73d207477e0006f5cb2523"
+    }
+  ],
+  "m5_migration_diff": ""
+}

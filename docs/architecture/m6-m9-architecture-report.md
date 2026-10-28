@@ -1,3 +1,5 @@
+> Current-state correction (2026-10-28): this document preserves a historical checkpoint. M10 exact head `06a0cda` has green Verify 40655120408 (real PostgreSQL and all three browsers); M10 code `92ea06c` has READY preview plus 10/10 hosted acceptance. Production, live assistant commissioning and distribution remain separate gates. See [company-build ledger](../evaluation/company-build-m10-m26.md) and [lineage audit](../evaluation/m11-release-reconciliation.md). Earlier environment blockers below are historical, not current findings.
+
 # TastePolicy M6–M9 Architecture Report
 
 Prepared at the M9 gate, 2026-10-24. Statements about what exists are backed by code and tests in this repository; statements about what was **not** verified say so. Companion: [Canonical Architecture v4](canonical-architecture-v4.md). Evidence index: [`docs/evaluation/m6-m9-freeze.md`](../evaluation/m6-m9-freeze.md).

@@ -1,3 +1,5 @@
+> Current-state correction (2026-10-28): this document preserves a historical checkpoint. M10 exact head `06a0cda` has green Verify 40655120408 (real PostgreSQL and all three browsers); M10 code `92ea06c` has READY preview plus 10/10 hosted acceptance. Production, live assistant commissioning and distribution remain separate gates. See [company-build ledger](../evaluation/company-build-m10-m26.md) and [lineage audit](../evaluation/m11-release-reconciliation.md). Earlier environment blockers below are historical, not current findings.
+
 # Final acceptance matrix
 
 Candidate: branch `m6-m9-final-reconciliation` (PR 15) on the M9 tip. Statuses: PASS, PARTIAL, BLOCKED_EXTERNAL, BLOCKED_HUMAN, NOT_APPLICABLE. Evidence kinds: CI (GitHub Actions `Verify`, cited only for the exact head whose run completed green), LOCAL (this repository's tests incl. real PostgreSQL 16 and a clean clone), CONTROLLED (synthetic, agent-to-agent inside the repository). Nothing here is HOSTED or LIVE.
