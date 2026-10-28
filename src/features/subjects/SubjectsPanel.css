@@ -77,3 +77,27 @@
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }
+
+/* WebKit mobile: native controls and disclosure content must not contribute
+   min-content widths wider than the responsive subject panel. */
+.subjects-panel :is(fieldset, article, details, summary, table, pre, button) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.subjects-panel :is(button, summary) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.subjects-panel .check > input[type="checkbox"] {
+  width: 1rem;
+  min-width: 1rem;
+  max-width: 1rem;
+  flex-basis: 1rem;
+}
+.subjects-panel pre {
+  width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
