@@ -15,6 +15,7 @@ import {
 import {
   LeaseService,
   isCommitmentAware,
+  requirePortableProofAuthority,
   requirePresented,
 } from "@/server/platform/lease-service";
 import { handlePlatform } from "@/server/platform/http";
@@ -218,11 +219,22 @@ it("13. a lease without commitments (issued before they existed) keeps the old b
   } as unknown as LeaseRecord;
   expect(isCommitmentAware(modern)).toBe(true);
   expect(() => requirePresented(modern, {})).toThrow();
-  // half-formed fingerprints do not downgrade a lease to legacy
-  const half = {
+  // Half-formed fingerprints are corrupt: neither variant may downgrade to legacy.
+  const candidateOnly = {
     state: { fingerprint: { candidateCommitment: "c" } },
   } as unknown as LeaseRecord;
-  expect(isCommitmentAware(half)).toBe(false);
+  const contextOnly = {
+    state: { fingerprint: { contextCommitment: "x" } },
+  } as unknown as LeaseRecord;
+  expect(() => isCommitmentAware(candidateOnly)).toThrow();
+  expect(() => isCommitmentAware(contextOnly)).toThrow();
+  expect(() => requirePortableProofAuthority(legacy)).toThrowError(
+    "LEGACY_AUTHORITY_NOT_PORTABLE",
+  );
+  expect(() => requirePortableProofAuthority(modern)).not.toThrow();
+  expect(() => requirePortableProofAuthority(candidateOnly)).toThrowError(
+    "INTEGRITY_ERROR",
+  );
 });
 it("14. an ended lease reports its status without demanding a presentation; omission never turns a dead lease valid", async () => {
   const w = await world(),

@@ -87,6 +87,33 @@ for (const mode of ["auto", "legacy"] as const)
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
+      openWorldHint: true,
+    });
+    expect(
+      tools.tools.find((t) => t.name === "tastepolicy_release_lease")
+        ?.annotations,
+    ).toMatchObject({
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    });
+    expect(
+      tools.tools.find((t) => t.name === "tastepolicy_verify_attestation")
+        ?.annotations,
+    ).toMatchObject({
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    });
+    expect(
+      tools.tools.find((t) => t.name === "tastepolicy_get_authority")
+        ?.annotations,
+    ).toMatchObject({
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
       openWorldHint: false,
     });
     expect(tools.tools.every((t) => t.outputSchema)).toBe(true);

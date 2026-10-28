@@ -807,3 +807,19 @@ footer > p {
   min-height: 44px;
   margin-block: 0.5rem;
 }
+
+/* Stable first keyboard target across server-rendered and hydrated pages. */
+.skip-link {
+  position: fixed;
+  inset: 0.75rem auto auto 0.75rem;
+  z-index: 10000;
+  transform: translateY(-200%);
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--foreground);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}

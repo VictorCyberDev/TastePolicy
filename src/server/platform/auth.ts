@@ -59,24 +59,26 @@ export function createAuthentication(
   });
 }
 
-// Better Auth uses unqualified model names, so each connection must enter the
-// TastePolicy schema before Better Auth can issue its first query. Do this as a
-// normal SQL command rather than PostgreSQL's startup `options` parameter:
-// managed poolers such as Neon reject `options=...search_path...` in the
-// startup packet. The connect listener runs synchronously and queues this SET
-// before the client can be handed to Better Auth; pg then serializes following
-// queries behind it.
+// Better Auth uses unqualified model names. Hosted PostgreSQL must set the
+// schema as a database-role default (TastePolicy production does this on Neon)
+// so a managed pooler can hand a connection to Better Auth without racing an
+// asynchronous `SET search_path` query. Direct local/test PostgreSQL can safely
+// use the startup option; Neon poolers reject that option, so never send it to
+// a non-local host.
 export function createAuthenticationPool(connectionString: string) {
-  const pool = new Pool({
+  const host = new URL(connectionString).hostname.toLowerCase();
+  const directLocal =
+    process.env.NODE_ENV === "test" ||
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "::1";
+  return new Pool({
     connectionString,
     max: 3,
     connectionTimeoutMillis: 5000,
     statement_timeout: 5000,
+    ...(directLocal ? { options: "-c search_path=tastepolicy,public" } : {}),
   });
-  pool.on("connect", (client) => {
-    void client.query("SET search_path=tastepolicy");
-  });
-  return pool;
 }
 
 let authentication: ReturnType<typeof createAuthentication> | undefined;

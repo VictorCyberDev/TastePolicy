@@ -93,6 +93,7 @@ export class PlatformFailure extends Error {
       | "PROVIDER_UNAVAILABLE"
       | "LEASE_NOT_FOUND"
       | "LEASE_NOT_PERMITTED"
+      | "LEGACY_AUTHORITY_NOT_PORTABLE"
       | "CLARIFICATION_REQUIRED"
       | "COMMITMENT_MISMATCH"
       | "COMMITMENT_REQUIRED"

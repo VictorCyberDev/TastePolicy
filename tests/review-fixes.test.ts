@@ -1,5 +1,4 @@
 // @vitest-environment node
-/* eslint-disable @typescript-eslint/no-explicit-any -- assertions over loosely typed JSON responses */
 // Regression tests for defects found by the independent security review.
 import { afterEach, it, expect } from "vitest";
 import { syntheticReceipt } from "./receipt-presentation-fixture";

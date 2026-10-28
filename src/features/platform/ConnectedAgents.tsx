@@ -49,9 +49,11 @@ export default function ConnectedAgents() {
         boundaries. They can never buy, book or pay. Disconnecting ends their
         access at once.
       </p>
-      <p role="status" aria-live="polite">
-        {notice}
-      </p>
+      {notice && (
+        <p role="status" aria-live="polite">
+          {notice}
+        </p>
+      )}
       {list?.length === 0 && <p>No assistant is connected.</p>}
       {list?.map((a) => (
         <article key={a.familyId}>

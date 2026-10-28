@@ -51,6 +51,11 @@ export const ERROR_CATALOG: Record<string, ErrorSpec> = {
     "No such lease is available to this caller.",
   ),
   LEASE_NOT_PERMITTED: spec(403, false, "This decision cannot be leased."),
+  LEGACY_AUTHORITY_NOT_PORTABLE: spec(
+    409,
+    false,
+    "Legacy authority without candidate and context commitments cannot be issued as a portable proof. Evaluate the current choice again.",
+  ),
   CLARIFICATION_REQUIRED: spec(
     409,
     false,

@@ -32,6 +32,19 @@ export function allowedOriginHostnames(request: Request) {
     .filter(Boolean);
   return [own, "localhost", "127.0.0.1", ...extra];
 }
+
+function annotationsFor(tool: (typeof PLATFORM_TOOLS)[number]) {
+  const destructive = tool.op === "lease-release";
+  const openWorld = tool.op === "evaluate" || tool.op === "attestation-verify";
+  return {
+    title: tool.title,
+    readOnlyHint: tool.readOnly,
+    destructiveHint: destructive,
+    idempotentHint: tool.idempotent,
+    openWorldHint: openWorld,
+  };
+}
+
 function codeOf(e: unknown) {
   const typed =
     e instanceof PlatformFailure ||
@@ -58,13 +71,7 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
         description: tool.description,
         inputSchema: tool.input as z.ZodObject,
         outputSchema: OUTPUT,
-        annotations: {
-          title: tool.title,
-          readOnlyHint: tool.readOnly,
-          destructiveHint: false,
-          idempotentHint: tool.idempotent,
-          openWorldHint: false,
-        },
+        annotations: annotationsFor(tool),
       },
       async (args: unknown) => {
         try {

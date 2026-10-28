@@ -67,9 +67,11 @@ export default function ProofPrivacy({ passportRef }: { passportRef: string }) {
         a fingerprint the other side can check against its own copy of the
         choice.
       </p>
-      <p role="status" aria-live="polite">
-        {notice}
-      </p>
+      {notice && (
+        <p role="status" aria-live="polite">
+          {notice}
+        </p>
+      )}
       {view && (
         <>
           <ul>

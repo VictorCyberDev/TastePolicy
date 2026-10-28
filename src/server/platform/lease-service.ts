@@ -67,9 +67,15 @@ function presentedOf(v: Record<string, unknown>): Presented {
 // candidate and one situation. Relying on it means saying what they are now:
 // leaving that out must never read as "unchanged". Legacy leases carry no
 // commitments (explicit version detection), so they keep the old behaviour.
-export const isCommitmentAware = (l: LeaseRecord) =>
-  !!l.state.fingerprint.candidateCommitment &&
-  !!l.state.fingerprint.contextCommitment;
+export const isCommitmentAware = (l: LeaseRecord) => {
+  const candidate = !!l.state.fingerprint.candidateCommitment;
+  const context = !!l.state.fingerprint.contextCommitment;
+  if (candidate !== context) fail("INTEGRITY_ERROR");
+  return candidate && context;
+};
+export function requirePortableProofAuthority(l: LeaseRecord) {
+  if (!isCommitmentAware(l)) fail("LEGACY_AUTHORITY_NOT_PORTABLE");
+}
 export function requirePresented(l: LeaseRecord, presented: Presented) {
   if (!isCommitmentAware(l)) return;
   const missing: ("candidate" | "context")[] = [];
@@ -202,6 +208,9 @@ export class LeaseService extends PolicyService {
       await this.settle(r, l);
   }
   private async checked(r: Repositories, l: LeaseRecord) {
+    // A one-sided commitment fingerprint is neither a valid modern lease nor a
+    // legacy lease. Reject it before any status, drift, or proof path can use it.
+    isCommitmentAware(l);
     let stored;
     try {
       stored = replay(await r.leases.events(l.leaseRef));

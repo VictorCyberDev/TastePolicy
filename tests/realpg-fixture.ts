@@ -19,7 +19,11 @@ export async function realDatabase() {
   await admin.query(`CREATE DATABASE ${name}`);
   const url = new URL(REAL_URL!);
   url.pathname = "/" + name;
-  const pool = new Pool({ connectionString: url.toString(), max: 16 });
+  const pool = new Pool({
+    connectionString: url.toString(),
+    max: 16,
+    options: "-c search_path=tastepolicy,public",
+  });
   for (const f of FILES)
     await pool.query(
       await readFile(new URL(`../migrations/${f}`, import.meta.url), "utf8"),
@@ -27,8 +31,6 @@ export async function realDatabase() {
   // Dropping the database terminates idle clients; that is expected.
   pool.on("error", () => {});
   pool.on("connect", (c) => c.on("error", () => {}));
-  await pool.query("SET search_path=tastepolicy");
-  pool.on("connect", (c) => void c.query("SET search_path=tastepolicy"));
   const authSecret = randomBytes(48).toString("base64url");
   const auth = createAuthentication(
     pool,
