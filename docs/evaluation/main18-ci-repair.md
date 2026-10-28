@@ -1,0 +1,5 @@
+# Main verification repair — 2026-10-28
+
+Production main `ec0c75b03aacb673644828a53139ee7fef168b06` deployed READY as `dpl_6xbvUS6HrPrEpLe6dT9MeBeacdK4`. Its post-merge Verify run `40757997743` passed all 871 assertions but failed on two unhandled React scheduler callbacks (`window is not defined`) attributed to `tests/foundation.test.tsx` after jsdom disposal. The exact release branch had passed Verify `40755648578`, all three browsers and hosted acceptance `40755648402`; that earlier green result does not make this failed main run green.
+
+Vitest globals are disabled in this repository. This foundation test imported RTL without installing explicit cleanup, so mounted roots could outlive the test. The repair explicitly unmounts each root and drains queued passive work with async act and one event-loop turn before environment teardown. It retains all assertions and does not suppress unhandled errors. Local focused validation: 11 assertions across foundation, state UI and trajectory UI passed with no unhandled errors. Fresh full CI and production hosted acceptance remain required.
