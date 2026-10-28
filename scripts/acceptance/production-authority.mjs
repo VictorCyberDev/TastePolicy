@@ -2,7 +2,9 @@
 // Run: BASE_URL=https://tastepolicy.vercel.app node --experimental-transform-types scripts/acceptance/production-authority.mjs
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
-import { TastePolicyClient } from "../../src/sdk/index.ts";
+const { TastePolicyClient } = await import(
+  process.env.SDK_ENTRY ?? "../../src/sdk/index.ts"
+);
 const base = (process.env.BASE_URL ?? "https://tastepolicy.vercel.app").replace(
   /\/$/,
   "",
