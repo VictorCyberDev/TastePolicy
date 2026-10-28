@@ -48,6 +48,7 @@ const COMPOSITION = new Set([
   "src/app/product/page.tsx",
   "src/app/developers/page.tsx",
   "src/server/platform/http.ts",
+  "src/app/api/workspace/[operation]/route.ts",
   "src/server/platform/gateway.ts",
   "src/server/platform/mcp.ts",
   "src/server/platform/a2a.ts",

@@ -11,7 +11,7 @@ import {
   type Principal,
 } from "@/lib/platform/types";
 import { hash } from "@/server/state/hash";
-import { integer, key, object } from "@/server/subjects/common";
+import { integer, key, object, id } from "@/server/subjects/common";
 import {
   driftReasons,
   isTerminal,
@@ -283,6 +283,7 @@ export class LeaseService extends PolicyService {
     if (!peek || (actorOnly && peek.actorId !== p.userId))
       fail("LEASE_NOT_FOUND");
     await this.agentAccess(r, p, peek, scope);
+    await this.agentIdentity(r, p, peek.agentId);
     const l = await r.leases.get(ref, true);
     if (!l || (actorOnly && l.actorId !== p.userId)) fail("LEASE_NOT_FOUND");
     return l;
@@ -367,6 +368,9 @@ export class LeaseService extends PolicyService {
         "EVALUATE_TASTE_ACTION",
         "TASTE_EVALUATE",
       );
+      await this.agentIdentity(r, p, e.evaluation.agentId);
+      if (await r.platform.agentRevoked(e.userId, e.evaluation.agentId))
+        fail("ACCESS_DENIED");
       const old = await r.platform.op(p.userId, "lease.request", k);
       if (old) {
         if (old.hash !== h) fail("IDEMPOTENCY_KEY_CONFLICT");
@@ -751,6 +755,42 @@ export class LeaseService extends PolicyService {
           { kind: "DECLINED", at: this.clock(), actor: "OWNER" },
         ]),
       );
+    });
+  }
+  async revokeRegisteredAgent(p: Principal, raw: unknown) {
+    const v = object(raw, ["agentId", "idempotencyKey"]),
+      agentId = id(v.agentId);
+    return this.ownerTx(p, false, async (r) => {
+      const agent = await r.platform.registeredAgent(p.userId, agentId);
+      if (!agent) fail("ACCESS_DENIED");
+      const now = this.clock();
+      await r.platform.revokeRegisteredAgent(p.userId, agentId, now);
+      const credentials = await r.platform.agentCredentials(
+        p.userId,
+        agent.externalId,
+      );
+      for (const credential of credentials)
+        await r.platform.revokeCredential(credential, now);
+      const passport = await r.platform.owned(p.userId);
+      let revoked = 0;
+      if (passport)
+        for (const lease of await r.leases.liveForPassport(
+          passport.passportRef,
+        )) {
+          if (lease.agentId !== agent.externalId) continue;
+          await this.advance(r, lease, [
+            { kind: "REVOKED", at: now, actor: "OWNER" },
+          ]);
+          revoked++;
+        }
+      return {
+        agentId,
+        externalId: agent.externalId,
+        authorityRevoked: true,
+        newlyRevokedLeases: revoked,
+        revokedCredentials: credentials.length,
+        scope: "OWNER_PASSPORT_ALL_ENVIRONMENTS",
+      };
     });
   }
   async leaseRevoke(p: Principal, raw: unknown) {

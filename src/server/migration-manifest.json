@@ -9,5 +9,6 @@
   "0008_verifiable_attestations.sql": "b1f5e38b5d36543893fee85de910af645d607428f7a80a4c730ba209450e8b4f",
   "0009_action_ladder.sql": "07090d96348beaff404c668374814cc6e8edb87cda9517cfd85b710552abe8c4",
   "0010_status_list_guard.sql": "070181d7dfc262791d0adee514b3324cab43ea1543c8c701f9149ac91bb6a80c",
-  "0011_proof_disclosure.sql": "0156974276cb26bccd8c963acc6799b525f830f4ee73d207477e0006f5cb2523"
+  "0011_proof_disclosure.sql": "0156974276cb26bccd8c963acc6799b525f830f4ee73d207477e0006f5cb2523",
+  "0012_developer_workspaces.sql": "cc0b2c34f8ffb27936a749a8acd0dff140103afe79611e9ed9cd80b1b2b23aaa"
 }

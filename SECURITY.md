@@ -1,16 +1,14 @@
-# Security
+# Security reporting
 
-## Reporting
+Report a suspected vulnerability privately to **victornnajiofor1@gmail.com**, subject `TastePolicy security report`. Include the affected URL/revision, reproduction steps and impact. Omit live credentials and private preference data. This is the founder's support/security address, not a staffed security operations center.
 
-Use GitHub private vulnerability reporting if enabled. Otherwise open a minimal issue requesting a private reporting channel, without exploit details, credentials or personal data. Do not publish sensitive material in a public issue. No response-time SLA is offered during the hackathon.
+Use your own account and synthetic or public test anchors. Do not access another user's data, run denial-of-service tests, send unsolicited messages, execute financial/legal actions, or retain data obtained accidentally. There is no funded bug bounty or guaranteed response SLA. The founder aims to acknowledge reports within three business days when available; this is an operating target, not a contractual promise.
+
+Supported hosted release: canonical `https://tastepolicy.vercel.app`. Branch previews are development environments. No SOC 2, ISO 27001, penetration-test certification, HIPAA or GDPR certification is claimed. See `docs/security/threat-model.md`, `docs/company/vendor-register.md`, and `docs/security/operations.md` for current boundaries and gaps.
 
 ## Secret policy
 
 Never commit credentials, .env files, tokens, private keys or provider payloads. `.env.example` contains blank placeholders only. Server configuration imports server-only; never serialize it into client props or responses. NEXT_PUBLIC values are public. Service-role credentials must never have that prefix. If a secret is exposed, revoke/rotate it immediately and coordinate history cleanup.
-
-## Supported expectations
-
-Only the latest main branch is maintained. Milestone 1 has server-side Qloo integration, but no authentication, persistence or action execution. Do not use it for sensitive production workloads until those boundaries receive threat review. Dependency findings should be reviewed, not fixed with blind force upgrades.
 
 ## Baseline
 

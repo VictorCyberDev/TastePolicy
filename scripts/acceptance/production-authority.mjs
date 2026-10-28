@@ -21,7 +21,15 @@ const anchors = source.results.find((r) => r.step === "resolve").selected;
 const candidate = source.results.find((r) => r.step === "discover")
   .candidates[0].entity;
 const rows = [];
-let cookie, secret, passport;
+let cookie,
+  secret,
+  passport,
+  credentialId,
+  workspaceId,
+  environmentId,
+  registeredAgentId,
+  evaluation,
+  proof;
 const json = { "content-type": "application/json", origin: base };
 const check = (v, m) => {
   if (!v) throw Error(m);
@@ -32,6 +40,20 @@ async function account(op, data) {
     headers: { ...json, cookie },
     body: JSON.stringify({ idempotencyKey: randomUUID(), ...data }),
     signal: AbortSignal.timeout(60000),
+  });
+  const body = await r.json();
+  check(
+    r.ok && body.status === "available",
+    `${op}:${r.status}:${body.code ?? body.status}`,
+  );
+  return body.data;
+}
+async function workspace(op, data = {}) {
+  const r = await fetch(`${base}/api/workspace/${op}`, {
+    method: "POST",
+    headers: { ...json, cookie },
+    body: JSON.stringify({ idempotencyKey: randomUUID(), ...data }),
+    signal: AbortSignal.timeout(30000),
   });
   const body = await r.json();
   check(
@@ -97,6 +119,7 @@ try {
       expiresAt: new Date(Date.now() + 3600000).toISOString(),
     });
     secret = key.secret;
+    credentialId = key.credential.credentialId;
     check(secret, "No credential");
     return {
       scopes: key.credential?.scopes ?? [
@@ -106,6 +129,43 @@ try {
       ],
     };
   });
+  await step(
+    "self-serve workspace, project, environment, registered agent and key binding",
+    async () => {
+      const w = await workspace("create-workspace", {
+        displayLabel: "Disposable acceptance workspace",
+      });
+      workspaceId = w.workspaceId;
+      const project = await workspace("create-project", {
+        workspaceId,
+        displayLabel: "Disposable acceptance application",
+      });
+      const env = await workspace("create-environment", {
+        projectId: project.projectId,
+        displayLabel: "Acceptance development",
+        kind: "DEVELOPMENT",
+      });
+      environmentId = env.environmentId;
+      const agent = await workspace("register-agent", {
+        environmentId,
+        externalId: "production-probe",
+        displayLabel: "Disposable acceptance agent",
+      });
+      registeredAgentId = agent.agentId;
+      await workspace("bind-credential", {
+        environmentId,
+        agentId: registeredAgentId,
+        credentialId,
+      });
+      return {
+        workspaceId,
+        projectId: project.projectId,
+        environmentId,
+        registeredAgentId,
+        boundCredential: true,
+      };
+    },
+  );
   const client = new TastePolicyClient(base, secret);
   await step("independent SDK passport read", async () => {
     const p = await client.passport({ passportRef: passport.passportRef });
@@ -124,6 +184,7 @@ try {
   };
   await step("independent SDK live cultural decision", async () => {
     const r = await client.evaluate({ ...input, idempotencyKey: randomUUID() });
+    evaluation = r;
     check(
       ["ALLOW", "ASK", "REJECT", "UNAVAILABLE"].includes(r.decision),
       "No decision",
@@ -174,11 +235,136 @@ try {
       evaluationRef: result.evaluationRef,
     };
   });
+  await step(
+    "live bounded lease and portable proof with current commitments",
+    async () => {
+      check(
+        evaluation?.decision === "ALLOW",
+        `Fresh cultural decision is ${evaluation?.decision}; no ALLOW is fabricated for the proof probe`,
+      );
+      const lease = await client.lease({
+        evaluationRef: evaluation.evaluationRef,
+        idempotencyKey: randomUUID(),
+      });
+      const verified = await client.leaseVerify(lease.leaseRef, {
+        candidate,
+        context: input.proposal.context,
+      });
+      check(
+        verified.valid,
+        "Lease did not verify with the same candidate/context",
+      );
+      proof = await client.attestation({
+        leaseRef: lease.leaseRef,
+        audience: "https://acceptance-verifier.example",
+      });
+      const checked = await client.verifyAttestation({
+        presentation: proof.attestation,
+        audience: "https://acceptance-verifier.example",
+        dryRun: true,
+        expect: { candidate, context: input.proposal.context },
+      });
+      check(
+        checked.valid === true,
+        "Issued proof failed independent current commitment verification",
+      );
+      return {
+        leaseRef: lease.leaseRef,
+        jti: proof.jti,
+        expiresAt: proof.expiresAt,
+        verified: true,
+        verificationIsExecutionAuthority: false,
+      };
+    },
+  );
+  await step(
+    "workspace counts and isolated internal billing simulation",
+    async () => {
+      const operation = {
+        workspaceId,
+        confirmation: "SIMULATE ONLY",
+        idempotencyKey: randomUUID(),
+      };
+      const simulated = await workspace("sandbox-upgrade", operation),
+        replayed = await workspace("sandbox-upgrade", operation);
+      check(
+        simulated.charged === false &&
+          simulated.liveEntitlementChanged === false &&
+          replayed.eventId === simulated.eventId,
+        "Simulation changed live entitlement or duplicated invoice",
+      );
+      const state = await workspace("inspect");
+      check(
+        state.metrics.captured.total >= 2,
+        "Captured decision counts missing",
+      );
+      check(
+        state.subscriptions.find((s) => s.mode === "LIVE")?.plan === "FREE",
+        "Internal simulation escaped into live plan",
+      );
+      check(
+        state.subscriptions.find((s) => s.mode === "SANDBOX")?.plan === "PRO",
+        "Internal sandbox entitlement absent",
+      );
+      await workspace("sandbox-cancel", {
+        workspaceId,
+        confirmation: "SIMULATE ONLY",
+      });
+      return {
+        capturedDecisions: state.metrics.captured.total,
+        livePlan: "FREE",
+        sandboxPlan: "PRO",
+        charged: false,
+        invoiceReplayedOnce: true,
+        provider: "INTERNAL_SANDBOX",
+      };
+    },
+  );
   await step("account export", async () => {
     const data = await account("export", { passportRef: passport.passportRef });
     check(data.exportId, "No export manifest");
     return { exportId: data.exportId, semanticHash: data.semanticHash };
   });
+  await step(
+    "agent revocation ends bound key and portable proof epoch",
+    async () => {
+      const result = await workspace("revoke-agent", {
+        agentId: registeredAgentId,
+      });
+      check(
+        result.authorityRevoked === true && result.revokedCredentials >= 1,
+        "Agent keys were not revoked",
+      );
+      const denied = await fetch(base + "/api/v1/capabilities", {
+        headers: { authorization: `Bearer ${secret}` },
+        signal: AbortSignal.timeout(30000),
+      });
+      check([401, 403].includes(denied.status), "Revoked key survived");
+      const r = await fetch(base + "/api/attest/verify", {
+        method: "POST",
+        headers: json,
+        body: JSON.stringify({
+          presentation: proof.attestation,
+          audience: "https://acceptance-verifier.example",
+          dryRun: true,
+          expect: { candidate, context: input.proposal.context },
+        }),
+        signal: AbortSignal.timeout(30000),
+      });
+      const checked = await r.json();
+      check(
+        r.ok && checked.data?.valid === false,
+        "Old proof stayed valid after agent revocation",
+      );
+      return {
+        revokedCredentials: result.revokedCredentials,
+        revokedLeases: result.newlyRevokedLeases,
+        keyHTTP: denied.status,
+        oldProofValid: false,
+        reasons: checked.data?.reasons,
+      };
+    },
+  );
 } catch {
   process.exitCode = 1;
 } finally {

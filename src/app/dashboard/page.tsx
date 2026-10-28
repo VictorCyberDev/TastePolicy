@@ -1,4 +1,5 @@
 import CompanyDocument from "@/features/company/CompanyDocument";
+import WorkspaceControl from "@/features/company/WorkspaceControl";
 import DeveloperWorkspace from "@/features/company/DeveloperWorkspace";
 export default function Page() {
   return (
@@ -8,6 +9,7 @@ export default function Page() {
       lead="Review your taste, create a private Passport and issue a credential without founder configuration."
     >
       <DeveloperWorkspace />
+      <WorkspaceControl />
     </CompanyDocument>
   );
 }

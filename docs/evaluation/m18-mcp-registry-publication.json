@@ -1,0 +1,43 @@
+{
+  "verified_at": "2026-10-28",
+  "source_url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.VictorCyberDev%2Ftastepolicy/versions/0.2.0",
+  "publish_run": 40752927856,
+  "production_acceptance_run": 40752703012,
+  "implementation_sha": "833fb722289911009431dd7d41237bb361a003c7",
+  "record": {
+    "server": {
+      "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+      "name": "io.github.VictorCyberDev/tastepolicy",
+      "description": "Qloo cultural evidence with ALLOW, ASK and REJECT boundaries for agent preference decisions.",
+      "title": "TastePolicy",
+      "repository": {
+        "url": "https://github.com/VictorCyberDev/TastePolicy",
+        "source": "github"
+      },
+      "version": "0.2.0",
+      "websiteUrl": "https://tastepolicy.vercel.app/integrations",
+      "icons": [
+        {
+          "src": "https://tastepolicy.vercel.app/brand/mark.png",
+          "mimeType": "image/png",
+          "sizes": ["512x512"]
+        }
+      ],
+      "remotes": [
+        {
+          "type": "streamable-http",
+          "url": "https://tastepolicy.vercel.app/api/mcp"
+        }
+      ]
+    },
+    "_meta": {
+      "io.modelcontextprotocol.registry/official": {
+        "status": "active",
+        "statusChangedAt": "2026-10-28T19:17:22.275916Z",
+        "publishedAt": "2026-10-28T19:17:22.275916Z",
+        "updatedAt": "2026-10-28T19:17:22.275916Z",
+        "isLatest": true
+      }
+    }
+  }
+}

@@ -666,6 +666,16 @@ export class PlatformService {
     void e;
     return null;
   }
+  protected async agentIdentity(
+    r: Repositories,
+    p: Principal,
+    agentId: string,
+  ) {
+    if (p.kind !== "CREDENTIAL" || !p.credentialId) return;
+    const binding = await r.platform.credentialAgent(p.userId, p.credentialId);
+    if (binding && (binding.revoked || binding.externalId !== agentId))
+      fail("ACCESS_DENIED");
+  }
   async evaluate(
     p: Principal,
     raw: unknown,
@@ -688,8 +698,8 @@ export class PlatformService {
       k = key(v.idempotencyKey);
     if (!input) fail("INVALID_INPUT");
     const h = hash({ ...v, proposal: input });
-    const authorize = (r: Repositories) =>
-      this.access(
+    const authorize = async (r: Repositories) => {
+      const access = await this.access(
         r,
         p,
         pr,
@@ -697,6 +707,11 @@ export class PlatformService {
         "EVALUATE_TASTE_ACTION",
         "TASTE_EVALUATE",
       );
+      await this.agentIdentity(r, p, input.agentId);
+      if (await r.platform.agentRevoked(access.passport.userId, input.agentId))
+        fail("ACCESS_DENIED");
+      return access;
+    };
     // Phase 1 (short transaction): authority, replay, quota, and the state the
     // answer will be about. No lock outlives it.
     const pre = await this.store.transaction(async (r) => {

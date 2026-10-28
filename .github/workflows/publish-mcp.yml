@@ -49,7 +49,50 @@ jobs:
           tar xzf /tmp/mcp-publisher.tar.gz -C /tmp mcp-publisher
       - name: Validate listing
         run: /tmp/mcp-publisher validate server.json
+      - name: Inspect existing public registry version
+        id: registry
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, urllib.request, urllib.parse, urllib.error
+          expected = json.load(open('server.json'))
+          url = 'https://registry.modelcontextprotocol.io/v0.1/servers/' + urllib.parse.quote(expected['name'], safe='') + '/versions/' + urllib.parse.quote(expected['version'], safe='')
+          published = False
+          try:
+              with urllib.request.urlopen(url, timeout=30) as r:
+                  record = json.load(r)
+              if record['server'] != expected:
+                  raise SystemExit('Published version differs from the manifest. Increment the version before publishing changes.')
+              if record['_meta']['io.modelcontextprotocol.registry/official']['status'] != 'active':
+                  raise SystemExit('Existing public version is not active.')
+              published = True
+          except urllib.error.HTTPError as error:
+              if error.code != 404:
+                  raise
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('published=' + str(published).lower() + '\n')
+          PYTHON
       - name: Authenticate with GitHub OIDC
+        if: steps.registry.outputs.published != 'true'
         run: /tmp/mcp-publisher login github-oidc
       - name: Publish remote server
+        if: steps.registry.outputs.published != 'true'
         run: /tmp/mcp-publisher publish server.json
+      - name: Verify public registry record
+        run: |
+          python3 - <<'PYTHON'
+          import json, urllib.request, urllib.parse
+          expected = json.load(open('server.json'))
+          url = 'https://registry.modelcontextprotocol.io/v0.1/servers/' + urllib.parse.quote(expected['name'], safe='') + '/versions/' + urllib.parse.quote(expected['version'], safe='')
+          with urllib.request.urlopen(url, timeout=30) as r:
+              record = json.load(r)
+          assert record['server'] == expected
+          assert record['_meta']['io.modelcontextprotocol.registry/official']['status'] == 'active'
+          with open('registry-publication.json', 'w') as output:
+              json.dump(record, output, indent=2)
+          print('Verified active public registry record: ' + expected['name'] + '@' + expected['version'])
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: registry-evidence-${{ github.event.workflow_run.head_sha }}
+          path: registry-publication.json
+          retention-days: 30

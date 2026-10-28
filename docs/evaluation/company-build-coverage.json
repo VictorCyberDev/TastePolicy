@@ -438,377 +438,493 @@
       "id": "M12-01",
       "milestone": "M12",
       "requirement": "stable production hostname",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-02",
       "milestone": "M12",
       "requirement": "production green main deployment",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-03",
       "milestone": "M12",
       "requirement": "production Neon binding",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-04",
       "milestone": "M12",
       "requirement": "environment separation",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-05",
       "milestone": "M12",
       "requirement": "production secrets",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-06",
       "milestone": "M12",
       "requirement": "canonical origin configuration",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-07",
       "milestone": "M12",
       "requirement": "Better Auth origin",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-08",
       "milestone": "M12",
       "requirement": "OAuth issuer",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-09",
       "milestone": "M12",
       "requirement": "authorization metadata",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-10",
       "milestone": "M12",
       "requirement": "protected resource metadata",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-11",
       "milestone": "M12",
       "requirement": "REST base",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-12",
       "milestone": "M12",
       "requirement": "MCP",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-13",
       "milestone": "M12",
       "requirement": "A2A card",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-14",
       "milestone": "M12",
       "requirement": "A2A endpoint",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-15",
       "milestone": "M12",
       "requirement": "attestation issuer",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-16",
       "milestone": "M12",
       "requirement": "verify page",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-17",
       "milestone": "M12",
       "requirement": "attestation verify API",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-18",
       "milestone": "M12",
       "requirement": "OpenAPI",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-19",
       "milestone": "M12",
       "requirement": "health readiness",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-20",
       "milestone": "M12",
       "requirement": "external hosted acceptance",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-21",
       "milestone": "M12",
       "requirement": "clean signup signin",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-22",
       "milestone": "M12",
       "requirement": "OAuth rotation reuse",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-23",
       "milestone": "M12",
       "requirement": "REST credentials",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-24",
       "milestone": "M12",
       "requirement": "MCP credentials",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-25",
       "milestone": "M12",
       "requirement": "A2A acceptance",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-26",
       "milestone": "M12",
       "requirement": "verifier acceptance",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-27",
       "milestone": "M12",
       "requirement": "Qloo production path",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-28",
       "milestone": "M12",
       "requirement": "remove branch public origins",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M12-29",
       "milestone": "M12",
       "requirement": "custom domain migration runbook",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
+      "implementation": "Canonical production config; centralized origin; migration readiness; auth/OAuth/REST/MCP/A2A/attestation; CUSTOM_DOMAIN_MIGRATION.md",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub main Verify 40750769872",
+        "GitHub production Hosted acceptance 40752703012",
+        "docs/evaluation/m12-production-main-833fb72.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app",
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1513,39 +1629,45 @@
       "id": "M15-02",
       "milestone": "M15",
       "requirement": "workspace organization",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M15-03",
       "milestone": "M15",
       "requirement": "project application",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M15-04",
       "milestone": "M15",
       "requirement": "environment",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1591,13 +1713,15 @@
       "id": "M15-08",
       "milestone": "M15",
       "requirement": "agent",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1630,13 +1754,15 @@
       "id": "M15-11",
       "milestone": "M15",
       "requirement": "billing plan state",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1656,26 +1782,30 @@
       "id": "M15-13",
       "milestone": "M15",
       "requirement": "decision counts and four outcomes",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M15-14",
       "milestone": "M15",
       "requirement": "ASK rate rejected incidents",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1695,13 +1825,15 @@
       "id": "M15-16",
       "milestone": "M15",
       "requirement": "active suspended leases",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1721,13 +1853,15 @@
       "id": "M15-18",
       "milestone": "M15",
       "requirement": "receipts proofs epochs",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -1838,13 +1972,15 @@
       "id": "M15-27",
       "milestone": "M15",
       "requirement": "revoke agent",
-      "implementation": null,
+      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -2631,13 +2767,16 @@
       "id": "M18-21",
       "milestone": "M18",
       "requirement": "official MCP registry registration",
-      "implementation": "src/app/.well-known/openai-apps-challenge/route.ts; server.json; .github/workflows/publish-mcp.yml",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
-      "production_url": null,
-      "registration_status": "VALIDATED_NOT_PUBLISHED",
-      "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "implementation": "server.json; .github/workflows/publish-mcp.yml",
+      "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+      "evidence": [
+        "GitHub publish run 40752927856",
+        "docs/evaluation/m18-mcp-registry-publication.json"
+      ],
+      "production_url": "https://tastepolicy.vercel.app/api/mcp",
+      "registration_status": "PUBLISHED_ACTIVE",
+      "submission_status": "PUBLISHED_ACTIVE",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2930,117 +3069,135 @@
       "id": "M20-01",
       "milestone": "M20",
       "requirement": "competitor value cost pricing research",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-02",
       "milestone": "M20",
       "requirement": "free pro enterprise plans",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-03",
       "milestone": "M20",
       "requirement": "billable units",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-04",
       "milestone": "M20",
       "requirement": "metering",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-05",
       "milestone": "M20",
       "requirement": "plan limits",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-06",
       "milestone": "M20",
       "requirement": "entitlements",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-07",
       "milestone": "M20",
       "requirement": "upgrade state",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-08",
       "milestone": "M20",
       "requirement": "billing state",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-09",
       "milestone": "M20",
       "requirement": "invoice customer model",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3060,13 +3217,15 @@
       "id": "M20-11",
       "milestone": "M20",
       "requirement": "overage behavior",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3086,26 +3245,30 @@
       "id": "M20-13",
       "milestone": "M20",
       "requirement": "billing sandbox acceptance",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M20-14",
       "milestone": "M20",
       "requirement": "no real charges",
-      "implementation": null,
+      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "tests/workspace.test.ts; payment-provider acceptance still missing"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3138,13 +3301,15 @@
       "id": "M21-03",
       "milestone": "M21",
       "requirement": "architecture data flow",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3164,91 +3329,105 @@
       "id": "M21-05",
       "milestone": "M21",
       "requirement": "verified encryption claims",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-06",
       "milestone": "M21",
       "requirement": "authentication OAuth credential design",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-07",
       "milestone": "M21",
       "requirement": "audit logging",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-08",
       "milestone": "M21",
       "requirement": "tenant isolation",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-09",
       "milestone": "M21",
       "requirement": "backup recovery",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-10",
       "milestone": "M21",
       "requirement": "retention deletion",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-11",
       "milestone": "M21",
       "requirement": "incident response",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3307,39 +3486,45 @@
       "id": "M21-16",
       "milestone": "M21",
       "requirement": "DPA readiness",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-17",
       "milestone": "M21",
       "requirement": "security questionnaire",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-18",
       "milestone": "M21",
       "requirement": "threat model",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3385,13 +3570,15 @@
       "id": "M21-22",
       "milestone": "M21",
       "requirement": "migration rollback",
-      "implementation": null,
+      "implementation": "docs/security/operations.md; SECURITY.md; existing threat model and shared authority services",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Written controls and explicit operational gaps; recovery/monitoring gates remain open"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3736,26 +3923,30 @@
       "id": "M23-01",
       "milestone": "M23",
       "requirement": "repository license",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-02",
       "milestone": "M23",
       "requirement": "third party licenses",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3775,39 +3966,45 @@
       "id": "M23-04",
       "milestone": "M23",
       "requirement": "Wikimedia media",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-05",
       "milestone": "M23",
       "requirement": "MCP SDK dependencies",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-06",
       "milestone": "M23",
       "requirement": "copied generated assets",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3853,91 +4050,105 @@
       "id": "M23-10",
       "milestone": "M23",
       "requirement": "security license audit",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-11",
       "milestone": "M23",
       "requirement": "open source-available proprietary hosted boundaries",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-12",
       "milestone": "M23",
       "requirement": "licensing strategy",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-13",
       "milestone": "M23",
       "requirement": "contributor policy",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-14",
       "milestone": "M23",
       "requirement": "dependency IP ledger",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-15",
       "milestone": "M23",
       "requirement": "moat explanation",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-16",
       "milestone": "M23",
       "requirement": "trademark checklist",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -4126,364 +4337,420 @@
       "id": "M25-01",
       "milestone": "M25",
       "requirement": "investor narrative category problem why now",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-02",
       "milestone": "M25",
       "requirement": "agent market tailwind",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-03",
       "milestone": "M25",
       "requirement": "Qloo leverage",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-04",
       "milestone": "M25",
       "requirement": "product architecture moat",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-05",
       "milestone": "M25",
       "requirement": "wedge buyer pricing",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-06",
       "milestone": "M25",
       "requirement": "market map",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-07",
       "milestone": "M25",
       "requirement": "sourced TAM SAM SOM",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-08",
       "milestone": "M25",
       "requirement": "competition differentiation",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-09",
       "milestone": "M25",
       "requirement": "distribution",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-10",
       "milestone": "M25",
       "requirement": "30 60 90 day GTM",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-11",
       "milestone": "M25",
       "requirement": "100 paying customer target",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-12",
       "milestone": "M25",
       "requirement": "sales pipeline enterprise wedge",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-13",
       "milestone": "M25",
       "requirement": "developer adoption",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-14",
       "milestone": "M25",
       "requirement": "metrics dashboard",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-15",
       "milestone": "M25",
       "requirement": "unit economics",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-16",
       "milestone": "M25",
       "requirement": "risks Qloo privacy regulatory",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-17",
       "milestone": "M25",
       "requirement": "ask use of funds",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-18",
       "milestone": "M25",
       "requirement": "hiring funded milestones",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-19",
       "milestone": "M25",
       "requirement": "pitch deck source",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-20",
       "milestone": "M25",
       "requirement": "one page brief",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-21",
       "milestone": "M25",
       "requirement": "investor memo",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-22",
       "milestone": "M25",
       "requirement": "demo link",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-23",
       "milestone": "M25",
       "requirement": "architecture brief",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-24",
       "milestone": "M25",
       "requirement": "technical diligence",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-25",
       "milestone": "M25",
       "requirement": "data room index",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-26",
       "milestone": "M25",
       "requirement": "FAQ",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-27",
       "milestone": "M25",
       "requirement": "founder narrative",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M25-28",
       "milestone": "M25",
       "requirement": "actual versus targets",
-      "implementation": null,
+      "implementation": "docs/fundraising; docs/company/pricing-research.md; scripts/build-investor-deck.mjs",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Draft 12-slide rendered/checked editable deck, company brief, investor memo, market/cost sensitivity, GTM, FAQ, data-room index; actual commercial metrics remain unmeasured"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
