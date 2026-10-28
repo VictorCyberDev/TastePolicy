@@ -809,3 +809,41 @@
     overflow: clip;
   }
 }
+
+.workspace-control {
+  margin-top: 5rem;
+  border-top: 1px solid var(--c-line);
+  padding-top: 3rem;
+}
+.company-control-forms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 2rem;
+  margin-block: 2rem;
+}
+.company-control-forms form {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+.company-control-forms label {
+  display: grid;
+  gap: 0.4rem;
+  overflow: clip;
+}
+.company-control-forms input,
+.company-control-forms select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--c-line);
+  padding: 0.8rem;
+  background: var(--c-panel);
+  color: inherit;
+  font: inherit;
+}
+.workspace-control li {
+  margin-block: 0.7rem;
+  overflow-wrap: anywhere;
+}

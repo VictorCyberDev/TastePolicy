@@ -24,6 +24,39 @@ export function platformRepository(c: PoolClient): PlatformRepository {
       ],
     );
   return {
+    credentialAgent: async (user, credentialId) => {
+      const q = await c.query(
+        "SELECT a.external_id,a.revoked_at FROM tastepolicy.credential_environments b JOIN tastepolicy.developer_agents a USING(agent_id) WHERE b.user_id=$1 AND b.credential_id=$2",
+        [user, credentialId],
+      );
+      return q.rows.length
+        ? { externalId: q.rows[0].external_id, revoked: !!q.rows[0].revoked_at }
+        : null;
+    },
+    agentCredentials: (user, externalId) =>
+      list(
+        "SELECT c.data FROM tastepolicy.developer_credentials c JOIN tastepolicy.credential_environments b USING(credential_id) JOIN tastepolicy.developer_agents a USING(agent_id) WHERE c.user_id=$1 AND a.external_id=$2",
+        [user, externalId],
+      ),
+    registeredAgent: async (user, id) => {
+      const r = await c.query(
+        "SELECT external_id FROM tastepolicy.developer_agents WHERE user_id=$1 AND agent_id=$2",
+        [user, id],
+      );
+      return r.rows.length ? { externalId: r.rows[0].external_id } : null;
+    },
+    revokeRegisteredAgent: (user, id, at) =>
+      write(
+        "UPDATE tastepolicy.developer_agents SET revoked_at=COALESCE(revoked_at,$3) WHERE user_id=$1 AND external_id=(SELECT external_id FROM tastepolicy.developer_agents WHERE user_id=$1 AND agent_id=$2)",
+        [user, id, at],
+      ),
+    agentRevoked: async (user, externalId) =>
+      !!(
+        await c.query(
+          "SELECT 1 FROM tastepolicy.developer_agents WHERE user_id=$1 AND external_id=$2 AND revoked_at IS NOT NULL LIMIT 1",
+          [user, externalId],
+        )
+      ).rows.length,
     sessionActive: async (u, id, now) =>
       !!(
         await c.query(

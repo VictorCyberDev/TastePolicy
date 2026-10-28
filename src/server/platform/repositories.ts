@@ -5,6 +5,17 @@ import type {
   PlatformEvaluation,
 } from "@/lib/platform/types";
 export interface PlatformRepository {
+  credentialAgent(
+    user: string,
+    credentialId: string,
+  ): Promise<{ externalId: string; revoked: boolean } | null>;
+  agentCredentials(user: string, externalId: string): Promise<Credential[]>;
+  registeredAgent(
+    user: string,
+    id: string,
+  ): Promise<{ externalId: string } | null>;
+  revokeRegisteredAgent(user: string, id: string, at: string): Promise<void>;
+  agentRevoked(user: string, externalId: string): Promise<boolean>;
   sessionActive(user: string, id: string, now: string): Promise<boolean>;
   user(id: string, lock?: boolean): Promise<boolean>;
   owned(user: string): Promise<PassportRecord | null>;

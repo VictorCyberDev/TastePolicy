@@ -1,0 +1,349 @@
+{
+  "exact_sha": "833fb722289911009431dd7d41237bb361a003c7",
+  "deployment": "dpl_7jdUcCNd4yoN3VG2dfK7FpFDRHE1",
+  "origin": "https://tastepolicy.vercel.app",
+  "main_ci": 40750769872,
+  "secret_scan": 40750770950,
+  "hosted_acceptance": 40752703012,
+  "registry_publication": 40752927856,
+  "auth_oauth_summary": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "live_probes": [
+    {
+      "kind": "LIVE_PRODUCTION",
+      "origin": "https://tastepolicy.vercel.app",
+      "at": "2026-10-28T19:16:43.516Z",
+      "results": [
+        {
+          "step": "resolve",
+          "status": "PASS",
+          "selected": [
+            {
+              "id": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+              "name": "Nils Frahm",
+              "type": "artist"
+            },
+            {
+              "id": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+              "name": "Perfect Days",
+              "type": "movie",
+              "releaseYear": 2023
+            },
+            {
+              "id": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+              "name": "Muji",
+              "type": "brand"
+            },
+            {
+              "id": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+              "name": "Piranesi",
+              "type": "book"
+            },
+            {
+              "id": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+              "name": "Severance",
+              "type": "tv_show",
+              "releaseYear": 2022
+            }
+          ]
+        },
+        {
+          "step": "discover",
+          "status": "PASS",
+          "provenance": {
+            "provider": "qloo",
+            "endpoint": "/v2/insights",
+            "host": "https://hackathon.api.qloo.com",
+            "fetchedAt": "2026-10-28T19:16:47.179Z",
+            "signalIds": [
+              "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+              "b30db61e-707c-421e-a1c4-1a912b7f067d",
+              "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+              "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+              "569f8294-72da-4935-b9f2-4fc697ab2a1e"
+            ],
+            "targetType": "place"
+          },
+          "candidates": [
+            {
+              "entity": {
+                "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+                "name": "HOUSE OF FINN JUHL HAKUBA",
+                "type": "place",
+                "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+              },
+              "score": 0.9233086745343598
+            },
+            {
+              "entity": {
+                "id": "b3963dac-8929-4c5e-9988-2793cf154837",
+                "name": "HOTEL CYCLE",
+                "type": "place",
+                "address": "5-11 Nishigoshocho Onomichi, Hiroshima 722-0037 Japan"
+              },
+              "score": 0.921948789731937
+            },
+            {
+              "entity": {
+                "id": "701b1c14-0d84-469d-aa79-178eada518e7",
+                "name": "Izuyasu",
+                "type": "place",
+                "address": "272 Sasayacho Shimogyo Ward, Kyoto, 600-8156 Japan"
+              },
+              "score": 0.9202351111044059
+            },
+            {
+              "entity": {
+                "id": "a5ee6950-1a25-4d9a-ba5e-4961ebdf8d7a",
+                "name": "Benesse House Beach",
+                "type": "place",
+                "address": "\u5bae\u30ce\u6d66 Naoshima, Kagawa District, Kagawa 761-3110 Japan"
+              },
+              "score": 0.9197370251837511
+            },
+            {
+              "entity": {
+                "id": "72cc0a8d-c41b-468f-9504-e506ac553462",
+                "name": "\u8fd1\u6c5f\u516b\u5e61\u307e\u3061\u3084\u5036\u697d\u90e8",
+                "type": "place",
+                "address": "Japan \u3012523-0862 Shiga, Omihachiman, Suwaicho, 21 \u307e\u3061\u3084\u5036\u697d\u90e8 1F"
+              },
+              "score": 0.919580890308093
+            },
+            {
+              "entity": {
+                "id": "ede6b7ab-a838-4a65-a962-8bd0128593e5",
+                "name": "My Spanishsteps Guest House Rome Italy",
+                "type": "place",
+                "address": "Via Gregoriana, 25 00187 Roma RM Italy"
+              },
+              "score": 0.9195617127491102
+            },
+            {
+              "entity": {
+                "id": "1eb47699-753d-4ea8-9b19-297da60e7ed6",
+                "name": "Shiretoko Villa Hotel Freeze",
+                "type": "place",
+                "address": "63-27 Toyosato Shari, Shari District, Hokkaido 099-4134 Japan"
+              },
+              "score": 0.9191538970341474
+            },
+            {
+              "entity": {
+                "id": "dc337db4-f408-497f-a391-40b6e4bb2f31",
+                "name": "\u30f4\u30a3\u30e9\u767d\u6d5c",
+                "type": "place",
+                "address": "Japan \u3012415-0012 Shizuoka, Shimoda, Shirahama, 2416-10"
+              },
+              "score": 0.918360621401574
+            }
+          ]
+        },
+        {
+          "step": "evaluate",
+          "status": "PASS",
+          "receipt": {
+            "receiptId": "9ac545d8-5980-4b59-aac6-71d2cb070205",
+            "schemaVersion": "cultural-receipt-v1",
+            "normalizationVersion": "affinity-explicit-scale-v1",
+            "policyVersion": "tastepolicy-v1-experimental",
+            "decision": {
+              "outcome": "ALLOW",
+              "reasonCode": "STRONG_ALIGNMENT"
+            },
+            "action": {
+              "kind": "SELECT_ENTITY",
+              "targetEntity": {
+                "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+                "name": "HOUSE OF FINN JUHL HAKUBA",
+                "type": "place",
+                "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+              },
+              "context": "Public production commissioning using reviewed public anchors"
+            },
+            "candidate": {
+              "id": "85fda07d-0245-4445-a495-7d53df8950fb",
+              "name": "HOUSE OF FINN JUHL HAKUBA",
+              "type": "place",
+              "address": "Japan \u3012399-9301 Nagano, Kitaazumi District, Hakuba, Hokujo, 3020-281"
+            },
+            "inputSignals": [
+              {
+                "id": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+                "name": "Nils Frahm",
+                "type": "artist"
+              },
+              {
+                "id": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+                "name": "Perfect Days",
+                "type": "movie",
+                "releaseYear": 2023
+              },
+              {
+                "id": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+                "name": "Muji",
+                "type": "brand"
+              },
+              {
+                "id": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+                "name": "Piranesi",
+                "type": "book"
+              },
+              {
+                "id": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+                "name": "Severance",
+                "type": "tv_show",
+                "releaseYear": 2022
+              }
+            ],
+            "alignmentScore": 0.9233086745343598,
+            "qlooEvidence": {
+              "rawAffinity": 0.9233086745343598,
+              "scale": "unit",
+              "provenance": {
+                "provider": "qloo",
+                "endpoint": "/v2/insights",
+                "host": "https://hackathon.api.qloo.com",
+                "fetchedAt": "2026-10-28T19:16:48.693Z",
+                "signalIds": [
+                  "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+                  "b30db61e-707c-421e-a1c4-1a912b7f067d",
+                  "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+                  "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+                  "569f8294-72da-4935-b9f2-4fc697ab2a1e"
+                ],
+                "targetType": "place",
+                "specificCandidateId": "85fda07d-0245-4445-a495-7d53df8950fb"
+              }
+            },
+            "explainability": {
+              "status": "complete",
+              "contributions": [
+                {
+                  "signalId": "b30db61e-707c-421e-a1c4-1a912b7f067d",
+                  "score": 0.24247254451055075
+                },
+                {
+                  "signalId": "e12201a5-cc50-40af-97ae-c54a2ca303f7",
+                  "score": 0.2316769078799444
+                },
+                {
+                  "signalId": "55908017-4cfd-4688-9a7e-7b1ff04b171d",
+                  "score": 0.19243708834488626
+                },
+                {
+                  "signalId": "0d8eafa4-ceea-44d5-8e1f-26a8a9f49a77",
+                  "score": 0.17690522839409517
+                },
+                {
+                  "signalId": "569f8294-72da-4935-b9f2-4fc697ab2a1e",
+                  "score": 0.15650823087052343
+                }
+              ],
+              "missingSignalIds": [],
+              "omittedSignalIds": [],
+              "omission": "none",
+              "issues": []
+            },
+            "policy": {
+              "allowAbove": 0.8,
+              "rejectBelow": 0.5,
+              "calibration": "provisional_not_live_calibrated"
+            },
+            "requestId": "12bfb059-c42e-4462-ab45-d2b901c2cf3e",
+            "evaluatedAt": "2026-10-28T19:16:48.694Z"
+          }
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "kind": "LIVE_PRODUCTION",
+      "origin": "https://tastepolicy.vercel.app",
+      "at": "2026-10-28T19:17:07.082Z",
+      "status": "PASS",
+      "rows": [
+        {
+          "name": "fresh signup and signin",
+          "status": "PASS",
+          "evidence": {
+            "signup": 200,
+            "signin": 200
+          }
+        },
+        {
+          "name": "real Qloo Passport enrollment",
+          "status": "PASS",
+          "evidence": {
+            "passportRef": "tp_22e26f623c2ca3fa38d0554ac9c436f1c9095129ea0651ff",
+            "stateVersion": 1
+          }
+        },
+        {
+          "name": "fresh developer credential",
+          "status": "PASS",
+          "evidence": {
+            "scopes": ["PASSPORT_READ", "RECEIPT_READ", "TASTE_EVALUATE"]
+          }
+        },
+        {
+          "name": "independent SDK passport read",
+          "status": "PASS",
+          "evidence": {
+            "schemaVersion": "taste-passport-v1",
+            "stateVersion": 1
+          }
+        },
+        {
+          "name": "independent SDK live cultural decision",
+          "status": "PASS",
+          "evidence": {
+            "evaluationRef": "tp_30b0e0f5248defc4e349e155054795b7d3625d4a3e9cb663",
+            "decision": "ALLOW",
+            "receiptRef": "tp_30b0e0f5248defc4e349e155054795b7d3625d4a3e9cb663",
+            "continuation": {
+              "schemaVersion": "taste-continuation-v1",
+              "permitted": ["recommend", "add_to_draft"],
+              "permittedActions": [
+                "SUGGEST",
+                "RANK",
+                "SHORTLIST",
+                "ADD_TO_DRAFT"
+              ],
+              "automaticRetry": false,
+              "authorityBoundary": "Cultural authorization only. No purchase, payment, booking, legal, account, communication, execution or physical-consent authority."
+            }
+          }
+        },
+        {
+          "name": "independent A2A live invocation",
+          "status": "PASS",
+          "evidence": {
+            "taskId": "tp_82ea620bbf2b3c2eb3925e5f03babc16973486728dad9078",
+            "decision": "ALLOW",
+            "evaluationRef": "tp_82ea620bbf2b3c2eb3925e5f03babc16973486728dad9078"
+          }
+        },
+        {
+          "name": "account export",
+          "status": "PASS",
+          "evidence": {
+            "exportId": "cf79f10c-5cb0-4cc3-8914-72f89a9a7518",
+            "semanticHash": "8eb02b37dac3ad4b4f332cf742fa41fde5dbf6aca4c566d996ef943b07471883"
+          }
+        },
+        {
+          "name": "disposable account deletion and credential invalidation",
+          "status": "PASS",
+          "evidence": {
+            "deleted": true,
+            "credentialHTTP": 401
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -120,3 +120,27 @@ Main `c8da03c766c05e7f7d15ed618ba542d20dab232c` Verify 40700068412 completed suc
 - Official MCP Registry publisher v1.8.6 accepted `server.json`. OIDC publication workflow waits for successful main push Verify and exact ready production revision. Registry registration is not yet claimed.
 - Gitleaks v8.30.1 source and full 128-commit history scans PASS. Generated build/dependency directories are excluded; only JWT findings in the public ephemeral-key conformance-vector file are exempted. Other secret rules still apply to that file. Added pinned/checksummed CI secret scanning. npm audit reported zero vulnerabilities; regenerated CycloneDX SBOM.
 - ChatGPT Google authentication stopped at a rejected password. Password values were never read into chat, logs or source. Secure browser handoff preserved. No connector, scan, invocation, directory submission or publisher verification is claimed. Independent work continues.
+
+### Company release and M12 production exit — PASS
+
+- PR #17 merged with expected-head protection at main `833fb722289911009431dd7d41237bb361a003c7` after exact-head Verify 40711555241, Secret scan 40711554869 and fresh preview Hosted acceptance 40711555197 all succeeded.
+- New main Verify 40750769872 and Secret scan 40750770950 completed success. Production deployment `dpl_7jdUcCNd4yoN3VG2dfK7FpFDRHE1` is READY, target production, canonical `https://tastepolicy.vercel.app`.
+- Outside-Vercel production Hosted acceptance 40752703012 passed: 12/12 auth/OAuth/discovery/verifier/credential checks including cleanup, a live Qloo resolve/discover/receipt probe, and 8/8 installed SDK/A2A/enrollment/export/deletion checks. Evidence: `m12-production-main-833fb72.json`.
+- Centralized origin validation, full migration-checksum readiness, company pages, guided onboarding, MCP Apps resource and packaged SDK now exist on canonical production. OpenAI challenge serving still returns 404 without the platform's exact token; no domain verification is inferred.
+- M12 PASS. This closes production identity/commissioning, not real ChatGPT/Claude use, paid billing or final company acceptance.
+
+### M18 official MCP Registry — PUBLISHED
+
+- GitHub OIDC publisher run 40752927856 succeeded for `io.github.VictorCyberDev/tastepolicy@0.2.0`.
+- Independently fetched the public registry API record and compared it exactly with `server.json`: official status `active`, latest=true, publishedAt `2026-10-28T19:17:22.275916Z`. Stable remote URL is `https://tastepolicy.vercel.app/api/mcp`.
+- Public evidence: `m18-mcp-registry-publication.json`. OpenAI and Claude directory states remain separate and unsubmitted. Official MCP registry publication does not establish approval by either assistant platform.
+
+### M15 / M20 / company material continuation
+
+- Local additive migration 0012 adds owner workspaces, projects, environments, agent registration, immutable credential/agent/environment bindings, separate live and internal-sandbox subscriptions, and simulated invoice events. No older migration changed.
+- A bound key cannot rename its agent for an evaluation or lease. Revoking a registered identifier atomically ends matching live leases, invalidates their proof status entries and revokes bound credentials. The identifier remains revoked across the owner's application environments. Existing unbound credentials retain their explicitly broader account scope.
+- Owner inspection includes actual captured decision counts, ASK rate, latest receipt, recorded lease states, active policy version and issued-proof counts. Counts do not establish current execution authority, provider reachability or customer traction.
+- Live plans remain Free. The internal billing simulator explicitly records no charge and no live entitlement change. This is not a commissioned payment-provider sandbox; metering/paid-provider/entitlement requirements remain open.
+- Focused ownership, replay, binding, revocation/proof invalidation, sandbox separation and deletion tests pass. Full local suite: 845 PASS / 26 real-PostgreSQL SKIP. Browser binaries were absent after the environment restart; exact-head CI remains the three-engine authority for this next change.
+- Updated pricing research, 665-package dependency/IP inventory, licensing/contributor policy, security operations/procurement notes and investor package are drafts pending release reconciliation. The twelve-slide editable deck was rendered and visually checked; a missing image in the first candidate was repaired. No traction, company incorporation, certification or commercial permission is invented.
+- Claude email sign-in advanced to the email-verification step. The secure code checkpoint remains pending; no secret code was read from Gmail or printed. ChatGPT sign-in is still incomplete. No real assistant tool invocation is claimed.

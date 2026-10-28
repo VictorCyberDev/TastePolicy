@@ -1,0 +1,77 @@
+{
+  "version": "2026-10-28",
+  "slides": [
+    {
+      "title": "TastePolicy",
+      "body": "Subjective Authority Infrastructure\nfor AI Agents",
+      "caption": "Your taste. Your rules. Any agent.",
+      "notes": "Independent founder project. Evidence and assumptions as of 2026-10-28. No investor or financing commitment is implied."
+    },
+    {
+      "title": "The preference boundary",
+      "body": "An agent can remember what you like\nand still choose beyond your rules.",
+      "caption": "A recommendation needs context, a permitted action ceiling and a way to pause.",
+      "notes": "Buyer hypothesis: travel/concierge agent teams that already propose places. IAM/tool permission and preference authority answer different questions."
+    },
+    {
+      "title": "Why now",
+      "body": "Conversational apps create a distribution path\nfor user-controlled authority.",
+      "caption": "MCP apps and public directories exist. Agent adoption remains early.",
+      "notes": "Sources: https://openai.com/index/introducing-apps-in-chatgpt/ and https://help.openai.com/en/articles/6825453-chatgpt-release-notes. https://hai.stanford.edu/ai-index/2026-ai-index-report/economy reports 88% organizational AI use but agent deployment in single digits across nearly all business functions. Platform availability is not TastePolicy adoption."
+    },
+    {
+      "title": "Qloo and TastePolicy",
+      "body": "Qloo supplies cultural evidence.\nTastePolicy applies explicit user boundaries.",
+      "caption": "ALLOW   ASK   REJECT   UNAVAILABLE",
+      "notes": "Qloo affinity is not authorization. Qloo owns the cultural graph. Written commercial/output rights and pricing are pending the official sales inquiry. See docs/company/qloo-commercial-and-data.md."
+    },
+    {
+      "title": "Product and developer path",
+      "body": "Reviewed taste \u2192 private Passport \u2192 credential\n\u2192 decision \u2192 receipt \u2192 bounded lease/proof",
+      "caption": "REST, remote MCP and A2A share the authority services.",
+      "notes": "Current production evidence proves fresh enrollment, SDK/A2A, export and deletion. New guided onboarding is in release verification. Organization/project/environment and billing paths remain unfinished. Verification is not authorization. Payment/booking/legal authority stays separate."
+    },
+    {
+      "title": "Engineering evidence",
+      "body": "Production OAuth and real Qloo receipts\nIndependent SDK and A2A acceptance",
+      "caption": "Canonical origin: tastepolicy.vercel.app",
+      "notes": "Canonical merged main c8da03c766c05e7f7d15ed618ba542d20dab232c, production dpl_CTk3Vr9drAKM87SM3EDJ1YNXCqQa. Hosted auth/OAuth10/10, independent SDK/A2A/export/deletion8/8. New company/MCP app PR17 exact head a94ee7790688e61eb6a9f4374fbafc2792ca0ea8 is not yet merged at deck preparation. No actual ChatGPT/Claude use, directory approval or npm publication established."
+    },
+    {
+      "title": "Evaluation has exposed gaps",
+      "body": "94 / 160 exact agreement\n33 / 67 missed ASK",
+      "caption": "Ten operator-asserted people. 180 repeated judgments.",
+      "notes": "Source docs/evaluation/wg-c-human-pilot-report.md. Unsafe autonomy14/150, incorrect REJECT2/10, UNAVAILABLE agreement9/32.20/180 unscorable. These are synthetic-scenario judgments, not execution harms. No population safety or competitive-win claim. Current TasteBench24engineering cases do not establish a moat."
+    },
+    {
+      "title": "First buyer and test price",
+      "body": "Travel and concierge agent teams\nOne candidate flow before separate execution",
+      "caption": "Free developer usage. Pro USD49/month is an experiment.",
+      "notes": "Sources: https://www.cerbos.dev/pricing developer25/month production933/month; https://www.osohq.com/pricing Growth15/user/month; https://authzed.com/pricing cloud2/hour. Units differ. Qloo commercial cost is unknown. No working checkout or paid entitlement is claimed."
+    },
+    {
+      "title": "Market scenario",
+      "body": "100 paying workspaces at USD49/month\nwould produce USD58,800 annualized revenue.",
+      "caption": "Target, not traction. Jobs-to-team model remains unvalidated.",
+      "notes": "Source BLS https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm 1693800USdeveloperjobs2024. Assume10developers/team=169380team-equivalents. At588annualworkspaceprice broadproxy99.60m, relevance10%=9.96m. Jobs are not buyer companies. No measured TAM or contracted pipeline. See market-and-economics.json."
+    },
+    {
+      "title": "Route to paid adoption",
+      "body": "30 days: qualified interviews and design partners\n60 days: scoped pilots and first price tests\n90 days: retention evidence and ten paid targets",
+      "caption": "100 paid customers follows validated cohorts.",
+      "notes": "All targets. At20%trial-to-paid need500qualifiedtrials; at30%signup-to-trial need1667signups; at5%visitor-to-signup need33340qualifiedvisitors. No actual conversion, customer or revenue metrics claimed. No outreach sent from this package."
+    },
+    {
+      "title": "Defensibility and risk",
+      "body": "Inspectable authority, revocation and commitments\nUseful integrations and legitimate evaluation data",
+      "caption": "Qloo rights, buyer demand and held-out performance remain critical.",
+      "notes": "Prompt/memory, Qloo recommendation, deterministic rules and operational authorization vendors are alternatives. No apples-to-apples competitive result exists. Apache source remains open. No patents, exclusive rights, compliance certifications or proprietary dataset monopoly claimed. See licensing-and-ip.md and security/operations.md."
+    },
+    {
+      "title": "Funding scenario",
+      "body": "USD500,000 over 18 months\nUSD50,000 contingency reserve",
+      "caption": "Draft planning ask. Founder and legal decisions remain open.",
+      "notes": "Budget hypothesis:275kproduct/engineering,75kprovider/infrastructure/reliability,50ksecurity/legal/privacy,50kdiscovery/distribution,50kreserve.450k/18=25kmonthlyoperatingbudget. No salaries/vendorquotes approved. Milestones: commercialQloocontract, multitenant/onboarding/billingsandbox, realassistants/listings, recovery/monitoring, heldoutevaluation, firstpaidcohort. No financingterms/corporateentity/captable invented."
+    }
+  ]
+}

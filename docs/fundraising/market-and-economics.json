@@ -1,0 +1,81 @@
+{
+  "version": "2026-10-28",
+  "classification": "HYPOTHETICAL_PLANNING_MODEL_NOT_TRACTION",
+  "sources": [
+    {
+      "url": "https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm",
+      "value": 1693800,
+      "unit": "US software developer jobs, 2024",
+      "limitation": "jobs are not buyer companies"
+    }
+  ],
+  "assumptions": {
+    "developers_per_team": 10,
+    "relevant_team_fraction": 0.1,
+    "pro_usd_per_month": 49,
+    "paying_customer_target": 100,
+    "provider_calls_per_decision": 2,
+    "decisions_per_month": 1000,
+    "funding_usd": 500000,
+    "runway_months": 18,
+    "reserve_usd": 50000
+  },
+  "actual_metrics": {
+    "paying_customers": null,
+    "mrr_usd": null,
+    "contracted_pipeline_usd": null,
+    "qloo_commercial_price_per_call": null,
+    "gross_margin": null,
+    "cac": null,
+    "ltv": null,
+    "retention": null
+  },
+  "scenarios": [
+    {
+      "developers_per_team": 5,
+      "broad_team_equivalents": 338760.0,
+      "annual_subscription_proxy_usd": 199190880.0,
+      "serviceable_at_10pct_usd": 19919088.0,
+      "warning": "scenario, not measured TAM/SAM"
+    },
+    {
+      "developers_per_team": 10,
+      "broad_team_equivalents": 169380.0,
+      "annual_subscription_proxy_usd": 99595440.0,
+      "serviceable_at_10pct_usd": 9959544.0,
+      "warning": "scenario, not measured TAM/SAM"
+    },
+    {
+      "developers_per_team": 20,
+      "broad_team_equivalents": 84690.0,
+      "annual_subscription_proxy_usd": 49797720.0,
+      "serviceable_at_10pct_usd": 4979772.0,
+      "warning": "scenario, not measured TAM/SAM"
+    }
+  ],
+  "target_arr_usd": 58800,
+  "provider_cost_sensitivity": [
+    {
+      "assumed_cost_per_call_usd": 0.001,
+      "provider_cost_usd": 2.0,
+      "remaining_before_hosting_support_fees_usd": 47.0
+    },
+    {
+      "assumed_cost_per_call_usd": 0.01,
+      "provider_cost_usd": 20.0,
+      "remaining_before_hosting_support_fees_usd": 29.0
+    },
+    {
+      "assumed_cost_per_call_usd": 0.05,
+      "provider_cost_usd": 100.0,
+      "remaining_before_hosting_support_fees_usd": -51.0
+    }
+  ],
+  "budget_usd": {
+    "product_engineering": 275000,
+    "provider_infrastructure_reliability": 75000,
+    "security_legal_privacy": 50000,
+    "discovery_distribution": 50000,
+    "contingency": 50000
+  }
+}
