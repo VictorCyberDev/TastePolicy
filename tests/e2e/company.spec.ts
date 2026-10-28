@@ -33,7 +33,9 @@ for (const [label, width, height] of [
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     for (const route of routes) {
-      await page.goto(route);
+      // Settle speculative RSC fetches before replacing the document. WebKit
+      // reports canceled prefetches as access-control page errors on rapid goto.
+      await page.goto(route, { waitUntil: "networkidle" });
       await expect(page.locator("main h1")).toHaveCount(1);
       await expect(page.locator("main h1")).toBeVisible();
       expect(
@@ -187,4 +189,27 @@ test("new developer can review identities, enroll and issue a credential without
     page.getByText("SYNTHETIC_CREDENTIAL_DO_NOT_USE", { exact: true }),
   ).toHaveCount(0);
   expect(enrolled && issued).toBe(true);
+});
+
+test("company navigation uses the client router without runtime errors", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/", { waitUntil: "networkidle" });
+  for (const [name, pathname] of [
+    ["Product", "/product"],
+    ["Developers", "/developers"],
+    ["Pricing", "/pricing"],
+    ["Trust", "/trust"],
+  ]) {
+    await page
+      .getByRole("navigation", { name: "Company", exact: true })
+      .getByRole("link", { name, exact: true })
+      .click();
+    await expect(page).toHaveURL(new RegExp(pathname + "$"));
+    await expect(page.locator("main h1")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+  }
+  expect(errors).toEqual([]);
 });
