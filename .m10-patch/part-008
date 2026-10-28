@@ -1,0 +1,35 @@
+modern, {})).toThrow();
+-  // half-formed fingerprints do not downgrade a lease to legacy
+-  const half = {
++  // Half-formed fingerprints are corrupt: neither variant may downgrade to legacy.
++  const candidateOnly = {
+     state: { fingerprint: { candidateCommitment: "c" } },
+   } as unknown as LeaseRecord;
+-  expect(isCommitmentAware(half)).toBe(false);
++  const contextOnly = {
++    state: { fingerprint: { contextCommitment: "x" } },
++  } as unknown as LeaseRecord;
++  expect(() => isCommitmentAware(candidateOnly)).toThrow();
++  expect(() => isCommitmentAware(contextOnly)).toThrow();
++  expect(() => requirePortableProofAuthority(legacy)).toThrowError(
++    "LEGACY_AUTHORITY_NOT_PORTABLE",
++  );
++  expect(() => requirePortableProofAuthority(modern)).not.toThrow();
++  expect(() => requirePortableProofAuthority(candidateOnly)).toThrowError(
++    "INTEGRITY_ERROR",
++  );
+ });
+ it("14. an ended lease reports its status without demanding a presentation; omission never turns a dead lease valid", async () => {
+   const w = await world(),
+diff --git a/tests/mcp.test.ts b/tests/mcp.test.ts
+index 4e28b70..b344fd3 100644
+--- a/tests/mcp.test.ts
++++ b/tests/mcp.test.ts
+@@ -87,6 +87,33 @@ for (const mode of ["auto", "legacy"] as const)
+       readOnlyHint: false,
+       destructiveHint: false,
+       idempotentHint: true,
++      openWorldHint: true,
++    });
++    expect(
++      tools.tools

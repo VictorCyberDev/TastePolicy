@@ -1,0 +1,31 @@
+T_PORTABLE"
+       | "CLARIFICATION_REQUIRED"
+       | "COMMITMENT_MISMATCH"
+       | "COMMITMENT_REQUIRED"
+diff --git a/src/server/platform/attest-service.ts b/src/server/platform/attest-service.ts
+index 6253c95..3651a25 100644
+--- a/src/server/platform/attest-service.ts
++++ b/src/server/platform/attest-service.ts
+@@ -1,6 +1,10 @@
+ import "server-only";
+ import { importJWK, type JWK } from "jose";
+-import { LeaseService, legacyWords } from "./lease-service";
++import {
++  LeaseService,
++  legacyWords,
++  requirePortableProofAuthority,
++} from "./lease-service";
+ import { attestationConfig, type AttestationConfig } from "./attest-config";
+ import { leaseRef as parseLeaseRef } from "./lease-service";
+ import { platformFail as fail, type Principal } from "@/lib/platform/types";
+@@ -150,6 +154,10 @@ export class AttestationService extends LeaseService {
+         fail("RATE_LIMITED");
+       const l = await this.settle(r, l0);
+       if (l.state.status !== "ACTIVE") fail("LEASE_STATE_CONFLICT");
++      // Portable authority proofs require modern candidate + context binding.
++      // A genuine legacy lease may still be inspected/released, but cannot be
++      // upgraded into a proof that falsely appears choice/context-bound.
++      requirePortableProofAuthority(l);
+       const passport = await r.platform.passport(l.passportRef);
+       if (!passport) fail("PASSPORT_NOT_FOUND");
+  

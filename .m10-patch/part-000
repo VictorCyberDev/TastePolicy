@@ -1,0 +1,49 @@
+diff --git a/src/app/globals.css b/src/app/globals.css
+index cb6968e..34a2203 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -807,3 +807,19 @@ footer > p {
+   min-height: 44px;
+   margin-block: 0.5rem;
+ }
++
++/* Stable first keyboard target across server-rendered and hydrated pages. */
++.skip-link {
++  position: fixed;
++  inset: 0.75rem auto auto 0.75rem;
++  z-index: 10000;
++  transform: translateY(-200%);
++  padding: 0.65rem 0.9rem;
++  border: 1px solid var(--line);
++  border-radius: 0.5rem;
++  background: var(--surface);
++  color: var(--foreground);
++}
++.skip-link:focus {
++  transform: translateY(0);
++}
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 9e3be68..c24dfc7 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -13,7 +13,14 @@ export default function RootLayout({
+ }: Readonly<{ children: React.ReactNode }>) {
+   return (
+     <html lang="en">
+-      <body>{children}</body>
++      <body>
++        <a className="skip-link" href="#main-content">
++          Skip to main content
++        </a>
++        <div id="main-content" tabIndex={-1}>
++          {children}
++        </div>
++      </body>
+     </html>
+   );
+ }
+diff --git a/src/features/platform/ConnectedAgents.tsx b/src/features/platform/ConnectedAgents.tsx
+index 471cf9c..48b45a3 100644
+--- a/src/features/platform/ConnectedAgents.tsx
++++ b/src/features/platform/ConnectedAgents.tsx
+@@ -49,9 

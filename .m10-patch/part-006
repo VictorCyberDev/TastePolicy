@@ -1,0 +1,34 @@
+if (candidate !== context) fail("INTEGRITY_ERROR");
++  return candidate && context;
++};
++export function requirePortableProofAuthority(l: LeaseRecord) {
++  if (!isCommitmentAware(l)) fail("LEGACY_AUTHORITY_NOT_PORTABLE");
++}
+ export function requirePresented(l: LeaseRecord, presented: Presented) {
+   if (!isCommitmentAware(l)) return;
+   const missing: ("candidate" | "context")[] = [];
+@@ -202,6 +208,9 @@ export class LeaseService extends PolicyService {
+       await this.settle(r, l);
+   }
+   private async checked(r: Repositories, l: LeaseRecord) {
++    // A one-sided commitment fingerprint is neither a valid modern lease nor a
++    // legacy lease. Reject it before any status, drift, or proof path can use it.
++    isCommitmentAware(l);
+     let stored;
+     try {
+       stored = replay(await r.leases.events(l.leaseRef));
+diff --git a/src/server/platform/mcp.ts b/src/server/platform/mcp.ts
+index c10bc82..63444bc 100644
+--- a/src/server/platform/mcp.ts
++++ b/src/server/platform/mcp.ts
+@@ -32,6 +32,19 @@ export function allowedOriginHostnames(request: Request) {
+     .filter(Boolean);
+   return [own, "localhost", "127.0.0.1", ...extra];
+ }
++
++function annotationsFor(tool: (typeof PLATFORM_TOOLS)[number]) {
++  const destructive = tool.op === "lease-release";
++  const openWorld = tool.op === "evaluate" || tool.op === "attestation-verify";
++  return {
++    title: tool.title,
++    r

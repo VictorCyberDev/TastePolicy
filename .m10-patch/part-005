@@ -1,0 +1,35 @@
+Case();
++  const directLocal =
++    process.env.NODE_ENV === "test" ||
++    host === "localhost" ||
++    host === "127.0.0.1" ||
++    host === "::1";
++  return new Pool({
+     connectionString,
+     max: 3,
+     connectionTimeoutMillis: 5000,
+     statement_timeout: 5000,
++    ...(directLocal ? { options: "-c search_path=tastepolicy,public" } : {}),
+   });
+-  pool.on("connect", (client) => {
+-    void client.query("SET search_path=tastepolicy");
+-  });
+-  return pool;
+ }
+ 
+ let authentication: ReturnType<typeof createAuthentication> | undefined;
+diff --git a/src/server/platform/lease-service.ts b/src/server/platform/lease-service.ts
+index 6674587..99c4704 100644
+--- a/src/server/platform/lease-service.ts
++++ b/src/server/platform/lease-service.ts
+@@ -67,9 +67,15 @@ function presentedOf(v: Record<string, unknown>): Presented {
+ // candidate and one situation. Relying on it means saying what they are now:
+ // leaving that out must never read as "unchanged". Legacy leases carry no
+ // commitments (explicit version detection), so they keep the old behaviour.
+-export const isCommitmentAware = (l: LeaseRecord) =>
+-  !!l.state.fingerprint.candidateCommitment &&
+-  !!l.state.fingerprint.contextCommitment;
++export const isCommitmentAware = (l: LeaseRecord) => {
++  const candidate = !!l.state.fingerprint.candidateCommitment;
++  const context = !!l.state.fingerprint.contextCommitment;
++  

@@ -1,0 +1,47 @@
+tart;
+ }
++
++.subjects-panel :is(label, legend) {
++  min-width: 0;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++}
++.subjects-panel .check {
++  min-width: 0;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++}
++.subjects-panel .check > input {
++  flex: 0 0 auto;
++}
++.subjects-panel select {
++  text-overflow: ellipsis;
++}
+ .subjects-panel :is(input:not([type="checkbox"]), select) {
+   width: 100%;
+   min-width: 0;
+diff --git a/src/lib/platform/errors.ts b/src/lib/platform/errors.ts
+index da7e739..9363684 100644
+--- a/src/lib/platform/errors.ts
++++ b/src/lib/platform/errors.ts
+@@ -51,6 +51,11 @@ export const ERROR_CATALOG: Record<string, ErrorSpec> = {
+     "No such lease is available to this caller.",
+   ),
+   LEASE_NOT_PERMITTED: spec(403, false, "This decision cannot be leased."),
++  LEGACY_AUTHORITY_NOT_PORTABLE: spec(
++    409,
++    false,
++    "Legacy authority without candidate and context commitments cannot be issued as a portable proof. Evaluate the current choice again.",
++  ),
+   CLARIFICATION_REQUIRED: spec(
+     409,
+     false,
+diff --git a/src/lib/platform/types.ts b/src/lib/platform/types.ts
+index 058318b..204a322 100644
+--- a/src/lib/platform/types.ts
++++ b/src/lib/platform/types.ts
+@@ -93,6 +93,7 @@ export class PlatformFailure extends Error {
+       | "PROVIDER_UNAVAILABLE"
+       | "LEASE_NOT_FOUND"
+       | "LEASE_NOT_PERMITTED"
++      | "LEGACY_AUTHORITY_NO
