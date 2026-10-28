@@ -45,7 +45,7 @@ async function arrange(page: Page, score = 0.7) {
   await page.route("**/api/demo/evaluate", (r) =>
     r.fulfill({ json: { status: "available", data: syntheticReceipt(score) } }),
   );
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)
@@ -123,7 +123,7 @@ test("synthetic provider failure remains unavailable without a receipt or reject
 test("keyboard validation is associated and loading describes each real request", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/demo");
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to working demo" }),
@@ -239,7 +239,7 @@ test("synthetic mobile decision precedes inputs and long evidence stays bounded"
 test("synthetic invalid request and internal failure use separate safe states", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page.route("**/api/demo/resolve", (r) =>
     r.fulfill({
@@ -275,7 +275,7 @@ test("synthetic invalid request and internal failure use separate safe states", 
 test("light/dark controls have labels, visible focus and AA text tokens", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/demo");
   for (const scheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme: scheme });
     const audit = await page.evaluate(() => {
@@ -339,7 +339,7 @@ test("Judge Mode is a preset, not automatic resolution or authorization", async 
   page.on("request", (r) => {
     if (r.url().includes("/api/demo/")) providerRequests.push(r.url());
   });
-  await page.goto("/");
+  await page.goto("/demo");
   await page
     .getByLabel("Signal 1 name", { exact: true })
     .fill("Custom concept");

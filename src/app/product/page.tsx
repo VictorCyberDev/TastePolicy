@@ -1,3 +1,4 @@
+import CompanyShell from "@/features/company/CompanyShell";
 import type { Metadata } from "next";
 import Product from "@/features/policy/Product";
 export const metadata: Metadata = {
@@ -6,5 +7,9 @@ export const metadata: Metadata = {
     "The subjective authority layer for AI agents: Qloo gives agents taste; TastePolicy gives that taste authority boundaries.",
 };
 export default function Page() {
-  return <Product />;
+  return (
+    <CompanyShell>
+      <Product />
+    </CompanyShell>
+  );
 }

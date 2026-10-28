@@ -1,0 +1,55 @@
+name: Publish official MCP registry
+on:
+  workflow_run:
+    workflows: [Hosted acceptance]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: mcp-registry-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'workflow_run' && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Require exact verified revision on canonical production
+        env:
+          EXPECTED_REVISION: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          python3 - <<'PYTHON'
+          import os, time, urllib.request, json
+          origin = 'https://tastepolicy.vercel.app'
+          for attempt in range(60):
+              try:
+                  with urllib.request.urlopen(origin + '/api/health', timeout=15) as r:
+                      revision = r.headers.get('X-TastePolicy-Revision')
+                  with urllib.request.urlopen(origin + '/api/ready', timeout=15) as r:
+                      ready = json.load(r)['status'] == 'ready'
+                  if revision == os.environ['EXPECTED_REVISION'] and ready:
+                      break
+              except Exception:
+                  pass
+              time.sleep(10)
+          else:
+              raise SystemExit('Canonical production did not expose this verified revision ready; no publication.')
+          PYTHON
+      - name: Download pinned publisher and verify checksum
+        run: |
+          curl --fail --location --silent --show-error --output /tmp/mcp-publisher.tar.gz https://github.com/modelcontextprotocol/registry/releases/download/v1.8.6/mcp-publisher_linux_amd64.tar.gz
+          echo '1fbe93fc0783c2394d8012c8d6e50a59e98cb2cc2d216264cc69f405d0e21340  /tmp/mcp-publisher.tar.gz' | sha256sum --check
+          tar xzf /tmp/mcp-publisher.tar.gz -C /tmp mcp-publisher
+      - name: Validate listing
+        run: /tmp/mcp-publisher validate server.json
+      - name: Authenticate with GitHub OIDC
+        run: /tmp/mcp-publisher login github-oidc
+      - name: Publish remote server
+        run: /tmp/mcp-publisher publish server.json

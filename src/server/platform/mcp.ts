@@ -1,4 +1,12 @@
 import "server-only";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import {
+  registerAppResource,
+  registerAppTool,
+  RESOURCE_MIME_TYPE,
+} from "@modelcontextprotocol/ext-apps/server";
+import { outputFor } from "./mcp-output";
 import {
   createMcpHandler,
   McpServer,
@@ -18,7 +26,18 @@ import { SubjectFailure } from "@/lib/subjects/types";
 import { publicOrigin } from "./origin";
 import { BodyReadFailure, readJsonBody } from "@/server/taste/read-body";
 
-const OUTPUT = z.looseObject({});
+const AUTHORITY_UI = "ui://tastepolicy/authority-card.html";
+const UI_OPS = new Set([
+  "evaluate",
+  "receipt",
+  "lease",
+  "lease-verify",
+  "lease-checkpoint",
+  "lease-resume",
+  "lease-release",
+  "attestation",
+  "attestation-verify",
+]);
 const NO_STORE = { "Cache-Control": "no-store" };
 
 export function mcpResourceMetadataUrl(request: Request) {
@@ -34,7 +53,13 @@ export function allowedOriginHostnames(request: Request) {
 }
 
 function annotationsFor(tool: (typeof PLATFORM_TOOLS)[number]) {
-  const destructive = tool.op === "lease-release";
+  const destructive = [
+    "lease-verify",
+    "lease-checkpoint",
+    "lease-resume",
+    "lease-release",
+    "attestation",
+  ].includes(tool.op);
   const openWorld = tool.op === "evaluate" || tool.op === "attestation-verify";
   return {
     title: tool.title,
@@ -64,20 +89,29 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
     },
   );
   for (const tool of PLATFORM_TOOLS)
-    s.registerTool(
+    registerAppTool(
+      s,
       tool.name,
       {
         title: tool.title,
         description: tool.description,
         inputSchema: tool.input as z.ZodObject,
-        outputSchema: OUTPUT,
+        outputSchema: outputFor(tool.op),
+        _meta: UI_OPS.has(tool.op) ? { ui: { resourceUri: AUTHORITY_UI } } : {},
         annotations: annotationsFor(tool),
       },
       async (args: unknown) => {
         try {
           const data = await gatewayInvoke(deps, p, tool, args, requestId);
           return {
-            content: [{ type: "text" as const, text: JSON.stringify(data) }],
+            content: [
+              {
+                type: "text" as const,
+                text:
+                  "TastePolicy cultural preference authority only. Verification is not authorization.\n" +
+                  JSON.stringify(data),
+              },
+            ],
             structuredContent: data as Record<string, unknown>,
           };
         } catch (e) {
@@ -100,6 +134,40 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
         }
       },
     );
+  registerAppResource(
+    s,
+    "TastePolicy Authority Card",
+    AUTHORITY_UI,
+    {
+      mimeType: RESOURCE_MIME_TYPE,
+      description:
+        "Inspect the requested choice, cultural evidence, policy boundary, receipt, lease and proof. This interface cannot approve an ASK or grant execution authority.",
+      _meta: {
+        ui: {
+          csp: { connectDomains: [], resourceDomains: [] },
+          prefersBorder: true,
+        },
+      },
+    },
+    async () => ({
+      contents: [
+        {
+          uri: AUTHORITY_UI,
+          mimeType: RESOURCE_MIME_TYPE,
+          text: await readFile(
+            join(process.cwd(), "public", "mcp", "authority-app.html"),
+            "utf8",
+          ),
+          _meta: {
+            ui: {
+              csp: { connectDomains: [], resourceDomains: [] },
+              prefersBorder: true,
+            },
+          },
+        },
+      ],
+    }),
+  );
   return s;
 }
 export async function handleMcp(

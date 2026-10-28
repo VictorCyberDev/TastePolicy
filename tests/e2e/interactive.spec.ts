@@ -171,7 +171,7 @@ async function flow(
     if (op === "replay-repair") data = repair;
     return r.fulfill({ json: { status: "available", data } });
   });
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)

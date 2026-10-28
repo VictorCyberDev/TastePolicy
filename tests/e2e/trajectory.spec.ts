@@ -226,7 +226,7 @@ async function browserFixture(page: Page, outcome = "ALLOW") {
       },
     });
   });
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page
     .getByRole("button", { name: "Start / resume demo profile" })

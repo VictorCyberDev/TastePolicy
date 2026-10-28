@@ -70,7 +70,7 @@ test("test-only browser responses exercise the complete decision UI", async ({
       },
     }),
   );
-  await page.goto("/");
+  await page.goto("/demo");
   await labelSynthetic(page);
   await page.getByRole("button", { name: "Resolve with Qloo" }).click();
   for (let i = 0; i < 5; i++)

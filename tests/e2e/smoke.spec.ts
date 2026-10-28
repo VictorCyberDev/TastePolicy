@@ -5,7 +5,7 @@ test("real runtime fails safely without Qloo credentials", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
+  await page.goto("/demo");
   await expect(
     page.getByRole("heading", { name: "TastePolicy", exact: true }),
   ).toBeVisible();

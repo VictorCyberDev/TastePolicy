@@ -1,0 +1,74 @@
+name: Hosted acceptance
+on:
+  pull_request:
+    branches: [main]
+  workflow_run:
+    workflows: [Verify]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: hosted-${{ github.event.pull_request.number || 'production' }}
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'm10-m26-company-build') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASE_URL: ${{ github.event_name == 'pull_request' && 'https://tastepolicy-git-m10-m26-company-build-start-up16.vercel.app' || 'https://tastepolicy.vercel.app' }}
+      EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_REVISION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Wait for exact ready hosted revision
+        run: |
+          python3 - <<'PYTHON'
+          import os, time, urllib.request, json
+          origin = os.environ['BASE_URL']
+          for attempt in range(36):
+              try:
+                  with urllib.request.urlopen(origin + '/api/health', timeout=15) as r:
+                      revision = r.headers.get('X-TastePolicy-Revision')
+                  with urllib.request.urlopen(origin + '/api/ready', timeout=15) as r:
+                      ready = json.load(r)['status'] == 'ready'
+                  if revision == os.environ['EXPECTED_REVISION'] and ready:
+                      break
+              except Exception:
+                  pass
+              time.sleep(10)
+          else:
+              raise SystemExit('Exact hosted revision was not ready; no acceptance PASS.')
+          PYTHON
+      - run: npm ci
+      - name: Package and install SDK as an outside consumer
+        run: |
+          mkdir -p .work-evidence/sdk-consumer
+          npm run sdk:build
+          npm pack ./packages/sdk --ignore-scripts --pack-destination .work-evidence
+          npm install --prefix .work-evidence/sdk-consumer --ignore-scripts --no-audit --no-fund ./.work-evidence/victorcyberdev-tastepolicy-sdk-0.2.0.tgz
+      - name: Fresh hosted auth, OAuth, credential and verifier acceptance
+        run: node scripts/acceptance/hosted-acceptance.mjs | tee .work-evidence/hosted.log
+      - name: Live Qloo public anchors and receipt
+        env:
+          EVIDENCE_FILE: .work-evidence/production-qloo.json
+        run: node scripts/acceptance/production-qloo.mjs
+      - name: Installed SDK, A2A, export, deletion and post-deletion credentials
+        env:
+          SDK_ENTRY: ../../.work-evidence/sdk-consumer/node_modules/@victorcyberdev/tastepolicy-sdk/dist/sdk/index.js
+        run: node scripts/acceptance/production-authority.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hosted-evidence-${{ env.EXPECTED_REVISION }}
+          path: |
+            .work-evidence/hosted.log
+            .work-evidence/production-qloo.json
+            .work-evidence/production-authority.json
+          retention-days: 30

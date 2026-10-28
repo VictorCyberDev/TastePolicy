@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/api/mcp": ["./public/mcp/authority-app.html"],
+  },
   turbopack: {
     rules: { "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" } },
   },

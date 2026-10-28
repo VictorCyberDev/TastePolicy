@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Home from "@/app/page";
+import EngineeringDemo from "@/app/demo/page";
 import { GET } from "@/app/api/health/route";
 import { validateEnvironment } from "@/lib/env/schema";
 import { normalizeError } from "@/lib/errors/normalize";
@@ -44,8 +45,23 @@ describe("Phase 0 foundation", () => {
       requestId: "id",
     });
   });
-  it("renders an honest homepage", () => {
+  it("renders the company boundary with an explicitly illustrative card", () => {
     render(<Home />);
+    expect(
+      screen.getByRole("heading", { name: /Knowing your taste.*permission/ }),
+    ).toBeVisible();
+    expect(
+      screen.getByText("Interactive example · no live decision"),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: /See Qloo in action/ }),
+    ).toHaveAttribute("href", "/arena/consumer");
+    expect(
+      screen.getByText(/Live ChatGPT and Claude commissioning is pending/),
+    ).toBeVisible();
+  });
+  it("preserves the full engineering demo on its dedicated route", () => {
+    render(<EngineeringDemo />);
     expect(screen.getByRole("heading", { name: "TastePolicy" })).toBeVisible();
     expect(
       screen.getByText("Milestone 2 — Versioned cultural policy"),

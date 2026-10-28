@@ -1,0 +1,13 @@
+title = "TastePolicy secret scanning"
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated outputs and downloaded dependencies are not source"
+paths = ['''(^|/)(node_modules|\.next|\.work-evidence|test-results|playwright-report|coverage)/''', '''^packages/sdk/dist/''']
+
+[[allowlists]]
+description = "Public conformance JWTs are signed by ephemeral test-only keys, with reserved .test issuers; they are not access tokens"
+targetRules = ["jwt"]
+paths = ['''^conformance/attestation-vectors-v1\.json$''']
+regexes = ['''^eyJ[A-Za-z0-9_.-]+$''']

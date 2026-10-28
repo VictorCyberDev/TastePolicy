@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "node scripts/migrate.mjs --if-enabled && next build",
+    "vercel-build": "npm run mcp:app:build && node scripts/migrate.mjs --if-enabled && next build",
     "db:migrate:all": "node scripts/migrate.mjs",
     "db:migrate:status": "node scripts/migrate.mjs --status",
     "start": "next start",
@@ -42,9 +42,13 @@
     "tastebench:report": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts report",
     "tastebench:export": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts export",
     "tastebench:annotations": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts import-annotations",
-    "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration"
+    "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration",
+    "mcp:app:build": "node scripts/build-authority-app.mjs",
+    "prebuild": "npm run mcp:app:build",
+    "sdk:build": "node scripts/build-sdk.mjs"
   },
   "dependencies": {
+    "@modelcontextprotocol/ext-apps": "2.0.4",
     "@modelcontextprotocol/server": "2.4.0",
     "better-auth": "1.7.10",
     "jose": "6.2.13",
@@ -71,6 +75,7 @@
     "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "0.25.12",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.4.2",
     "eslint-config-prettier": "^10",

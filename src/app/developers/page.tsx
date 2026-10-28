@@ -1,3 +1,4 @@
+import CompanyShell from "@/features/company/CompanyShell";
 import type { Metadata } from "next";
 import Developers from "@/features/policy/Developers";
 export const metadata: Metadata = {
@@ -5,5 +6,9 @@ export const metadata: Metadata = {
   description: "Connect, control, enforce and verify subjective authority.",
 };
 export default function Page() {
-  return <Developers />;
+  return (
+    <CompanyShell>
+      <Developers />
+    </CompanyShell>
+  );
 }
