@@ -56,3 +56,10 @@ Executed on Neon production database role:
 `ALTER ROLE tastepolicy_owner IN DATABASE tastepolicy SET search_path TO tastepolicy, public;`
 
 `pg_db_role_setting` confirmed the exact role/database setting. Fresh hosted auth behavior still requires end-to-end proof before M10/M12 PASS.
+
+## M10 continuation (session 2) — why CI was red and what changed
+
+- Prior CI runs 123–128 on PR #16 were red only at `npm run test:e2e`; format, lint, typecheck, 859 tests, build, conformance and TasteBench steps were green.
+- Reproduced locally with PostgreSQL 16 and all three Playwright engines. The remaining defect was WebKit mobile horizontal overflow in the M5 subjects panel (`subjects.spec.ts` "mobile keyboard … long labels", dark and light): WebKit counts a `<select>`'s longest `<option>` as scrollable overflow of its parent `<label>` (document `scrollWidth` 1540 vs 390) although every element box was within the viewport. Fixed with `overflow: clip` on `.subjects-panel label`; verified by injecting alternatives (`select{overflow:hidden}`, `contain:inline-size`, `option` ellipsis all failed; label clip passed).
+- Local gate after the fix: Prettier PASS, ESLint 0 errors (1 pre-existing `no-img-element` warning), typecheck PASS, Vitest 859/859 with real PostgreSQL (0 skipped), build PASS, Playwright chromium 138/138, firefox 138/138, webkit 138/138, `npm audit --audit-level=high` clean.
+- M10 stays IN_PROGRESS until exact-SHA PR CI is green and a READY exact-SHA deployment plus hosted auth proof are recorded.

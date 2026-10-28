@@ -27,6 +27,11 @@
   max-width: 100%;
   overflow-wrap: anywhere;
 }
+/* WebKit counts a select's longest <option> as scrollable overflow of its
+   label even though the select box is clamped; clip it at the label. */
+.subjects-panel label {
+  overflow: clip;
+}
 .subjects-panel .check {
   min-width: 0;
   max-width: 100%;
