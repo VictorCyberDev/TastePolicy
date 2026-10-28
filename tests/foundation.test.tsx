@@ -1,11 +1,20 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, describe, it, expect } from "vitest";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import Home from "@/app/page";
 import EngineeringDemo from "@/app/demo/page";
 import { GET } from "@/app/api/health/route";
 import { validateEnvironment } from "@/lib/env/schema";
 import { normalizeError } from "@/lib/errors/normalize";
 import type { CulturalReceipt, ProviderResult } from "@/types/domain";
+// Vitest globals are disabled, so RTL cannot install automatic afterEach
+// cleanup. Unmount each root and let React's queued passive-effect callback
+// finish while jsdom still exists, before the file environment is disposed.
+afterEach(async () => {
+  cleanup();
+  await act(async () => {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  });
+});
 describe("Phase 0 foundation", () => {
   it("returns a non-sensitive health response with a generated request ID", async () => {
     const r = GET();
