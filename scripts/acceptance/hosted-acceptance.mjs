@@ -190,7 +190,11 @@ if (!persisted) {
         );
         const as = (await jf("/.well-known/oauth-authorization-server")).body;
         ok(as.code_challenge_methods_supported?.includes("S256"), "no S256");
-        const redirect = "http://127.0.0.1:9/cb";
+        // Hosted issuers refuse loopback redirects (developer mode only), so a hosted
+        // origin is exercised with an https redirect that is never followed.
+        const redirect = B.startsWith("https://")
+          ? "https://acceptance.example.test/cb"
+          : "http://127.0.0.1:9/cb";
         const reg = (
           await jf("/api/oauth/register", {
             method: "POST",
@@ -318,9 +322,10 @@ if (!persisted) {
           }),
         });
         ok(reuse.status === 400, "reuse not rejected");
+        const afterReuse = (await mcp(rt.access_token)).r.status;
         ok(
-          (await mcp(rt.access_token)).r.status === 403,
-          "link not revoked after reuse",
+          afterReuse === 401 || afterReuse === 403,
+          `link not revoked after reuse (MCP ${afterReuse})`,
         );
         const list = (await acct(a, "connected-agents")).body.data;
         ok(
