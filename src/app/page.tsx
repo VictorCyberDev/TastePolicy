@@ -49,7 +49,10 @@ export default function Home() {
           <TasteBoundaryShowcase />
         </section>
 
-        <section className="submission-proof-strip" aria-label="Three boundary outcomes">
+        <section
+          className="submission-proof-strip"
+          aria-label="Three boundary outcomes"
+        >
           <div className="submission-proof-strip-inner">
             <article>
               <span className="submission-number">92%</span>
@@ -91,7 +94,10 @@ export default function Home() {
               from permission.
             </p>
           </header>
-          <div className="submission-mosaic" aria-label="Authored TastePolicy cultural illustrations">
+          <div
+            className="submission-mosaic"
+            aria-label="Authored TastePolicy cultural illustrations"
+          >
             {tasteSignals.map(([src, label]) => (
               <figure key={src}>
                 <img src={src} alt="" aria-hidden="true" />
@@ -101,7 +107,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="submission-comparison" aria-label="Why Qloo plus TastePolicy">
+        <section
+          className="submission-comparison"
+          aria-label="Why Qloo plus TastePolicy"
+        >
           <div className="submission-comparison-grid">
             <article>
               <p className="company-eyebrow">GENERIC LLM</p>
@@ -116,8 +125,8 @@ export default function Home() {
               <h3>Knows what fits.</h3>
               <p>
                 Qloo supplies real cultural intelligence and candidate-specific
-                evidence across domains. That makes the recommendation materially
-                better.
+                evidence across domains. That makes the recommendation
+                materially better.
               </p>
             </article>
             <article>
@@ -132,7 +141,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="company-principles" aria-label="Authority principles">
+        <section
+          className="company-principles"
+          aria-label="Authority principles"
+        >
           <p>
             Taste <span>is not permission.</span>
           </p>
@@ -158,8 +170,8 @@ export default function Home() {
               <span>01 / UNDERSTAND</span>
               <h3>Ground the choice in Qloo.</h3>
               <p>
-                Resolve cultural signals and inspect candidate-specific evidence.
-                TastePolicy does not recreate Qloo&apos;s graph.
+                Resolve cultural signals and inspect candidate-specific
+                evidence. TastePolicy does not recreate Qloo&apos;s graph.
               </p>
             </article>
             <article>
@@ -167,7 +179,8 @@ export default function Home() {
               <h3>Apply the person&apos;s actual rules.</h3>
               <p>
                 Keep exclusions absolute, respect action ceilings, ask when a
-                required fact is missing and never turn uncertainty into consent.
+                required fact is missing and never turn uncertainty into
+                consent.
               </p>
             </article>
             <article>
@@ -184,7 +197,9 @@ export default function Home() {
         <section className="company-section company-protocol">
           <BoundaryMark />
           <div>
-            <p className="company-eyebrow">THE PRODUCT IS SIMPLE. THE INFRASTRUCTURE IS REAL.</p>
+            <p className="company-eyebrow">
+              THE PRODUCT IS SIMPLE. THE INFRASTRUCTURE IS REAL.
+            </p>
             <h2>One boundary. Multiple agent doors.</h2>
             <p>
               The same authority contract is exposed through the live consumer
@@ -203,7 +218,8 @@ export default function Home() {
             </Link>
             <p className="company-caption">
               Protocol support and public directory approval are kept distinct.
-              The live Qloo Consumer Arena is available without a founder-only key.
+              The live Qloo Consumer Arena is available without a founder-only
+              key.
             </p>
           </div>
         </section>
