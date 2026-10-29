@@ -1,14 +1,11 @@
-type MetadataField = { value?: unknown };
-
-type CommonsPage = {
-  title?: unknown;
-  imageinfo?: Array<{
-    url?: unknown;
-    thumburl?: unknown;
-    descriptionurl?: unknown;
-    extmetadata?: Record<string, MetadataField>;
-  }>;
-};
+import {
+  acceptedLicense,
+  metadata,
+  plainText,
+  safeUrl,
+  text,
+  type CommonsPage,
+} from "@/server/media/commons-license";
 
 const STOP_WORDS = new Set([
   "the",
@@ -23,10 +20,6 @@ const STOP_WORDS = new Set([
   "japan",
 ]);
 
-function text(value: unknown) {
-  return typeof value === "string" ? value : "";
-}
-
 function words(value: string) {
   return value
     .toLocaleLowerCase()
@@ -34,21 +27,6 @@ function words(value: string) {
     .replace(/[^a-z0-9\p{L}\p{N}]+/gu, " ")
     .split(/\s+/)
     .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
-}
-
-function plainText(value: unknown) {
-  return text(value)
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#0?39;/gi, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function metadata(page: CommonsPage, key: string) {
-  return page.imageinfo?.[0]?.extmetadata?.[key]?.value;
 }
 
 function searchableText(page: CommonsPage) {
@@ -82,43 +60,6 @@ function relevance(page: CommonsPage, name: string, address: string) {
   )
     return -1;
   return distinctive * 3 + location;
-}
-
-function acceptedLicense(page: CommonsPage) {
-  const license = plainText(metadata(page, "LicenseShortName"));
-  const licenseUrl = text(metadata(page, "LicenseUrl"));
-  const match = /^(CC BY(?:-SA)?) (1\.0|2\.0|2\.5|3\.0|4\.0)$/i.exec(license);
-  const expected = match
-    ? `https://creativecommons.org/licenses/${match[1].toLowerCase().replace("cc ", "")}/${match[2]}/`
-    : /^(CC0|CC0 1\.0)$/i.test(license)
-      ? "https://creativecommons.org/publicdomain/zero/1.0/"
-      : /^Public domain$/i.test(license)
-        ? "https://creativecommons.org/publicdomain/mark/1.0/"
-        : null;
-  if (
-    !expected ||
-    licenseUrl.replace(/\/$/, "") !== expected.replace(/\/$/, "")
-  )
-    return null;
-  return { license, licenseUrl: expected };
-}
-
-function safeUrl(value: string, host: string, prefix: string) {
-  try {
-    const url = new URL(value);
-    return (
-      url.protocol === "https:" &&
-      url.hostname === host &&
-      !url.username &&
-      !url.password &&
-      !url.port &&
-      !url.search &&
-      !url.hash &&
-      url.pathname.startsWith(prefix)
-    );
-  } catch {
-    return false;
-  }
 }
 
 const unavailable = {

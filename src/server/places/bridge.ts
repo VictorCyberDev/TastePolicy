@@ -16,9 +16,26 @@ const norm = (s: string) =>
     .replace(/&/g, " and ")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
+// Street abbreviations, so "59 W 44th St" and "59, West 44th Street" agree.
+const EXPAND: Record<string, string> = {
+  st: "street",
+  ave: "avenue",
+  av: "avenue",
+  blvd: "boulevard",
+  rd: "road",
+  w: "west",
+  e: "east",
+  n: "north",
+  s: "south",
+  dr: "drive",
+  ln: "lane",
+  pl: "place",
+  sq: "square",
+};
 const tokens = (s: string) =>
   norm(s)
     .split(" ")
+    .map((t) => EXPAND[t] ?? t)
     .filter((t) => t && !STOP.has(t));
 
 function nameScore(a: string, b: string) {

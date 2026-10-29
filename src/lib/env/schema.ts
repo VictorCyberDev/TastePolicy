@@ -40,6 +40,9 @@ export function validateEnvironment(input: EnvironmentInput) {
     // Server-only place provider (Places + Routes). Optional: without it the
     // experience falls back to licensed/authored imagery and unknown facts.
     googleMapsApiKey: input.GOOGLE_MAPS_API_KEY?.trim() || undefined,
+    // M25 optional server-only keys. The open core needs neither.
+    heigitApiKey: input.HEIGIT_API_KEY?.trim() || undefined,
+    mapillaryAccessToken: input.MAPILLARY_ACCESS_TOKEN?.trim() || undefined,
     supabaseServiceRoleKey:
       input.SUPABASE_SERVICE_ROLE_KEY?.trim() || undefined,
   });

@@ -1,5 +1,5 @@
 import "server-only";
-import { resolvePlaceContext } from "@/server/places/context";
+import { resolveOpenPlace } from "@/server/open/context";
 import {
   googlePlaceProvider,
   googleRouteProvider,
@@ -37,11 +37,19 @@ export async function POST(request: Request) {
     );
   try {
     const key = serverEnvironment.googleMapsApiKey;
-    const context = await resolvePlaceContext(
-      input,
-      googlePlaceProvider(key),
-      googleRouteProvider(key),
-      new Date().toISOString(),
+    // Open providers first and always; Google only enriches when configured.
+    const context = await resolveOpenPlace(
+      { entity: input.entity, origin: input.origin },
+      {
+        heigitKey: serverEnvironment.heigitApiKey,
+        mapillaryToken: serverEnvironment.mapillaryAccessToken,
+        google: {
+          configured: Boolean(key),
+          places: googlePlaceProvider(key),
+          routes: googleRouteProvider(key),
+        },
+        now: new Date().toISOString(),
+      },
     );
     return Response.json({ status: "available", data: context }, { headers });
   } finally {

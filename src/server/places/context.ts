@@ -19,7 +19,7 @@ export interface PlaceContext {
     reasons: string[];
   };
   place?: {
-    provider: "google-places";
+    provider: "google-places" | "openstreetmap";
     providerId: string;
     name: string;
     address: string;
