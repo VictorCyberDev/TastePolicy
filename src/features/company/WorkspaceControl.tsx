@@ -37,6 +37,16 @@ type Snapshot = {
     outcomes: { decision: string; count: number }[];
     captured: { total: number; latest_receipt_at: string | null };
     recordedLeases: { status: string; count: number }[];
+    evidenceObservedAt?: string;
+    latestProviderAt?: string | null;
+    authorityEpochs?: {
+      leaseRef: string;
+      agentId: string;
+      status: string;
+      epoch: string | null;
+      expiresAt: string;
+      checkpointDueAt: string;
+    }[];
     issuedProofs: number;
     activePolicy: { version: number; action_ceilings: unknown } | null;
     leaseStatesRequireFreshVerification: boolean;
@@ -203,6 +213,24 @@ export default function WorkspaceControl() {
               </span>
             </article>
             <article>
+              <strong>Qloo evidence age</strong>
+              <span>
+                {m!.latestProviderAt && m!.evidenceObservedAt
+                  ? (() => {
+                      const age =
+                        Date.parse(m!.evidenceObservedAt) -
+                        Date.parse(m!.latestProviderAt!);
+                      return Number.isFinite(age) && age >= 0
+                        ? `Latest captured provider evidence: ${Math.floor(age / 60000)} minutes at snapshot time`
+                        : "Evidence timestamp requires review";
+                    })()
+                  : "No captured provider timestamp"}
+              </span>
+              <span>
+                Historical evidence age does not establish current authority.
+              </span>
+            </article>
+            <article>
               <strong>Policy version</strong>
               <span>
                 {m!.activePolicy?.version ?? "Default policy"} ·{" "}
@@ -228,6 +256,30 @@ export default function WorkspaceControl() {
               Inspect receipts, proof epochs and audit timeline
             </Link>
           </p>
+          <details>
+            <summary>Recorded authority epochs (latest twenty leases)</summary>
+            <p>
+              These are owner-visible historical records, not a current validity
+              grant. Verify the exact candidate/context, policy and status
+              before relying on a lease or proof.
+            </p>
+            {m!.authorityEpochs?.length ? (
+              <ul>
+                {m!.authorityEpochs.map((epoch) => (
+                  <li key={epoch.leaseRef}>
+                    <strong>{epoch.agentId}</strong> · epoch{" "}
+                    {epoch.epoch ?? "unknown for legacy record"} ·{" "}
+                    {epoch.status} · expires {epoch.expiresAt} · checkpoint{" "}
+                    {epoch.checkpointDueAt}
+                    <br />
+                    <code>{epoch.leaseRef}</code>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No recorded lease epochs.</p>
+            )}
+          </details>
           <div className="company-control-forms">
             <form
               onSubmit={(e) => {

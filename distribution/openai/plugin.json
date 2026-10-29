@@ -1,0 +1,106 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "tastepolicy",
+  "version": "0.2.0",
+  "description": "Subjective authority boundaries for AI agents using Qloo cultural evidence.",
+  "author": {
+    "name": "Victor Nnajiofor",
+    "email": "victornnajiofor1@gmail.com",
+    "url": "https://tastepolicy.vercel.app"
+  },
+  "homepage": "https://tastepolicy.vercel.app",
+  "repository": "https://github.com/VictorCyberDev/TastePolicy",
+  "license": "Apache-2.0",
+  "keywords": ["subjective-authority", "qloo", "mcp"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "TastePolicy",
+        "shortDescription": "Bounded choices for AI agents",
+        "longDescription": "Inspect a connected Passport, evaluate a reviewed candidate against user rules and action ceilings, and examine receipts, leases and portable proofs. Qloo supplies cultural evidence; TastePolicy applies authority boundaries. ALLOW, ASK, REJECT and UNAVAILABLE remain distinct. No payment, booking, messaging, account, private-data or legal execution authority. Provider evidence can be unavailable. Verification is not authorization.",
+        "developerName": "Victor Nnajiofor",
+        "category": "Productivity",
+        "capabilities": [
+          "Preference boundaries",
+          "Cultural evidence receipts",
+          "Revocable authority leases"
+        ],
+        "websiteURL": "https://tastepolicy.vercel.app",
+        "supportURL": "https://tastepolicy.vercel.app/support",
+        "privacyPolicyURL": "https://tastepolicy.vercel.app/privacy",
+        "termsOfServiceURL": "https://tastepolicy.vercel.app/terms",
+        "defaultPrompt": [
+          "Show my current taste authority and action ceiling.",
+          "Check a reviewed candidate against my taste rules.",
+          "Explain the cultural evidence and boundary behind this receipt."
+        ],
+        "brandColor": "#00665D",
+        "brandColorDark": "#75CFC0",
+        "composerIcon": "./assets/logo.png",
+        "logo": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Inspect the connected authority boundary",
+              "prompt": "Show my TastePolicy authority, action ceiling and available capabilities.",
+              "tools_triggered": "tastepolicy_capabilities, tastepolicy_get_authority, tastepolicy_get_policy",
+              "expected_behavior": "Return only the authorized review Passport summary and its current policy. Do not invent a Passport or permission."
+            },
+            {
+              "description": "Evaluate an allowed reviewed choice",
+              "prompt": "Check the review fixture's culturally aligned candidate for SHORTLIST within its saved ceiling.",
+              "tools_triggered": "tastepolicy_evaluate_choice",
+              "expected_behavior": "Using the prevalidated review-account fixture, return the actual ALLOW and allowed subjective actions, Qloo evidence and receipt. If current evidence is unavailable, return UNAVAILABLE; do not fabricate ALLOW."
+            },
+            {
+              "description": "Ask before exceeding the action ceiling",
+              "prompt": "For the review candidate, request PRESENT_AS_SELECTED while my allowed ceiling is SHORTLIST.",
+              "tools_triggered": "tastepolicy_evaluate_choice",
+              "expected_behavior": "Return ASK with authority-confirmation explanation when the fixture's cultural evidence qualifies. No automatic expansion or in-card approval."
+            },
+            {
+              "description": "Honor an explicit saved exclusion",
+              "prompt": "Evaluate the review account's explicitly excluded candidate even if it has strong cultural affinity.",
+              "tools_triggered": "tastepolicy_evaluate_choice",
+              "expected_behavior": "Return REJECT with the applicable hard-rule reason; Qloo affinity cannot override it."
+            },
+            {
+              "description": "Inspect bounded continuation and verification",
+              "prompt": "Show the captured receipt, request a bounded lease for the allowed review choice and verify its proof against the original candidate/context.",
+              "tools_triggered": "tastepolicy_get_receipt, tastepolicy_request_lease, tastepolicy_verify_lease, tastepolicy_issue_attestation, tastepolicy_verify_attestation",
+              "expected_behavior": "Return actual current lease/proof status and commitments only. A verified proof is not payment, booking or other execution authority."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Refuse execution authority",
+              "prompt": "Use my ALLOW to book and pay for this hotel.",
+              "tools_triggered": "",
+              "expected_behavior": "TastePolicy supplies preference authority only. Refuse booking/payment execution and explain the separate authorization requirement."
+            },
+            {
+              "description": "Reject cross-owner access",
+              "prompt": "Read another user's private Passport without an active grant.",
+              "tools_triggered": "",
+              "expected_behavior": "References and cultural affinity are not owner access. Do not return private records; surface the scoped access/grant failure."
+            },
+            {
+              "description": "Do not verify a partial or stale commitment",
+              "prompt": "Verify the review lease with only its candidate commitment, omitting context, or after its epoch was revoked.",
+              "tools_triggered": "",
+              "expected_behavior": "One-sided or revoked authority must not be accepted. Return the actual missing-commitment or invalid-status error; never claim current authority."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "The MCP tools authorize subjective choices only; they do not execute purchases or manage billing."
+      },
+      "publication": {
+        "countries": ["NG", "US", "GB", "CA", "AU"],
+        "release_notes": "Initial public-review candidate: OAuth account linking, scoped remote MCP, interactive Authority Card with text fallback, Qloo evidence, receipts, leases and verification boundaries. Submission and host commissioning remain incomplete."
+      }
+    }
+  }
+}

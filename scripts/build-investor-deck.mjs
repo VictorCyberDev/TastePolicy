@@ -17,7 +17,7 @@ const { finalizePresentation } =
 const build = path.join(workspaceDir, ".work-evidence/investor-build");
 const output = path.join(
   workspaceDir,
-  "docs/fundraising/tastepolicy-investor-v3.pptx",
+  "docs/fundraising/tastepolicy-investor-v5.pptx",
 );
 const source = JSON.parse(
   await fs.readFile("docs/fundraising/deck-source.json", "utf8"),
@@ -65,7 +65,12 @@ for (const [i, row] of source.slides.entries()) {
     );
     slide.images.add({
       blob: new Uint8Array(
-        await fs.readFile(path.join(build, "authority-example.png")),
+        await fs.readFile(
+          path.join(
+            workspaceDir,
+            "docs/fundraising/assets/authority-example.png",
+          ),
+        ),
       ),
       contentType: "image/png",
       alt: "Illustrative website Authority Card. No live decision or lease.",
@@ -132,7 +137,7 @@ const result = await finalizePresentation({
   requiredNativeChartOwnerSlides: [],
   fontPolicy: { basis: "design", families: ["DejaVu Sans"] },
   verifyArtifactToolImport: true,
-  receiptPath: path.join(build, "validation-v3.json"),
+  receiptPath: path.join(build, "validation-v5.json"),
 });
 console.log(
   JSON.stringify(

@@ -1,6 +1,6 @@
 # TastePolicy investor memo
 
-Working diligence draft, 2026-10-28. Read together with the release ledger and `company-brief.md`. Engineering evidence, targets and unvalidated assumptions are separate throughout.
+Working diligence draft, 2026-10-29. Read together with the release ledger and `company-brief.md`. Engineering evidence, targets and unvalidated assumptions are separate throughout.
 
 ## Thesis and problem
 
@@ -18,7 +18,7 @@ A developer enrolls reviewed cultural identities into a private Passport, issues
 
 State, grants, policy versions, credentials, decisions, leases and proofs have separate lifecycles. Replays preserve captured inputs. Fresh authority checks can reject a stale/revoked lease even when its historic receipt is valid. Issuer discovery does not grant trust. Payment, account access, booking, private-data disclosure and legal action require separate execution authorization.
 
-Canonical production is `https://tastepolicy.vercel.app`. See the company ledger for exact deployment/commit/acceptance evidence. Production hosting exists, but the full company definition of done is still open: multi-tenant commercial onboarding, billing, continuous operational monitoring, real assistant use and distribution approvals are not complete.
+Canonical production is `https://tastepolicy.vercel.app`. See the company ledger for exact deployment/commit/acceptance evidence. Production hosting exists, but the full company definition of done is still open: single-owner workspace metadata and onboarding are hosted-tested, while team membership/RBAC, provider billing commissioning, deployed operational monitoring, real assistant use and distribution approvals remain incomplete.
 
 ## Wedge and buyer
 
@@ -46,7 +46,7 @@ Sources and current price units are recorded in `docs/company/pricing-research.m
 
 ## Evidence and defensibility
 
-Engineering proof includes production auth/OAuth, isolated credentials, Qloo provenance, lease/epoch/commitment tests, independent protocol clients and conformance vectors. The existing 24-scenario TasteBench engineering contract is reproducible but small. A ten-person descriptive pilot has weak exact agreement and substantial missed ASK. Human assurance relies on the supplied operator assertion. Reported judgments are repeated observations, not independent participants. There is no controlled generic-LLM versus Qloo versus TastePolicy outcome study establishing superiority.
+Engineering proof includes production auth/OAuth, isolated credentials, Qloo provenance, lease/epoch/commitment tests, independent protocol clients and conformance vectors. The original 24-scenario TasteBench remains intact. The new 525-case synthetic boundary component benchmark adds reproducible contract coverage; its 132-case deterministic evaluation subset is not independent validation or a taste-relevance study. See ../evaluation/tastebench-v2-methodology.md. A ten-person descriptive pilot has weak exact agreement and substantial missed ASK. Human assurance relies on the supplied operator assertion. Reported judgments are repeated observations, not independent participants. There is no controlled generic-LLM versus Qloo versus TastePolicy outcome study establishing superiority.
 
 Potential compounding value lies in reliable integrations, transparent authority history and legitimate consented evaluation data. Cultural graph IP belongs to Qloo. Apache-licensed source and portable/deletable state limit lock-in and support adoption. No patents, exclusive provider agreement or proprietary dataset moat are claimed.
 

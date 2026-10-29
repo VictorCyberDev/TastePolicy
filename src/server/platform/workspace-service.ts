@@ -338,6 +338,12 @@ export class WorkspaceService {
       const captured =
         await query(`SELECT count(*)::integer AS total,max((data->'evaluation'->>'evaluatedAt')::timestamptz) AS latest_receipt_at
         FROM tastepolicy.platform_evaluations WHERE user_id=$1`);
+      const providerEvidence = await query(
+        `SELECT max((data->'evaluation'->'cultural'->'data'->'qlooEvidence'->'provenance'->>'fetchedAt')::timestamptz) AS latest_provider_at FROM tastepolicy.platform_evaluations WHERE user_id=$1`,
+      );
+      const authorityEpochs = await query(
+        `SELECT lease_ref AS "leaseRef",agent_id AS "agentId",status,data->'epoch'->>'n' AS epoch,expires_at AS "expiresAt",checkpoint_due_at AS "checkpointDueAt" FROM tastepolicy.platform_leases WHERE owner_id=$1 ORDER BY issued_at DESC,lease_ref LIMIT 20`,
+      );
       const leases = await query(
         `SELECT status,count(*)::integer AS count FROM tastepolicy.platform_leases WHERE owner_id=$1 GROUP BY status`,
       );
@@ -352,6 +358,9 @@ export class WorkspaceService {
           windowDays: 30,
           outcomes,
           captured: captured[0],
+          evidenceObservedAt: this.clock(),
+          latestProviderAt: providerEvidence[0]?.latest_provider_at ?? null,
+          authorityEpochs,
           recordedLeases: leases,
           issuedProofs: proofs[0]?.count ?? 0,
           activePolicy: policy[0] ?? null,

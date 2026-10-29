@@ -35,7 +35,7 @@ export default function CompanyShell({
           <Link href="/pricing">Pricing</Link>
           <Link href="/trust">Trust</Link>
         </nav>
-        <Link className="company-small-cta" href="/account">
+        <Link className="company-small-cta" href="/dashboard">
           Open workspace <span aria-hidden="true">↗</span>
         </Link>
       </header>
