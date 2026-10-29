@@ -106,6 +106,7 @@ export default function TasteBoundaryShowcase() {
           <button
             key={item}
             type="button"
+            aria-label={item}
             aria-pressed={scenario === item}
             data-decision={item}
             onClick={() => setScenario(item)}
