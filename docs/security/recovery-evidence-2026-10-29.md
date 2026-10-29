@@ -26,13 +26,13 @@ A new branch was created directly from the production branch:
 
 Read-only integrity counters matched exactly at the checkpoint:
 
-| Counter | Production | Recovery |
-| --- | ---: | ---: |
-| Schema migrations | 13 | 13 |
-| Auth users | 3 | 3 |
-| Taste Passports | 1 | 1 |
-| Cultural receipts | 2 | 2 |
-| Developer workspaces | 1 | 1 |
+| Counter              | Production | Recovery |
+| -------------------- | ---------: | -------: |
+| Schema migrations    |         13 |       13 |
+| Auth users           |          3 |        3 |
+| Taste Passports      |          1 |        1 |
+| Cultural receipts    |          2 |        2 |
+| Developer workspaces |          1 |        1 |
 
 The recovery branch was not promoted, did not write production data and is intentionally ephemeral.
 
