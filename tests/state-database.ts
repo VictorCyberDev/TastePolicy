@@ -14,6 +14,14 @@ export async function testDatabase(dataDir?: string, migrate = true) {
     );
   let tail = Promise.resolve();
   const pool = {
+    async query(sql: string, values?: unknown[]) {
+      const client = await pool.connect();
+      try {
+        return await client.query(sql, values);
+      } finally {
+        client.release();
+      }
+    },
     async connect() {
       const previous = tail;
       let release!: () => void;

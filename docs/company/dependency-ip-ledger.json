@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-28",
+  "generated": "2026-10-29",
   "source": "package-lock.json plus installed package manifests",
   "repository_license": "Apache-2.0",
   "scope": "all locked dependencies including optional uninstalled binaries; no legal opinion",
@@ -5323,6 +5323,14 @@
       "development": true,
       "optional": false,
       "path": "node_modules/zod-validation-error"
+    },
+    {
+      "name": "stripe",
+      "version": "23.0.1",
+      "license": "MIT",
+      "development": false,
+      "optional": false,
+      "path": "node_modules/stripe"
     }
   ]
 }

@@ -2,8 +2,25 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { configuredOrigin } from "@/lib/config/origin";
 import { publicOrigin } from "@/server/platform/origin";
+import { trustedOrigin } from "@/server/platform/http";
 import { GET } from "@/app/.well-known/openai-apps-challenge/route";
 afterEach(() => vi.unstubAllEnvs());
+it("pins cookie mutations to the configured identity and rejects mixed configuration", () => {
+  vi.stubEnv("TASTEPOLICY_PUBLIC_ORIGIN", "https://tastepolicy.vercel.app");
+  vi.stubEnv("BETTER_AUTH_URL", "https://tastepolicy.vercel.app");
+  vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://tastepolicy.vercel.app");
+  const req = (origin: string, site = "same-origin") =>
+    new Request("https://attacker.test/api/account/update", {
+      headers: { host: "attacker.test", origin, "sec-fetch-site": site },
+    });
+  expect(trustedOrigin(req("https://attacker.test"))).toBe(false);
+  expect(trustedOrigin(req("https://tastepolicy.vercel.app"))).toBe(true);
+  expect(
+    trustedOrigin(req("https://tastepolicy.vercel.app", "cross-site")),
+  ).toBe(false);
+  vi.stubEnv("BETTER_AUTH_URL", "https://other.test");
+  expect(trustedOrigin(req("https://attacker.test"))).toBe(false);
+});
 it("rejects mixed production identities and unsafe issuer URLs", () => {
   for (const bad of [
     "https://a.test/path",
