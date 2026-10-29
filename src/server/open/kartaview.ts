@@ -34,7 +34,13 @@ export function parseKartaView(
   const out: PlaceMediaItem[] = [];
   for (const r of rows) {
     if (!r || r.status !== "active" || r.visibility !== "public") continue;
-    const url = safeImage(r.imageProcUrl),
+    const panoramicRow =
+      r.projection === "SPHERE" || num(r.fieldOfView) === 360;
+    // Ordinary frames use the 1280px rendition (~200 KB, faces/plates blurred);
+    // a 360° capture needs the full-resolution panorama to be explorable.
+    const url = safeImage(
+        panoramicRow ? r.imageProcUrl : (r.imageLthUrl ?? r.imageProcUrl),
+      ),
       thumb = safeImage(r.imageThUrl) ?? safeImage(r.imageLthUrl);
     const lat = num(r.lat),
       lng = num(r.lng);

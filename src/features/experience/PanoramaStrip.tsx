@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { PlaceMediaItem } from "@/server/open/types";
 import "./explore.css";
 
@@ -15,6 +16,7 @@ export default function PanoramaStrip({
   place: string;
   onClose: () => void;
 }) {
+  const [ready, setReady] = useState(false);
   return (
     <section className="tp-pano" aria-label={`360° panorama near ${place}`}>
       <div
@@ -29,8 +31,15 @@ export default function PanoramaStrip({
           alt={`360° panorama${item.relation === "AREA_CONTEXT" ? " of the area around" : " near"} ${place}`}
           referrerPolicy="no-referrer"
           decoding="async"
+          onLoad={() => setReady(true)}
         />
       </div>
+      {!ready && (
+        <p className="tp-muted" role="status">
+          Loading a large panorama
+          {item.width && item.width > 8000 ? " (several MB)" : ""}…
+        </p>
+      )}
       <div className="tp-seq-controls">
         <button onClick={onClose}>Exit panorama</button>
         {item.landingUrl && (

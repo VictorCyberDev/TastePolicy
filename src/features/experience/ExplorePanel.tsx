@@ -34,10 +34,12 @@ const WHY: Record<string, string> = {
 export default function ExplorePanel({
   context,
   name,
+  address: entityAddress,
   mapState,
 }: {
   context: OpenPlaceContext;
   name: string;
+  address?: string;
   mapState: MapState;
 }) {
   const [panel, setPanel] = useState<null | "journey" | "approach" | "look">(
@@ -49,7 +51,7 @@ export default function ExplorePanel({
   if (!dest && !o.sequence && !o.panorama) return null;
   const toggle = (p: "journey" | "approach" | "look") =>
     setPanel(panel === p ? null : p);
-  const address = context.place?.address;
+  const address = entityAddress ?? context.place?.address;
   return (
     <div className="tp-explore">
       <div

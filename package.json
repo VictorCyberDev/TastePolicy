@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "npm run mcp:app:build && node scripts/migrate.mjs --if-enabled && next build",
+    "vercel-build": "npm run mcp:app:build && npm run maplibre:worker && node scripts/migrate.mjs --if-enabled && next build",
+    "maplibre:worker": "node scripts/copy-maplibre-worker.mjs",
     "db:migrate:all": "node scripts/migrate.mjs",
     "db:migrate:status": "node scripts/migrate.mjs --status",
     "start": "next start",
@@ -44,7 +45,7 @@
     "tastebench:annotations": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts import-annotations",
     "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration",
     "mcp:app:build": "node scripts/build-authority-app.mjs",
-    "prebuild": "npm run mcp:app:build",
+    "prebuild": "npm run mcp:app:build && npm run maplibre:worker",
     "sdk:build": "node scripts/build-sdk.mjs",
     "tastebench:boundaries": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench-boundaries.ts",
     "tastebench:gateway": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench-gateway.ts"

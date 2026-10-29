@@ -18,6 +18,7 @@ export default function SequenceViewer({
 }) {
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [loaded, setLoaded] = useState<Set<number>>(new Set());
   // Rendered only after a click, so the browser value is read once up front.
   const [reduced] = useState(
     () =>
@@ -61,8 +62,14 @@ export default function SequenceViewer({
             data-active={n === i}
             referrerPolicy="no-referrer"
             decoding="async"
+            onLoad={() => setLoaded((l) => new Set(l).add(n))}
           />
         ))}
+        {!loaded.has(i) && (
+          <span className="tp-seq-wait" role="status">
+            Loading frame…
+          </span>
+        )}
         <span className="tp-gallery-tag" data-relation={f.relation}>
           Street sequence · frame {i + 1} of {frames.length}
         </span>

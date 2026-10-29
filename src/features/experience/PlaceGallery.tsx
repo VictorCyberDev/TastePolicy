@@ -117,6 +117,8 @@ export default function PlaceGallery({
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
+                  // A provider CDN can fail for one picture: drop just that one.
+                  onError={() => setBroken((b) => new Set(b).add(i.providerId))}
                 />
               </button>
             </li>

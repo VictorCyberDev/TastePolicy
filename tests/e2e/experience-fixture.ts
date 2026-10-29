@@ -37,6 +37,8 @@ export async function mockExperience(
     facts?: CandidateFact[];
     culturalUnavailable?: boolean;
     placeUnavailable?: boolean;
+    // Full /api/places/context payload (M25 open place experience).
+    context?: unknown;
   } = {},
 ) {
   const evaluations: StateEvaluation[] = [];
@@ -87,39 +89,41 @@ export async function mockExperience(
     route.fulfill({
       json: {
         status: "available",
-        data: options.placeUnavailable
-          ? {
-              status: "unavailable",
-              reason: "not_configured",
-              identity: {
-                status: "not_attempted",
-                confidence: 0,
-                margin: 0,
-                reasons: [],
+        data: options.context
+          ? options.context
+          : options.placeUnavailable
+            ? {
+                status: "unavailable",
+                reason: "not_configured",
+                identity: {
+                  status: "not_attempted",
+                  confidence: 0,
+                  margin: 0,
+                  reasons: [],
+                },
+                facts: [],
+                silentKeys: [],
+                provenance: { requestedAt: receipt.evaluatedAt, sources: [] },
+              }
+            : {
+                status: "available",
+                identity: {
+                  status: "matched",
+                  confidence: 0.95,
+                  margin: 0.5,
+                  reasons: [],
+                },
+                place: {
+                  provider: "google-places",
+                  providerId: "synthetic",
+                  name: place.name,
+                  address: place.address,
+                  types: [],
+                },
+                facts: options.facts ?? [],
+                silentKeys: [],
+                provenance: { requestedAt: receipt.evaluatedAt, sources: [] },
               },
-              facts: [],
-              silentKeys: [],
-              provenance: { requestedAt: receipt.evaluatedAt, sources: [] },
-            }
-          : {
-              status: "available",
-              identity: {
-                status: "matched",
-                confidence: 0.95,
-                margin: 0.5,
-                reasons: [],
-              },
-              place: {
-                provider: "google-places",
-                providerId: "synthetic",
-                name: place.name,
-                address: place.address,
-                types: [],
-              },
-              facts: options.facts ?? [],
-              silentKeys: [],
-              provenance: { requestedAt: receipt.evaluatedAt, sources: [] },
-            },
       },
     }),
   );

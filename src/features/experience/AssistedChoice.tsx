@@ -292,7 +292,8 @@ function PlaceStage({
           .map((x) => h.anchors.find((a) => a.id === x.signalId)?.name)
           .filter((n): n is string => Boolean(n))
       : [];
-  const locality = place?.place?.address ?? c.address;
+  // The recommendation's own address reads best; the map address is a fallback.
+  const locality = c.address ?? place?.place?.address;
   const area = areaFromDisplayName(place?.open?.identity.displayName);
   const mapState: MapState = h.busy.includes("checking")
     ? "checking"
@@ -383,6 +384,7 @@ function PlaceStage({
             key={c.id}
             context={place}
             name={c.name}
+            address={c.address}
             mapState={mapState}
           />
         ) : null}

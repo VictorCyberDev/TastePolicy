@@ -28,3 +28,6 @@ anonymous-response-*.json
 
 packages/sdk/dist/
 *.tgz
+
+# Generated at build time (scripts/copy-maplibre-worker.mjs)
+/public/vendor/

@@ -155,6 +155,20 @@ describe("KartaView adapter (recorded live response)", () => {
       "2481404617",
     ]);
   });
+  it("uses the light 1280px rendition for photos and the full file only for 360 captures", () => {
+    const rows = kv.result.data as {
+      id: string;
+      projection: string;
+      imageLthUrl: string;
+      imageProcUrl: string;
+    }[];
+    for (const i of parseKartaView(kv, target)) {
+      const row = rows.find((r) => r.id === i.providerId)!;
+      expect(i.url).toBe(
+        row.projection === "SPHERE" ? row.imageProcUrl : row.imageLthUrl,
+      );
+    }
+  });
   it("handles valid, empty, malformed, timeout and HTTP-error answers", async () => {
     const q = { point: target, radiusMeters: 250, limit: 50 };
     const ok = await kartaView.search(

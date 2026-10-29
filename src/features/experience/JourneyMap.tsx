@@ -68,6 +68,7 @@ export default function JourneyMap({
         ]);
         if (!res.ok || cancelled || !box.current) throw new Error("style");
         const style = brand((await res.json()) as Style);
+        maplibre.setWorkerUrl("/vendor/maplibre-gl-worker.mjs");
         const reduced = window.matchMedia(
           "(prefers-reduced-motion: reduce)",
         ).matches;

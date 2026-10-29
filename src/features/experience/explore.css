@@ -5,8 +5,8 @@
 }
 .tp-gallery-hero {
   position: relative;
-  aspect-ratio: 16 / 9;
-  max-height: 48vh;
+  width: 100%;
+  height: clamp(240px, 46vh, 460px);
   border-radius: 18px;
   overflow: hidden;
   background: #1c1b2e;
@@ -261,6 +261,17 @@
 .tp-place > .tp-gallery {
   padding: 14px 14px 0;
 }
-.tp-place > .tp-gallery .tp-gallery-hero {
-  max-height: 46vh;
+.tp-gallery-credit a,
+.tp-journey-panel a:not(.tp-btn),
+.tp-pano a:not(.tp-btn) {
+  text-decoration: underline;
+}
+
+.tp-seq-stage .tp-seq-wait {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font: 600 0.95rem var(--tp-sans);
 }
