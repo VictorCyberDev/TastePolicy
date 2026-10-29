@@ -40,3 +40,7 @@ If a place provider already confirms an entrance, ALLOW can appear without an AS
 ## Positioning guardrails
 
 Needs are modelled as functional rules (`walking_minutes <= 10`), never diagnoses. Nothing about a person is inferred from taste. ALLOW is preference authority only: no booking, payment or messaging.
+
+## Production
+
+`https://tastepolicy.vercel.app` (deployment `dpl_5XGyzQWCVqLGW3w6ZZHRF11vEJwR`, `main` at `6447a28`). Screenshots from production are in `docs/submission/screenshots/`.
