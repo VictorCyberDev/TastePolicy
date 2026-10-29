@@ -1,26 +1,46 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, it, expect } from "vitest";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import Home from "@/app/page";
 import EngineeringDemo from "@/app/demo/page";
-import { health } from "@/lib/health";
-import { normalizeError } from "@/lib/errors";
-import { validateEnvironment } from "@/lib/env";
-import type { CulturalReceipt, ProviderResult } from "@/lib/types";
-
-afterEach(() => cleanup());
-
+import { GET } from "@/app/api/health/route";
+import { validateEnvironment } from "@/lib/env/schema";
+import { normalizeError } from "@/lib/errors/normalize";
+import type { CulturalReceipt, ProviderResult } from "@/types/domain";
+// Vitest globals are disabled, so RTL cannot install automatic afterEach
+// cleanup. Unmount each root and let React's queued passive-effect callback
+// finish while jsdom still exists, before the file environment is disposed.
+afterEach(async () => {
+  cleanup();
+  await act(async () => {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  });
+});
 describe("Phase 0 foundation", () => {
-  it("returns a non-sensitive health response with a generated request ID", () => {
-    const response = health({ requestId: "request-1" });
-    expect(response).toEqual({ status: "ok", requestId: "request-1" });
-    expect(JSON.stringify(response)).not.toContain("secret");
+  it("returns a non-sensitive health response with a generated request ID", async () => {
+    const r = GET();
+    expect(r.status).toBe(200);
+    expect(await r.json()).toEqual({ status: "ok", service: "tastepolicy" });
+    expect(r.headers.get("x-request-id")).toMatch(/^[a-f0-9-]{36}$/);
+    expect(r.headers.get("cache-control")).toBe("no-store");
   });
   it("needs no external credentials, including in production", () => {
-    expect(validateEnvironment({ NODE_ENV: "production" }).mode).toBe(
-      "production",
-    );
+    expect(
+      validateEnvironment({ NODE_ENV: "production" }).qlooApiKey,
+    ).toBeUndefined();
+    expect(validateEnvironment({}).nodeEnv).toBe("development");
   });
   it("validates supplied URLs without leaking values", () => {
+    expect(() =>
+      validateEnvironment({ SUPABASE_URL: "secret-bad-url" }),
+    ).toThrow("Invalid SUPABASE_URL");
+    expect(() =>
+      validateEnvironment({ NEXT_PUBLIC_APP_URL: "javascript:alert(1)" }),
+    ).toThrow();
+    expect(() =>
+      validateEnvironment({
+        NEXT_PUBLIC_APP_URL: "https://user:pass@example.com",
+      }),
+    ).toThrow();
     expect(
       validateEnvironment({ NEXT_PUBLIC_APP_URL: "https://example.com" })
         .appUrl,
