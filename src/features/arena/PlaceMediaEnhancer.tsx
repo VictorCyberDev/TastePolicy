@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./place-media.css";
 
 type PlaceMedia = {
@@ -39,8 +39,17 @@ function currentTarget(): Target | null {
   return portrait && name ? { portrait, name, address } : null;
 }
 
+function sameTarget(a: Target | null, b: Target | null) {
+  return (
+    a?.portrait === b?.portrait &&
+    a?.name === b?.name &&
+    a?.address === b?.address
+  );
+}
+
 export default function PlaceMediaEnhancer() {
   const [target, setTarget] = useState<Target | null>(null);
+  const targetRef = useRef<Target | null>(null);
   const [resolved, setResolved] = useState<{
     target: Target;
     media: PlaceMedia;
@@ -55,16 +64,17 @@ export default function PlaceMediaEnhancer() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const next = currentTarget();
-        setTarget((previous) => {
-          if (
-            previous?.portrait === next?.portrait &&
-            previous?.name === next?.name &&
-            previous?.address === next?.address
-          ) {
-            return previous;
-          }
-          return next;
-        });
+        const previous = targetRef.current;
+        if (sameTarget(previous, next)) return;
+
+        // A candidate identity change invalidates presentation media immediately.
+        // Clear the old portrait styling before React commits the new target so
+        // stale photography can never visually bleed into the next candidate.
+        previous?.portrait.classList.remove("hasLicensedPhoto");
+        targetRef.current = next;
+        setLoadedUrl(null);
+        setResolved(null);
+        setTarget(next);
       });
     };
     sync();
@@ -77,6 +87,8 @@ export default function PlaceMediaEnhancer() {
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      targetRef.current?.portrait.classList.remove("hasLicensedPhoto");
+      targetRef.current = null;
     };
   }, []);
 
