@@ -3,6 +3,7 @@ import { getAuthentication } from "./auth";
 import { AttestationService } from "./attest-service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
+import { configuredOrigin } from "@/lib/config/origin";
 import { capabilities } from "./gateway";
 import {
   PlatformFailure,
@@ -17,9 +18,18 @@ import type { StateStore } from "@/server/state/repositories";
 import type { QlooProvider } from "@/server/qloo/contracts";
 export function trustedOrigin(request: Request) {
   const url = new URL(request.url);
+  const configured = configuredOrigin();
+  if (
+    !configured &&
+    (process.env.TASTEPOLICY_PUBLIC_ORIGIN ||
+      process.env.BETTER_AUTH_URL ||
+      process.env.NEXT_PUBLIC_APP_URL)
+  )
+    return false;
   return (
     request.headers.get("origin") ===
-      `${url.protocol}//${request.headers.get("host") ?? url.host}` &&
+      (configured ??
+        `${url.protocol}//${request.headers.get("host") ?? url.host}`) &&
     request.headers.get("sec-fetch-site") !== "cross-site"
   );
 }

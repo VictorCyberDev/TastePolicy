@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "rule": "PASS requires the complete requirement, exact SHA and evidence. Unexecuted internal work is NOT_STARTED, never BLOCKED_EXTERNAL.",
   "requirements": [
     {
@@ -3159,59 +3159,69 @@
       "id": "M20-07",
       "milestone": "M20",
       "requirement": "upgrade state",
-      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
+      "implementation": "src/server/billing/{stripe-test,service,body}.ts; src/app/api/billing/test; BillingTestPanel; migration 0013",
       "exact_sha": null,
       "evidence": [
-        "tests/workspace.test.ts; payment-provider acceptance still missing"
+        "docs/company/billing-test-provider.md",
+        "tests/billing-test-provider.test.ts; tests/realpg-billing.test.ts; tests/billing-ui.test.tsx",
+        "Local full suite 856 passed / 28 skipped; real provider commissioning pending"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
       "status": "IN_PROGRESS",
-      "blocker": null
+      "blocker": "Stripe account, server-only TEST configuration and real signed-webhook checkout acceptance remain unverified."
     },
     {
       "id": "M20-08",
       "milestone": "M20",
       "requirement": "billing state",
-      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
+      "implementation": "src/server/billing/{stripe-test,service,body}.ts; src/app/api/billing/test; BillingTestPanel; migration 0013",
       "exact_sha": null,
       "evidence": [
-        "tests/workspace.test.ts; payment-provider acceptance still missing"
+        "docs/company/billing-test-provider.md",
+        "tests/billing-test-provider.test.ts; tests/realpg-billing.test.ts; tests/billing-ui.test.tsx",
+        "Local full suite 856 passed / 28 skipped; real provider commissioning pending"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
       "status": "IN_PROGRESS",
-      "blocker": null
+      "blocker": "Stripe account, server-only TEST configuration and real signed-webhook checkout acceptance remain unverified."
     },
     {
       "id": "M20-09",
       "milestone": "M20",
       "requirement": "invoice customer model",
-      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
+      "implementation": "src/server/billing/{stripe-test,service,body}.ts; src/app/api/billing/test; BillingTestPanel; migration 0013",
       "exact_sha": null,
       "evidence": [
-        "tests/workspace.test.ts; payment-provider acceptance still missing"
+        "docs/company/billing-test-provider.md",
+        "tests/billing-test-provider.test.ts; tests/realpg-billing.test.ts; tests/billing-ui.test.tsx",
+        "Local full suite 856 passed / 28 skipped; real provider commissioning pending"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
       "status": "IN_PROGRESS",
-      "blocker": null
+      "blocker": "Stripe account, server-only TEST configuration and real signed-webhook checkout acceptance remain unverified."
     },
     {
       "id": "M20-10",
       "milestone": "M20",
       "requirement": "webhook boundaries",
-      "implementation": null,
+      "implementation": "src/server/billing/{stripe-test,service,body}.ts; src/app/api/billing/test; BillingTestPanel; migration 0013",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "docs/company/billing-test-provider.md",
+        "tests/billing-test-provider.test.ts; tests/realpg-billing.test.ts; tests/billing-ui.test.tsx",
+        "Local full suite 856 passed / 28 skipped; real provider commissioning pending"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Stripe account, server-only TEST configuration and real signed-webhook checkout acceptance remain unverified."
     },
     {
       "id": "M20-11",
@@ -3245,16 +3255,18 @@
       "id": "M20-13",
       "milestone": "M20",
       "requirement": "billing sandbox acceptance",
-      "implementation": "docs/company/pricing-research.md; workspace_subscriptions and internal sandbox events; captured decision metrics",
+      "implementation": "src/server/billing/{stripe-test,service,body}.ts; src/app/api/billing/test; BillingTestPanel; migration 0013",
       "exact_sha": null,
       "evidence": [
-        "tests/workspace.test.ts; payment-provider acceptance still missing"
+        "docs/company/billing-test-provider.md",
+        "tests/billing-test-provider.test.ts; tests/realpg-billing.test.ts; tests/billing-ui.test.tsx",
+        "Local full suite 856 passed / 28 skipped; real provider commissioning pending"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
       "status": "IN_PROGRESS",
-      "blocker": null
+      "blocker": "Stripe account, server-only TEST configuration and real signed-webhook checkout acceptance remain unverified."
     },
     {
       "id": "M20-14",

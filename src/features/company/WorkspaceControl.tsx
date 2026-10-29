@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import BillingTestPanel from "./BillingTestPanel";
 type Item = {
   id: string;
   label: string;
@@ -586,6 +587,7 @@ export default function WorkspaceControl() {
             environments, agent registrations, bindings and internal billing
             simulations.
           </p>
+          <BillingTestPanel workspaces={snapshot.workspaces} />
         </>
       )}
     </section>

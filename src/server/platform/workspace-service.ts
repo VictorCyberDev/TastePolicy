@@ -44,6 +44,18 @@ export class WorkspaceService {
       c.release();
     }
   }
+  async billingWorkspace(p: Principal, workspaceId: string, fresh = true) {
+    return this.transaction(p, fresh, async (c) => {
+      await this.owns(
+        c,
+        "developer_workspaces",
+        "workspace_id",
+        workspaceId,
+        p.userId,
+      );
+      return { workspaceId };
+    });
+  }
   async mutate(p: Principal, operation: string, raw: unknown) {
     const fields: Record<string, string[]> = {
       "create-workspace": ["displayLabel"],
