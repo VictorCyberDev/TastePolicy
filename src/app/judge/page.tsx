@@ -42,7 +42,10 @@ export default function JudgePage() {
           <TasteBoundaryShowcase />
         </section>
 
-        <section className="submission-proof-strip" aria-label="Two-minute judging route">
+        <section
+          className="submission-proof-strip"
+          aria-label="Two-minute judging route"
+        >
           <div className="submission-proof-strip-inner">
             <article>
               <span className="submission-number">01</span>
@@ -58,15 +61,17 @@ export default function JudgePage() {
               <h3>Trigger a boundary.</h3>
               <p>
                 A qualifying choice can ALLOW. A missing required fact can ASK.
-                An exact exclusion can REJECT even when cultural affinity is high.
+                An exact exclusion can REJECT even when cultural affinity is
+                high.
               </p>
             </article>
             <article>
               <span className="submission-number">03</span>
               <h3>Open the Cultural Receipt.</h3>
               <p>
-                Inspect the captured Qloo provenance, the applicable user rule and
-                the decision together. Evidence and permission stay separate.
+                Inspect the captured Qloo provenance, the applicable user rule
+                and the decision together. Evidence and permission stay
+                separate.
               </p>
             </article>
           </div>
@@ -102,25 +107,33 @@ export default function JudgePage() {
               <span>WITH TASTEPOLICY</span>
               <h3>Grounded fit becomes bounded authority.</h3>
               <p>
-                Rules, context and action ceilings determine whether the agent may
-                continue, must ask, must reject, or must pause because evidence is
-                unavailable.
+                Rules, context and action ceilings determine whether the agent
+                may continue, must ask, must reject, or must pause because
+                evidence is unavailable.
               </p>
             </article>
           </div>
         </section>
 
         <section className="company-section company-protocol">
-          <div aria-hidden="true" style={{ fontFamily: "Boundary Serif, Georgia, serif", fontSize: "clamp(80px, 12vw, 180px)", lineHeight: 0.8, textAlign: "center" }}>
+          <div
+            aria-hidden="true"
+            style={{
+              fontFamily: "Boundary Serif, Georgia, serif",
+              fontSize: "clamp(80px, 12vw, 180px)",
+              lineHeight: 0.8,
+              textAlign: "center",
+            }}
+          >
             99%
           </div>
           <div>
             <p className="company-eyebrow">THE SIGNATURE TEST</p>
             <h2>A perfect taste match can still be a hard no.</h2>
             <p>
-              Save an exact exclusion, evaluate the same candidate and watch the
-              boundary hold. This is the difference between knowing someone&apos;s
-              taste and being authorized to choose for them.
+              Save an exact exclusion, evaluate the same candidate and watch
+              the boundary hold. This is the difference between knowing
+              someone&apos;s taste and being authorized to choose for them.
             </p>
             <div className="company-protocol-tags">
               <span>Qloo evidence</span>
@@ -140,8 +153,8 @@ export default function JudgePage() {
           <p className="company-lead" style={{ margin: "0 auto 28px" }}>
             REST, OAuth, remote MCP, A2A, scoped credentials, leases, portable
             proofs, conformance tests and release evidence are available for a
-            deeper technical review. They are not required to understand the core
-            product.
+            deeper technical review. They are not required to understand the
+            core product.
           </p>
           <Link className="company-primary" href="/developers">
             Developer platform ↗
