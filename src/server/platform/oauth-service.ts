@@ -53,6 +53,25 @@ export class OAuthError extends Error {
   }
 }
 const b64u = /^[A-Za-z0-9_-]+$/;
+// CIMD's plural choices describe methods the client can use. The legacy
+// singular field is a preference, not a requirement when choices are present.
+// This server still accepts only public clients (none + mandatory PKCE).
+function publicClientMethod(doc: Record<string, unknown>): boolean {
+  const method = (v: unknown) =>
+    typeof v === "string" && /^[A-Za-z0-9._-]{1,64}$/.test(v);
+  const preferred = doc.token_endpoint_auth_method;
+  if (preferred !== undefined && !method(preferred)) return false;
+  if (!("token_endpoint_auth_methods_supported" in doc))
+    return preferred === undefined || preferred === "none";
+  const choices = doc.token_endpoint_auth_methods_supported;
+  return (
+    Array.isArray(choices) &&
+    choices.length > 0 &&
+    choices.length <= 16 &&
+    choices.every(method) &&
+    choices.includes("none")
+  );
+}
 const sha256b64u = (s: string) =>
   createHash("sha256").update(s).digest("base64url");
 const loopback = (h: string) =>
@@ -194,8 +213,7 @@ export class OAuthService {
       !uris.every(
         (u) => typeof u === "string" && validRedirect(u, this.allowLoopback),
       ) ||
-      (doc.token_endpoint_auth_method !== undefined &&
-        doc.token_endpoint_auth_method !== "none") ||
+      !publicClientMethod(doc) ||
       "client_secret" in doc
     )
       throw new OAuthError(
