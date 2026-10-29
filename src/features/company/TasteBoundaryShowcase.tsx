@@ -52,7 +52,10 @@ export default function TasteBoundaryShowcase() {
   const active = scenarios[scenario];
 
   return (
-    <section className="submission-showcase" aria-label="Interactive TastePolicy boundary example">
+    <section
+      className="submission-showcase"
+      aria-label="Interactive TastePolicy boundary example"
+    >
       <div className="submission-showcase-topline">
         <span>LIVE PRODUCT IDEA</span>
         <span>QLOO TASTE → USER RULES → AUTHORITY</span>
@@ -60,13 +63,18 @@ export default function TasteBoundaryShowcase() {
 
       <div className="submission-showcase-visual" data-decision={scenario}>
         <div className="submission-taste-side">
-          <img src={active.image} alt="Authored TastePolicy cultural illustration" />
+          <img
+            src={active.image}
+            alt="Authored TastePolicy cultural illustration"
+          />
           <div className="submission-image-scrim" />
           <div className="submission-taste-copy">
             <span className="submission-chip">Qloo cultural evidence</span>
             <p>{active.kicker}</p>
             <strong>
-              {active.score === null ? "Evidence unavailable" : `${active.score}% cultural fit`}
+              {active.score === null
+                ? "Evidence unavailable"
+                : `${active.score}% cultural fit`}
             </strong>
           </div>
         </div>
@@ -90,7 +98,10 @@ export default function TasteBoundaryShowcase() {
         </div>
       </div>
 
-      <div className="submission-scenario-tabs" aria-label="Try another decision state">
+      <div
+        className="submission-scenario-tabs"
+        aria-label="Try another decision state"
+      >
         {(Object.keys(scenarios) as Scenario[]).map((item) => (
           <button
             key={item}
@@ -114,7 +125,8 @@ export default function TasteBoundaryShowcase() {
       </div>
 
       <p className="submission-showcase-note">
-        The cultural fit is illustrative on this marketing card. The public Consumer Arena uses real Qloo requests and exposes the captured evidence.
+        The cultural fit is illustrative on this marketing card. The public
+        Consumer Arena uses real Qloo requests and exposes the captured evidence.
       </p>
     </section>
   );
