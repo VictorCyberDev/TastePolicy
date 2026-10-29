@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "tastepolicy": {
+      "type": "streamable-http",
+      "url": "https://tastepolicy.vercel.app/api/mcp",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": {
+              "mode": "cimd"
+            },
+            "resource": "https://tastepolicy.vercel.app/api/mcp",
+            "defaultScopes": ["PASSPORT_READ", "TASTE_EVALUATE", "RECEIPT_READ"]
+          }
+        }
+      }
+    }
+  }
+}

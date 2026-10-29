@@ -1,11 +1,11 @@
 {
-  "version": "2026-10-28",
+  "version": "2026-10-29",
   "slides": [
     {
       "title": "TastePolicy",
       "body": "Subjective Authority Infrastructure\nfor AI Agents",
       "caption": "Your taste. Your rules. Any agent.",
-      "notes": "Independent founder project. Evidence and assumptions as of 2026-10-28. No investor or financing commitment is implied."
+      "notes": "Independent founder project. Evidence and assumptions as of 2026-10-29. No investor or financing commitment is implied."
     },
     {
       "title": "The preference boundary",
@@ -27,39 +27,39 @@
     },
     {
       "title": "Product and developer path",
-      "body": "Reviewed taste \u2192 private Passport \u2192 credential\n\u2192 decision \u2192 receipt \u2192 bounded lease/proof",
+      "body": "Reviewed taste → private Passport → credential\n→ decision → receipt → bounded lease/proof",
       "caption": "REST, remote MCP and A2A share the authority services.",
-      "notes": "Current production evidence proves fresh enrollment, SDK/A2A, export and deletion. New guided onboarding is in release verification. Organization/project/environment and billing paths remain unfinished. Verification is not authorization. Payment/booking/legal authority stays separate."
+      "notes": "Fresh production acceptance proves guided enrollment, owner workspace/project/environment/agent metadata, API credentials, SDK/A2A, export, lease/proof revocation and disposable-account deletion. Workspaces are single-owner; logical environments are not physical isolation. Stripe TEST implementation is merged but no provider checkout is commissioned. Verification is not authorization. Payment, booking and legal authority stay separate."
     },
     {
       "title": "Engineering evidence",
       "body": "Production OAuth and real Qloo receipts\nIndependent SDK and A2A acceptance",
       "caption": "Canonical origin: tastepolicy.vercel.app",
-      "notes": "Canonical merged main c8da03c766c05e7f7d15ed618ba542d20dab232c, production dpl_CTk3Vr9drAKM87SM3EDJ1YNXCqQa. Hosted auth/OAuth10/10, independent SDK/A2A/export/deletion8/8. New company/MCP app PR17 exact head a94ee7790688e61eb6a9f4374fbafc2792ca0ea8 is not yet merged at deck preparation. No actual ChatGPT/Claude use, directory approval or npm publication established."
+      "notes": "Latest fully commissioned release at preparation: main 4b58ff11c49c59141a2dad3d2aebd65d36d0d5d8, Vercel production dpl_4vtyd3S2F7z5B53gohM9vBJbxAQA. Exact-main Verify 40802738876, secret scan 40802738952, hosted acceptance 40803876959 and registry verification 40804041077 passed. Operations/benchmark/developer PR21 at 85c6b4e passed Verify 40802776822 and hosted acceptance 40802776853, then merged as main 165bb862cce6ee9f32e2bce2ba4f25f288020f86; its main/deployment checks remain pending. Official MCP Registry io.github.VictorCyberDev/tastepolicy@0.2.0 is active. No real TastePolicy ChatGPT/Claude tool invocation, OpenAI/Claude directory approval, npm publication or provider billing commissioning established."
     },
     {
       "title": "Evaluation has exposed gaps",
       "body": "94 / 160 exact agreement\n33 / 67 missed ASK",
       "caption": "Ten operator-asserted people. 180 repeated judgments.",
-      "notes": "Source docs/evaluation/wg-c-human-pilot-report.md. Unsafe autonomy14/150, incorrect REJECT2/10, UNAVAILABLE agreement9/32.20/180 unscorable. These are synthetic-scenario judgments, not execution harms. No population safety or competitive-win claim. Current TasteBench24engineering cases do not establish a moat."
+      "notes": "Historical source docs/evaluation/wg-c-human-pilot-report.md. Unsafe autonomy 14/150; incorrect REJECT 2/10; UNAVAILABLE agreement 9/32; 20/180 unscorable. Synthetic-scenario judgments, not execution harms or population validation. New TasteBench v2: 525 synthetic component cases; deterministic evaluation subset 132 cases gives state policy 132/132, affinity only 102/132 and conservative rules 82/132. It is contract coverage, not live Qloo relevance, a generic LLM study, new human labels or a full-system competitive victory. See tastebench-v2-methodology.md. Separate actual ChatGPT browser observation: full written contract, sixteen preselected synthetic cases, 13/16 exact and one unsafe ALLOW; one run only, exact model identity not exposed, not independent replication or MCP commissioning."
     },
     {
       "title": "First buyer and test price",
       "body": "Travel and concierge agent teams\nOne candidate flow before separate execution",
       "caption": "Free developer usage. Pro USD49/month is an experiment.",
-      "notes": "Sources: https://www.cerbos.dev/pricing developer25/month production933/month; https://www.osohq.com/pricing Growth15/user/month; https://authzed.com/pricing cloud2/hour. Units differ. Qloo commercial cost is unknown. No working checkout or paid entitlement is claimed."
+      "notes": "Sources: Cerbos developer USD25/month and production USD933/month; Oso Growth USD15/user/month; Authzed cloud USD2/hour, as researched in pricing-research.md. Units differ. Qloo commercial cost is unknown. Stripe TEST checkout/webhook code is merged, but provider account commissioning and live paid entitlement remain unproved. USD49 is an experiment."
     },
     {
       "title": "Market scenario",
       "body": "100 paying workspaces at USD49/month\nwould produce USD58,800 annualized revenue.",
       "caption": "Target, not traction. Jobs-to-team model remains unvalidated.",
-      "notes": "Source BLS https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm 1693800USdeveloperjobs2024. Assume10developers/team=169380team-equivalents. At588annualworkspaceprice broadproxy99.60m, relevance10%=9.96m. Jobs are not buyer companies. No measured TAM or contracted pipeline. See market-and-economics.json."
+      "notes": "BLS software developers outlook: 1,693,800 US developer jobs in 2024. Assume ten developers per team: 169,380 team equivalents. USD588 hypothetical annual price yields a USD99.60m broad proxy; an assumed ten-percent relevance yields USD9.96m. Jobs are not buyer companies. No measured TAM or contracted pipeline. See market-and-economics.json and the cited source."
     },
     {
       "title": "Route to paid adoption",
       "body": "30 days: qualified interviews and design partners\n60 days: scoped pilots and first price tests\n90 days: retention evidence and ten paid targets",
       "caption": "100 paid customers follows validated cohorts.",
-      "notes": "All targets. At20%trial-to-paid need500qualifiedtrials; at30%signup-to-trial need1667signups; at5%visitor-to-signup need33340qualifiedvisitors. No actual conversion, customer or revenue metrics claimed. No outreach sent from this package."
+      "notes": "Targets only. At an assumed 20% trial-to-paid conversion, 100 paying workspaces require 500 qualified trials. At 30% signup-to-trial: approximately 1,667 signups. At 5% visitor-to-signup: approximately 33,340 qualified visitors. No observed conversion, customers or revenue. No outreach sent from this package."
     },
     {
       "title": "Defensibility and risk",
@@ -71,7 +71,7 @@
       "title": "Funding scenario",
       "body": "USD500,000 over 18 months\nUSD50,000 contingency reserve",
       "caption": "Draft planning ask. Founder and legal decisions remain open.",
-      "notes": "Budget hypothesis:275kproduct/engineering,75kprovider/infrastructure/reliability,50ksecurity/legal/privacy,50kdiscovery/distribution,50kreserve.450k/18=25kmonthlyoperatingbudget. No salaries/vendorquotes approved. Milestones: commercialQloocontract, multitenant/onboarding/billingsandbox, realassistants/listings, recovery/monitoring, heldoutevaluation, firstpaidcohort. No financingterms/corporateentity/captable invented."
+      "notes": "Budget hypothesis: USD275k product/engineering; USD75k provider/infrastructure/reliability; USD50k security/legal/privacy; USD50k discovery/distribution; USD50k reserve. USD450k over eighteen months gives USD25k monthly operating budget. No salaries or vendor quotes are approved. Milestones include written Qloo terms, expanded tenant controls, provider billing commissioning, real assistants/listings, historical recovery and deployed monitoring, independently labeled evaluation and a first paid cohort. No financing terms, corporate entity or cap table invented."
     }
   ]
 }

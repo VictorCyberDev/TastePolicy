@@ -1226,117 +1226,144 @@
       "id": "M14-01",
       "milestone": "M14",
       "requirement": "category copy",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-02",
       "milestone": "M14",
       "requirement": "Boundary logo wordmark",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-03",
       "milestone": "M14",
       "requirement": "colors typography spacing",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-04",
       "milestone": "M14",
       "requirement": "motion icons",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-05",
       "milestone": "M14",
       "requirement": "ALLOW ASK REJECT UNAVAILABLE states",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-06",
       "milestone": "M14",
       "requirement": "evidence lease proof states",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-07",
       "milestone": "M14",
       "requirement": "Qloo evidence visualization",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-08",
       "milestone": "M14",
       "requirement": "Authority Card",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-09",
       "milestone": "M14",
       "requirement": "Cultural Receipt",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1356,234 +1383,288 @@
       "id": "M14-11",
       "milestone": "M14",
       "requirement": "social directory icons",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-12",
       "milestone": "M14",
       "requirement": "OpenGraph favicon",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-13",
       "milestone": "M14",
       "requirement": "light dark",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-14",
       "milestone": "M14",
       "requirement": "home",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-15",
       "milestone": "M14",
       "requirement": "product",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-16",
       "milestone": "M14",
       "requirement": "pricing",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-17",
       "milestone": "M14",
       "requirement": "developers",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-18",
       "milestone": "M14",
       "requirement": "docs",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-19",
       "milestone": "M14",
       "requirement": "integrations",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-20",
       "milestone": "M14",
       "requirement": "security",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-21",
       "milestone": "M14",
       "requirement": "trust",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-22",
       "milestone": "M14",
       "requirement": "privacy",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-23",
       "milestone": "M14",
       "requirement": "terms",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-24",
       "milestone": "M14",
       "requirement": "support contact",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-25",
       "milestone": "M14",
       "requirement": "status",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-26",
       "milestone": "M14",
       "requirement": "login",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-27",
       "milestone": "M14",
       "requirement": "signup",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M14-28",
       "milestone": "M14",
       "requirement": "dashboard",
-      "implementation": "src/features/company; src/app company routes; public/brand; docs/company/brand-boundary.md",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/features/company; src/app company pages; public/brand; docs/company/brand-boundary.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: Chromium/Firefox/WebKit company acceptance",
+        "Hosted acceptance 40802776853; company-page content and responsive/accessibility tests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1616,84 +1697,96 @@
       "id": "M15-01",
       "milestone": "M15",
       "requirement": "user onboarding",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-02",
       "milestone": "M15",
       "requirement": "workspace organization",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-03",
       "milestone": "M15",
       "requirement": "project application",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-04",
       "milestone": "M15",
       "requirement": "environment",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-05",
       "milestone": "M15",
       "requirement": "developer credential",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-06",
       "milestone": "M15",
       "requirement": "API key",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1713,15 +1806,16 @@
       "id": "M15-08",
       "milestone": "M15",
       "requirement": "agent",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1741,13 +1835,16 @@
       "id": "M15-10",
       "milestone": "M15",
       "requirement": "Passport",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1782,30 +1879,32 @@
       "id": "M15-13",
       "milestone": "M15",
       "requirement": "decision counts and four outcomes",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-14",
       "milestone": "M15",
       "requirement": "ASK rate rejected incidents",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1907,13 +2006,16 @@
       "id": "M15-22",
       "milestone": "M15",
       "requirement": "create revoke credentials",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -1972,132 +2074,160 @@
       "id": "M15-27",
       "milestone": "M15",
       "requirement": "revoke agent",
-      "implementation": "migrations/0012_developer_workspaces.sql; workspace-service.ts; WorkspaceControl.tsx; shared lease/attestation revocation",
-      "exact_sha": null,
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "tests/workspace.test.ts; pending exact-head hosted/browser acceptance"
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-28",
       "milestone": "M15",
       "requirement": "export",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-29",
       "milestone": "M15",
       "requirement": "delete account",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M15-30",
       "milestone": "M15",
       "requirement": "fresh developer golden path",
-      "implementation": "src/features/company/DeveloperWorkspace.tsx; existing authenticated account services; docs/evaluation/m12-production-authority.json",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "WorkspaceControl, DeveloperWorkspace, workspace-service; single-owner workspaces and logical environments; owner account controls",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: fresh owner workspace/project/environment/agent, credential, decision, revoke, export/deletion",
+        "Verify 40802776822: real PostgreSQL and three browsers; tests/workspace.test.ts and workspace.spec.ts"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-01",
       "milestone": "M16",
       "requirement": "audit tool names titles descriptions",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-02",
       "milestone": "M16",
       "requirement": "input output schemas",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-03",
       "milestone": "M16",
       "requirement": "scopes",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-04",
       "milestone": "M16",
       "requirement": "read-only destructive open-world idempotent annotations",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-05",
       "milestone": "M16",
       "requirement": "confirmation boundary",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-06",
       "milestone": "M16",
       "requirement": "errors",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2169,117 +2299,143 @@
       "id": "M16-12",
       "milestone": "M16",
       "requirement": "MCP no auth",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-13",
       "milestone": "M16",
       "requirement": "MCP OAuth",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-14",
       "milestone": "M16",
       "requirement": "fresh expired revoked credentials",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-15",
       "milestone": "M16",
       "requirement": "malformed requests",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-16",
       "milestone": "M16",
       "requirement": "one-sided commitment",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-17",
       "milestone": "M16",
       "requirement": "stale lease",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-18",
       "milestone": "M16",
       "requirement": "revoked epoch",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M16-19",
       "milestone": "M16",
       "requirement": "provider unavailable",
-      "implementation": "src/server/platform/mcp.ts; mcp-output.ts; src/features/mcp-app; docs/company/mcp-tool-audit.md; tests/mcp.test.ts",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/lib/platform/contracts.ts; src/server/platform/{mcp,mcp-output}.ts; docs/company/mcp-tool-audit.md",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: MCP/OAuth/credential/commitment/lifecycle/provider tests; conformance",
+        "Hosted acceptance 40802776853: fresh scoped MCP and OAuth; real host commissioning remains separate M17"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M17-01",
       "milestone": "M17",
       "requirement": "ChatGPT workflow access",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Signed-in ChatGPT custom MCP creation workflow observed",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Browser 2026-10-28: stable URL and OAuth/CIMD connection form; no tool invocation inferred"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2299,14 +2455,14 @@
       "id": "M17-03",
       "milestone": "M17",
       "requirement": "ChatGPT OAuth authorization",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Prepared exact OAuth consent for PASSPORT_READ, TASTE_EVALUATE, RECEIPT_READ",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": ["docs/evaluation/external-checkpoints-2026-10-29.md"],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "BLOCKED_EXTERNAL",
+      "blocker": "Browser policy requires action-time confirmation before granting new scoped assistant access."
     },
     {
       "id": "M17-04",
@@ -2390,27 +2546,29 @@
       "id": "M17-10",
       "milestone": "M17",
       "requirement": "Claude customize connector registration",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Saved Claude TastePolicy custom connector with stable origin",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Browser 2026-10-28: saved connector detail and detected published OAuth identity; connection pending"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M17-11",
       "milestone": "M17",
       "requirement": "Claude OAuth identity authentication",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Prepared exact OAuth consent for PASSPORT_READ, TASTE_EVALUATE, RECEIPT_READ",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": ["docs/evaluation/external-checkpoints-2026-10-29.md"],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "BLOCKED_EXTERNAL",
+      "blocker": "Browser policy requires action-time confirmation before granting new scoped assistant access."
     },
     {
       "id": "M17-12",
@@ -2468,39 +2626,45 @@
       "id": "M17-16",
       "milestone": "M17",
       "requirement": "independent REST",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "scripts/acceptance/{hosted-acceptance,production-authority}.mjs; SDK tarball consumer",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: independent installed SDK, REST and A2A credential requests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M17-17",
       "milestone": "M17",
       "requirement": "independent A2A",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "scripts/acceptance/{hosted-acceptance,production-authority}.mjs; SDK tarball consumer",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: independent installed SDK, REST and A2A credential requests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M17-18",
       "milestone": "M17",
       "requirement": "independent SDK",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "scripts/acceptance/{hosted-acceptance,production-authority}.mjs; SDK tarball consumer",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853: independent installed SDK, REST and A2A credential requests"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2520,13 +2684,15 @@
       "id": "M18-02",
       "milestone": "M18",
       "requirement": "stable MCP",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Stable canonical MCP, company legal/support pages, OAuth and annotation audit",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853; docs/company/mcp-tool-audit.md; no platform scan/approval implied"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2559,26 +2725,30 @@
       "id": "M18-05",
       "milestone": "M18",
       "requirement": "website support privacy terms",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Stable canonical MCP, company legal/support pages, OAuth and annotation audit",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853; docs/company/mcp-tool-audit.md; no platform scan/approval implied"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M18-06",
       "milestone": "M18",
       "requirement": "safe OAuth",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Stable canonical MCP, company legal/support pages, OAuth and annotation audit",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853; docs/company/mcp-tool-audit.md; no platform scan/approval implied"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2598,13 +2768,15 @@
       "id": "M18-08",
       "milestone": "M18",
       "requirement": "annotations justifications",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Stable canonical MCP, company legal/support pages, OAuth and annotation audit",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Hosted acceptance 40802776853; docs/company/mcp-tool-audit.md; no platform scan/approval implied"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2728,14 +2900,16 @@
       "id": "M18-18",
       "milestone": "M18",
       "requirement": "Claude current submission",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Claude directory portal inspected on signed-in Free account",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Actual portal 2026-10-29: Directory submissions need a paid plan; docs/evaluation/external-checkpoints-2026-10-29.md"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "BLOCKED_EXTERNAL",
+      "blocker": "Pro/Max/Team/Enterprise plan required by observed portal; no paid upgrade authorized."
     },
     {
       "id": "M18-19",
@@ -2754,14 +2928,16 @@
       "id": "M18-20",
       "milestone": "M18",
       "requirement": "Claude submit and track review",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Claude directory portal inspected on signed-in Free account",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Actual portal 2026-10-29: Directory submissions need a paid plan; docs/evaluation/external-checkpoints-2026-10-29.md"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "BLOCKED_EXTERNAL",
+      "blocker": "Pro/Max/Team/Enterprise plan required by observed portal; no paid upgrade authorized."
     },
     {
       "id": "M18-21",
@@ -2926,52 +3102,64 @@
       "id": "M19-11",
       "milestone": "M19",
       "requirement": "TypeScript SDK",
-      "implementation": "src/features/company/DeveloperDocs.tsx; packages/sdk; scripts/build-sdk.mjs",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M19-12",
       "milestone": "M19",
       "requirement": "professional package",
-      "implementation": "src/features/company/DeveloperDocs.tsx; packages/sdk; scripts/build-sdk.mjs",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M19-13",
       "milestone": "M19",
       "requirement": "version changelog install examples",
-      "implementation": "src/features/company/DeveloperDocs.tsx; packages/sdk; scripts/build-sdk.mjs",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M19-14",
       "milestone": "M19",
       "requirement": "Next.js example",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3004,39 +3192,48 @@
       "id": "M19-17",
       "milestone": "M19",
       "requirement": "Vercel AI SDK example",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M19-18",
       "milestone": "M19",
       "requirement": "raw REST example",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M19-19",
       "milestone": "M19",
       "requirement": "MCP client example",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "src/sdk; packages/sdk; examples/golden-path; explicit local install, no npm publication claim",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: SDK build, example npm ci, four-outcome offline executor and Next.js production build",
+        "Hosted acceptance 40802776853: independently installed SDK"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3543,39 +3740,48 @@
       "id": "M21-19",
       "milestone": "M21",
       "requirement": "SBOM",
-      "implementation": "src/features/company/PublicPages.tsx; docs/company/vendor-register.md; docs/security/sbom.cdx.json; .gitleaks.toml; .github/workflows/secrets.yml",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "docs/security/{sbom.cdx.json,scanning-2026-10-29.md}; pinned secret-scan workflow",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "666 root lock components; official structural schema/reference checks with disclosed unsupported formats",
+        "Root/example npm audit zero advisories; Secret scan 40802776841"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M21-20",
       "milestone": "M21",
       "requirement": "dependency audit",
-      "implementation": "src/features/company/PublicPages.tsx; docs/company/vendor-register.md; docs/security/sbom.cdx.json; .gitleaks.toml; .github/workflows/secrets.yml",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "docs/security/{sbom.cdx.json,scanning-2026-10-29.md}; pinned secret-scan workflow",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "666 root lock components; official structural schema/reference checks with disclosed unsupported formats",
+        "Root/example npm audit zero advisories; Secret scan 40802776841"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M21-21",
       "milestone": "M21",
       "requirement": "secret scanning",
-      "implementation": "src/features/company/PublicPages.tsx; docs/company/vendor-register.md; docs/security/sbom.cdx.json; .gitleaks.toml; .github/workflows/secrets.yml",
-      "exact_sha": null,
-      "evidence": ["company-build-m10-m26.md / implementation checkpoint"],
+      "implementation": "docs/security/{sbom.cdx.json,scanning-2026-10-29.md}; pinned secret-scan workflow",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "666 root lock components; official structural schema/reference checks with disclosed unsupported formats",
+        "Root/example npm audit zero advisories; Secret scan 40802776841"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3668,13 +3874,16 @@
       "id": "M22-01",
       "milestone": "M22",
       "requirement": "expanded TasteBench",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3697,14 +3906,16 @@
       "id": "M22-03",
       "milestone": "M22",
       "requirement": "generic LLM baseline",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2/chatgpt-prompt-observation.json",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Actual browser 2026-10-29: one prompt-only run, 13/16 exact, one unsafe ALLOW; exact model version not exposed"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Single convenience batch; no independent replication or exact model identity."
     },
     {
       "id": "M22-04",
@@ -3723,16 +3934,16 @@
       "id": "M22-05",
       "milestone": "M22",
       "requirement": "deterministic baseline",
-      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
-      "exact_sha": null,
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
-        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3765,78 +3976,96 @@
       "id": "M22-08",
       "milestone": "M22",
       "requirement": "exact authority",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-09",
       "milestone": "M22",
       "requirement": "unsafe autonomy",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-10",
       "milestone": "M22",
       "requirement": "missed ASK",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-11",
       "milestone": "M22",
       "requirement": "incorrect REJECT",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-12",
       "milestone": "M22",
       "requirement": "UNAVAILABLE",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-13",
       "milestone": "M22",
       "requirement": "hard rules",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -3882,58 +4111,64 @@
       "id": "M22-17",
       "milestone": "M22",
       "requirement": "held-out separation",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-18",
       "milestone": "M22",
       "requirement": "human pilot caveats",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-19",
       "milestone": "M22",
       "requirement": "public report",
-      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
-      "exact_sha": null,
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
-        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-20",
       "milestone": "M22",
       "requirement": "technical methodology",
-      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
-      "exact_sha": null,
+      "implementation": "benchmarks/tastebench/v2; scripts/tastebench-boundaries.ts; docs/evaluation/tastebench-v2-methodology.md; synthetic component scope explicitly limited",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
       "evidence": [
-        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
-        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+        "Verify 40802776822: reproducible 525-case hash, per-case results and metrics; 393/132 deterministic partition without tuning",
+        "Historical 24-case dataset and human-pilot caveats preserved; no live relevance/full-system superiority claim"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -4289,27 +4524,31 @@
       "id": "M24-09",
       "milestone": "M24",
       "requirement": "Devpost submission existence status",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Live Devpost project 1474261 audit",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "2026-10-29 readback: public description version 4; Qloo submitted_at null. Exact status verified, not claimed entered."
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M24-10",
       "milestone": "M24",
       "requirement": "name production repo description Qloo",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Devpost public description version 4; docs/submission/qloo-submission-package-2026-10-29.json",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Public write/readback verified 2026-10-29; production and GitHub/Qloo/Codex description updated"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Entry-specific preview URL remains until final submit; explicit eligibility/rules agreement required."
     },
     {
       "id": "M24-11",
@@ -4328,27 +4567,31 @@
       "id": "M24-12",
       "milestone": "M24",
       "requirement": "no stale preview",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Devpost public description version 4; docs/submission/qloo-submission-package-2026-10-29.json",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Public write/readback verified 2026-10-29; production and GitHub/Qloo/Codex description updated"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Entry-specific preview URL remains until final submit; explicit eligibility/rules agreement required."
     },
     {
       "id": "M24-13",
       "milestone": "M24",
       "requirement": "edit if open otherwise preserve evidence",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Devpost public description version 4; docs/submission/qloo-submission-package-2026-10-29.json",
+      "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
+      "evidence": [
+        "Public write/readback verified 2026-10-29; production and GitHub/Qloo/Codex description updated"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Entry-specific preview URL remains until final submit; explicit eligibility/rules agreement required."
     },
     {
       "id": "M24-14",

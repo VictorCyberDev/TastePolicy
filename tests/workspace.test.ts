@@ -331,7 +331,19 @@ it("atomically revokes agent leases and issued status entries, and stops new eva
     status: "REVOKED",
     count: 1,
   });
-  expect((await service.inspect(b.principal)).metrics.captured.total).toBe(0);
+  expect(metrics.authorityEpochs).toContainEqual(
+    expect.objectContaining({
+      leaseRef: lease.leaseRef,
+      agentId: proposed.agentId,
+      status: "REVOKED",
+      epoch: "1",
+    }),
+  );
+  expect(metrics.latestProviderAt).not.toBeNull();
+  const otherMetrics = (await service.inspect(b.principal)).metrics;
+  expect(otherMetrics.captured.total).toBe(0);
+  expect(otherMetrics.authorityEpochs).toEqual([]);
+  expect(otherMetrics.latestProviderAt).toBeNull();
 });
 it("account deletion cascades application metadata and internal simulated billing records", async () => {
   const w = await world();

@@ -847,3 +847,41 @@
   margin-block: 0.7rem;
   overflow-wrap: anywhere;
 }
+
+.company-account-content {
+  --foreground: var(--c-fg);
+  --background: var(--c-bg);
+  --surface: var(--c-panel);
+  --line: var(--c-line);
+}
+.company-account-content :is(h1, h2) {
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
+}
+.company-account-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  max-width: 64rem;
+  margin: auto;
+  padding: 24px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--c-line);
+}
+.company-account-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.company-judge-steps {
+  padding-left: 24px;
+}
+.company-judge-steps li {
+  padding: 12px 0;
+  max-width: 78ch;
+}
+.company-judge-steps strong {
+  display: block;
+}

@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-10-29",
+  "projectId": 1474261,
+  "projectUrl": "https://devpost.com/software/tastepolicy",
+  "publicDescriptionVersion": 4,
+  "publicDescriptionVerified": true,
+  "competitionState": "NOT_SUBMITTED",
+  "deadline": "2026-10-31T03:45:00Z",
+  "currentEntryUrl": "https://tastepolicy-b1s31uiqj-start-up16.vercel.app/arena/consumer",
+  "requiredHumanCheckpoint": "Confirm eligibility and acceptance of Qloo official rules before final submission; the Devpost connector requires this agreement.",
+  "proposedSubmission": {
+    "hackathon_subdomain": "qloo",
+    "project_slug": "1474261",
+    "custom_answers": [
+      {
+        "submission_field_id": 28597,
+        "value": "2026-10-10 (first repository commit and Devpost project record). Continued development during the hackathon."
+      },
+      {
+        "submission_field_id": 28598,
+        "value": "https://tastepolicy.vercel.app/arena/consumer"
+      },
+      {
+        "submission_field_id": 28599,
+        "value": "https://github.com/VictorCyberDev/TastePolicy"
+      },
+      {
+        "submission_field_id": 28701,
+        "value": "TastePolicy began during this hackathon. Qloo is central to cross-domain signal resolution, discovery and candidate-specific cultural evidence. Continued work added private authenticated Passports, explicit constraints/action ceilings, leases, portable proofs, REST/OAuth/remote MCP/A2A, production deployment, self-serve owner workspace onboarding and automated PostgreSQL/browser acceptance. Real hosted ChatGPT/Claude tool execution and commercial Qloo permission remain unproved."
+      }
+    ]
+  },
+  "videoRequired": false,
+  "ruleAgreementRecorded": false,
+  "readbackChecks": {
+    "main": true,
+    "synthetic": true,
+    "codex": true,
+    "noFalseSubmission": true
+  },
+  "readbackUpdatedAt": "2026-10-28T21:53:15.771-04:00"
+}

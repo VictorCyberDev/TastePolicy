@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 const routes = [
   "/",
   "/pricing",
+  "/judge",
   "/security",
   "/trust",
   "/privacy",

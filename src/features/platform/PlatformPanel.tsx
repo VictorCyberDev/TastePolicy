@@ -147,9 +147,9 @@ export default function PlatformPanel() {
   return (
     <section className="platform-panel" aria-labelledby="platform-title">
       <nav>
-        <Link href="/demo">TastePolicy · Judge Mode</Link>
+        <Link href="/judge">TastePolicy · Product walkthrough</Link>
       </nav>
-      <p className="eyebrow">M6 · Interoperable Preference Authority</p>
+      <p className="eyebrow">PERSONAL AUTHORITY</p>
       <h1 id="platform-title">Your TastePolicy Passport</h1>
       <p>
         Private state references, explicit sharing and bounded developer access.
