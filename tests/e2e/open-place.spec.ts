@@ -82,7 +82,7 @@ test("See the approach waits for the person: no autoplay, manual steps, then pla
   await expect(seq.getByText("Street sequence · frame 1 of 5")).toBeVisible();
   await page.waitForTimeout(2500);
   await expect(seq.getByText("Street sequence · frame 1 of 5")).toBeVisible();
-  await seq.getByRole("button", { name: "Next frame" }).click();
+  await seq.getByRole("button", { name: /Forward/ }).click();
   await expect(seq.getByText("frame 2 of 5")).toBeVisible();
   await seq.getByRole("button", { name: "Play" }).click();
   await expect(seq.getByText(/frame ([3-5]) of 5/)).toBeVisible();
@@ -104,7 +104,7 @@ test("reduced motion: the sequence only moves when the person steps it", async (
   const seq = page.getByRole("region", { name: /Street sequence toward/ });
   await expect(seq.getByRole("button", { name: "Play" })).toBeDisabled();
   await expect(seq.getByText(/Reduced motion is on/)).toBeVisible();
-  await seq.getByRole("button", { name: "Next frame" }).click();
+  await seq.getByRole("button", { name: /Forward/ }).click();
   await expect(seq.getByText("frame 2 of 5")).toBeVisible();
 });
 
@@ -313,7 +313,7 @@ test("axe and mobile: gallery, approach and journey open with no serious violati
   expect(await check()).toEqual([]);
   await page.getByRole("button", { name: "See the approach" }).click();
   expect(await check()).toEqual([]);
-  for (const name of ["Previous frame", "Next frame", "Close"]) {
+  for (const name of ["Back", "Forward", "Close"]) {
     const box = await page
       .getByRole("button", { name })
       .boundingBox()

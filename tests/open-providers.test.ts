@@ -423,6 +423,30 @@ describe("Nominatim identity", () => {
   });
 });
 
+describe("caching respects free public infrastructure", () => {
+  it("asks Nominatim once for the same candidate within the cache window", async () => {
+    let calls = 0;
+    const f = (async () => {
+      calls++;
+      return Response.json(nomA);
+    }) as unknown as typeof fetch;
+    const a = await geocodeCandidate(algonquin, f);
+    const b = await geocodeCandidate(algonquin, f);
+    expect(a.status === "available" && b.status === "available").toBe(true);
+    expect(calls).toBe(1);
+  });
+  it("does not cache a failure, so a transient outage cannot stick", async () => {
+    let calls = 0;
+    const f = (async () => {
+      calls++;
+      return new Response("x", { status: 503 });
+    }) as unknown as typeof fetch;
+    await geocodeCandidate(algonquin, f);
+    await geocodeCandidate(algonquin, f);
+    expect(calls).toBe(2);
+  });
+});
+
 describe("OSM facts: explicit tags only, absence is unknown (M25.3)", () => {
   it("maps explicit wheelchair tags with a not-verified note", () => {
     const yes = factsFromTags({ wheelchair: "yes" }, now);

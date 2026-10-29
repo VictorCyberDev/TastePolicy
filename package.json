@@ -7,6 +7,7 @@
     "build": "next build",
     "vercel-build": "npm run mcp:app:build && npm run maplibre:worker && node scripts/migrate.mjs --if-enabled && next build",
     "maplibre:worker": "node scripts/copy-maplibre-worker.mjs",
+    "live:open-places": "node --experimental-transform-types --import ./scripts/source-imports.mjs scripts/live-open-places.ts",
     "db:migrate:all": "node scripts/migrate.mjs",
     "db:migrate:status": "node scripts/migrate.mjs --status",
     "start": "next start",

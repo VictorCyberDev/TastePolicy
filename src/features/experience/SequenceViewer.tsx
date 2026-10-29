@@ -79,11 +79,7 @@ export default function SequenceViewer({
         role="group"
         aria-label="Sequence controls"
       >
-        <button
-          onClick={() => setI(Math.max(0, i - 1))}
-          disabled={i === 0}
-          aria-label="Previous frame"
-        >
+        <button onClick={() => setI(Math.max(0, i - 1))} disabled={i === 0}>
           ‹ Back
         </button>
         <button
@@ -100,7 +96,6 @@ export default function SequenceViewer({
         <button
           onClick={() => setI(Math.min(frames.length - 1, i + 1))}
           disabled={i >= frames.length - 1}
-          aria-label="Next frame"
         >
           Forward ›
         </button>

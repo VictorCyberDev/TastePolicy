@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   try {
     const key = serverEnvironment.googleMapsApiKey;
     // Open providers first and always; Google only enriches when configured.
-    const context = await resolveOpenPlace(
+    const resolved = resolveOpenPlace(
       { entity: input.entity, origin: input.origin },
       {
         heigitKey: serverEnvironment.heigitApiKey,
@@ -51,6 +51,16 @@ export async function POST(request: Request) {
         now: new Date().toISOString(),
       },
     );
+    // A hard ceiling so a slow public service can never hang the experience.
+    const context = await Promise.race([
+      resolved,
+      new Promise<null>((r) => setTimeout(() => r(null), 24_000)),
+    ]);
+    if (!context)
+      return Response.json(
+        { status: "unavailable", reason: "timeout" },
+        { status: 504, headers },
+      );
     return Response.json({ status: "available", data: context }, { headers });
   } finally {
     release();
