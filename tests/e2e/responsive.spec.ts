@@ -10,6 +10,11 @@ const sizes = [
   ["desktop", 1280, 800],
 ] as const;
 const pages: [string, string][] = [
+  ["/", "AI that helps without replacing you."],
+  ["/experience", "Meet Margaret."],
+  ["/experience/sensory-aware", "Sensory-aware night out"],
+  ["/experience/low-energy", "Low-energy day"],
+  ["/judge", "Margaret's mobility changed. Her taste didn't."],
   ["/product", "Your taste. Your rules. Any agent."],
   ["/developers", "Subjective authority for your agents"],
   ["/account/rules", "Your rules"],

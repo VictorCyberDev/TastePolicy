@@ -59,6 +59,13 @@ const COMPOSITION = new Set([
   // M24: the anonymous demo state route runs the policy engine against a
   // session-chosen action ceiling.
   "src/server/state/service.ts",
+  // M24: the human product composes the action ladder (M7) and account API.
+  "src/components/brand/primitives.tsx",
+  "src/features/experience/AssistedChoice.tsx",
+  "src/features/experience/personas.ts",
+  "src/features/experience/useAssistedChoice.ts",
+  "src/features/home/PersonalAgencyHome.tsx",
+  "src/lib/human/copy.ts",
   "src/server/state/session-authority.ts",
   "src/server/state/repositories.ts",
   "src/lib/platform/contracts.ts",

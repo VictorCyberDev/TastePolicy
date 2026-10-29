@@ -1,17 +1,23 @@
 import Link from "next/link";
-import CompanyDocument from "@/features/company/CompanyDocument";
+import HumanShell from "@/components/layout/HumanShell";
+import Tasteprint from "@/components/brand/Tasteprint";
+import {
+  CultureTiles,
+  DecisionSeal,
+  NeedChip,
+} from "@/components/brand/primitives";
+import { MARGARET } from "@/features/experience/personas";
+import "@/features/home/home.css";
+
 export const metadata = {
   title: "Judge walkthrough · TastePolicy",
   description:
-    "See Qloo cultural evidence, explicit user boundaries and bounded authority. Live paths and recorded engineering evidence remain distinct.",
+    "Three acts, no login: meet Margaret, watch Qloo understand her, watch TastePolicy protect her agency. Technical evidence follows.",
 };
-export default function JudgePage() {
+
+function TechnicalEvidence() {
   return (
-    <CompanyDocument
-      eyebrow="JUDGE WALKTHROUGH"
-      title="Taste is a signal. Your rules draw the boundary."
-      lead="Qloo gives agents taste. TastePolicy gives that taste authority boundaries. Start with a public live path; account controls and recorded evidence are clearly marked."
-    >
+    <div className="tp-evidence">
       <section>
         <h2>Begin with the real product</h2>
         <p>
@@ -151,6 +157,162 @@ export default function JudgePage() {
           execution permissible.
         </p>
       </section>
-    </CompanyDocument>
+    </div>
+  );
+}
+
+export default function JudgePage() {
+  return (
+    <HumanShell>
+      <main className="tp-landing tp-judge">
+        <section aria-labelledby="judge-h">
+          <p className="tp-eyebrow">Judge walkthrough · no login</p>
+          <h1 id="judge-h">
+            Margaret&apos;s mobility changed. Her taste didn&apos;t.
+          </h1>
+          <p className="tp-band-lead">
+            Three short acts show the whole idea with real Qloo data. A
+            technical evidence track follows for the deeper infrastructure.
+            Everything in the three acts works anonymously.
+          </p>
+          <p>
+            <Link className="tp-btn" data-variant="spectrum" href="/experience">
+              Start the live walkthrough
+            </Link>
+          </p>
+        </section>
+
+        <section aria-labelledby="act1">
+          <p className="tp-eyebrow">Act 1</p>
+          <h2 id="act1">Meet Margaret</h2>
+          <p className="tp-band-lead">
+            Margaret still knows exactly what she enjoys. Her physical needs
+            changed. Her taste didn&apos;t.
+          </p>
+          <div className="tp-split">
+            <div>
+              <CultureTiles
+                items={MARGARET.anchors.map((a) => ({
+                  name: a.query,
+                  kind: a.caption,
+                }))}
+              />
+              <ul className="tp-need-row" aria-label="Current constraints">
+                {MARGARET.requirements.map((r) => (
+                  <li key={r.key}>
+                    <NeedChip
+                      label={r.label ?? r.key}
+                      status="pending"
+                      detail={
+                        r.importance === "hard" ? "required" : "preferred"
+                      }
+                    />
+                  </li>
+                ))}
+              </ul>
+              <p>
+                <b>Request:</b> &ldquo;{MARGARET.quote}&rdquo;{" "}
+                <b>AI permission:</b> suggest, compare and shortlist, nothing
+                more.
+              </p>
+            </div>
+            <div className="tp-center">
+              <Tasteprint
+                anchors={MARGARET.anchors.map((a) => a.query)}
+                size={150}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="act2">
+          <p className="tp-eyebrow">Act 2</p>
+          <h2 id="act2">Watch Qloo understand her</h2>
+          <p>
+            In the experience, Qloo resolves her five anchors to real entities
+            (you confirm each match), then discovers real places that fit her
+            taste. Three ways to answer the same evening:
+          </p>
+          <div className="tp-trio tp-compare">
+            <article>
+              <h3>Generic AI</h3>
+              <p>
+                A popular, accessible-sounding suggestion. No cultural
+                reasoning.
+              </p>
+            </article>
+            <article>
+              <h3>Qloo</h3>
+              <p>
+                A culturally relevant place, ranked by real cross-domain
+                affinity.
+              </p>
+            </article>
+            <article data-us="true">
+              <h3>TastePolicy</h3>
+              <p>
+                Culturally relevant, compatible with her real needs, and bounded
+                by explicit authority.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="act3">
+          <p className="tp-eyebrow">Act 3</p>
+          <h2 id="act3">Watch TastePolicy protect her agency</h2>
+          <ol className="tp-steps">
+            <li>
+              Strong cultural fit, and a critical requirement: a step-free
+              entrance.
+            </li>
+            <li>
+              The evidence is unknown, so the answer is <b>ASK</b>: &ldquo;This
+              feels like you, but I need to confirm the entrance.&rdquo;
+            </li>
+            <li>
+              Answer the missing question. TastePolicy re-evaluates the same
+              choice.
+            </li>
+            <li>
+              <b>ALLOW</b>, but only as far as <b>SHORTLIST</b>.
+            </li>
+            <li>
+              Press &ldquo;Simulate: the agent tries to present it as the final
+              choice&rdquo;. The ceiling forces <b>ASK</b> again.
+            </li>
+            <li>
+              Open &ldquo;Why this happened&rdquo;: Qloo, place facts, her
+              requirements, her rules and the decision, each with its own
+              source.
+            </li>
+          </ol>
+          <div className="tp-seals">
+            <DecisionSeal outcome="ASK" />
+            <DecisionSeal outcome="ALLOW" />
+          </div>
+          <p className="tp-muted">
+            If a place provider already confirms the entrance, you may see ALLOW
+            straight away. That is correct behaviour; press &ldquo;Show me
+            another&rdquo; or answer &ldquo;No, there are steps&rdquo; on a
+            place to see a hard REJECT. Two concise variants prove generality:{" "}
+            <Link href="/experience/sensory-aware">sensory-aware</Link> and{" "}
+            <Link href="/experience/low-energy">low-energy</Link>.
+          </p>
+        </section>
+
+        <section aria-labelledby="evidence-h">
+          <p className="tp-eyebrow">Technical evidence</p>
+          <h2 id="evidence-h">Under the three acts</h2>
+          <p>
+            REJECT, UNAVAILABLE, Cultural Receipts, policy updates, leases,
+            drift, proofs, MCP, A2A, SDK, OAuth, ChatGPT/Claude integration
+            status, trust and the developer platform. Recorded evidence and live
+            paths are clearly distinguished below.
+          </p>
+          <TechnicalEvidence />
+        </section>
+      </main>
+    </HumanShell>
   );
 }

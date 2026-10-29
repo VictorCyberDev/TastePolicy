@@ -129,7 +129,7 @@ test("owner creates application namespaces, binds a key and keeps billing simula
     });
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/dashboard", { waitUntil: "networkidle" });
+  await page.goto("/developers/workspace", { waitUntil: "networkidle" });
   await expect(page.getByText("33.3% of 3 captured decisions")).toBeVisible();
   await page
     .getByRole("button", { name: "Create workspace", exact: true })

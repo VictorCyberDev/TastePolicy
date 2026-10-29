@@ -2,10 +2,61 @@
 
 # TastePolicy
 
-**The subjective authority layer for AI agents.**
+**AI that helps without replacing you.**
 
-> Qloo gives agents taste. TastePolicy gives that taste authority boundaries.
-> Your taste. Your rules. Any agent.
+TastePolicy is **personal agency infrastructure for AI**. It uses [Qloo](https://qloo.com) to understand what feels like _you_, then respects the needs and boundaries that decide what an AI may suggest, shortlist or choose.
+
+> Margaret's mobility changed. Her taste didn't.
+
+A recommender asks _"Will this person like it?"_ An accessibility tool asks _"Can this person access it?"_ TastePolicy asks: **will they genuinely like it, can it work for their real life, what evidence is known or unknown, and how far is the AI actually permitted to go?** Preference, evidence, requirements, permission and action stay separate.
+
+## Assisted Choice (the flagship demo)
+
+Open **`/experience`** (no login). Margaret is 72, loves intimate live jazz, classic cinema and Italian dining, and now needs a step-free entrance and a short walk. The journey:
+
+1. Qloo resolves her five cultural anchors (you confirm each exact match) and discovers real places.
+2. A place appears image-first, with _why it feels like her_ and a _will it work today?_ checklist.
+3. Critical fact unknown (entrance) → **ASK** ("Needs your answer"). You answer; the same evaluator re-checks.
+4. **ALLOW**, but only as far as her limit (**SHORTLIST**).
+5. A simulated over-eager agent tries to _present it as the final choice_ → **ASK** again; only she can widen the limit.
+6. **Why this happened** shows each source apart: Qloo (cultural evidence), place provider (facts), her requirements, her rules, the evaluator.
+
+A known violation (e.g. no step-free entrance) is **REJECT**; evidence that cannot be obtained is **UNAVAILABLE**. Two concise variants prove the model generalises: `/experience/sensory-aware` (`noise_level in [low, moderate]`) and `/experience/low-energy` (`walking_minutes <= 10`). Needs are modelled as functional rules, never diagnoses, and nothing is inferred about a person from taste.
+
+### Requirements and facts (generic contract)
+
+A requirement is `{ key, operator, expected, importance, sourceRequirement }` (`hard` or `soft`). A candidate fact is `{ key, value, state: known|unknown|unavailable, evidence: VERIFIED|USER_CONFIRMED|INFERRED, source, sourceType, observedAt }`. Both travel in the existing evaluation `context` (additive; legacy callers are unchanged) and are committed in the context commitment, so a changed fact is drift.
+
+| Situation                                                       | Outcome                             |
+| --------------------------------------------------------------- | ----------------------------------- |
+| Known hard violation                                            | `REJECT` (final)                    |
+| Critical fact unknown, inferred, stale or conflicting           | `ASK`                               |
+| Required evidence the provider cannot supply / Qloo unavailable | `UNAVAILABLE`                       |
+| Requirements satisfied, strong fit, action within ceiling       | `ALLOW`                             |
+| Good choice but requested action above the ceiling              | `ASK` (`ACTION_CEILING`)            |
+| Soft requirement unmet or unknown                               | reported, never changes the outcome |
+
+Qloo is **never** accepted as the source of a place fact. Code: `src/lib/requirements/`, `src/server/state/policy.ts`, tests in `tests/requirements.test.ts`.
+
+### Place layer
+
+`src/server/places/` bridges a Qloo place to a factual place (Google Places API New + Routes API) with a deterministic identity score; ambiguous or weak matches attach nothing. Photos stream through a same-origin proxy (`/api/places/photo`) with attribution and `no-store`; the key never reaches the browser. Fallback order: provider photo → licensed Wikimedia Commons → authored Taste image, each labelled. Without `GOOGLE_MAPS_API_KEY`, photos, accessibility facts and walking time stay **unknown** (the experience asks) and no route is drawn.
+
+### Visual system
+
+_Taste is expressive. Authority is precise._ Tokens and components live in `src/components/brand/` (Taste Spectrum, Tasteprint, Boundary Ribbon, Culture Tiles, Need Chips, Place Canvas, Authority Ladder, Decision Seal, Journey Line). The human product is deliberately light; motion is semantic and respects `prefers-reduced-motion`; status is never colour-only.
+
+### Routes
+
+`/` story · `/experience` Assisted Choice · `/judge` three-act walkthrough + technical evidence · `/dashboard` Personal Agency Home (example mode when signed out) · `/account/*` your taste, rules, leases, history, decision details · `/product` · `/developers` and `/developers/workspace` (credentials, projects, agents, billing) · `/arena/consumer` engineering route (kept) · `/demo` `/verify` `/integrations` `/docs` `/trust` `/security` `/status` `/privacy` `/terms`.
+
+### For judges
+
+Start at `/judge` (or go straight to `/experience`): no login. Live Qloo needs `QLOO_API_KEY`; provider failures are shown, never faked. See `docs/submission/m24-submission.md`.
+
+## Technical foundation
+
+**The subjective authority layer for AI agents.** _Qloo gives agents taste. TastePolicy gives that taste authority boundaries._
 
 An agent can technically recommend a hotel, a record or a brand. TastePolicy answers the question that comes next: _should this agent make this subjective choice for this person, in this context, right now?_ The answer is one of **ALLOW, ASK, REJECT or UNAVAILABLE**, with the rule that decided it, a Cultural Receipt, and a bounded permission that ends when the facts change.
 
@@ -102,7 +153,7 @@ Credentials and tokens are stored hashed; OAuth tokens are audience-bound and 15
 
 ## Local development
 
-Node.js 24 and npm. `npm ci && cp .env.example .env.local && npm run dev`. Without credentials the app runs and reports unavailable states; it never invents Qloo results. Set `QLOO_API_KEY` (server-only), `QLOO_API_BASE_URL` and `QLOO_AFFINITY_SCALE` to use Qloo ([setup](docs/architecture/qloo-contract-review.md)). Persistence needs `DATABASE_URL`; account features need `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`; proofs need `TASTEPOLICY_PUBLIC_ORIGIN` and `TASTEPOLICY_ATTESTATION_KEY`. Apply the schema with `npm run db:migrate:all` (ledgered, idempotent; [ADR 0030](docs/decisions/0030-migration-ledger.md)). See `.env.example`.
+Node.js 24 and npm. `npm ci && cp .env.example .env.local && npm run dev`. Without credentials the app runs and reports unavailable states; it never invents Qloo results. Set `QLOO_API_KEY` (server-only), `QLOO_API_BASE_URL` and `QLOO_AFFINITY_SCALE` to use Qloo ([setup](docs/architecture/qloo-contract-review.md)). Optional `GOOGLE_MAPS_API_KEY` (server-only; Places + Routes) enables real place photos, accessibility facts and walking time. Persistence needs `DATABASE_URL`; account features need `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`; proofs need `TASTEPOLICY_PUBLIC_ORIGIN` and `TASTEPOLICY_ATTESTATION_KEY`. Apply the schema with `npm run db:migrate:all` (ledgered, idempotent; [ADR 0030](docs/decisions/0030-migration-ledger.md)). See `.env.example`.
 
 ## Tests, conformance, load
 

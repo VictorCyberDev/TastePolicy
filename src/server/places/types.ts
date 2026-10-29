@@ -41,10 +41,7 @@ export type IdentityVerdict =
   | { status: "no_match"; confidence: 0; margin: 0; reasons: string[] };
 
 export interface PlaceProvider {
-  search(query: {
-    name: string;
-    address?: string;
-  }): Promise<
+  search(query: { name: string; address?: string }): Promise<
     | { status: "available"; places: ProviderPlace[] }
     | {
         status: "unavailable";

@@ -8,6 +8,8 @@
 //  CLARIFICATION_REQUIRED  A fact is missing (price, context, fresh evidence).
 //                          Approving cannot supply it. The fact must be
 //                          captured and the choice evaluated again.
+import { humanKey } from "@/lib/human/copy";
+
 export const ASK_KINDS = [
   "AUTHORITY_CONFIRMATION",
   "CLARIFICATION_REQUIRED",
@@ -59,6 +61,11 @@ export function describeAsk(basis: string, rules: readonly string[]): Ask {
     reasons.some((r) => r === "SENSITIVE:FRESH_EXPLICIT_EVIDENCE_REQUIRED")
   )
     question = "Is this still something you want? It is a sensitive choice.";
+  else if (reasons.some((r) => r.startsWith("REQUIRED_FACT:")))
+    question = `Your requirements need a fact that is not confirmed yet: ${reasons
+      .filter((r) => r.startsWith("REQUIRED_FACT:"))
+      .map((r) => humanKey(r.slice("REQUIRED_FACT:".length)).toLowerCase())
+      .join(", ")}. Answer it and the choice is checked again.`;
   else if (reasons.some((r) => r.startsWith("REQUIRED_PRICE:")))
     question = "What is the price?";
   else if (reasons.some((r) => r === "AUTONOMY:PRICE_UNKNOWN"))

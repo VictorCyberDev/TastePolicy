@@ -1,0 +1,621 @@
+/* TastePolicy visual identity 2.0.
+   Taste is expressive. Authority is precise.
+   The human product is deliberately LIGHT whatever the OS prefers: a warm
+   paper ground lets the spectrum read as colour instead of glow. Developer
+   surfaces keep their own theme behaviour. */
+.tp {
+  color-scheme: light;
+  /* Ground and ink */
+  --tp-paper: #fbf7ef;
+  --tp-card: #fffdf8;
+  --tp-ink: #1c1b2e;
+  --tp-muted: #57566b;
+  --tp-line: #d9d2c3;
+  /* Taste Spectrum — fills, art and large display. Not for small text. */
+  --tp-vermilion: #ef3b1d;
+  --tp-cobalt: #2140d8;
+  --tp-violet: #6b3fd4;
+  --tp-saffron: #f7aa16;
+  --tp-aqua: #07a3a3;
+  --tp-lime: #79c11f;
+  --tp-rose: #e8457c;
+  --tp-coral: #ff6f59;
+  /* Text-safe spectrum (>= 4.5:1 on paper and on white) */
+  --tp-vermilion-ink: #b3220a;
+  --tp-cobalt-ink: #1a34b5;
+  --tp-violet-ink: #5a30bd;
+  --tp-aqua-ink: #04706f;
+  --tp-rose-ink: #b5245a;
+  /* Authority — calm, exact. Colour is never the only signal (icon + word). */
+  --tp-allow: #0b6b4f;
+  --tp-allow-bg: #e1f2e9;
+  --tp-ask: #7a4a00;
+  --tp-ask-bg: #fdefcf;
+  --tp-reject: #a3262a;
+  --tp-reject-bg: #fbe3e1;
+  --tp-unavailable: #3f4a5c;
+  --tp-unavailable-bg: #e6eaf1;
+  --tp-focus: #2140d8;
+  --tp-radius: 18px;
+  --tp-shadow:
+    0 1px 2px rgba(28, 27, 46, 0.06), 0 8px 28px rgba(28, 27, 46, 0.08);
+  --tp-display:
+    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --tp-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  /* Pin the legacy global tokens to their light values inside the human
+     product, so embedded technical components never go near-black. */
+  --background: #f4f3ec;
+  --surface: #fcfcf7;
+  --foreground: #182622;
+  --muted: #52605a;
+  --line: #bfc8bf;
+  --accent: #006459;
+  --accent-bg: #e3eee5;
+  --allow: #006453;
+  --ask: #805017;
+  --reject: #a13134;
+  background: var(--tp-paper);
+  color: var(--tp-ink);
+  font-family: var(--tp-sans);
+  line-height: 1.55;
+}
+/* Authority and evidence surfaces: cooler, flatter, more legible. */
+.tp [data-surface="authority"],
+.tp-authority {
+  --tp-card: #f6f8fb;
+  --tp-line: #c9d1de;
+  background: var(--tp-card);
+  border: 1px solid var(--tp-line);
+  border-radius: 14px;
+}
+.tp :is(a, button, input, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--tp-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.tp h1,
+.tp h2,
+.tp h3 {
+  font-family: var(--tp-display);
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+.tp-eyebrow {
+  font: 700 0.78rem/1.2 var(--tp-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tp-cobalt-ink);
+}
+.tp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 2px solid var(--tp-ink);
+  background: var(--tp-ink);
+  color: #fff;
+  font: 700 1.05rem var(--tp-sans);
+  text-decoration: none;
+  cursor: pointer;
+}
+.tp-btn[data-variant="ghost"] {
+  background: transparent;
+  color: var(--tp-ink);
+}
+.tp-btn[data-variant="spectrum"] {
+  border-color: transparent;
+  background: linear-gradient(
+    100deg,
+    var(--tp-vermilion),
+    var(--tp-rose) 45%,
+    var(--tp-violet)
+  );
+}
+.tp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Boundary Ribbon ---------- */
+.tp-ribbon {
+  display: block;
+  width: 100%;
+  max-width: 880px;
+  margin-inline: auto;
+}
+.tp-ribbon text {
+  font: 700 11px var(--tp-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: var(--tp-muted);
+}
+.tp-ribbon .rb-track {
+  stroke: var(--tp-line);
+  stroke-width: 2;
+  fill: none;
+}
+.tp-ribbon .rb-flow {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 3 11;
+}
+.tp-ribbon .rb-line {
+  stroke: var(--tp-ink);
+  stroke-width: 3;
+}
+.tp-ribbon .rb-scan {
+  fill: var(--tp-ink);
+}
+.tp-ribbon .rb-marker {
+  fill: var(--tp-card);
+  stroke: var(--tp-ink);
+  stroke-width: 3;
+}
+@keyframes tp-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+@keyframes tp-scan {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--rb-span, 260px));
+  }
+}
+.tp-ribbon[data-state="discover"] .rb-flow {
+  animation: tp-flow 2.4s linear infinite;
+}
+.tp-ribbon[data-state="checking"] .rb-scan {
+  animation: tp-scan 1.6s ease-in-out infinite;
+}
+.tp-ribbon[data-state="ask"] .rb-line {
+  stroke: var(--tp-ask);
+  stroke-dasharray: 5 5;
+}
+.tp-ribbon[data-state="allow"] .rb-line {
+  stroke: var(--tp-allow);
+}
+.tp-ribbon[data-state="reject"] .rb-line {
+  stroke: var(--tp-reject);
+  stroke-width: 6;
+}
+.tp-ribbon[data-state="unavailable"] .rb-flow {
+  opacity: 0.3;
+  stroke-dasharray: 1 14;
+}
+.tp-ribbon .rb-advance {
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-ribbon .rb-flow,
+  .tp-ribbon .rb-scan {
+    animation: none !important;
+  }
+  .tp-ribbon .rb-advance {
+    transition: none;
+  }
+}
+
+/* ---------- Culture Tiles ---------- */
+.tp-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.tp-tile {
+  display: grid;
+  gap: 2px;
+  min-width: 128px;
+  padding: 12px 16px 12px 14px;
+  border-radius: 14px;
+  background: var(--tp-card);
+  border: 1px solid var(--tp-line);
+  border-left: 8px solid var(--tile, var(--tp-cobalt));
+}
+.tp-tile b {
+  font: 700 1rem var(--tp-sans);
+}
+.tp-tile span {
+  font-size: 0.82rem;
+  color: var(--tp-muted);
+}
+
+/* ---------- Need Chips ---------- */
+.tp-need {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  font: 600 0.95rem var(--tp-sans);
+  background: var(--tp-card);
+}
+.tp-need i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: currentColor;
+  font-style: normal;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.tp-need i::before {
+  content: attr(data-g);
+  color: var(--tp-card);
+}
+.tp-need[data-status="met"] {
+  color: var(--tp-allow);
+  background: var(--tp-allow-bg);
+}
+.tp-need[data-status="unmet"] {
+  color: var(--tp-reject);
+  background: var(--tp-reject-bg);
+}
+.tp-need[data-status="unknown"] {
+  color: var(--tp-ask);
+  background: var(--tp-ask-bg);
+  border-style: dashed;
+}
+.tp-need[data-status="unavailable"] {
+  color: var(--tp-unavailable);
+  background: var(--tp-unavailable-bg);
+  border-style: dotted;
+}
+.tp-need[data-status="pending"] {
+  color: var(--tp-muted);
+  border-color: var(--tp-line);
+}
+.tp-need span {
+  color: var(--tp-ink);
+}
+.tp-need small {
+  font-weight: 500;
+  color: var(--tp-muted);
+}
+.tp-needs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- Authority Ladder ---------- */
+.tp-ladder {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rung;
+}
+.tp-rung {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 4px 12px;
+  align-items: center;
+  min-height: 56px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--tp-line);
+  background: var(--tp-card);
+}
+.tp-rung::before {
+  counter-increment: rung;
+  content: counter(rung);
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tp-line);
+  font: 700 0.9rem var(--tp-sans);
+}
+.tp-rung b {
+  font-size: 1.02rem;
+}
+.tp-rung small {
+  grid-column: 2;
+  color: var(--tp-muted);
+  font-size: 0.88rem;
+}
+.tp-rung[data-reach="yes"] {
+  border-color: var(--tp-allow);
+  background: var(--tp-allow-bg);
+}
+.tp-rung[data-reach="yes"]::before {
+  background: var(--tp-allow);
+  color: #fff;
+}
+.tp-rung[data-reach="no"] {
+  background: transparent;
+}
+.tp-rung[data-asked="true"] {
+  border-color: var(--tp-ask);
+  border-style: dashed;
+  background: var(--tp-ask-bg);
+  opacity: 1;
+}
+.tp-rung[data-asked="true"]::before {
+  background: var(--tp-ask);
+  color: #fff;
+}
+.tp-rung em {
+  grid-column: 2;
+  justify-self: start;
+  font: 700 0.78rem var(--tp-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tp-ask);
+}
+.tp-ladder-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.tp-rung:focus-within {
+  outline: 3px solid var(--tp-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Decision Seal ---------- */
+.tp-seal {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  align-items: center;
+  padding: 16px 20px;
+  border-radius: var(--tp-radius);
+  border: 2px solid var(--seal);
+  background: var(--seal-bg);
+  color: var(--tp-ink);
+}
+.tp-seal-mark {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  color: var(--tp-card);
+  background: var(--seal);
+  font: 700 1.9rem var(--tp-sans);
+}
+.tp-seal[data-outcome="ALLOW"] {
+  --seal: var(--tp-allow);
+  --seal-bg: var(--tp-allow-bg);
+}
+.tp-seal[data-outcome="ASK"] {
+  --seal: var(--tp-ask);
+  --seal-bg: var(--tp-ask-bg);
+}
+.tp-seal[data-outcome="REJECT"] {
+  --seal: var(--tp-reject);
+  --seal-bg: var(--tp-reject-bg);
+}
+.tp-seal[data-outcome="UNAVAILABLE"] {
+  --seal: var(--tp-unavailable);
+  --seal-bg: var(--tp-unavailable-bg);
+}
+/* Shape carries meaning as well as colour. */
+.tp-seal[data-outcome="ALLOW"] .tp-seal-mark {
+  border-radius: 50%;
+}
+.tp-seal[data-outcome="ASK"] .tp-seal-mark {
+  border-radius: 14px;
+}
+.tp-seal[data-outcome="REJECT"] .tp-seal-mark {
+  clip-path: polygon(
+    30% 0,
+    70% 0,
+    100% 30%,
+    100% 70%,
+    70% 100%,
+    30% 100%,
+    0 70%,
+    0 30%
+  );
+}
+.tp-seal[data-outcome="UNAVAILABLE"] .tp-seal-mark {
+  border-radius: 8px;
+  border: 3px dotted var(--tp-card);
+  background: var(--seal);
+}
+.tp-seal h3 {
+  font-size: 1.35rem;
+  color: var(--seal);
+}
+.tp-seal p {
+  font-size: 1rem;
+}
+@keyframes tp-settle {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.tp-seal[data-outcome="ALLOW"] .tp-seal-mark {
+  animation: tp-settle 0.5s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-seal .tp-seal-mark {
+    animation: none !important;
+  }
+}
+
+/* ---------- Place Canvas ---------- */
+.tp-place {
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--tp-card);
+  border: 1px solid var(--tp-line);
+  box-shadow: var(--tp-shadow);
+}
+.tp-place-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: 44vh;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--a, var(--tp-vermilion)),
+    var(--b, var(--tp-saffron))
+  );
+  overflow: hidden;
+}
+.tp-place-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tp-place-credit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 14px 8px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.62));
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+.tp-place-credit a {
+  color: #fff;
+}
+.tp-place-body {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+}
+.tp-place-body h3 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+}
+.tp-place-loc {
+  color: var(--tp-muted);
+}
+.tp-why {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: color-mix(
+    in srgb,
+    var(--a, var(--tp-saffron)) 14%,
+    var(--tp-card)
+  );
+  border-left: 6px solid var(--a, var(--tp-saffron));
+}
+.tp-why h4,
+.tp-section-title {
+  margin: 0 0 6px;
+  font: 700 0.8rem var(--tp-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tp-muted);
+}
+.tp-source {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--tp-card);
+  border: 1px solid var(--tp-line);
+  font-size: 0.9rem;
+}
+.tp-source b {
+  font: 700 0.72rem var(--tp-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tp-cobalt-ink);
+}
+
+/* ---------- Journey Line ---------- */
+.tp-journey {
+  display: grid;
+  gap: 8px;
+}
+.tp-journey svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+  background: var(--tp-card);
+  border: 1px solid var(--tp-line);
+}
+.tp-journey path.jl {
+  fill: none;
+  stroke: var(--tp-cobalt);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: tp-draw 1.4s ease-out forwards;
+}
+@keyframes tp-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-journey path.jl {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- Tasteprint ---------- */
+.tp-tasteprint {
+  display: block;
+  border-radius: 50%;
+}
+
+/* Hit targets and readable type everywhere in the human product. */
+.tp :is(button, [role="button"], a.tp-btn, select, input[type="number"]) {
+  min-height: 48px;
+}
+@media (max-width: 640px) {
+  .tp-place-body {
+    padding: 16px;
+  }
+  .tp-seal {
+    grid-template-columns: 1fr;
+  }
+  .tp-seal-mark {
+    grid-row: auto;
+  }
+}
+.tp-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The human product owns the whole viewport background, light by design. */
+body:has(.tp) {
+  background: #fbf7ef;
+  color-scheme: light;
+}

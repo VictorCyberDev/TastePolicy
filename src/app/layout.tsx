@@ -3,13 +3,13 @@ import { configuredOrigin } from "@/lib/config/origin";
 const origin = configuredOrigin();
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "TastePolicy | Subjective Authority Infrastructure",
+  title: "TastePolicy | AI that helps without replacing you",
   description:
-    "Your taste. Your rules. Any agent. Qloo cultural evidence, bounded by explicit user authority.",
+    "Personal agency infrastructure for AI. Qloo understands what feels like you; TastePolicy respects your needs and decides how far an AI may go.",
   openGraph: {
-    title: "TastePolicy — Your taste. Your rules. Any agent.",
+    title: "TastePolicy — AI that helps without replacing you",
     description:
-      "Subjective Authority Infrastructure for AI agents, built around Qloo cultural evidence.",
+      "Personal agency infrastructure for AI: Qloo cultural understanding, your needs, and explicit authority boundaries.",
     images: [{ url: "/brand/social-card.png", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", images: ["/brand/social-card.png"] },

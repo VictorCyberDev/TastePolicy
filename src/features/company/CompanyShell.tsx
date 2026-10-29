@@ -31,12 +31,12 @@ export default function CompanyShell({
         </Link>
         <nav aria-label="Company">
           <Link href="/product">Product</Link>
+          <Link href="/experience">Use cases</Link>
           <Link href="/developers">Developers</Link>
-          <Link href="/pricing">Pricing</Link>
           <Link href="/trust">Trust</Link>
         </nav>
         <Link className="company-small-cta" href="/dashboard">
-          Open workspace <span aria-hidden="true">↗</span>
+          Open TastePolicy <span aria-hidden="true">↗</span>
         </Link>
       </header>
       <div id="company-content" tabIndex={-1}>
@@ -48,7 +48,7 @@ export default function CompanyShell({
             <BoundaryMark />
             TastePolicy.
           </Link>
-          <p>Your taste. Your rules. Any agent.</p>
+          <p>AI that helps without replacing you.</p>
           <p className="company-caption">
             Built by Victor Nnamdi. Independent founder project.
           </p>
@@ -56,6 +56,7 @@ export default function CompanyShell({
         <nav aria-label="Resources">
           <Link href="/docs">Documentation</Link>
           <Link href="/integrations">Integrations</Link>
+          <Link href="/pricing">Pricing</Link>
           <Link href="/status">Status</Link>
           <Link href="/support">Contact</Link>
           <Link href="/security">Security</Link>

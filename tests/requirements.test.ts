@@ -12,7 +12,7 @@ import {
 } from "@/server/state/session-authority";
 import { contextMaterial, commitContext } from "@/lib/commit/commitments";
 import type { CandidateFact, Requirement } from "@/lib/requirements/types";
-import type { Context, StateEntry, StateVersion } from "@/lib/state/types";
+import type { Context, StateVersion } from "@/lib/state/types";
 
 const now = "2026-10-20T12:00:00.000Z";
 const strong = syntheticReceipt(0.9);
@@ -22,24 +22,14 @@ const unavailableCultural = {
   status: "unavailable" as const,
   reason: "timeout" as const,
 };
-const entry = (over: Partial<StateEntry>): StateEntry => ({
-  signalId: crypto.randomUUID(),
-  kind: "EXPLICIT_LIKE",
-  scope: "GLOBAL_PREFERENCE",
-  persistence: "DURABLE",
-  source: "USER",
-  sourceEventId: crypto.randomUUID(),
-  createdAt: now,
-  ...over,
-});
-const state = (...entries: StateEntry[]): StateVersion => ({
+const state = (): StateVersion => ({
   profileId: crypto.randomUUID(),
   stateVersion: 1,
   parentVersion: null,
   createdAt: now,
   mutationId: null,
   stateHash: "t",
-  entries,
+  entries: [],
 });
 
 const stepFree: Requirement = {

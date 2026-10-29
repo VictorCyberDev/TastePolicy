@@ -1,15 +1,15 @@
-import CompanyDocument from "@/features/company/CompanyDocument";
-import WorkspaceControl from "@/features/company/WorkspaceControl";
-import DeveloperWorkspace from "@/features/company/DeveloperWorkspace";
+import HumanShell from "@/components/layout/HumanShell";
+import PersonalAgencyHome from "@/features/home/PersonalAgencyHome";
+
+export const metadata = {
+  title: "Your home · TastePolicy",
+  description:
+    "Your taste, what matters right now, what needs your answer and how far AI may go.",
+};
 export default function Page() {
   return (
-    <CompanyDocument
-      eyebrow="DEVELOPER WORKSPACE"
-      title="Build your first boundary."
-      lead="Review your taste, create a private Passport and issue a credential without founder configuration."
-    >
-      <DeveloperWorkspace />
-      <WorkspaceControl />
-    </CompanyDocument>
+    <HumanShell>
+      <PersonalAgencyHome />
+    </HumanShell>
   );
 }

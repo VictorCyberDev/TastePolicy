@@ -158,7 +158,7 @@ test("new developer can review identities, enroll and issue a credential without
       },
     }),
   );
-  await page.goto("/dashboard");
+  await page.goto("/developers/workspace");
   await page
     .getByRole("button", { name: "Use public example anchors" })
     .click();

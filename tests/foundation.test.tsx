@@ -57,14 +57,16 @@ describe("Phase 0 foundation", () => {
   it("renders the company boundary with an explicitly illustrative card", () => {
     render(<Home />);
     expect(
-      screen.getByRole("heading", { name: /Knowing your taste.*permission/ }),
+      screen.getByRole("heading", {
+        name: /AI that helps without replacing you/,
+      }),
     ).toBeVisible();
     expect(
       screen.getByText("Interactive example · no live decision"),
     ).toBeVisible();
     expect(
-      screen.getByRole("link", { name: /See Qloo in action/ }),
-    ).toHaveAttribute("href", "/arena/consumer");
+      screen.getAllByRole("link", { name: /See Margaret's choice/ })[0],
+    ).toHaveAttribute("href", "/experience");
     expect(
       screen.getByText(/Live ChatGPT and Claude commissioning is pending/),
     ).toBeVisible();

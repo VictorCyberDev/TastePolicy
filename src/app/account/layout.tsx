@@ -9,7 +9,8 @@ export default function AccountLayout({
     <CompanyShell>
       <div className="company-account-content">
         <nav className="company-account-nav" aria-label="Account sections">
-          <Link href="/dashboard">Developer workspace</Link>
+          <Link href="/dashboard">Your home</Link>
+          <Link href="/developers/workspace">Developer workspace</Link>
           <Link href="/account">Passport &amp; access</Link>
           <Link href="/account/rules">Rules &amp; ceilings</Link>
           <Link href="/account/leases">Leases &amp; proofs</Link>
