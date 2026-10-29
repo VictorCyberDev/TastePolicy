@@ -59,24 +59,21 @@ export default function PlaceMediaEnhancer() {
   const loaded = Boolean(media && loadedUrl === media.image.url);
 
   useEffect(() => {
-    let frame = 0;
     const sync = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const next = currentTarget();
-        const previous = targetRef.current;
-        if (sameTarget(previous, next)) return;
+      const next = currentTarget();
+      const previous = targetRef.current;
+      if (sameTarget(previous, next)) return;
 
-        // A candidate identity change invalidates presentation media immediately.
-        // Clear the old portrait styling before React commits the new target so
-        // stale photography can never visually bleed into the next candidate.
-        previous?.portrait.classList.remove("hasLicensedPhoto");
-        targetRef.current = next;
-        setLoadedUrl(null);
-        setResolved(null);
-        setTarget(next);
-      });
+      // Candidate identity changes invalidate presentation media immediately.
+      // Do this synchronously in the mutation callback so the previous photo
+      // styling cannot survive even one animation frame on the next candidate.
+      previous?.portrait.classList.remove("hasLicensedPhoto");
+      targetRef.current = next;
+      setLoadedUrl(null);
+      setResolved(null);
+      setTarget(next);
     };
+
     sync();
     const observer = new MutationObserver(sync);
     observer.observe(document.body, {
@@ -85,7 +82,6 @@ export default function PlaceMediaEnhancer() {
       characterData: true,
     });
     return () => {
-      cancelAnimationFrame(frame);
       observer.disconnect();
       targetRef.current?.portrait.classList.remove("hasLicensedPhoto");
       targetRef.current = null;
