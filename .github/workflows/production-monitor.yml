@@ -1,0 +1,26 @@
+name: Production monitor
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: production-monitor
+  cancel-in-progress: false
+jobs:
+  public-surfaces:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/acceptance/monitor-production.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-production-monitor
+          path: .work-evidence/production-monitor.json
+          retention-days: 14

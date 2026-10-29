@@ -1,3 +1,4 @@
+import { measuredHttp } from "@/server/operations/metrics";
 import { getStateStore } from "@/server/state/postgres";
 import { getQlooProvider } from "@/server/qloo/provider";
 import { handlePlatform, safePlatformError } from "@/server/platform/http";
@@ -27,5 +28,9 @@ async function handle(
     release();
   }
 }
-export const POST = handle;
-export const GET = handle;
+const measured = (
+  request: Request,
+  context: { params: Promise<{ operation: string }> },
+) => measuredHttp("REST", () => handle(request, context));
+export const POST = measured;
+export const GET = measured;

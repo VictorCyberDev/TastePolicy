@@ -41,9 +41,9 @@ Each recipe below is the configuration shape from the vendor's own documentation
 ### Anthropic
 
 - **Claude Code**: `claude mcp add --transport http tastepolicy https://<host>/api/mcp --header "Authorization: Bearer $TASTEPOLICY_API_KEY"`, or commit `examples/integrations/claude-code.mcp.json`. Human-run.
-- **Claude Agent SDK**: `mcpServers: { tastepolicy: { type: "http", url, headers } }` with `allowedTools: ["mcp__tastepolicy__*"]` (`examples/integrations/claude-agent-sdk.ts`).
+- **Claude Agent SDK**: `mcpServers: { tastepolicy: { type: "http", url, headers } }` with `allowedTools: ["mcp__tastepolicy__*"]` (`examples/integrations/claude-agent-sdk.mjs`).
 - **Messages API MCP connector** (beta `mcp-client-2025-11-20`): `examples/integrations/claude-messages-connector.json`.
-- **claude.ai custom connector**: supports request headers for static credentials; entered in the UI by a plan owner. Human-only.
+- **claude.ai custom connector**: use the stable production MCP URL and detected OAuth, preferably Claude's published client identity. A saved connector reached the consent flow, but authorization and real tool invocation are not yet proved. See the company-build ledger.
 
 ### Google
 
@@ -64,3 +64,7 @@ With `TASTEPOLICY_PUBLIC_ORIGIN` pinned, TastePolicy is an OAuth 2.1 authorizati
 ## Local stdio MCP (legacy alias)
 
 `npm run mcp:platform` keeps the original local stdio server (MCP 2025-06-18) with its original tool names (`get_taste_passport`, `evaluate_taste_action`, …). It calls the REST API with an operator credential and is unchanged for compatibility. New integrations should use the remote tools above, whose names and schemas come from the shared contract.
+
+## Runnable framework examples
+
+See `examples/golden-path/README.md` for Next.js, raw REST, the official MCP client and AI SDK 7 examples with an installed-package offline exercise. The SDK remains unpublished; local tarball/file installation is explicit.

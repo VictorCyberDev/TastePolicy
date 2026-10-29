@@ -5,7 +5,7 @@
     {
       "type": "mcp",
       "server_label": "tastepolicy",
-      "server_url": "https://<your-host>/api/mcp",
+      "server_url": "https://tastepolicy.vercel.app/api/mcp",
       "authorization": "<TASTEPOLICY_API_KEY from a private variable>",
       "allowed_tools": [
         "tastepolicy_capabilities",
@@ -14,7 +14,7 @@
         "tastepolicy_get_receipt",
         "tastepolicy_get_status"
       ],
-      "require_approval": "never"
+      "require_approval": "always"
     }
   ]
 }

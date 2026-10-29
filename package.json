@@ -45,7 +45,8 @@
     "tastebench:calibration": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench.ts calibration",
     "mcp:app:build": "node scripts/build-authority-app.mjs",
     "prebuild": "npm run mcp:app:build",
-    "sdk:build": "node scripts/build-sdk.mjs"
+    "sdk:build": "node scripts/build-sdk.mjs",
+    "tastebench:boundaries": "node --experimental-transform-types --conditions=react-server --import ./scripts/tastebench-imports.mjs ./scripts/tastebench-boundaries.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "2.0.4",

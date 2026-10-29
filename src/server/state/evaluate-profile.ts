@@ -1,3 +1,4 @@
+import { operationMetric } from "@/server/operations/metrics";
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { StateVersion, StateEvaluation } from "@/lib/state/types";
@@ -17,6 +18,7 @@ export async function evaluateStateSnapshot(
   requestId: string,
   now: string,
 ): Promise<StateEvaluation> {
+  const started = performance.now();
   const signals = state.entries
     .filter((e) => e.kind === "EXPLICIT_LIKE")
     .map((e) => e.entity);
@@ -98,6 +100,11 @@ export async function evaluateStateSnapshot(
     evaluatedAt: now,
     source: "live",
   };
+  operationMetric(
+    "DECISION",
+    evaluation.decision.outcome,
+    performance.now() - started,
+  );
   return evaluation;
 }
 export async function persistStateEvaluation(

@@ -1,0 +1,21 @@
+{
+  "name": "tastepolicy-golden-path",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "offline": "node offline.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "mcp": "node mcp-client.mjs"
+  },
+  "dependencies": {
+    "@victorcyberdev/tastepolicy-sdk": "file:../../packages/sdk",
+    "@modelcontextprotocol/client": "2.4.0",
+    "ai": "7.0.156",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.7"
+  }
+}

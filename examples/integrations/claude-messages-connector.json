@@ -12,7 +12,7 @@
     "mcp_servers": [
       {
         "type": "url",
-        "url": "https://<your-host>/api/mcp",
+        "url": "https://tastepolicy.vercel.app/api/mcp",
         "name": "tastepolicy",
         "authorization_token": "<TASTEPOLICY_API_KEY from a private variable>"
       }
