@@ -1,156 +1,156 @@
 import Link from "next/link";
-import CompanyDocument from "@/features/company/CompanyDocument";
+import CompanyShell from "@/features/company/CompanyShell";
+import TasteBoundaryShowcase from "@/features/company/TasteBoundaryShowcase";
+import "@/features/company/submission.css";
+
 export const metadata = {
-  title: "Judge walkthrough · TastePolicy",
+  title: "Judge route · TastePolicy",
   description:
-    "See Qloo cultural evidence, explicit user boundaries and bounded authority. Live paths and recorded engineering evidence remain distinct.",
+    "A two-minute route through Qloo cultural evidence, explicit user boundaries and explainable agent authority.",
 };
+
 export default function JudgePage() {
   return (
-    <CompanyDocument
-      eyebrow="JUDGE WALKTHROUGH"
-      title="Taste is a signal. Your rules draw the boundary."
-      lead="Qloo gives agents taste. TastePolicy gives that taste authority boundaries. Start with a public live path; account controls and recorded evidence are clearly marked."
-    >
-      <section>
-        <h2>Begin with the real product</h2>
-        <p>
-          The Consumer Arena resolves five public cultural identities through
-          Qloo, discovers real candidates and shows candidate-specific cultural
-          evidence. No founder key or private reviewer account is needed for
-          this public path. Provider failures remain visible.
-        </p>
-        <p>
-          <Link className="company-small-cta" href="/arena/consumer">
-            Start with real Qloo evidence ↗
-          </Link>
-          {" · "}
-          <Link href="/status">Check current readiness</Link>
-        </p>
-      </section>
-      <section>
-        <h2>A concise route through the boundary</h2>
-        <ol className="company-judge-steps">
-          <li>
-            <strong>1 · Cultural understanding</strong>Review the five resolved
-            cross-domain identities before using them. Qloo supplies the
-            cultural relationship; TastePolicy does not invent the graph.
-          </li>
-          <li>
-            <strong>2 · Candidate selection</strong>Discover places, review an
-            actual candidate and inspect its identity. A candidate must be
-            distinct from the input anchors.
-          </li>
-          <li>
-            <strong>3 · Explicit authority</strong>Inspect the saved context and
-            rules alongside the cultural evidence. Memory is not permission.
-          </li>
-          <li>
-            <strong>4 · ALLOW</strong>Evaluate a qualifying candidate and show
-            the actual outcome. Continue only within the returned
-            subjective-action ceiling. A strong score cannot promise ALLOW in
-            advance.
-          </li>
-          <li>
-            <strong>5 · ASK</strong>Add an applicable budget and leave its price
-            unresolved, or request an action above the saved ceiling. Show the
-            actual question; asking is not approval.
-          </li>
-          <li>
-            <strong>6 · REJECT</strong>Save an exact exclusion and evaluate that
-            same choice. Affinity cannot erase an applicable hard boundary.
-          </li>
-          <li>
-            <strong>7 · UNAVAILABLE</strong>If required evidence fails, pause
-            visibly. Never call an unavailable provider a negative preference.
-            Fault-injection demonstrations in the engineering route are labeled;
-            they are not a real Qloo outage.
-          </li>
-          <li>
-            <strong>8 · Cultural Receipt</strong>Inspect the captured Qloo
-            provenance, alignment evidence, explicit rules and decision.
-            Recorded evidence is distinguished from a fresh provider request.
-          </li>
-          <li>
-            <strong>9 · Policy change</strong>
-            <Link href="/account/rules">
-              Authenticated account controls
-            </Link>{" "}
-            let an owner preview and publish a new rule/action ceiling. These
-            steps require ordinary signup, rather than hidden founder
-            configuration.
-          </li>
-          <li>
-            <strong>10 · Lease and drift</strong>
-            <Link href="/account/leases">Inspect bounded authority</Link>,
-            checkpoints and revocation. Changed candidate/context commitments
-            require a fresh check; an old ALLOW is not permission for a new
-            choice.
-          </li>
-          <li>
-            <strong>11 · Portable proof</strong>
-            <Link href="/verify">Verify an actually issued proof</Link> and
-            current status. Do not paste invented proof data. Verification is
-            not authorization.
-          </li>
-          <li>
-            <strong>12 · ChatGPT</strong>The remote MCP and Authority Card are
-            implemented. Real TastePolicy tool invocation in ChatGPT is still
-            unproved; a prompt-only benchmark is not an integration demo.
-          </li>
-          <li>
-            <strong>13 · Claude</strong>A custom connector reached OAuth
-            consent, but actual invocation is unproved. Directory submission on
-            the inspected Free account requires a paid plan. No approval or
-            publication is claimed.
-          </li>
-          <li>
-            <strong>14 · Developer platform</strong>
-            <Link href="/developers">
-              Sign up and create a scoped credential
+    <CompanyShell>
+      <main className="submission-home">
+        <section className="company-hero">
+          <div className="company-hero-copy">
+            <p className="company-eyebrow">
+              <span className="company-live-dot" /> JUDGE ROUTE · START HERE
+            </p>
+            <h1>
+              Taste tells the agent
+              <br />
+              what fits.
+              <br />
+              <em>Your rules tell it where to stop.</em>
+            </h1>
+            <p className="company-lead">
+              The fastest way to understand TastePolicy is to watch one
+              culturally grounded choice move from Qloo evidence to an explicit
+              authority decision.
+            </p>
+            <div className="company-actions">
+              <Link href="/arena/consumer" className="company-primary">
+                Run the live Qloo journey <span aria-hidden="true">↗</span>
+              </Link>
+              <Link href="/demo" className="company-text-link">
+                Engineering evidence <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          </div>
+          <TasteBoundaryShowcase />
+        </section>
+
+        <section className="submission-proof-strip" aria-label="Two-minute judging route">
+          <div className="submission-proof-strip-inner">
+            <article>
+              <span className="submission-number">01</span>
+              <h3>See real Qloo cultural evidence.</h3>
+              <p>
+                Start in the public Consumer Arena. Review the five resolved
+                cross-domain signals, discover a real candidate and inspect its
+                cultural evidence.
+              </p>
+            </article>
+            <article>
+              <span className="submission-number">02</span>
+              <h3>Trigger a boundary.</h3>
+              <p>
+                A qualifying choice can ALLOW. A missing required fact can ASK.
+                An exact exclusion can REJECT even when cultural affinity is high.
+              </p>
+            </article>
+            <article>
+              <span className="submission-number">03</span>
+              <h3>Open the Cultural Receipt.</h3>
+              <p>
+                Inspect the captured Qloo provenance, the applicable user rule and
+                the decision together. Evidence and permission stay separate.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section className="company-section company-boundary-story">
+          <div>
+            <p className="company-eyebrow">WHAT THIS PROVES</p>
+            <h2>
+              Qloo is not decoration.
+              <br />
+              <em>It is the cultural evidence layer.</em>
+            </h2>
+          </div>
+          <div className="company-story-grid">
+            <article>
+              <span>WITHOUT QLOO</span>
+              <h3>The agent can reason but may still guess taste.</h3>
+              <p>
+                TastePolicy does not claim that language-model confidence is a
+                substitute for cultural evidence.
+              </p>
+            </article>
+            <article>
+              <span>WITH QLOO</span>
+              <h3>The agent gets grounded cultural fit.</h3>
+              <p>
+                Qloo supplies identities, relationships and candidate-specific
+                signals across cultural domains.
+              </p>
+            </article>
+            <article>
+              <span>WITH TASTEPOLICY</span>
+              <h3>Grounded fit becomes bounded authority.</h3>
+              <p>
+                Rules, context and action ceilings determine whether the agent may
+                continue, must ask, must reject, or must pause because evidence is
+                unavailable.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section className="company-section company-protocol">
+          <div aria-hidden="true" style={{ fontFamily: "Boundary Serif, Georgia, serif", fontSize: "clamp(80px, 12vw, 180px)", lineHeight: 0.8, textAlign: "center" }}>
+            99%
+          </div>
+          <div>
+            <p className="company-eyebrow">THE SIGNATURE TEST</p>
+            <h2>A perfect taste match can still be a hard no.</h2>
+            <p>
+              Save an exact exclusion, evaluate the same candidate and watch the
+              boundary hold. This is the difference between knowing someone&apos;s
+              taste and being authorized to choose for them.
+            </p>
+            <div className="company-protocol-tags">
+              <span>Qloo evidence</span>
+              <span>Explicit rules</span>
+              <span>ALLOW / ASK / REJECT</span>
+              <span>Cultural Receipt</span>
+            </div>
+            <Link className="company-text-link" href="/arena/consumer">
+              Run the live route →
             </Link>
-            . REST, OAuth, MCP, A2A and the packaged SDK share the authority
-            contracts. Keep credentials in server secrets.
-          </li>
-          <li>
-            <strong>15 · Company and evidence</strong>
-            <Link href="/product">Inspect the product</Link>,{" "}
-            <Link href="/pricing">plan states</Link> and{" "}
-            <Link href="/trust">trust material</Link>. Pricing is a hypothesis;
-            no paying customers, commercial Qloo permission or certifications
-            are invented.
-          </li>
-        </ol>
-      </section>
-      <section>
-        <h2>What a short demonstration can truthfully prove</h2>
-        <p>
-          Focus the first two minutes on Qloo discovery, one real decision, an
-          applicable constraint and the captured receipt. Timing depends on
-          network/provider behavior and has not been established by this page.
-          Account policy, lease and proof steps are an optional deeper route.
-          The public <Link href="/demo">engineering demonstration</Link>{" "}
-          provides separate labeled workflows.
-        </p>
-        <p>
-          Exact release, acceptance and benchmark records are available in the{" "}
-          <a href="https://github.com/VictorCyberDev/TastePolicy/tree/main/docs/evaluation">
-            public evidence ledger
-          </a>
-          . The original human pilot exposed meaningful missed-ASK and
-          unsafe-autonomy errors; synthetic contract coverage does not remove
-          those caveats.
-        </p>
-      </section>
-      <section>
-        <h2>The execution boundary stays intact</h2>
-        <p>
-          ALLOW never grants payment, booking, messaging, account changes,
-          private-data disclosure or legal authority. Recommendation is not
-          authorization. A verified receipt or proof does not make a separate
-          execution permissible.
-        </p>
-      </section>
-    </CompanyDocument>
+          </div>
+        </section>
+
+        <section className="company-section company-final-cta">
+          <p className="company-eyebrow">OPTIONAL DEEPER REVIEW</p>
+          <h2>After the idea is clear, inspect the infrastructure.</h2>
+          <p className="company-lead" style={{ margin: "0 auto 28px" }}>
+            REST, OAuth, remote MCP, A2A, scoped credentials, leases, portable
+            proofs, conformance tests and release evidence are available for a
+            deeper technical review. They are not required to understand the core
+            product.
+          </p>
+          <Link className="company-primary" href="/developers">
+            Developer platform ↗
+          </Link>
+          <Link className="company-text-link" href="/trust">
+            Trust and evidence →
+          </Link>
+        </section>
+      </main>
+    </CompanyShell>
   );
 }
