@@ -41,6 +41,7 @@ jobs:
       - run: npm run build --prefix examples/golden-path
       - run: npm run conformance:compatible
       - run: npm run tastebench:boundaries
+      - run: npm run tastebench:gateway
       - run: python3 scripts/tastebench-observation.py
       - run: python3 scripts/package-openai-plugin.py
       - run: npm run tastebench:validate

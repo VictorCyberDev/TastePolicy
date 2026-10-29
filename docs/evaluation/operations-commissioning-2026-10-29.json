@@ -1,0 +1,75 @@
+{
+  "workflowRun": 40836587300,
+  "jobId": 123322679413,
+  "sourceSha": "165bb862cce6ee9f32e2bce2ba4f25f288020f86",
+  "event": "workflow_dispatch",
+  "conclusion": "success",
+  "artifactId": 12880273969,
+  "artifactDigest": "sha256:af63b0ddeb35603c29870318d2090f0949d8dc4835ebb519bd3553531a81ddb7",
+  "report": {
+    "checkedAt": "2026-10-29T07:37:17.171Z",
+    "origin": "https://tastepolicy.vercel.app",
+    "scope": "Read-only liveness/readiness/public metadata. Not signup, Qloo reachability, OAuth authorization, tool invocation or uptime SLA.",
+    "results": [
+      {
+        "name": "liveness",
+        "status": "PASS",
+        "http": 200,
+        "elapsedMs": 277
+      },
+      {
+        "name": "readiness",
+        "status": "PASS",
+        "http": 200,
+        "elapsedMs": 1285
+      },
+      {
+        "name": "OpenAPI",
+        "status": "PASS",
+        "http": 200,
+        "elapsedMs": 239
+      },
+      {
+        "name": "agent_card",
+        "status": "PASS",
+        "http": 200,
+        "elapsedMs": 164
+      },
+      {
+        "name": "OAuth_issuer",
+        "status": "PASS",
+        "http": 200,
+        "elapsedMs": 207
+      }
+    ]
+  },
+  "previewRuntime": {
+    "deploymentId": "dpl_4TxHCSMogbbQ5tbfGHmFNNn49WrL",
+    "sourceSha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
+    "events": [
+      {
+        "event": "tastepolicy_operation_v1",
+        "surface": "REST",
+        "outcome": "ERROR",
+        "durationMs": 237,
+        "at": "2026-10-29T07:27:24.216Z"
+      },
+      {
+        "event": "tastepolicy_operation_v1",
+        "surface": "REST",
+        "outcome": "ERROR",
+        "durationMs": 552,
+        "at": "2026-10-29T07:27:21.014Z"
+      },
+      {
+        "event": "tastepolicy_operation_v1",
+        "surface": "REST",
+        "outcome": "OK",
+        "durationMs": 1271,
+        "at": "2026-10-29T07:27:12.199Z"
+      }
+    ],
+    "note": "Expected success/auth-failure events during passing hosted acceptance. Preview only; no production or delivered alert claim."
+  },
+  "scheduledRunObserved": false
+}

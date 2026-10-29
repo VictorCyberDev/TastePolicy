@@ -1,6 +1,6 @@
 # Licensing, ownership and company boundary
 
-Reviewed 2026-10-28. This records source evidence and unresolved diligence, not a legal opinion, trademark clearance or IP valuation.
+Reviewed 2026-10-29. This records source evidence and unresolved diligence, not a legal opinion, trademark clearance or IP valuation.
 
 The repository and proposed SDK carry Apache-2.0. Already published grants remain in place. No exclusive ownership over Qloo's cultural graph, MCP, A2A, cryptographic standards, third-party libraries or user preferences is claimed. Future proprietary work must start with a clearly separated ownership/license boundary; changing a future license does not revoke earlier Apache grants.
 
@@ -12,7 +12,7 @@ Future hosted-only components may include billing administration and operational
 
 ## Dependency and asset record
 
-`dependency-ip-ledger.json` enumerates 665 locked packages, versions and license expressions, including development and optional platform binaries. No missing license expression was found in that generated inventory. It is a package-manifest audit, not proof that every distributed file has been inspected. MPL-2.0 build dependencies and LGPL libvips/native binaries require preservation of notices and review of redistribution/linking obligations. Combined Apache/LGPL expressions do not erase the LGPL obligations. Public SDK `jose` dependency is separately included in its package manifest.
+`dependency-ip-ledger.json` enumerates 666 root-lock packages, versions and license expressions, including development and optional platform binaries. No missing license expression was found in that generated inventory. It is a package-manifest audit, not proof that every distributed file has been inspected. MPL-2.0 build dependencies and LGPL libvips/native binaries require preservation of notices and review of redistribution/linking obligations. Combined Apache/LGPL expressions do not erase the LGPL obligations. Public SDK `jose` dependency is separately included in its package manifest.
 
 Original Boundary SVG artwork lives in `public/brand`; raster exports derive from those files. The bundled font license notices remain with the repository assets. No third-party logo implies a partnership. Qloo's marks and cultural data retain their owners' rights. Written API commercialization, output redistribution, retention and attribution rights remain pending the commercial inquiry documented in `qloo-commercial-and-data.md`.
 
@@ -29,3 +29,9 @@ TastePolicy is a working product name. No registered trademark, incorporated ent
 ## Defensibility thesis
 
 Potential defensibility comes from reliable authority semantics, portable proofs with independently checked commitments, integration quality, legitimate consented evaluation data and operational trust. The current ten-person descriptive pilot does not establish a performance moat. Qloo supplies a licensed substrate that competitors may also access. No patent, trade-secret protection, exclusive agreement or competitive advantage is asserted as obtained.
+
+## Name/search checkpoint
+
+On 2026-10-29, public indexed searches for “TastePolicy” with trademark, and scoped searches on uspto.gov, ipo.gov.uk and euipo.europa.eu returned no indexed results. This is a limited first-pass search, not a direct registry clearance or proof that the name is free of conflicting marks. Formal jurisdiction/class searches and counsel review remain unfinished. No trademark application, domain purchase or registered corporate identity is claimed. Package scope ownership still requires npm authorization; an E404 response is not ownership evidence.
+
+Vercel read-only registry lookups on 2026-10-29 reported tastepolicy.com, tastepolicy.dev and tastepolicy.ai available. Availability is transient and does not reserve a name or establish trademark rights; no purchase was made. The stable tastepolicy.vercel.app origin remains canonical.
