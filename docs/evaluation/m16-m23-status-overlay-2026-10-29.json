@@ -26,7 +26,15 @@
       "requirements": 18,
       "pass": 7,
       "blocked_external": 11,
-      "pass_ids": ["M17-01", "M17-02", "M17-09", "M17-10", "M17-16", "M17-17", "M17-18"],
+      "pass_ids": [
+        "M17-01",
+        "M17-02",
+        "M17-09",
+        "M17-10",
+        "M17-16",
+        "M17-17",
+        "M17-18"
+      ],
       "remaining": [
         "Real ChatGPT owner authentication, OAuth completion, scan/enable and fresh ALLOW/ASK/REJECT/UNAVAILABLE invocation",
         "Real Claude owner authentication, OAuth completion, enablement and fresh tool invocation"
@@ -39,7 +47,22 @@
       "blocked_external": 6,
       "in_progress": 1,
       "tooling_blocked": 1,
-      "pass_ids": ["M18-01", "M18-02", "M18-03", "M18-05", "M18-06", "M18-08", "M18-09", "M18-10", "M18-12", "M18-13", "M18-17", "M18-19", "M18-21", "M18-22"],
+      "pass_ids": [
+        "M18-01",
+        "M18-02",
+        "M18-03",
+        "M18-05",
+        "M18-06",
+        "M18-08",
+        "M18-09",
+        "M18-10",
+        "M18-12",
+        "M18-13",
+        "M18-17",
+        "M18-19",
+        "M18-21",
+        "M18-22"
+      ],
       "remaining": [
         "OpenAI publisher identity/domain verification, authenticated scan and final portal submission",
         "Portal-ready demo recording",
@@ -52,7 +75,9 @@
       "requirements": 21,
       "pass": 20,
       "blocked_external": 1,
-      "remaining": ["npm authentication/scope ownership and actual package publication/readback"]
+      "remaining": [
+        "npm authentication/scope ownership and actual package publication/readback"
+      ]
     },
     "M20": {
       "state": "INTERNAL_BILLING_PASS_PROVIDER_COMMISSIONING_EXTERNAL",
