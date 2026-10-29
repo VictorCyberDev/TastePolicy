@@ -619,3 +619,11 @@ body:has(.tp) {
   background: #fbf7ef;
   color-scheme: light;
 }
+
+/* The ribbon scales with its box; on phones enlarge labels so they stay legible. */
+@media (max-width: 640px) {
+  .tp-ribbon text {
+    font-size: 25px;
+    letter-spacing: 0.04em;
+  }
+}

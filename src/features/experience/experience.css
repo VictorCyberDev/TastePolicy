@@ -249,3 +249,15 @@
   color: var(--tp-reject);
   font-weight: 600;
 }
+
+/* Final acceptance: disclosure summaries and inline labels stay readable. */
+.tp-receipt > summary,
+.tp-dev > summary {
+  font-size: 1.05rem;
+}
+.tp-ask-row label {
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

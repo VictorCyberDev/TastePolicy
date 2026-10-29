@@ -443,7 +443,7 @@ function DecisionArea({
 
       {factAsk && unknownKeys.length > 0 && (
         <div className="tp-exp-ask tp-authority" data-surface="authority">
-          <h3>Needs your answer</h3>
+          <h3>A few quick questions</h3>
           <ul>
             {unknownKeys.map((k) => (
               <li key={k}>

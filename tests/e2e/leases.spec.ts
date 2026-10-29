@@ -131,9 +131,11 @@ test("declining, ending one permission and stopping everything call the owner op
     .click();
   await expect(page.getByRole("status").first()).toContainText("Declined");
   await page.getByRole("button", { name: "End now" }).click();
-  expect(
-    f.calls.some((c) => c.op === "lease-revoke" && c.body.leaseRef === live),
-  ).toBe(true);
+  await expect
+    .poll(() =>
+      f.calls.some((c) => c.op === "lease-revoke" && c.body.leaseRef === live),
+    )
+    .toBe(true);
   await expect(
     page.getByRole("button", { name: "Stop all agents" }),
   ).toBeDisabled();
