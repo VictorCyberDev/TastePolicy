@@ -42,6 +42,10 @@ Qloo is **never** accepted as the source of a place fact. Code: `src/lib/require
 
 `src/server/places/` bridges a Qloo place to a factual place (Google Places API New + Routes API) with a deterministic identity score; ambiguous or weak matches attach nothing. Photos stream through a same-origin proxy (`/api/places/photo`) with attribution and `no-store`; the key never reaches the browser. Fallback order: provider photo → licensed Wikimedia Commons → authored Taste image, each labelled. Without `GOOGLE_MAPS_API_KEY`, photos, accessibility facts and walking time stay **unknown** (the experience asks) and no route is drawn.
 
+### Open place experience (M25, no Google required)
+
+Candidates now come alive with open data: a branded **MapLibre + OpenFreeMap** journey map, real photographs labelled by how they relate to the place (photo of it / street view near it / around it), a real street **sequence** ("See the approach") and genuine **360°** captures ("Look around") from KartaView and Panoramax, explicit **OpenStreetMap** facts (absence stays unknown) and optional **openrouteservice** routing. Pictures are presentation only: they never satisfy a requirement. Providers, endpoints, terms and caching: [docs/architecture/open-place-providers.md](docs/architecture/open-place-providers.md). Optional keys: `HEIGIT_API_KEY`, `MAPILLARY_ACCESS_TOKEN`.
+
 ### Visual system
 
 _Taste is expressive. Authority is precise._ Tokens and components live in `src/components/brand/` (Taste Spectrum, Tasteprint, Boundary Ribbon, Culture Tiles, Need Chips, Place Canvas, Authority Ladder, Decision Seal, Journey Line). The human product is deliberately light; motion is semantic and respects `prefers-reduced-motion`; status is never colour-only.

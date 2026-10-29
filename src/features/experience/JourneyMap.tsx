@@ -113,7 +113,7 @@ export default function JourneyMap({
           coords?.forEach((c) => bounds.extend(c));
           if (origin || coords)
             map.fitBounds(bounds, {
-              padding: 56,
+              padding: { top: 64, right: 72, bottom: 56, left: 56 },
               maxZoom: 16,
               duration: reduced ? 0 : 900,
             });
