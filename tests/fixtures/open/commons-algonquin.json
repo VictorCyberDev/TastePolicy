@@ -1,35 +1,35 @@
 {
- "_recorded": "2026-10-29 live Wikimedia response values (Commons imageinfo / Wikidata Q689447 P18), re-shaped to the API envelope after the live endpoint began rate-limiting this workspace",
- "body": {
-  "query": {
-   "pages": {
-    "1": {
-     "title": "File:W 44 St Sep 2021 01.jpg",
-     "imageinfo": [
-      {
-       "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/W_44_St_Sep_2021_01.jpg/1280px-W_44_St_Sep_2021_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-       "descriptionurl": "https://commons.wikimedia.org/wiki/File:W_44_St_Sep_2021_01.jpg",
-       "extmetadata": {
-        "ImageDescription": {
-         "value": "The Algonquin Hotel on 65 West 44th Street in Manhattan, New York, seen in September 2021."
-        },
-        "DateTimeOriginal": {
-         "value": "2021-09-23 10:16:34"
-        },
-        "Artist": {
-         "value": "<a href=\"//commons.wikimedia.org/wiki/User:Epicgenius\" title=\"User:Epicgenius\">Epicgenius</a>"
-        },
-        "LicenseShortName": {
-         "value": "CC BY-SA 4.0"
-        },
-        "LicenseUrl": {
-         "value": "https://creativecommons.org/licenses/by-sa/4.0"
+  "_recorded": "2026-10-29 live Wikimedia response values (Commons imageinfo / Wikidata Q689447 P18), re-shaped to the API envelope after the live endpoint began rate-limiting this workspace",
+  "body": {
+    "query": {
+      "pages": {
+        "1": {
+          "title": "File:W 44 St Sep 2021 01.jpg",
+          "imageinfo": [
+            {
+              "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/W_44_St_Sep_2021_01.jpg/1280px-W_44_St_Sep_2021_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:W_44_St_Sep_2021_01.jpg",
+              "extmetadata": {
+                "ImageDescription": {
+                  "value": "The Algonquin Hotel on 65 West 44th Street in Manhattan, New York, seen in September 2021."
+                },
+                "DateTimeOriginal": {
+                  "value": "2021-09-23 10:16:34"
+                },
+                "Artist": {
+                  "value": "<a href=\"//commons.wikimedia.org/wiki/User:Epicgenius\" title=\"User:Epicgenius\">Epicgenius</a>"
+                },
+                "LicenseShortName": {
+                  "value": "CC BY-SA 4.0"
+                },
+                "LicenseUrl": {
+                  "value": "https://creativecommons.org/licenses/by-sa/4.0"
+                }
+              }
+            }
+          ]
         }
-       }
       }
-     ]
     }
-   }
   }
- }
 }

@@ -231,7 +231,11 @@ export default function JudgePage() {
           <p>
             In the experience, Qloo resolves her five anchors to real entities
             (you confirm each match), then discovers real places that fit her
-            taste. Three ways to answer the same evening:
+            taste, then shows them: real photographs labelled by how they relate
+            to the place, a map and street sequence from open data
+            (OpenStreetMap, KartaView, Panoramax), and 360° where it genuinely
+            exists. Pictures are presentation, never evidence. Three ways to
+            answer the same evening:
           </p>
           <div className="tp-trio tp-compare">
             <article>

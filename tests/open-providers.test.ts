@@ -102,8 +102,12 @@ describe("media relationship (M25.9)", () => {
     });
     // No license, or no author: not shown.
     const bad = structuredClone(commons);
-    const meta = Object.values(bad.query.pages as Record<string, any>)[0]
-      .imageinfo[0].extmetadata;
+    type Meta = Record<string, { value: string }>;
+    const meta = (
+      Object.values(bad.query.pages)[0] as {
+        imageinfo: { extmetadata: Meta }[];
+      }
+    ).imageinfo[0].extmetadata;
     meta.LicenseShortName.value = "All rights reserved";
     clearOpenCache();
     const r2 = await exactImage(

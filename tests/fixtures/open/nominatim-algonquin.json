@@ -1,40 +1,35 @@
 {
- "_recorded": "2026-10-29 from the live service; trimmed, not synthetic",
- "body": [
-  {
-   "place_id": 359587079,
-   "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
-   "osm_type": "way",
-   "osm_id": 266170533,
-   "lat": "40.7559397",
-   "lon": "-73.9823473",
-   "category": "tourism",
-   "type": "hotel",
-   "place_rank": 30,
-   "importance": 0.4268457730448817,
-   "addresstype": "tourism",
-   "name": "The Algonquin Hotel Times Square Autograph Collection",
-   "display_name": "The Algonquin Hotel Times Square Autograph Collection, 59, West 44th Street, Midtown, Manhattan Community Board 5, Manhattan, New York County, New York, 10036, United States",
-   "extratags": {
-    "email": "ak.nycak.askalgonquin@marriott.com",
-    "phone": "+1 212 840 6800",
-    "height": "43.0",
-    "smoking": "no",
-    "website": "https://www.algonquinhotel.com/",
-    "building": "hotel",
-    "wikidata": "Q689447",
-    "wikipedia": "en:Algonquin Hotel",
-    "wheelchair": "yes",
-    "nycdoitt:bin": "1081059",
-    "building:levels": "12",
-    "air_conditioning": "yes"
-   },
-   "boundingbox": [
-    "40.7558568",
-    "40.7560241",
-    "-73.9824888",
-    "-73.9822091"
-   ]
-  }
- ]
+  "_recorded": "2026-10-29 from the live service; trimmed, not synthetic",
+  "body": [
+    {
+      "place_id": 359587079,
+      "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 266170533,
+      "lat": "40.7559397",
+      "lon": "-73.9823473",
+      "category": "tourism",
+      "type": "hotel",
+      "place_rank": 30,
+      "importance": 0.4268457730448817,
+      "addresstype": "tourism",
+      "name": "The Algonquin Hotel Times Square Autograph Collection",
+      "display_name": "The Algonquin Hotel Times Square Autograph Collection, 59, West 44th Street, Midtown, Manhattan Community Board 5, Manhattan, New York County, New York, 10036, United States",
+      "extratags": {
+        "email": "ak.nycak.askalgonquin@marriott.com",
+        "phone": "+1 212 840 6800",
+        "height": "43.0",
+        "smoking": "no",
+        "website": "https://www.algonquinhotel.com/",
+        "building": "hotel",
+        "wikidata": "Q689447",
+        "wikipedia": "en:Algonquin Hotel",
+        "wheelchair": "yes",
+        "nycdoitt:bin": "1081059",
+        "building:levels": "12",
+        "air_conditioning": "yes"
+      },
+      "boundingbox": ["40.7558568", "40.7560241", "-73.9824888", "-73.9822091"]
+    }
+  ]
 }

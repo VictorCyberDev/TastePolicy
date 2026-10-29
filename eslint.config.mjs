@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
     "test-results/**",
     ".work-evidence/**",
     "packages/sdk/dist/**",
+    "public/vendor/**",
   ]),
 ]);
 
