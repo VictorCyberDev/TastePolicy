@@ -203,7 +203,8 @@ export default function Home() {
             <h2>One boundary. Multiple agent doors.</h2>
             <p>
               The same authority contract is exposed through the live consumer
-              experience, REST, OAuth, remote MCP, A2A and the TypeScript client.
+              experience, REST, OAuth, remote MCP, A2A and the TypeScript
+              client.
             </p>
             <div className="company-protocol-tags">
               <span>Qloo</span>

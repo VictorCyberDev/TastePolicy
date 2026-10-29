@@ -131,8 +131,8 @@ export default function JudgePage() {
             <p className="company-eyebrow">THE SIGNATURE TEST</p>
             <h2>A perfect taste match can still be a hard no.</h2>
             <p>
-              Save an exact exclusion, evaluate the same candidate and watch
-              the boundary hold. This is the difference between knowing
+              Save an exact exclusion, evaluate the same candidate and watch the
+              boundary hold. This is the difference between knowing
               someone&apos;s taste and being authorized to choose for them.
             </p>
             <div className="company-protocol-tags">

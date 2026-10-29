@@ -126,7 +126,8 @@ export default function TasteBoundaryShowcase() {
 
       <p className="submission-showcase-note">
         The cultural fit is illustrative on this marketing card. The public
-        Consumer Arena uses real Qloo requests and exposes the captured evidence.
+        Consumer Arena uses real Qloo requests and exposes the captured
+        evidence.
       </p>
     </section>
   );

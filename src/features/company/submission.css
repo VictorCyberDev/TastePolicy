@@ -114,7 +114,10 @@
 .submission-taste-copy strong {
   display: block;
   margin-top: 4px;
-  font-family: Boundary Serif, Georgia, serif;
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
   font-weight: 400;
   font-size: clamp(34px, 3.3vw, 54px);
   letter-spacing: -0.03em;
@@ -170,11 +173,7 @@
   gap: 24px;
   padding: clamp(28px, 4vw, 56px);
   background:
-    radial-gradient(
-      circle at 80% 0%,
-      rgba(0, 100, 89, 0.08),
-      transparent 33%
-    ),
+    radial-gradient(circle at 80% 0%, rgba(0, 100, 89, 0.08), transparent 33%),
     #f8f6ee;
 }
 
@@ -201,7 +200,10 @@
 
 .submission-authority-side h2 {
   margin: 0;
-  font-family: Boundary Serif, Georgia, serif;
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
   font-weight: 400;
   font-size: clamp(36px, 3.4vw, 58px);
   letter-spacing: -0.035em;
@@ -340,7 +342,10 @@
 }
 
 .submission-proof-strip .submission-number {
-  font-family: Boundary Serif, Georgia, serif;
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
   font-size: 62px;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -372,7 +377,10 @@
 }
 
 .submission-taste-field h2 {
-  font-family: Boundary Serif, Georgia, serif;
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
   font-size: clamp(44px, 5vw, 76px);
   font-weight: 400;
   letter-spacing: -0.04em;
@@ -465,7 +473,10 @@
 
 .submission-comparison h3 {
   margin: 40px 0 12px;
-  font-family: Boundary Serif, Georgia, serif;
+  font-family:
+    Boundary Serif,
+    Georgia,
+    serif;
   font-size: 30px;
   font-weight: 400;
 }
