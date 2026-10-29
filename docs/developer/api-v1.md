@@ -4,7 +4,7 @@ All operations are cultural authorization only. No API key, share or ALLOW grant
 
 ## Setup and authentication
 
-Apply migrations 0001 → 0002 → 0003 → 0004 → 0005 on a dedicated PostgreSQL database. `npm run db:migrate:platform` applies only 0005. Configure server-only DATABASE_URL, BETTER_AUTH_SECRET and BETTER_AUTH_URL. Never use NEXT_PUBLIC variables for secrets. The account UI is `/account`; Judge Mode remains separate. No demo claim/import is implemented.
+Use `npm run db:migrate:all` to apply the complete ordered checksum ledger (currently 0001–0013) on a dedicated PostgreSQL database. Legacy per-milestone migration scripts are not a complete bootstrap or upgrade. Configure server-only DATABASE_URL, BETTER_AUTH_SECRET and the central TASTEPOLICY_PUBLIC_ORIGIN / NEXT_PUBLIC_APP_URL consistently; production is https://tastepolicy.vercel.app. Keep preview and production databases, roles and secrets separate. Never use NEXT_PUBLIC variables for secrets. Developer onboarding is `/signup` → `/dashboard`; owner account controls are `/account`. Judge Mode is a separate demonstration.
 
 Sign in, initialize a private Passport using five independently reviewed identities, then issue an expiring, scoped developer credential. Copy its plaintext secret once. The API header is `Authorization: Bearer <your-issued-secret>`; only its hash persists. Credential ID/label/scopes/expiry/revocation remain inspectable, never the secret. Rotation revokes the old credential atomically. Retry of issuance returns durable metadata, not another secret.
 
@@ -101,7 +101,7 @@ MCP 2025-06-18 stdio supports initialize, ping, tools/list and tools/call. Six t
 - explain_taste_decision (captured structured decision evidence, no LLM narrative)
 - inspect_evaluation_status
 
-Tool calls execute under the explicit developer credential and grant scopes. There is no remote MCP listener, raw Qloo tool, arbitrary host/profile argument, list-accessible-Passports tool or extra stability capability. Input buffer/messages are bounded to 16 KiB and processed serially; HTTP requests retain server validation/rates/timeouts. Discovery metadata is not private authority. Errors are sanitized; stdout contains only JSON-RPC messages.
+Tool calls execute under the explicit developer credential and grant scopes. This legacy stdio server is distinct from the production remote MCP endpoint at https://tastepolicy.vercel.app/api/mcp. The remote service exposes the modern shared tool contracts and OAuth account linking; see integrations.md. Neither surface exposes a raw Qloo tool or arbitrary owner authority. Input buffer/messages are bounded to 16 KiB and processed serially; HTTP requests retain server validation/rates/timeouts. Discovery metadata is not private authority. Errors are sanitized; stdout contains only JSON-RPC messages.
 
 Official contracts consulted: [Better Auth installation](https://better-auth.com/docs/installation), [session management](https://better-auth.com/docs/concepts/session-management), [MCP stdio](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) and [tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools).
 
@@ -115,4 +115,4 @@ ReceiptResponse adds source=recorded, receiptSchemaVersion=taste-platform-receip
 
 MCP returns the same public contracts, including passportRef and subjectRef; no state-profile identity is semantic subject authority. Continuation and automaticRetry=false are unchanged.
 
-A2A is remaining M6G work after the guide-owned WIN GATE under the then-current official A2A specification. WIN GATE is not completed, A2A runtime is not implemented and this PR is not merge-ready. See [Canonical Architecture v3](../architecture/canonical-architecture-v3.md).
+A2A is implemented at `/api/a2a`, with a public `/.well-known/agent-card.json`. REST, installed SDK and A2A were independently exercised by hosted acceptance on canonical main 035a768. This does not establish Google marketplace acceptance or ChatGPT/Claude usage. Historical M6/Win Gate notes do not define the current release; use the company-build ledger and integrations.md.

@@ -1,0 +1,4208 @@
+{
+  "schemaVersion": "tastebench-boundaries-v2",
+  "source": "SYNTHETIC_ENGINEERING",
+  "createdAt": "2026-10-29T00:00:00.000Z",
+  "splitRule": "sha256(JSON input) first 32 bits modulo 4; 0 evaluation, remainder calibration",
+  "cases": [
+    {
+      "id": "case-7a99c02ab8fcc025",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-79f71725a75e3cea",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4c193d97e8ac3cd0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-3980556d08dc5b53",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6dd7b2de8dce206b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-337365d408a8b7f3",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-71494ec9c79e6b8f",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-5b3abe75878924eb",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d38892a95804f677",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-9b0311d72f20ed64",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-9579c7ec310d69e2",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-366b7030367db86c",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-affb56adc198064f",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-14d24b3a2ef543b2",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0167c7f91e9d4593",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2a211ce05fbcf6c1",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f7d687f207751bf9",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-86244a597761f5b0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-97a09962cfac51ae",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-c4b182781ca7097f",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c9eb8480ce579e1d",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-b7d1c3de2ae2225b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-6edee5dda5867f71",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-3559f98957dcb647",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-067cd22b5ffe6a91",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-d9dc06a8896482ee",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-21b6a136d10f0d8e",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-54ef4b0352565c58",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d7ea09f06544e2e0",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-d4bfc150976b7557",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-63989db19dbad0fc",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-68f9ee349c2772c0",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-fff06bc444e11fc0",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d9f324ddf96dab2a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-f104df9193e4107b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-bda90de1ac821d5c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-01482ecd2ddc3da7",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7f2d57eb8ccd873d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-eda6f7e167ea4932",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-af2b260dfd2b83a6",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-271ace38e59546c0",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-3661e5927534591c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-6dd0de7381c802a1",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-99fe20d6a2027b47",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-1eb6ad59ec4effa0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-017153864a6f19f5",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-24a205e551ff34fc",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-857904234d8db868",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-aac159f3ab34db14",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-714fa7c534cd9f28",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-773497ae68fe152c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8b5f0ca3572f0e96",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-8d24f2e06beb11e3",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f96fd93db7cd79e2",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-8ec31126eaa809bf",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-cc819bd88d869f42",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-1ca0277a8ca8332d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-81fd65d0b785f87b",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-b226a3670a448be0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-373b4c1102e40e34",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-5288c6757ad69876",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-0e44df3bbb46402f",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-a514bd217a747632",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-ca5c13c31186f742",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0a87496f5a7defe0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-7fcff8bacd6c0183",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-10fd0917b9cf0eea",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-84341404d95ef4bb",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-b0bf3c40d4b4a2a2",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-1cb3d04a41e16bc5",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-6bf02173cd9f5ca5",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f5cb89f12c425697",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-6b72f2a7cac2d0e4",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-41f872cc5fc68331",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-e20eb020ef0892bb",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-59a403050534fea0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-a5625b75c1620894",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-9a6f72d22004a01d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-8f26cd42f05f6f6a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-b80e649269ce758b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-7f6a76f7c34ae5a2",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-17bb43b742537fa7",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-bee4611e5ec88400",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-389833c4d126e07f",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-cfcddfac413db4e1",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-59a64a8288f8871d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-0da0c9e64b2f7634",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-edbbfaea0913c055",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f95fcc96b4535e41",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-90f8aa8a84cb0702",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-63e19a03e7e3afe9",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-ef61caf4b4490353",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-1094366ea5bf75a2",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d64d7d08e3afd3b7",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-13b5be94c0d0dc64",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-a14400abbeaf3fa0",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-4a48d574a86a5fa7",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-53db2b96630d5df7",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-07b6cbe10cd7f953",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6c0855682dc5edd8",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2b4778006af37cdd",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-61b15558ed04ea13",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7991c9cec33ceb90",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-c1cb06d0c69328a2",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-d43a3ec80eff3cef",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-cc78d25afdeace2a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-ff04c19372ac59a4",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-a8765d4454f12071",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f229214b1f499e83",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-fa2389db568c8d0d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f2f688fe8b1663f5",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-522bff0e21ebe23f",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-2d7a93aaa616e777",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-408079b06657d25c",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-dd69d958bc6eb757",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-00d1953e3d641728",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-92c81e770716f12c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-b72d57a739f7ce65",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-5c38ee7439bf4a1a",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-056457407398aff1",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-3070257a39ad868b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-3e62baabb5a6c883",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-caa77d82d1a237c7",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-e521b9f535b06661",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-a7ffcc5ef076206e",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-12de8e1927cc600d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-e33b6e07d1d6690d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-d4389f2eac2d647e",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-07838499ad07989c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-ce7e3734b5c7982e",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-bfbca8767db79cac",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-a68c4c3849256b89",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-35c41408ad5bed74",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-718315c53b46eefd",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-14ab45f15069c38b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c0df92df9ff50360",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-66e4289b56f7e1a2",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-3262a7281ccbe755",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-1633b5ce9b4d516d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0fa17cdee2741b6a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-ecd4109730361c5c",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-47d7e7b6c1131646",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-5975507ce019634e",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-84592137cdda1c1b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6a18b83cc8f325e2",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-d701dac554c4c1bc",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-a01ca0e0863d6a46",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-21c4c5570dede2e8",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-8dd7cc5856c1a6a6",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-49c10f9b707baae5",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-dc8a1c866cbdee74",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f963e6d3831f1d6b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-c9d4071594906f4d",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-b5a69cb2d93478d4",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-ce1d56e4d4366bf2",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-414603c4084e52cc",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f637df3649a31676",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-37d92e829bcefa3e",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-170a7b1f2970ddce",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-5122f0d2073b6e1b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-781b44095d05a751",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-31e7f44e917d754a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-bb439759bcee4656",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-4d0253d064f791c5",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-2da4852a5b04748b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2d4dae20d712bc84",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-ee93ba3fa1e4d883",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7defd205492fcc0b",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f02c4d6d63b33adc",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-935d7db37c5639f7",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-e5997ebb7ead9ce4",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-e23394f1f3a99a65",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-e4a938c099938dc3",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-86b49c02e215871a",
+      "split": "CALIBRATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0a59381c5db2deca",
+      "split": "EVALUATION",
+      "domain": "brand",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-8fab089ea79467ba",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-cb7e9ea2f2099072",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-606a4828f970e9a9",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-bc8632b473f86b99",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-b8309d63500c6d79",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-562bb32f97181c81",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-d1961d3753502fe2",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-c93d09fe814e5614",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-5814593c0d5e3e52",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-2ad4df2a9dfd1d1a",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-0266c254a04323ea",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-1f281f6dc6aa6ff7",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-462a1dba4843e49e",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-2a8305a794df4fdc",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-341d58803e331134",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-5a8445f0120b7615",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-5ad51851f2f06b6f",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-9634889acd1edfe7",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d002078db4ac4d3d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-9612798a92c0f6eb",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-83a2c4334ca8f880",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-78370993dacd2c45",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-6ca9cacd29a56476",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-6ed6c096edb41ce0",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-7a46d6f97dca36df",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f9476e6acc2a4fcf",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-915974e564c75732",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-c79d0b376bc2a886",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-2ebf315c7153d6bf",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0264c6b1ead780ce",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c579586d636d6b80",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-18be947a9a01791b",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-f9b6c2f71f2c6885",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-9ccb52a127ab96ff",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-7d7feca612b7e941",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-1c93459b473c0849",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-15b9d84e3b0b76cd",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-935149e5a8ea1c4c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-a162912e2fa86035",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-56dcd9c40cd1eb9a",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-905a2d3c567c2f76",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f78278dc5e7310b6",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-e5a84747a1a55e68",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-4c2392f22d49f888",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-dc730f110f4cc490",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f4e418d69cc83c72",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-372f5f9c7ede71c4",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4067985737a632fa",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-c13a8279feb26367",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-b7a44b134b127034",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-7a48c4a8d6aaedb2",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-adf38dd828da1555",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4357a12b11139af0",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-82b619cb6becaaf9",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-358ac5d6e516e928",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c5d1e687929fd0af",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-208efcdc7aa12703",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-5885ca4d03cc558b",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-dedb6737d906a970",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-31aba7b15dbf21fa",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-75cea730a29169ff",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-b5266a55ee5fcb47",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-fa5ae8352a88ba85",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-80c5ecb1a39135c8",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-28057d1b75566e5e",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-3b8c297b9541ce52",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-98093edada382950",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-1eec3cc9156cace4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-13c68fa784b1e602",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-191d0ededae0768d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-194d75632c96ef5a",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-c41bfe1929b25b2c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-2309f8e2b7df1e72",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f5117951a22e4666",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0b2d88a208559c8d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-555097c060d9b8d2",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-1336f2456574b1aa",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-5feecb9e2dff5651",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-c991e187b029240b",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-00b4c2f829d6d106",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-119233d0ecda3e00",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-b3aad3706bd40351",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4d5a91df8d73bf2f",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-4a1acb515a956486",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-c6c637640f8d44c6",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2170ae963065ea4d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2dee2e2c9ca8fd36",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-fa26d3cdeafe4456",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-055a7c2fffa240f3",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-2381ac02380df239",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-73d0136da5f62660",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-139a9e59c9744df7",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7481ace6b266c217",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-6e1dde53ffebe0ae",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-2989064b83142c4a",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-d56f95eb313ebda7",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8a87d256d98ebf13",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-8314e69811001c52",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-54f6dba80920f9c9",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-f526f7d7f906f915",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-807336be9f517bb4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-d1853942991c66e4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-ce88de37676ac7b9",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-45414ae57ced7c64",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-e7632189a898264c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-767022c1d4a3e26d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-cf001492647a448c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-92a80eadf08aa376",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-7a63db5914f55f88",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-4983867f1e9434c1",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-72b11f9237036d50",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2f68a3729e962a31",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-c915196bad590797",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-b59dd845c57d2d14",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-9bf5ce003fba0cf5",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-65861a3be2fcccdf",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8b762fb6df76dc73",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-dddb38436fee968a",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-ccb2a0656395eccd",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-49db046b0b47e518",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-4cc7685e724cfc73",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-fbc00da2a641729a",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-2d883b15f447f2c3",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-c571403d80a89ea4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-ddb0cc8e32b97b32",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-33aca6321ef2fb22",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-0556bbc25626b762",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-0af3e8e920332f03",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-078079c17d503b3c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0b3f04a845a89b76",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f3f7e05f90977cd4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-862505f454bdd418",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-665866d0dd69f4ae",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-97b112de5b8cb5e7",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-eaf0fd9cf42a851e",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-521d006d62106e54",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-495beec4cd0fbc0a",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-8aba0950bdfde891",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-0e4f3f94765b674f",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-276d1c1b0b346bf4",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-d06aa8a184cd514e",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-5c7cc9ef5818db58",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-f0a9b161e0796705",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-edafbcb00f7030bc",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-901b4ce07d9c8b2f",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-3f9ad3a7c2df8126",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2bc3ad696f02d242",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-f4a3734bdb5edf02",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-7417634ae5ae81d6",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-a6a6b313ba9622e6",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-aeb2cef50292b1d5",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-aadb0128a4510e23",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-8b20ef3f89584d2c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-780bd3b250b1322d",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-aa0adb9a1a177308",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-e2ce18a6484f21c6",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8358ae813aa2f81f",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4ceb8be362b2f76c",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-9b3b04dac43e6b57",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0b803e8ae35c8d31",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-ec1e8edd4f117677",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-caf7929b3e6cacd9",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-1bb35f82d0685a9e",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-2c4049bd596875dc",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-bbe2424dbdebfa3b",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-8b4998a460e75310",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-6766e71c87329319",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-2b973bcdffa39687",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-a89a4930e3bcb08a",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-168b92272bc8ad19",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-28c82bcaa38e3e18",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8a7f9feb3f032942",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-0d950b4275d24c73",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-f2494b908235fafb",
+      "split": "EVALUATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-5d69563e77a10226",
+      "split": "CALIBRATION",
+      "domain": "destination",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-79ab7fb879a73e6e",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-6d7efac12dbe74fb",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-6b3d691f39291ec2",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-876b193e846a1d3e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-43e53f2dbe87ab57",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-d1f0a786da70a98f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-5ecda44b42b5fc02",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-9d1d1163582dde76",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-3659213f54305d18",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-ab02ce23e3142a1c",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2fe3073f2a0f0f32",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-186cca4c7d8f6a6b",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-c2c1d9ef6b37b333",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d50eee1ebcd05c6f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-faa3974eb7086e9b",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-e707721f8f931559",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-ddec71cb8b8e8f7d",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-5a87858fb6edf20b",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-30a7ebb8f2c9012a",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-4bc29f9d13386ebe",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-6da2474ee6ae9a6c",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2475d518088a2bac",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-0865c90b264a7ea3",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-ebdfc4997b95d186",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-0c7db98014a84123",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.2,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-484d3ed6a05a1aa7",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-da38e3d029ba832d",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-2beb4fd04d27db60",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-58302721abbdc6c4",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-c3b1a8158b33778e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-06dee1481e0e72ae",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-e307ff2316e6b9d8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-03d86f9f725f878a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-c2543b7b7e8ae7a7",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-1fda4f371e391dc8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-39510a12b6b0d687",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-50e115d086bbd45c",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-eeeba530b0863374",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-dc7ead3883512fa3",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-087c5b30686afe7e",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-444d9e7adfef2138",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-56689c5fb2d6d68b",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-eae4887df7dd1585",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-9ea109d43419328c",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-d493983bc03b277d",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-56770b7bfa8e6565",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-873c8b6b5b5ccea7",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-8e63cf9a3c00cadb",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-22a87e22a67f8ef6",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-5cb70324a136188a",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.49,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2a82f615b8411fbf",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-78c1ab7af7a601f4",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-bd0a2e7aebdb7667",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-e91d819ca20ffc77",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-bd1b511820a492f4",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c83f6df90033a3ca",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-d9fc0918ca8a1988",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-1a22332c8d2208c5",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d8542035a01036b7",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-318fb3de2efff56a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-db200df1b4489f88",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-852a9d5a97881283",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7a72d5b133ce3658",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-11f91d6cff61db98",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-d33bd9afdad59c28",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-b0bc40d84e42a3e7",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-86083277cf341be2",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-388b92056675fc12",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-928a8fd42cc6d6a1",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-b30fa4b285f26256",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-55eb475758651cff",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-0e14aca6f869d11e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-aafcc3d02b85b88f",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-536fd42fc23a3df9",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-d6d10a9dc767b371",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.5,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-c7722faf276e04e9",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f16c6f7fabe344e9",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-7efb5c5e5ea7cb94",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-e3e48f810db20f0e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-9691b5111e97e42a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-da8d46e563e9244a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-eaabcc0192cfcfde",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-26a309ec4d908641",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-734b147d989373aa",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-2a9693eb56425f4a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-7548ac5cb5d10860",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-87a4743aeefe22ea",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-620c06f918b818a0",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-1ae4443d983dae62",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-24db923062e8f06e",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-07ef798c526f91f8",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-762eddb08305331b",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-adc46067b91e1938",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-9d362eb3ac902ba6",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-e3aa4df2d78fc649",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-dee282c08a20e71f",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8e46e7187bbd7163",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-9ac2f862ae2a5430",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-a1ff002d643a8654",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-e52fe1e703d9f701",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.65,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-db8fb16dacd617b8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-0621c546d0c42cb8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-e03068b288dddc94",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-d63780086953d725",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-acb9bcd0df4583f6",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-5d84874a17a37a2e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-10a685c23ad149b8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-263dfbf9df89276f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-3117fe687b27cdc8",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6776ccb1a17fda54",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-afcd08fb3b5a7583",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-14ccdc3c809077c5",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-a22cecd1daf4b35f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-0e1b00ffe4a4c11f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-c49f507cb44a0113",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-2f97f688a54c6ffc",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-06f6e3a3e3782d1a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-bc0f62a28f5ca157",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-1e4dfb8212fb50cf",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-33b8f9612d15b4e3",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-988914f8a3cbc963",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-c96f86c55ac9c519",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-68bb9c349e929d64",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-8ffa020414a99e7f",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-aba142a1cc91cfa3",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.8,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-e26c90711a8676e8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-00d465a35f70307e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-41b2225ea72db376",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-9a31bf63a3900ae4",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6705d649688e56fd",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-b588985530d3bcce",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-d42d6eeed05a8b76",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-1b705baa8ed34312",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-75d927f3d6f24d19",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-b728badc62a5854d",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-4bca7d467c4c5d72",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-f4b3496998965b9f",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-a5b2d5b3d1b6207d",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-12b9595097fc4cd0",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-9a5dbe378f989437",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-b21278560c072fc7",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-5d250358931b2534",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-bf75664a3d1f5ff2",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-088a413eb78d9926",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-203173e7a7e1d9c8",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f42caac6c60d565a",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-071743099c41b2e1",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-547d6c07d38e9390",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-4291cb76efaef120",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-867999f5f7ed8874",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": 0.81,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-eed68c3f1023c170",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "NONE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2c6b6fbebea3c181",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "NONE",
+      "price": "AT"
+    },
+    {
+      "id": "case-38494d7401226e54",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": null,
+      "rule": "NONE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-79effcca6f186368",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "NONE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-e15e9033dfd4f274",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "NONE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-889045af5533dfd6",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-972244c610b787b4",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "AT"
+    },
+    {
+      "id": "case-fc1f4fab8edaaace",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-3b654437f8c86503",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-6c64cab4992b89a4",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": null,
+      "rule": "EXCLUDE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-3c465ed17fdfdfd4",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-d1e1433b868bd44d",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-4b5d6bb62b1da494",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-83599f0286482c6e",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-ff8f561cea260e86",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": null,
+      "rule": "GLOBAL_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-f7c523e6053eb1af",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-2979118fc3080ed0",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-fecb984e9fe69407",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-05c68581c17ebb6d",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-72068f1d9181db4c",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "MATCHING_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    },
+    {
+      "id": "case-0d03f9efca454a41",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "WITHIN"
+    },
+    {
+      "id": "case-8bebe89f9684ae61",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "AT"
+    },
+    {
+      "id": "case-ab634be49a18acd9",
+      "split": "EVALUATION",
+      "domain": "place",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OVER"
+    },
+    {
+      "id": "case-a7e151da41d72b81",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "MISSING"
+    },
+    {
+      "id": "case-5f4ee0e14dc1545b",
+      "split": "CALIBRATION",
+      "domain": "place",
+      "score": null,
+      "rule": "OTHER_CONTEXT_PRICE",
+      "price": "OTHER_CURRENCY"
+    }
+  ]
+}

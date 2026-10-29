@@ -5,7 +5,7 @@
     {
       "type": "mcp_server",
       "name": "tastepolicy",
-      "url": "https://<your-host>/api/mcp",
+      "url": "https://tastepolicy.vercel.app/api/mcp",
       "headers": {
         "Authorization": "Bearer <TASTEPOLICY_API_KEY from a private variable>"
       }

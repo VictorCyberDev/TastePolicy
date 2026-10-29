@@ -1,3 +1,4 @@
+import { operationMetric } from "@/server/operations/metrics";
 import { migrationLedgerIsCurrent } from "@/server/migration-status";
 import { configuredOrigin } from "@/lib/config/origin";
 import { createRequestId } from "@/lib/logging/request-id";
@@ -10,6 +11,7 @@ type State = "up" | "unconfigured" | "down";
 // reachable, never a value. Not ready means a dependency the platform needs is
 // missing; optional components are listed but do not fail readiness.
 export async function GET() {
+  const started = performance.now();
   const checks: Record<
     string,
     State | "configured" | "current" | "behind" | "unknown"
@@ -35,6 +37,11 @@ export async function GET() {
     // "down" or "behind" are reported without detail.
     if (database === "up") migrations = "behind";
   }
+  operationMetric(
+    "DATABASE",
+    database === "up" ? "OK" : "ERROR",
+    performance.now() - started,
+  );
   checks.database = database;
   checks.migrations = migrations;
   checks.authentication = getAuthentication() ? "up" : "unconfigured";

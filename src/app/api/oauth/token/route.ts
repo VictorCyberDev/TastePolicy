@@ -1,3 +1,5 @@
+import { measuredHttp } from "@/server/operations/metrics";
 import { getStateStore } from "@/server/state/postgres";
 import { handleToken } from "@/server/platform/oauth-http";
-export const POST = (request: Request) => handleToken(request, getStateStore());
+export const POST = (request: Request) =>
+  measuredHttp("OAUTH", () => handleToken(request, getStateStore()));
