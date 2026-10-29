@@ -65,8 +65,6 @@ export default function PlaceMediaEnhancer() {
       if (sameTarget(previous, next)) return;
 
       // Candidate identity changes invalidate presentation media immediately.
-      // Do this synchronously in the mutation callback so the previous photo
-      // styling cannot survive even one animation frame on the next candidate.
       previous?.portrait.classList.remove("hasLicensedPhoto");
       targetRef.current = next;
       setLoadedUrl(null);
@@ -98,7 +96,7 @@ export default function PlaceMediaEnhancer() {
       try {
         const response = await fetch(`/api/media/place?${params.toString()}`);
         const result = response.ok ? await response.json() : null;
-        if (!cancelled) {
+        if (!cancelled && sameTarget(current, currentTarget())) {
           setResolved(
             result?.status === "available" &&
               result.presentationOnly === true &&
@@ -108,7 +106,9 @@ export default function PlaceMediaEnhancer() {
           );
         }
       } catch {
-        if (!cancelled) setResolved(null);
+        if (!cancelled && sameTarget(current, currentTarget())) {
+          setResolved(null);
+        }
       }
     })();
     return () => {
@@ -119,7 +119,8 @@ export default function PlaceMediaEnhancer() {
   useEffect(() => {
     const portrait = target?.portrait;
     if (!portrait) return;
-    portrait.classList.toggle("hasLicensedPhoto", loaded);
+    const stillCurrent = sameTarget(target, currentTarget());
+    portrait.classList.toggle("hasLicensedPhoto", loaded && stillCurrent);
     return () => portrait.classList.remove("hasLicensedPhoto");
   }, [target, loaded]);
 
@@ -132,7 +133,13 @@ export default function PlaceMediaEnhancer() {
         key={media.image.url}
         className="licensedPlacePhoto"
         style={{ visibility: loaded ? "visible" : "hidden" }}
-        onLoad={() => setLoadedUrl(media.image.url)}
+        onLoad={() => {
+          if (sameTarget(target, currentTarget())) {
+            setLoadedUrl(media.image.url);
+          } else {
+            target.portrait.classList.remove("hasLicensedPhoto");
+          }
+        }}
         src={media.image.url}
         alt={`Visual context: ${media.image.title}. Exact property not verified.`}
         referrerPolicy="no-referrer"
