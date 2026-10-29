@@ -7,12 +7,19 @@
 // Material means what decided the answer:
 //   candidate  id, name, type and the optional releaseYear / address that were
 //              recorded with the evaluation (QlooEntity as snapshotted)
-//   context    key, domain and optional price (the evaluator's whole context)
+//   context    key, domain, optional price and, when supplied, the explicit
+//              requirements and candidate facts (the evaluator's whole context)
 // Presentation (image URLs, display order, card layout, copy) is never part of
 // either: it is not in the snapshot, and normalization drops unknown fields.
 // The context type has no occasion or party attributes, so none are committed.
 import { createHash } from "node:crypto";
 import { canonicalize, isWellFormed } from "./jcs";
+import {
+  factMaterial,
+  parseFacts,
+  parseRequirements,
+  requirementMaterial,
+} from "@/lib/requirements/validate";
 
 export const COMMITMENT_SCHEMA = "taste-commitments-v1";
 export type CommitmentKind = "candidate" | "context" | "authority";
@@ -29,6 +36,10 @@ export interface ContextMaterial {
   key: string;
   domain: string;
   price?: { amount: number; currency: string };
+  // M24: the explicit requirements and candidate facts the decision relied on.
+  // Present only when the context carried them, so legacy digests are unchanged.
+  requirements?: ReturnType<typeof requirementMaterial>;
+  facts?: ReturnType<typeof factMaterial>;
 }
 const text = (v: unknown, max: number) =>
   typeof v === "string" && v.length >= 1 && v.length <= max && isWellFormed(v)
@@ -77,6 +88,16 @@ export function contextMaterial(raw: unknown): ContextMaterial | null {
     )
       return null;
     out.price = { amount: p.amount, currency: p.currency };
+  }
+  if (r.requirements !== undefined) {
+    const parsed = parseRequirements(r.requirements);
+    if (!parsed) return null;
+    if (parsed.length) out.requirements = requirementMaterial(parsed);
+  }
+  if (r.facts !== undefined) {
+    const parsed = parseFacts(r.facts);
+    if (!parsed) return null;
+    if (parsed.length) out.facts = factMaterial(parsed);
   }
   return out;
 }

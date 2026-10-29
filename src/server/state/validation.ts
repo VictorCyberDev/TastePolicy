@@ -1,4 +1,5 @@
 import { record, uuid } from "@/lib/validation";
+import { parseFacts, parseRequirements } from "@/lib/requirements/validate";
 import {
   isResolvedProfile,
   snapshotEntity,
@@ -152,11 +153,13 @@ export function evaluationInput(value: unknown) {
     !Number.isSafeInteger(r.expectedStateVersion) ||
     (r.expectedStateVersion as number) < 0 ||
     !c ||
-    !keys(c, ["key", "domain", "price"]) ||
+    !keys(c, ["key", "domain", "price", "requirements", "facts"]) ||
     typeof c.key !== "string" ||
     !/^[a-zA-Z0-9_-]{1,64}$/.test(c.key) ||
     c.domain !== r.candidate.type ||
-    (c.price !== undefined && !money(c.price))
+    (c.price !== undefined && !money(c.price)) ||
+    (c.requirements !== undefined && !parseRequirements(c.requirements)) ||
+    (c.facts !== undefined && !parseFacts(c.facts))
   )
     return null;
   return {
@@ -167,6 +170,10 @@ export function evaluationInput(value: unknown) {
       key: c.key,
       domain: c.domain,
       ...(c.price ? { price: money(c.price)! } : {}),
+      ...(c.requirements
+        ? { requirements: parseRequirements(c.requirements)! }
+        : {}),
+      ...(c.facts ? { facts: parseFacts(c.facts)! } : {}),
     } as Context,
   };
 }

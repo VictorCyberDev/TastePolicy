@@ -6,7 +6,7 @@ import { StateFailure } from "@/lib/state/types";
 import { evaluationInput } from "./validation";
 import type { Repositories } from "./repositories";
 import type { QlooProvider } from "@/server/qloo/contracts";
-import { stateDecision } from "./policy";
+import { contextRequirementReport, stateDecision } from "./policy";
 import { evaluateAction } from "@/server/taste/service";
 import { isResolvedProfile } from "@/server/taste/invariants";
 // Internal only: callers authorize subject ownership. SELF retains its accepted
@@ -96,6 +96,7 @@ export async function evaluateStateSnapshot(
       independent.outcome === "REJECT"
         ? "SKIPPED_INDEPENDENT_BLOCK"
         : "REQUESTED",
+    ...requirementsOf(input.context, now),
     requestId,
     evaluatedAt: now,
     source: "live",
@@ -106,6 +107,15 @@ export async function evaluateStateSnapshot(
     performance.now() - started,
   );
   return evaluation;
+}
+function requirementsOf(
+  context: StateVersion extends never
+    ? never
+    : NonNullable<ReturnType<typeof evaluationInput>>["context"],
+  now: string,
+) {
+  const report = contextRequirementReport(context, now);
+  return report ? { requirements: report } : {};
 }
 export async function persistStateEvaluation(
   r: Repositories,

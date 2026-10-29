@@ -9,6 +9,7 @@ import {
   type StateEvaluation,
 } from "@/lib/state/types";
 import { mutationInput, evaluationInput } from "./validation";
+import { sessionAuthority, splitSessionAuthority } from "./session-authority";
 import { stateDecision } from "./policy";
 import type { QlooProvider } from "@/server/qloo/contracts";
 import {
@@ -221,7 +222,9 @@ export class TasteStateService {
     providerFactory: () => QlooProvider,
     requestId: string,
   ): Promise<StateEvaluation> {
-    const input = evaluationInput(raw);
+    const split = splitSessionAuthority(raw);
+    if (split.authority === "INVALID") throw new StateFailure("INVALID_INPUT");
+    const input = evaluationInput(split.rest);
     if (!input) throw new StateFailure("INVALID_INPUT");
     const { state } = await this.read(token);
     if (state.stateVersion !== input.expectedStateVersion)
@@ -233,6 +236,13 @@ export class TasteStateService {
       requestId,
       this.clock(),
     );
+    if (split.authority)
+      evaluation.authority = sessionAuthority(
+        state,
+        evaluation,
+        split.authority,
+        evaluation.evaluatedAt,
+      );
     await this.store.transaction(async (r) => {
       const { profile, session } = await this.authorize(r, token, true);
       if (session.mutations >= 100) throw new StateFailure("RATE_LIMITED");

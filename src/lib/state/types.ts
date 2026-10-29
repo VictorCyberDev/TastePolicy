@@ -1,4 +1,9 @@
 import type {
+  CandidateFact,
+  Requirement,
+  RequirementReport,
+} from "@/lib/requirements/types";
+import type {
   CulturalReceipt,
   EvaluationResult,
   QlooEntity,
@@ -32,6 +37,10 @@ export interface Context {
   key: string;
   domain: TargetType;
   price?: { amount: number; currency: string };
+  // M24, additive: explicit requirements for this choice and the candidate
+  // facts known about it. Absent means the legacy contract applies unchanged.
+  requirements?: Requirement[];
+  facts?: CandidateFact[];
 }
 export interface FeedbackInput {
   category: (typeof FEEDBACK_CATEGORIES)[number];
@@ -129,6 +138,16 @@ export interface StateDecision {
     | "REQUIRED_EVIDENCE_MISSING";
   rules: string[];
 }
+export interface SessionAuthority {
+  requestedAction: string;
+  ceiling: string;
+  ceilingSource: string;
+  escalationRequired: boolean;
+  outcome: StateDecision["outcome"];
+  basis: string;
+  rules: string[];
+  permitted: string[];
+}
 export interface StateEvaluation {
   schemaVersion: "taste-state-evaluation-v1";
   evaluationId: string;
@@ -141,6 +160,11 @@ export interface StateEvaluation {
   decision: StateDecision;
   cultural: EvaluationResult;
   culturalRequest: "SKIPPED_INDEPENDENT_BLOCK" | "REQUESTED";
+  // M24, additive. Present only when the context carried requirements.
+  requirements?: RequirementReport;
+  // Present only when the caller named a session action ceiling and an
+  // intended action. The one policy engine produced it (evaluateWithPolicy).
+  authority?: SessionAuthority;
   requestId: string;
   evaluatedAt: string;
   source: "live" | "recorded";

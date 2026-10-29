@@ -37,6 +37,9 @@ export function validateEnvironment(input: EnvironmentInput) {
     supabaseUrl: optionalUrl("SUPABASE_URL"),
     qlooApiKey: input.QLOO_API_KEY?.trim() || undefined,
     openaiApiKey: input.OPENAI_API_KEY?.trim() || undefined,
+    // Server-only place provider (Places + Routes). Optional: without it the
+    // experience falls back to licensed/authored imagery and unknown facts.
+    googleMapsApiKey: input.GOOGLE_MAPS_API_KEY?.trim() || undefined,
     supabaseServiceRoleKey:
       input.SUPABASE_SERVICE_ROLE_KEY?.trim() || undefined,
   });

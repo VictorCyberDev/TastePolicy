@@ -56,6 +56,10 @@ const COMPOSITION = new Set([
   "src/server/subjects/group-service.ts",
   "src/server/subjects/postgres.ts",
   "src/server/state/postgres.ts",
+  // M24: the anonymous demo state route runs the policy engine against a
+  // session-chosen action ceiling.
+  "src/server/state/service.ts",
+  "src/server/state/session-authority.ts",
   "src/server/state/repositories.ts",
   "src/lib/platform/contracts.ts",
   "src/lib/platform/openapi.ts",

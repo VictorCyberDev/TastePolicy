@@ -5,6 +5,11 @@ import type {
   StateDecision,
 } from "@/lib/state/types";
 import type { EvaluationResult, QlooEntity } from "@/types/domain";
+import { evaluateRequirements } from "@/lib/requirements/evaluate";
+import type {
+  CandidateFact,
+  RequirementReport,
+} from "@/lib/requirements/types";
 export function applicable(
   entry: StateEntry,
   candidate: QlooEntity,
@@ -18,6 +23,27 @@ export function applicable(
     (entry.scope === "CONTEXT" && entry.contextKey === context.key) ||
     (entry.scope === "DOMAIN" && entry.domain === context.domain)
   );
+}
+// The facts a context carries, plus the one the evaluator already knows: the
+// price the person was quoted. A "price" requirement reads it as a fact that
+// the person supplied, so MAX_PRICE rules and price requirements agree.
+export function contextRequirementReport(
+  context: Context,
+  now: string,
+): RequirementReport | null {
+  if (!context.requirements?.length) return null;
+  const facts: CandidateFact[] = [...(context.facts ?? [])];
+  if (context.price && !facts.some((f) => f.key === "price"))
+    facts.push({
+      key: "price",
+      value: context.price.amount,
+      state: "known",
+      evidence: "USER_CONFIRMED",
+      source: "context.price",
+      sourceType: "USER",
+      unit: context.price.currency,
+    });
+  return evaluateRequirements(context.requirements, facts, now);
 }
 export function stateDecision(
   state: StateVersion,
@@ -42,6 +68,10 @@ export function stateDecision(
     )
       rules.push("MAX_PRICE_VIOLATION:" + e.signalId);
   }
+  // A known hard-requirement violation is final and independent of taste.
+  const requirements = contextRequirementReport(context, now);
+  for (const key of requirements?.hardViolated ?? [])
+    rules.push("REQUIREMENT_VIOLATION:" + key);
   if (rules.length)
     return {
       outcome: "REJECT",
@@ -67,17 +97,33 @@ export function stateDecision(
       basis: "CULTURAL_POLICY",
       rules: [cultural.data.decision.reasonCode],
     };
-  if (unresolved.length)
+  // Evidence the provider could not supply: pause, never guess.
+  if (requirements?.hardUnavailable.length)
+    return {
+      outcome: "UNAVAILABLE",
+      basis: "REQUIRED_EVIDENCE_MISSING",
+      rules: requirements.hardUnavailable.map(
+        (k) => "REQUIREMENT_EVIDENCE_UNAVAILABLE:" + k,
+      ),
+    };
+  const unknown = (requirements?.hardUnknown ?? []).map(
+    (k) => "REQUIRED_FACT:" + k,
+  );
+  if (unresolved.length || unknown.length)
     return {
       outcome: "ASK",
       basis: "UNRESOLVED_CONTEXT",
-      rules: unresolved.map((e) => "REQUIRED_PRICE:" + e.signalId).sort(),
+      rules: [
+        ...unresolved.map((e) => "REQUIRED_PRICE:" + e.signalId),
+        ...unknown,
+      ].sort(),
     };
   return {
     outcome: cultural.data.decision.outcome,
-    basis: entries.some((e) => e.constraint)
-      ? "CULTURAL_PLUS_CONTEXT"
-      : "CULTURAL_POLICY",
+    basis:
+      entries.some((e) => e.constraint) || requirements
+        ? "CULTURAL_PLUS_CONTEXT"
+        : "CULTURAL_POLICY",
     rules: [cultural.data.decision.reasonCode],
   };
 }
