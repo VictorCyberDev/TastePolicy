@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-10-29T08:02:48.523Z",
+  "deploymentId": "dpl_3moBMdVn3Gvrj3WZS3PnhV5htvLM",
+  "sourceSha": "a6572d82d01716b0dea3b1f0b7ae3dd3032867a8",
+  "origin": "https://tastepolicy.vercel.app",
+  "events": [
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "DATABASE",
+      "outcome": "OK",
+      "durationMs": 540,
+      "at": "2026-10-29T08:00:07.802Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "ERROR",
+      "durationMs": 231,
+      "at": "2026-10-29T07:59:54.538Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "ERROR",
+      "durationMs": 541,
+      "at": "2026-10-29T07:59:51.492Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "OK",
+      "durationMs": 1241,
+      "at": "2026-10-29T07:59:42.356Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "OK",
+      "durationMs": 2456,
+      "at": "2026-10-29T07:59:41.083Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "OK",
+      "durationMs": 1626,
+      "at": "2026-10-29T07:59:38.590Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "REST",
+      "outcome": "OK",
+      "durationMs": 2256,
+      "at": "2026-10-29T07:59:36.934Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "A2A",
+      "outcome": "OK",
+      "durationMs": 3731,
+      "at": "2026-10-29T07:59:34.621Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "DECISION",
+      "outcome": "ALLOW",
+      "durationMs": 252,
+      "at": "2026-10-29T07:59:32.843Z"
+    },
+    {
+      "event": "tastepolicy_operation_v1",
+      "surface": "QLOO",
+      "outcome": "OK",
+      "durationMs": 187,
+      "at": "2026-10-29T07:59:32.842Z"
+    }
+  ],
+  "limitations": "Fixed-schema production log records observed. No long-term collector, paging delivery, uptime or capacity claim."
+}

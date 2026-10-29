@@ -434,6 +434,62 @@ it("client ID metadata documents: the document must name its own URL, use https/
     );
 }, 60000);
 
+it("CIMD negotiates public auth from plural choices despite a different legacy preference, while rejecting no intersection and malformed choices", async () => {
+  const p = await person(false);
+  const id = "https://chatgpt.com/oauth/client.json";
+  const k = pkce();
+  cimdDocs.set(
+    id,
+    JSON.stringify({
+      client_id: id,
+      client_name: "ChatGPT",
+      redirect_uris: [REDIRECT],
+      token_endpoint_auth_method: "private_key_jwt",
+      token_endpoint_auth_methods_supported: ["none", "private_key_jwt"],
+      jwks_uri: "https://chatgpt.com/oauth/jwks.json",
+    }),
+  );
+  const redirect = new URL(await oauth.decide(p, authQ(id, k.challenge), true));
+  const form = new URLSearchParams({
+    grant_type: "authorization_code",
+    client_id: id,
+    code: redirect.searchParams.get("code")!,
+    redirect_uri: REDIRECT,
+    code_verifier: k.verifier,
+  });
+  // A signed assertion is not silently accepted or ignored by a public server.
+  const assertion = new URLSearchParams(form);
+  assertion.set("client_assertion", "not-a-supported-auth-method");
+  expect(await code(oauth.token(assertion))).toBe("invalid_client");
+  expect(await oauth.token(form)).toMatchObject({ token_type: "Bearer" });
+  const invalid = [
+    { token_endpoint_auth_methods_supported: ["private_key_jwt"] },
+    { token_endpoint_auth_methods_supported: [] },
+    { token_endpoint_auth_methods_supported: "none" },
+    { token_endpoint_auth_methods_supported: ["none", null] },
+    { token_endpoint_auth_methods_supported: Array(17).fill("none") },
+    { token_endpoint_auth_method: "private_key_jwt" },
+    {
+      token_endpoint_auth_method: 42,
+      token_endpoint_auth_methods_supported: ["none"],
+    },
+  ];
+  for (const [i, fields] of invalid.entries()) {
+    const badId = `https://client.test/${i}/metadata.json`;
+    cimdDocs.set(
+      badId,
+      JSON.stringify({
+        client_id: badId,
+        redirect_uris: [REDIRECT],
+        ...fields,
+      }),
+    );
+    expect(await code(oauth.preview(authQ(badId, k.challenge)))).toBe(
+      "invalid_client",
+    );
+  }
+}, 60000);
+
 it("review fixes: a client mismatch does not spend the refresh token; the family has an absolute lifetime; names are sanitized; revoke tolerates malformed ids", async () => {
   const p = await person();
   const l = await link(p);

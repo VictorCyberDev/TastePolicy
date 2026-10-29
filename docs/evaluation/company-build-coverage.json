@@ -2442,13 +2442,15 @@
       "id": "M17-02",
       "milestone": "M17",
       "requirement": "ChatGPT register stable MCP",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
-      "production_url": null,
-      "registration_status": "NOT_STARTED",
+      "implementation": "Saved ChatGPT TastePolicy cloud plugin plugin_asdk_app_6ae25337bc5c81918f37eefdaa6914d3; actual Connect targeted stable production OAuth/MCP",
+      "exact_sha": "fe16efff06aa37eba22fdb51d1db6c3c7657cf5e",
+      "evidence": [
+        "2026-10-29 signed-in ChatGPT installed plugin detail; Connect reached canonical issuer with resource https://tastepolicy.vercel.app/api/mcp"
+      ],
+      "production_url": "https://tastepolicy.vercel.app/api/mcp",
+      "registration_status": "CUSTOM_PLUGIN_INSTALLED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -2457,12 +2459,14 @@
       "requirement": "ChatGPT OAuth authorization",
       "implementation": "Prepared exact OAuth consent for PASSPORT_READ, TASTE_EVALUATE, RECEIPT_READ",
       "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
-      "evidence": ["docs/evaluation/external-checkpoints-2026-10-29.md"],
+      "evidence": [
+        "Actual invalid_client: Client metadata is not acceptable; official client metadata fetched 2026-10-29; see company-build-m10-m26.md"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "BLOCKED_EXTERNAL",
-      "blocker": "Browser policy requires action-time confirmation before granting new scoped assistant access."
+      "status": "FAIL_REPAIR_REQUIRED",
+      "blocker": "Consent approved by user. Actual Connect rejected current ChatGPT plural CIMD choices before consent; repair under local verification. Fresh TastePolicy owner login also remains necessary."
     },
     {
       "id": "M17-04",
@@ -2472,10 +2476,10 @@
       "exact_sha": null,
       "evidence": [],
       "production_url": null,
-      "registration_status": "NOT_STARTED",
+      "registration_status": "CUSTOM_PLUGIN_INSTALLED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Cloud plugin exists and is installed, but OAuth, successful hosted tool scan and enabled invocation are not proved."
     },
     {
       "id": "M17-05",
@@ -2563,12 +2567,14 @@
       "requirement": "Claude OAuth identity authentication",
       "implementation": "Prepared exact OAuth consent for PASSPORT_READ, TASTE_EVALUATE, RECEIPT_READ",
       "exact_sha": "85c6b4e04bba975eef6b907d196c0d963b8eb546",
-      "evidence": ["docs/evaluation/external-checkpoints-2026-10-29.md"],
+      "evidence": [
+        "2026-10-29 actual Claude Connect -> TastePolicy consent -> Allow -> recent sign-in required"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
       "status": "BLOCKED_EXTERNAL",
-      "blocker": "Browser policy requires action-time confirmation before granting new scoped assistant access."
+      "blocker": "User approved scoped access. Production Allow correctly requires recent owner sign-in. Secure login submitted but signed-in result not established; actual owner authentication remains."
     },
     {
       "id": "M17-12",
