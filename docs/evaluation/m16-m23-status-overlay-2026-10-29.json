@@ -1,0 +1,132 @@
+{
+  "as_of": "2026-10-29",
+  "scope": "M16-M23 finalization overlay",
+  "authority": "This file is the current M16-M23 status overlay and supersedes stale M16-M23 status fields in docs/evaluation/company-build-coverage.json without rewriting historical evidence.",
+  "canonical_main_before_finalization": "63913d103e722d65b649ba983a8707242e85ef80",
+  "distribution_package_head": "12567c49c4adbfc6d358554476f32898e977ba56",
+  "evidence": {
+    "main_verify": "40877895139 SUCCESS",
+    "main_secret_scan": "40877894997 SUCCESS",
+    "main_hosted_acceptance": "40879841640 SUCCESS",
+    "mcp_registry_publish": "40880126527 SUCCESS",
+    "scheduled_production_monitor": "40889688687 SUCCESS",
+    "fresh_recovery_branch": "br-mute-cloud-zacmusc5",
+    "recovery_schema_diff": "empty",
+    "recovery_integrity_counts": "13 migrations, 3 auth users, 1 Passport, 2 cultural receipts, 1 developer workspace on both production and recovery"
+  },
+  "milestones": {
+    "M16": {
+      "state": "PASS",
+      "requirements": 19,
+      "pass": 19,
+      "remaining": []
+    },
+    "M17": {
+      "state": "PROTOCOL_COMPLETE_HOST_COMMISSIONING_EXTERNAL",
+      "requirements": 18,
+      "pass": 7,
+      "blocked_external": 11,
+      "pass_ids": [
+        "M17-01",
+        "M17-02",
+        "M17-09",
+        "M17-10",
+        "M17-16",
+        "M17-17",
+        "M17-18"
+      ],
+      "remaining": [
+        "Real ChatGPT owner authentication, OAuth completion, scan/enable and fresh ALLOW/ASK/REJECT/UNAVAILABLE invocation",
+        "Real Claude owner authentication, OAuth completion, enablement and fresh tool invocation"
+      ]
+    },
+    "M18": {
+      "state": "DISTRIBUTION_PACKAGES_READY_EXTERNAL_PORTALS_PARTIAL",
+      "requirements": 22,
+      "pass": 14,
+      "blocked_external": 6,
+      "in_progress": 1,
+      "tooling_blocked": 1,
+      "pass_ids": [
+        "M18-01",
+        "M18-02",
+        "M18-03",
+        "M18-05",
+        "M18-06",
+        "M18-08",
+        "M18-09",
+        "M18-10",
+        "M18-12",
+        "M18-13",
+        "M18-17",
+        "M18-19",
+        "M18-21",
+        "M18-22"
+      ],
+      "remaining": [
+        "OpenAI publisher identity/domain verification, authenticated scan and final portal submission",
+        "Portal-ready demo recording",
+        "Fresh valid product screenshots: tooling-blocked because available browser automation wallet is depleted and the isolated Vercel sandbox lacks browser shared libraries/package manager",
+        "Claude public-directory submission remains blocked by observed paid-plan eligibility"
+      ]
+    },
+    "M19": {
+      "state": "INTERNAL_PASS_REGISTRY_PUBLICATION_EXTERNAL",
+      "requirements": 21,
+      "pass": 20,
+      "blocked_external": 1,
+      "remaining": [
+        "npm authentication/scope ownership and actual package publication/readback"
+      ]
+    },
+    "M20": {
+      "state": "INTERNAL_BILLING_PASS_PROVIDER_COMMISSIONING_EXTERNAL",
+      "requirements": 14,
+      "pass": 12,
+      "blocked_external": 2,
+      "remaining": [
+        "Stripe account/provider onboarding",
+        "Real Stripe TEST price/key/webhook configuration and signed checkout/webhook acceptance"
+      ]
+    },
+    "M21": {
+      "state": "OPERATIONS_CONTROLS_PASS_HISTORICAL_RESTORE_OPEN",
+      "requirements": 27,
+      "pass": 26,
+      "in_progress": 1,
+      "remaining": [
+        "M21-09 historical point-in-time recovery/RTO: a current production-derived recovery branch is proved, but the production child branch has no snapshot and Neon rejects snapshots on non-root branches"
+      ]
+    },
+    "M22": {
+      "state": "ENGINEERING_BENCHMARK_PASS_RESEARCH_GATES_OPEN",
+      "requirements": 21,
+      "pass": 18,
+      "in_progress": 1,
+      "blocked_external": 2,
+      "remaining": [
+        "Generic-LLM baseline replication/exact model identity beyond the existing prompt-only observation",
+        "Independent genuine human taste-relevance labels",
+        "Taste-relevance metric computed from those human labels"
+      ]
+    },
+    "M23": {
+      "state": "INTERNAL_IP_DILIGENCE_PASS_EXTERNAL_RIGHTS_LEGAL_GATES_OPEN",
+      "requirements": 16,
+      "pass": 14,
+      "blocked_external": 2,
+      "remaining": [
+        "Written Qloo commercial/output/retention rights, pricing and contract confirmation",
+        "Formal jurisdiction/class trademark clearance and qualified legal review"
+      ]
+    }
+  },
+  "hard_claim_boundaries": [
+    "No successful ChatGPT or Claude live tool invocation is claimed until host evidence exists.",
+    "No Stripe account or real/test provider checkout is claimed until signed provider acceptance exists.",
+    "No Qloo commercial partnership or post-hackathon rights are claimed without written permission.",
+    "No SOC 2, ISO 27001, external penetration-test certification, contractual SLA or measured RTO/RPO is claimed.",
+    "No human taste-relevance result is fabricated from synthetic or model-generated labels.",
+    "No OpenAI/Claude/Google directory or marketplace approval is inferred from protocol compatibility."
+  ]
+}
