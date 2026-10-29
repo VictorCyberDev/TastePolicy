@@ -1,0 +1,40 @@
+{
+ "_recorded": "2026-10-29 from the live service; trimmed, not synthetic",
+ "body": [
+  {
+   "place_id": 359215460,
+   "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+   "osm_type": "node",
+   "osm_id": 7099017456,
+   "lat": "40.7710341",
+   "lon": "-73.9619458",
+   "category": "amenity",
+   "type": "bar",
+   "place_rank": 30,
+   "importance": 9.175936522464359e-05,
+   "addresstype": "amenity",
+   "name": "Melody's Piano Bar",
+   "display_name": "Melody's Piano Bar, 1020, Lexington Avenue, Upper East Side, Manhattan Community Board 8, Manhattan, New York County, New York, 10021, United States",
+   "extratags": {
+    "level": "0",
+    "phone": "+1 646-559-2808",
+    "branch": "Lexington",
+    "website": "https://www.melodyspianobar.com/",
+    "cocktails": "yes",
+    "check_date": "2024-03-14",
+    "drink:beer": "served",
+    "drink:wine": "served",
+    "wheelchair": "no",
+    "contact:email": "melodyspianobar@gmail.com",
+    "opening_hours": "Mo-Th 17:00-02:00; Fr, Sa 17:00-04:00",
+    "contact:instagram": "melodyspianobar"
+   },
+   "boundingbox": [
+    "40.7709841",
+    "40.7710841",
+    "-73.9619958",
+    "-73.9618958"
+   ]
+  }
+ ]
+}

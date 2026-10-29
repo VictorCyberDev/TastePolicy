@@ -74,10 +74,10 @@ export function toIdentity(
     },
     category: row.category,
     kind: row.type,
+    // Only the tags the experience reads; contact details are never carried.
     tags: Object.fromEntries(
       Object.entries(row.extratags ?? {}).filter(
-        ([k, v]) =>
-          typeof k === "string" && typeof v === "string" && v.length < 300,
+        ([k, v]) => TAGS.has(k) && typeof v === "string" && v.length < 200,
       ),
     ),
   };

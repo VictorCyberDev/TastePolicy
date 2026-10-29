@@ -79,6 +79,11 @@ export async function cached<T>(
 export const clearOpenCache = () => cache.clear();
 
 // Public Nominatim allows at most one request per second.
+let gap = 1100;
+// Tests may shorten the spacing; production never does.
+export const setNominatimGap = (ms: number) => {
+  gap = ms;
+};
 let last = 0;
 let chain: Promise<unknown> = Promise.resolve();
 export function nominatimSlot<T>(

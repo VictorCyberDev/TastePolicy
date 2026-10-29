@@ -1,0 +1,648 @@
+{
+ "_recorded": "2026-10-29 from the live service; trimmed, not synthetic",
+ "body": {
+  "features": [
+   {
+    "id": "9ca4c9c4-4551-4551-83f1-1e5c1c2064d5",
+    "bbox": [
+     2.300141463,
+     48.860312034,
+     2.300141463,
+     48.860312034
+    ],
+    "type": "Feature",
+    "links": [
+     {
+      "rel": "license",
+      "href": "https://alliance.numerique.gouv.fr/licence-ouverte-open-licence/",
+      "title": "License for this object (etalab-2.0)"
+     },
+     {
+      "rel": "self",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/9ca4c9c4-4551-4551-83f1-1e5c1c2064d5",
+      "type": "application/geo+json"
+     },
+     {
+      "rel": "collection",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "parent",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "root",
+      "href": "https://api.panoramax.xyz/api",
+      "type": "application/json",
+      "title": "Instance catalog"
+     },
+     {
+      "rel": "prev",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/9bac0f17-d9ee-4504-97f5-0202f2576d78",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300207624,
+        48.860323957
+       ]
+      },
+      "id": "9bac0f17-d9ee-4504-97f5-0202f2576d78"
+     },
+     {
+      "rel": "next",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/e7153039-5275-4366-965f-359fbffbb7e5",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300074904,
+        48.860300136
+       ]
+      },
+      "id": "e7153039-5275-4366-965f-359fbffbb7e5"
+     },
+     {
+      "rel": "via",
+      "href": "https://panoramax.ign.fr",
+      "type": "application/json",
+      "title": "Link to the original instance",
+      "instance_name": "ign"
+     }
+    ],
+    "assets": {
+     "hd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/9c/a4/c9/c4/4551-4551-83f1-1e5c1c2064d5.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "data"
+      ],
+      "title": "HD picture",
+      "description": "Highest resolution available of this picture"
+     },
+     "sd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9c/a4/c9/c4/4551-4551-83f1-1e5c1c2064d5/sd.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "visual"
+      ],
+      "title": "SD picture",
+      "description": "Picture in standard definition (fixed width of 2048px)"
+     },
+     "thumb": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9c/a4/c9/c4/4551-4551-83f1-1e5c1c2064d5/thumb.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "thumbnail"
+      ],
+      "title": "Thumbnail",
+      "description": "Picture in low definition (fixed width of 500px)"
+     }
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      2.300141463,
+      48.860312034
+     ]
+    },
+    "providers": [
+     {
+      "id": "38676669-edf7-4831-9bc9-f90ec9da63d9",
+      "name": "immergis",
+      "roles": [
+       "producer"
+      ]
+     },
+     {
+      "name": "Immergis pour la Ville de Paris",
+      "roles": [
+       "producer"
+      ]
+     }
+    ],
+    "collection": "ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+    "properties": {
+     "created": "2025-12-03T10:52:01.361041+00:00",
+     "license": "etalab-2.0",
+     "updated": "2025-12-25T00:37:36.604075+00:00",
+     "datetime": "2025-06-26T12:47:57.620000+00:00",
+     "semantics": [],
+     "collection": {
+      "semantics": []
+     },
+     "datetimetz": "2025-06-26T14:47:57.620000+02:00",
+     "view:azimuth": 256,
+     "geovisio:image": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/9c/a4/c9/c4/4551-4551-83f1-1e5c1c2064d5.jpg",
+     "geovisio:status": "ready",
+     "geovisio:producer": "immergis",
+     "geovisio:thumbnail": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9c/a4/c9/c4/4551-4551-83f1-1e5c1c2064d5/thumb.jpg",
+     "original_file:name": "B3_1-81033-2025-06-26-085555010_663.jpg",
+     "original_file:size": 805136,
+     "geovisio:visibility": "anyone",
+     "pers:interior_orientation": {
+      "camera_model": "imajbox 3TX+",
+      "focal_length": 6.5,
+      "field_of_view": 95,
+      "camera_manufacturer": "IMAJING",
+      "sensor_array_dimensions": [
+       4096,
+       2160
+      ]
+     },
+     "geovisio:rank_in_collection": 13483,
+     "quality:horizontal_accuracy": 2.0,
+     "panoramax:horizontal_pixel_density": 43
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+     "https://stac-extensions.github.io/perspective-imagery/v1.0.0/schema.json"
+    ]
+   },
+   {
+    "id": "9bac0f17-d9ee-4504-97f5-0202f2576d78",
+    "bbox": [
+     2.300207624,
+     48.860323957,
+     2.300207624,
+     48.860323957
+    ],
+    "type": "Feature",
+    "links": [
+     {
+      "rel": "license",
+      "href": "https://alliance.numerique.gouv.fr/licence-ouverte-open-licence/",
+      "title": "License for this object (etalab-2.0)"
+     },
+     {
+      "rel": "self",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/9bac0f17-d9ee-4504-97f5-0202f2576d78",
+      "type": "application/geo+json"
+     },
+     {
+      "rel": "collection",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "parent",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "root",
+      "href": "https://api.panoramax.xyz/api",
+      "type": "application/json",
+      "title": "Instance catalog"
+     },
+     {
+      "rel": "prev",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/7aa71f5a-1d7f-4160-991e-ca8455d48572",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300274082,
+        48.860336069
+       ]
+      },
+      "id": "7aa71f5a-1d7f-4160-991e-ca8455d48572"
+     },
+     {
+      "rel": "next",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/9ca4c9c4-4551-4551-83f1-1e5c1c2064d5",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300141463,
+        48.860312034
+       ]
+      },
+      "id": "9ca4c9c4-4551-4551-83f1-1e5c1c2064d5"
+     },
+     {
+      "rel": "via",
+      "href": "https://panoramax.ign.fr",
+      "type": "application/json",
+      "title": "Link to the original instance",
+      "instance_name": "ign"
+     }
+    ],
+    "assets": {
+     "hd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/9b/ac/0f/17/d9ee-4504-97f5-0202f2576d78.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "data"
+      ],
+      "title": "HD picture",
+      "description": "Highest resolution available of this picture"
+     },
+     "sd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9b/ac/0f/17/d9ee-4504-97f5-0202f2576d78/sd.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "visual"
+      ],
+      "title": "SD picture",
+      "description": "Picture in standard definition (fixed width of 2048px)"
+     },
+     "thumb": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9b/ac/0f/17/d9ee-4504-97f5-0202f2576d78/thumb.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "thumbnail"
+      ],
+      "title": "Thumbnail",
+      "description": "Picture in low definition (fixed width of 500px)"
+     }
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      2.300207624,
+      48.860323957
+     ]
+    },
+    "providers": [
+     {
+      "id": "38676669-edf7-4831-9bc9-f90ec9da63d9",
+      "name": "immergis",
+      "roles": [
+       "producer"
+      ]
+     },
+     {
+      "name": "Immergis pour la Ville de Paris",
+      "roles": [
+       "producer"
+      ]
+     }
+    ],
+    "collection": "ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+    "properties": {
+     "created": "2025-12-03T10:52:01.236697+00:00",
+     "license": "etalab-2.0",
+     "updated": "2025-12-23T01:24:26.530513+00:00",
+     "datetime": "2025-06-26T12:47:56.770000+00:00",
+     "semantics": [],
+     "collection": {
+      "semantics": []
+     },
+     "datetimetz": "2025-06-26T14:47:56.770000+02:00",
+     "view:azimuth": 256,
+     "geovisio:image": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/9b/ac/0f/17/d9ee-4504-97f5-0202f2576d78.jpg",
+     "geovisio:status": "ready",
+     "geovisio:producer": "immergis",
+     "geovisio:thumbnail": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/9b/ac/0f/17/d9ee-4504-97f5-0202f2576d78/thumb.jpg",
+     "original_file:name": "B3_1-81033-2025-06-26-085555010_662.jpg",
+     "original_file:size": 716244,
+     "geovisio:visibility": "anyone",
+     "pers:interior_orientation": {
+      "camera_model": "imajbox 3TX+",
+      "focal_length": 6.5,
+      "field_of_view": 95,
+      "camera_manufacturer": "IMAJING",
+      "sensor_array_dimensions": [
+       4096,
+       2160
+      ]
+     },
+     "geovisio:rank_in_collection": 13482,
+     "quality:horizontal_accuracy": 2.0,
+     "panoramax:horizontal_pixel_density": 43
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+     "https://stac-extensions.github.io/perspective-imagery/v1.0.0/schema.json"
+    ]
+   },
+   {
+    "id": "7aa71f5a-1d7f-4160-991e-ca8455d48572",
+    "bbox": [
+     2.300274082,
+     48.860336069,
+     2.300274082,
+     48.860336069
+    ],
+    "type": "Feature",
+    "links": [
+     {
+      "rel": "license",
+      "href": "https://alliance.numerique.gouv.fr/licence-ouverte-open-licence/",
+      "title": "License for this object (etalab-2.0)"
+     },
+     {
+      "rel": "self",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/7aa71f5a-1d7f-4160-991e-ca8455d48572",
+      "type": "application/geo+json"
+     },
+     {
+      "rel": "collection",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "parent",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "root",
+      "href": "https://api.panoramax.xyz/api",
+      "type": "application/json",
+      "title": "Instance catalog"
+     },
+     {
+      "rel": "prev",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/0584199d-9dbc-4385-b58c-153507719251",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300340055,
+        48.860347973
+       ]
+      },
+      "id": "0584199d-9dbc-4385-b58c-153507719251"
+     },
+     {
+      "rel": "next",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/9bac0f17-d9ee-4504-97f5-0202f2576d78",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300207624,
+        48.860323957
+       ]
+      },
+      "id": "9bac0f17-d9ee-4504-97f5-0202f2576d78"
+     },
+     {
+      "rel": "via",
+      "href": "https://panoramax.ign.fr",
+      "type": "application/json",
+      "title": "Link to the original instance",
+      "instance_name": "ign"
+     }
+    ],
+    "assets": {
+     "hd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/7a/a7/1f/5a/1d7f-4160-991e-ca8455d48572.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "data"
+      ],
+      "title": "HD picture",
+      "description": "Highest resolution available of this picture"
+     },
+     "sd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/7a/a7/1f/5a/1d7f-4160-991e-ca8455d48572/sd.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "visual"
+      ],
+      "title": "SD picture",
+      "description": "Picture in standard definition (fixed width of 2048px)"
+     },
+     "thumb": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/7a/a7/1f/5a/1d7f-4160-991e-ca8455d48572/thumb.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "thumbnail"
+      ],
+      "title": "Thumbnail",
+      "description": "Picture in low definition (fixed width of 500px)"
+     }
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      2.300274082,
+      48.860336069
+     ]
+    },
+    "providers": [
+     {
+      "id": "38676669-edf7-4831-9bc9-f90ec9da63d9",
+      "name": "immergis",
+      "roles": [
+       "producer"
+      ]
+     },
+     {
+      "name": "Immergis pour la Ville de Paris",
+      "roles": [
+       "producer"
+      ]
+     }
+    ],
+    "collection": "ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+    "properties": {
+     "created": "2025-12-03T10:52:01.413213+00:00",
+     "license": "etalab-2.0",
+     "updated": "2025-12-25T00:55:12.548789+00:00",
+     "datetime": "2025-06-26T12:47:55.900000+00:00",
+     "semantics": [],
+     "collection": {
+      "semantics": []
+     },
+     "datetimetz": "2025-06-26T14:47:55.900000+02:00",
+     "view:azimuth": 256,
+     "geovisio:image": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/7a/a7/1f/5a/1d7f-4160-991e-ca8455d48572.jpg",
+     "geovisio:status": "ready",
+     "geovisio:producer": "immergis",
+     "geovisio:thumbnail": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/7a/a7/1f/5a/1d7f-4160-991e-ca8455d48572/thumb.jpg",
+     "original_file:name": "B3_1-81033-2025-06-26-085555010_661.jpg",
+     "original_file:size": 695073,
+     "geovisio:visibility": "anyone",
+     "pers:interior_orientation": {
+      "camera_model": "imajbox 3TX+",
+      "focal_length": 6.5,
+      "field_of_view": 95,
+      "camera_manufacturer": "IMAJING",
+      "sensor_array_dimensions": [
+       4096,
+       2160
+      ]
+     },
+     "geovisio:rank_in_collection": 13481,
+     "quality:horizontal_accuracy": 2.0,
+     "panoramax:horizontal_pixel_density": 43
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+     "https://stac-extensions.github.io/perspective-imagery/v1.0.0/schema.json"
+    ]
+   },
+   {
+    "id": "0584199d-9dbc-4385-b58c-153507719251",
+    "bbox": [
+     2.300340055,
+     48.860347973,
+     2.300340055,
+     48.860347973
+    ],
+    "type": "Feature",
+    "links": [
+     {
+      "rel": "license",
+      "href": "https://alliance.numerique.gouv.fr/licence-ouverte-open-licence/",
+      "title": "License for this object (etalab-2.0)"
+     },
+     {
+      "rel": "self",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/0584199d-9dbc-4385-b58c-153507719251",
+      "type": "application/geo+json"
+     },
+     {
+      "rel": "collection",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "parent",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+      "type": "application/json"
+     },
+     {
+      "rel": "root",
+      "href": "https://api.panoramax.xyz/api",
+      "type": "application/json",
+      "title": "Instance catalog"
+     },
+     {
+      "rel": "prev",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/f6244262-08e2-4491-bb0d-537cc0cbcc74",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300406597,
+        48.860359798
+       ]
+      },
+      "id": "f6244262-08e2-4491-bb0d-537cc0cbcc74"
+     },
+     {
+      "rel": "next",
+      "href": "https://api.panoramax.xyz/api/collections/ed6abbf5-e707-4b9a-b8db-a398ebf189e0/items/7aa71f5a-1d7f-4160-991e-ca8455d48572",
+      "type": "application/geo+json",
+      "geometry": {
+       "type": "Point",
+       "coordinates": [
+        2.300274082,
+        48.860336069
+       ]
+      },
+      "id": "7aa71f5a-1d7f-4160-991e-ca8455d48572"
+     },
+     {
+      "rel": "via",
+      "href": "https://panoramax.ign.fr",
+      "type": "application/json",
+      "title": "Link to the original instance",
+      "instance_name": "ign"
+     }
+    ],
+    "assets": {
+     "hd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/05/84/19/9d/9dbc-4385-b58c-153507719251.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "data"
+      ],
+      "title": "HD picture",
+      "description": "Highest resolution available of this picture"
+     },
+     "sd": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/05/84/19/9d/9dbc-4385-b58c-153507719251/sd.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "visual"
+      ],
+      "title": "SD picture",
+      "description": "Picture in standard definition (fixed width of 2048px)"
+     },
+     "thumb": {
+      "href": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/05/84/19/9d/9dbc-4385-b58c-153507719251/thumb.jpg",
+      "type": "image/jpeg",
+      "roles": [
+       "thumbnail"
+      ],
+      "title": "Thumbnail",
+      "description": "Picture in low definition (fixed width of 500px)"
+     }
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      2.300340055,
+      48.860347973
+     ]
+    },
+    "providers": [
+     {
+      "id": "38676669-edf7-4831-9bc9-f90ec9da63d9",
+      "name": "immergis",
+      "roles": [
+       "producer"
+      ]
+     },
+     {
+      "name": "Immergis pour la Ville de Paris",
+      "roles": [
+       "producer"
+      ]
+     }
+    ],
+    "collection": "ed6abbf5-e707-4b9a-b8db-a398ebf189e0",
+    "properties": {
+     "created": "2025-12-03T10:52:01.201428+00:00",
+     "license": "etalab-2.0",
+     "updated": "2025-12-25T02:01:50.214405+00:00",
+     "datetime": "2025-06-26T12:47:55.050000+00:00",
+     "semantics": [],
+     "collection": {
+      "semantics": []
+     },
+     "datetimetz": "2025-06-26T14:47:55.050000+02:00",
+     "view:azimuth": 256,
+     "geovisio:image": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/05/84/19/9d/9dbc-4385-b58c-153507719251.jpg",
+     "geovisio:status": "ready",
+     "geovisio:producer": "immergis",
+     "geovisio:thumbnail": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/derivates/05/84/19/9d/9dbc-4385-b58c-153507719251/thumb.jpg",
+     "original_file:name": "B3_1-81033-2025-06-26-085555010_660.jpg",
+     "original_file:size": 710502,
+     "geovisio:visibility": "anyone",
+     "pers:interior_orientation": {
+      "camera_model": "imajbox 3TX+",
+      "focal_length": 6.5,
+      "field_of_view": 95,
+      "camera_manufacturer": "IMAJING",
+      "sensor_array_dimensions": [
+       4096,
+       2160
+      ]
+     },
+     "geovisio:rank_in_collection": 13480,
+     "quality:horizontal_accuracy": 2.0,
+     "panoramax:horizontal_pixel_density": 43
+    },
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+     "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+     "https://stac-extensions.github.io/perspective-imagery/v1.0.0/schema.json"
+    ]
+   }
+  ],
+  "links": []
+ }
+}

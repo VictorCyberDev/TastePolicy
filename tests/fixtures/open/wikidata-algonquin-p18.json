@@ -1,0 +1,20 @@
+{
+ "_recorded": "2026-10-29 live Wikimedia response values (Commons imageinfo / Wikidata Q689447 P18), re-shaped to the API envelope after the live endpoint began rate-limiting this workspace",
+ "body": {
+  "entities": {
+   "Q689447": {
+    "claims": {
+     "P18": [
+      {
+       "mainsnak": {
+        "datavalue": {
+         "value": "W 44 St Sep 2021 01.jpg"
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

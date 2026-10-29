@@ -218,9 +218,11 @@ export async function resolveOpenPlace(
       seq = buildSequence(window);
     }
     if (seq) open.sequence = seq;
-    open.panorama = all.find(
-      (i) => i.panoramic && i.relation !== "AREA_CONTEXT",
-    );
+    // Nearest genuinely panoramic capture, labelled by its own relation (a 360
+    // a block away is "around the area", not "the place").
+    open.panorama = all
+      .filter((i) => i.panoramic)
+      .sort((a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0))[0];
 
     if (input.origin) {
       open.originLabel = input.origin.label;
