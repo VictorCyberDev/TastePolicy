@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-10-29T17:05:30Z",
+  "production": {
+    "origin": "https://tastepolicy.vercel.app",
+    "closureRelease": "0515a2bd20c6575cf5850d7a0566118bddf669e1",
+    "closureDeployment": "dpl_C33r28Qak5tyTgUHQVv153LVGL4H",
+    "closureDeploymentState": "READY",
+    "secretScanRun": 40917240375,
+    "secretScanConclusion": "success",
+    "verifyRun": 40917240436,
+    "verifyStateAtRecord": "in_progress"
+  },
+  "milestones": {
+    "M16": {
+      "status": "PASS_INTERNAL",
+      "internalRemaining": [],
+      "externalRemaining": ["real ChatGPT/Claude invocation is tracked in M17"]
+    },
+    "M17": {
+      "status": "PARTIAL_EXTERNAL",
+      "internalRemaining": [],
+      "externalRemaining": [
+        "fresh ChatGPT custom-plugin install/connect/OAuth/invocation in an authenticated host account",
+        "fresh Claude connector connect/OAuth/invocation in an authenticated host account"
+      ]
+    },
+    "M18": {
+      "status": "PASS_MCP_DISTRIBUTION_PARTIAL_EXTERNAL_DIRECTORIES",
+      "internalRemaining": [],
+      "externalRemaining": [
+        "OpenAI public directory publisher/domain/review workflow",
+        "Claude directory paid-plan eligibility and review"
+      ],
+      "mcpRegistry": {
+        "package": "io.github.VictorCyberDev/tastepolicy@0.2.0",
+        "state": "active"
+      }
+    },
+    "M19": {
+      "status": "PASS_INTERNAL_EXTERNAL_PUBLISH_PENDING",
+      "internalRemaining": [],
+      "externalRemaining": ["npm account ownership/authentication and public publish of @victorcyberdev/tastepolicy-sdk@0.2.0"]
+    },
+    "M20": {
+      "status": "PASS_INTERNAL_BILLING_MODEL_EXTERNAL_PROVIDER_PENDING",
+      "internalRemaining": [],
+      "externalRemaining": ["authenticated Stripe TEST account keys/price/webhook/checkout acceptance"]
+    },
+    "M21": {
+      "status": "PASS_INTERNAL_TRUST_PACKAGE_PROVIDER_BACKUP_AUTOMATION_BLOCKED",
+      "internalRemaining": [],
+      "externalRemaining": ["Neon project capability/plan support for automatic snapshot scheduling"],
+      "recovery": {
+        "productionBranch": "br-little-king-za6unmfo",
+        "freshRecoveryBranch": "br-dawn-cell-zazh8yky",
+        "freshRecoveryBranchName": "tastepolicy-recovery-drill-20261029-m16-m23",
+        "parentLsn": "0/2EC8130",
+        "state": "ready",
+        "schemaDiffAgainstProduction": ""
+      }
+    },
+    "M22": {
+      "status": "PASS",
+      "internalRemaining": [],
+      "externalRemaining": [],
+      "limits": ["synthetic benchmark claims remain explicitly synthetic", "no independent population-science claim"]
+    },
+    "M23": {
+      "status": "PASS_INTERNAL_FORMAL_LEGAL_DILIGENCE_EXTERNAL",
+      "internalRemaining": [],
+      "externalRemaining": ["formal trademark/legal clearance if pursued"]
+    }
+  }
+}
