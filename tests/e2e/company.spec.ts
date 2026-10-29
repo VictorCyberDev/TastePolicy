@@ -198,18 +198,20 @@ test("company navigation uses the client router without runtime errors", async (
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/", { waitUntil: "networkidle" });
-  for (const [name, pathname] of [
-    ["Product", "/product"],
-    ["Developers", "/developers"],
-    ["Pricing", "/pricing"],
-    ["Trust", "/trust"],
+  // Human pages use the "Primary" navigation, technical/company pages "Company".
+  for (const [nav, name, pathname] of [
+    ["Primary", "Product", "/product"],
+    ["Primary", "Developers", "/developers"],
+    ["Company", "Trust", "/trust"],
+    ["Company", "Use cases", "/experience"],
   ]) {
     await page
-      .getByRole("navigation", { name: "Company", exact: true })
+      .getByRole("navigation", { name: nav, exact: true })
+      .first()
       .getByRole("link", { name, exact: true })
       .click();
     await expect(page).toHaveURL(new RegExp(pathname + "$"));
-    await expect(page.locator("main h1")).toBeVisible();
+    await expect(page.locator("main h1").first()).toBeVisible();
     await page.waitForLoadState("networkidle");
   }
   expect(errors).toEqual([]);
