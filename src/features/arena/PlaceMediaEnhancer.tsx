@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./place-media.css";
 
 type PlaceMedia = {
@@ -39,8 +39,17 @@ function currentTarget(): Target | null {
   return portrait && name ? { portrait, name, address } : null;
 }
 
+function sameTarget(a: Target | null, b: Target | null) {
+  return (
+    a?.portrait === b?.portrait &&
+    a?.name === b?.name &&
+    a?.address === b?.address
+  );
+}
+
 export default function PlaceMediaEnhancer() {
   const [target, setTarget] = useState<Target | null>(null);
+  const targetRef = useRef<Target | null>(null);
   const [resolved, setResolved] = useState<{
     target: Target;
     media: PlaceMedia;
@@ -50,23 +59,19 @@ export default function PlaceMediaEnhancer() {
   const loaded = Boolean(media && loadedUrl === media.image.url);
 
   useEffect(() => {
-    let frame = 0;
     const sync = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const next = currentTarget();
-        setTarget((previous) => {
-          if (
-            previous?.portrait === next?.portrait &&
-            previous?.name === next?.name &&
-            previous?.address === next?.address
-          ) {
-            return previous;
-          }
-          return next;
-        });
-      });
+      const next = currentTarget();
+      const previous = targetRef.current;
+      if (sameTarget(previous, next)) return;
+
+      // Candidate identity changes invalidate presentation media immediately.
+      previous?.portrait.classList.remove("hasLicensedPhoto");
+      targetRef.current = next;
+      setLoadedUrl(null);
+      setResolved(null);
+      setTarget(next);
     };
+
     sync();
     const observer = new MutationObserver(sync);
     observer.observe(document.body, {
@@ -75,8 +80,9 @@ export default function PlaceMediaEnhancer() {
       characterData: true,
     });
     return () => {
-      cancelAnimationFrame(frame);
       observer.disconnect();
+      targetRef.current?.portrait.classList.remove("hasLicensedPhoto");
+      targetRef.current = null;
     };
   }, []);
 
@@ -90,7 +96,7 @@ export default function PlaceMediaEnhancer() {
       try {
         const response = await fetch(`/api/media/place?${params.toString()}`);
         const result = response.ok ? await response.json() : null;
-        if (!cancelled) {
+        if (!cancelled && sameTarget(current, currentTarget())) {
           setResolved(
             result?.status === "available" &&
               result.presentationOnly === true &&
@@ -100,7 +106,9 @@ export default function PlaceMediaEnhancer() {
           );
         }
       } catch {
-        if (!cancelled) setResolved(null);
+        if (!cancelled && sameTarget(current, currentTarget())) {
+          setResolved(null);
+        }
       }
     })();
     return () => {
@@ -111,7 +119,8 @@ export default function PlaceMediaEnhancer() {
   useEffect(() => {
     const portrait = target?.portrait;
     if (!portrait) return;
-    portrait.classList.toggle("hasLicensedPhoto", loaded);
+    const stillCurrent = sameTarget(target, currentTarget());
+    portrait.classList.toggle("hasLicensedPhoto", loaded && stillCurrent);
     return () => portrait.classList.remove("hasLicensedPhoto");
   }, [target, loaded]);
 
@@ -124,7 +133,13 @@ export default function PlaceMediaEnhancer() {
         key={media.image.url}
         className="licensedPlacePhoto"
         style={{ visibility: loaded ? "visible" : "hidden" }}
-        onLoad={() => setLoadedUrl(media.image.url)}
+        onLoad={() => {
+          if (sameTarget(target, currentTarget())) {
+            setLoadedUrl(media.image.url);
+          } else {
+            target.portrait.classList.remove("hasLicensedPhoto");
+          }
+        }}
         src={media.image.url}
         alt={`Visual context: ${media.image.title}. Exact property not verified.`}
         referrerPolicy="no-referrer"

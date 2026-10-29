@@ -57,17 +57,24 @@ describe("Phase 0 foundation", () => {
   it("renders the company boundary with an explicitly illustrative card", () => {
     render(<Home />);
     expect(
-      screen.getByRole("heading", { name: /Knowing your taste.*permission/ }),
+      screen.getByRole("heading", {
+        name: /Your AI knows.*Who said it could choose/i,
+      }),
     ).toBeVisible();
     expect(
-      screen.getByText("Interactive example · no live decision"),
+      screen.getByRole("region", {
+        name: "Interactive TastePolicy boundary example",
+      }),
     ).toBeVisible();
     expect(
-      screen.getByRole("link", { name: /See Qloo in action/ }),
+      screen.getByRole("heading", { name: "99% taste match. Still no." }),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/illustrative on this marketing card/i),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: /Try the live Qloo journey/ }),
     ).toHaveAttribute("href", "/arena/consumer");
-    expect(
-      screen.getByText(/Live ChatGPT and Claude commissioning is pending/),
-    ).toBeVisible();
   });
   it("preserves the full engineering demo on its dedicated route", () => {
     render(<EngineeringDemo />);
