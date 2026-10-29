@@ -153,6 +153,7 @@ export default function PlaceCanvas({
   locality,
   providerPhoto,
   address,
+  hero,
   children,
 }: {
   id: string;
@@ -160,16 +161,20 @@ export default function PlaceCanvas({
   locality?: string;
   address?: string;
   providerPhoto?: ProviderPhoto;
+  // A richer hero (real gallery) replaces the single-image fallback ladder.
+  hero?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   return (
     <article className="tp-place" aria-label={name}>
-      <PlaceMedia
-        id={id}
-        name={name}
-        address={address}
-        providerPhoto={providerPhoto}
-      />
+      {hero ?? (
+        <PlaceMedia
+          id={id}
+          name={name}
+          address={address}
+          providerPhoto={providerPhoto}
+        />
+      )}
       <div className="tp-place-body">
         <header>
           <h3>{name}</h3>

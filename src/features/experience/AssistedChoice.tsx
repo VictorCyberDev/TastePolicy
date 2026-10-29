@@ -19,6 +19,10 @@ import {
 } from "@/components/brand/primitives";
 import PlaceCanvas from "@/components/brand/PlaceCanvas";
 import JourneyLine from "@/components/brand/JourneyLine";
+import ExplorePanel from "./ExplorePanel";
+import PlaceGallery from "./PlaceGallery";
+import { areaFromDisplayName } from "./relation";
+import type { MapState } from "./JourneyMap";
 import { evaluateRequirements } from "@/lib/requirements/evaluate";
 import type {
   CandidateFact,
@@ -35,7 +39,7 @@ import {
 import { SUBJECTIVE_ACTIONS, type SubjectiveAction } from "@/lib/policy/types";
 import type { StateEvaluation } from "@/lib/state/types";
 import type { QlooEntity } from "@/types/domain";
-import type { PlaceContext } from "@/server/places/context";
+import type { OpenPlaceContext as PlaceContext } from "@/server/open/context";
 import { useAssistedChoice } from "./useAssistedChoice";
 import { PERSONAS, type AnswerSpec, type Persona } from "./personas";
 
@@ -289,6 +293,18 @@ function PlaceStage({
           .filter((n): n is string => Boolean(n))
       : [];
   const locality = place?.place?.address ?? c.address;
+  const area = areaFromDisplayName(place?.open?.identity.displayName);
+  const mapState: MapState = h.busy.includes("checking")
+    ? "checking"
+    : outcome === "ALLOW"
+      ? "allow"
+      : outcome === "ASK"
+        ? "ask"
+        : outcome === "REJECT"
+          ? "reject"
+          : outcome === "UNAVAILABLE"
+            ? "unavailable"
+            : "discover";
   return (
     <section
       className="tp-exp-stage"
@@ -314,6 +330,11 @@ function PlaceStage({
         address={c.address}
         locality={locality}
         providerPhoto={place?.photo}
+        hero={
+          place?.open?.media.length ? (
+            <PlaceGallery items={place.open.media} place={c.name} area={area} />
+          ) : undefined
+        }
       >
         <div className="tp-why">
           <h4>
@@ -340,7 +361,7 @@ function PlaceStage({
                   r.status === "UNKNOWN" || r.status === "UNAVAILABLE"
                     ? undefined
                     : r.fact
-                      ? `${r.fact.value}${r.fact.unit ? " " + r.fact.unit : ""}`
+                      ? factText(r.fact)
                       : undefined
                 }
               />
@@ -357,7 +378,15 @@ function PlaceStage({
           )}
         </div>
 
-        {place?.status === "available" && (
+        {place?.open ? (
+          <ExplorePanel
+            key={c.id}
+            context={place}
+            name={c.name}
+            mapState={mapState}
+          />
+        ) : null}
+        {place?.status === "available" && !place.open && (
           <JourneyLine
             polyline={place.route?.polyline}
             minutes={place.route?.minutes}
@@ -396,6 +425,31 @@ function PlaceStage({
     </section>
   );
 }
+
+// "true" is not an answer a person reads: say Yes / No, with units for numbers.
+const factText = (f: CandidateFact) =>
+  typeof f.value === "boolean"
+    ? f.value
+      ? "Yes"
+      : "No"
+    : `${f.value}${f.unit ? " " + f.unit : ""}`;
+
+const factSources = (facts: CandidateFact[]) => {
+  const names = [
+    ...new Set(
+      facts.map((f) =>
+        f.sourceType === "USER"
+          ? "you"
+          : f.source === "openstreetmap"
+            ? "OpenStreetMap"
+            : f.source === "openrouteservice"
+              ? "openrouteservice"
+              : f.source,
+      ),
+    ),
+  ];
+  return names.length ? names.join(", ") : "none attached";
+};
 
 const reasonText = (p: PlaceContext) =>
   p.reason === "not_configured"
@@ -660,22 +714,29 @@ function Receipt({
             ? `Affinity ${q.alignmentScore.toFixed(3)} (${q.qlooEvidence.scale} scale). This is taste similarity, not a promise and not a fact about the place.`
             : "Qloo evidence was not available for this check."}
         </SourceNote>
-        <SourceNote
-          kind="Place facts"
-          source={
-            place?.status === "available"
-              ? "Google Maps Platform (matched place)"
-              : "none attached"
-          }
-        >
+        <SourceNote kind="Place facts" source={factSources(facts)}>
           {facts.length
             ? facts
                 .map(
                   (f) =>
-                    `${humanKey(f.key)}: ${f.state === "known" ? String(f.value) : f.state} (${f.sourceType === "USER" ? "your answer" : f.source})`,
+                    `${humanKey(f.key)}: ${f.state === "known" ? factText(f) : f.state} (${f.sourceType === "USER" ? "your answer" : f.source}${f.note ? `; ${f.note.replace(/\.$/, "")}` : ""})`,
                 )
                 .join("; ")
             : "No factual place details were available. Unknown stays unknown."}
+        </SourceNote>
+        <SourceNote
+          kind="Place imagery"
+          source={
+            place?.open?.media.length
+              ? [...new Set(place.open.media.map((m) => m.attribution))].join(
+                  ", ",
+                )
+              : "illustration or none"
+          }
+        >
+          Presentation only. Photos are labelled by how they relate to the place
+          (photo of it, near it, or around it) and are never used as evidence
+          about access, noise or safety.
         </SourceNote>
         <SourceNote kind="Your requirements" source="you">
           {persona.requirements

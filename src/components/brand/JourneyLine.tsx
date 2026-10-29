@@ -30,6 +30,7 @@ export function decodePolyline(encoded: string): [number, number][] {
 // the component says so; it never invents a path, a time or terrain.
 export default function JourneyLine({
   polyline,
+  geometry,
   minutes,
   meters,
   originLabel,
@@ -37,13 +38,19 @@ export default function JourneyLine({
   unavailableReason,
 }: {
   polyline?: string;
+  // [lng, lat] pairs as a router returned them.
+  geometry?: [number, number][];
   minutes?: number;
   meters?: number;
   originLabel?: string;
   destinationLabel: string;
   unavailableReason?: string;
 }) {
-  const pts = polyline ? decodePolyline(polyline) : [];
+  const pts = geometry
+    ? geometry.map(([lng, lat]): [number, number] => [lat, lng])
+    : polyline
+      ? decodePolyline(polyline)
+      : [];
   if (pts.length < 2 || minutes === undefined)
     return (
       <div className="tp-journey">

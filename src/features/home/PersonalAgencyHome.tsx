@@ -243,12 +243,7 @@ export default function PersonalAgencyHome() {
           <div className="tp-home-places">
             {[0, 1, 2].map((i) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={i}
-                src={`/taste/taste-${(i * 3) % 8}.svg`}
-                alt=""
-                loading="lazy"
-              />
+              <img key={i} src={`/taste/taste-${(i * 3) % 8}.svg`} alt="" />
             ))}
           </div>
           <p className="tp-muted">{TASTE_IMAGE_LABEL}</p>

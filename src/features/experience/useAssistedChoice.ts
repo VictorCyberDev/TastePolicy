@@ -14,7 +14,7 @@ import type {
 } from "@/lib/state/types";
 import type { CandidateFact, FactValue } from "@/lib/requirements/types";
 import type { SubjectiveAction } from "@/lib/policy/types";
-import type { PlaceContext } from "@/server/places/context";
+import type { OpenPlaceContext as PlaceContext } from "@/server/open/context";
 import type { Persona } from "./personas";
 
 export type Step = "meet" | "anchors" | "discover";

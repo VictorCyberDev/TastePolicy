@@ -39,6 +39,8 @@ export interface OpenPart {
   routeUnavailable?: Unavailable | "no_origin" | "no_destination";
   straightLineMeters?: number;
   originLabel?: string;
+  // The explicit demo/journey origin the person or experience supplied.
+  originPoint?: GeoPoint;
   sources: SourceStatus[];
 }
 export type OpenPlaceContext = PlaceContext & { open: OpenPart };
@@ -226,6 +228,7 @@ export async function resolveOpenPlace(
 
     if (input.origin) {
       open.originLabel = input.origin.label;
+      open.originPoint = { lat: input.origin.lat, lng: input.origin.lng };
       open.straightLineMeters = Math.round(haversineMeters(input.origin, loc));
       const r = await openRoute(
         { from: input.origin, to: loc },
