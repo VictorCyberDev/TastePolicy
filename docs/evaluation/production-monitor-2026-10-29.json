@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-10-29T01:40:58.734Z",
+  "origin": "https://tastepolicy.vercel.app",
+  "scope": "Read-only liveness/readiness/public metadata. Not signup, Qloo reachability, OAuth authorization, tool invocation or uptime SLA.",
+  "results": [
+    {
+      "name": "liveness",
+      "status": "PASS",
+      "http": 200,
+      "elapsedMs": 4241
+    },
+    {
+      "name": "readiness",
+      "status": "PASS",
+      "http": 200,
+      "elapsedMs": 5838
+    },
+    {
+      "name": "OpenAPI",
+      "status": "PASS",
+      "http": 200,
+      "elapsedMs": 4273
+    },
+    {
+      "name": "agent_card",
+      "status": "PASS",
+      "http": 200,
+      "elapsedMs": 4261
+    },
+    {
+      "name": "OAuth_issuer",
+      "status": "PASS",
+      "http": 200,
+      "elapsedMs": 4321
+    }
+  ],
+  "canonicalMainAtCheck": "035a768212c4f32cc6fb2f7a73ae5b9d355f56f5"
+}

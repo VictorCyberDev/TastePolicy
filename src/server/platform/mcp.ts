@@ -1,3 +1,4 @@
+import { operationMetric } from "@/server/operations/metrics";
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -126,6 +127,7 @@ function server(deps: GatewayDeps, p: Principal, requestId: string) {
                 : {}),
               requestId,
             };
+          operationMetric("MCP_TOOL", "ERROR", 0);
           return {
             isError: true,
             content: [{ type: "text" as const, text: JSON.stringify(body) }],

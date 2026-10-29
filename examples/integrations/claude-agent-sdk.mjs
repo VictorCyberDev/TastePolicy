@@ -7,7 +7,7 @@ for await (const message of query({
     mcpServers: {
       tastepolicy: {
         type: "http",
-        url: "https://<your-host>/api/mcp",
+        url: "https://tastepolicy.vercel.app/api/mcp",
         headers: { Authorization: `Bearer ${process.env.TASTEPOLICY_API_KEY}` },
       },
     },

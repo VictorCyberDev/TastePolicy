@@ -3597,13 +3597,16 @@
       "id": "M21-23",
       "milestone": "M21",
       "requirement": "error rate metrics",
-      "implementation": null,
+      "implementation": "src/server/operations/metrics.ts; production-monitor.yml; docs/security/operations-observability.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Local metrics security tests 3/3; full suite 859 passed/28 skipped",
+        "Outside production public probes 5/5; scheduled execution and production metric enablement uncommissioned"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3623,13 +3626,16 @@
       "id": "M21-25",
       "milestone": "M21",
       "requirement": "latency DB health",
-      "implementation": null,
+      "implementation": "src/server/operations/metrics.ts; production-monitor.yml; docs/security/operations-observability.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Local metrics security tests 3/3; full suite 859 passed/28 skipped",
+        "Outside production public probes 5/5; scheduled execution and production metric enablement uncommissioned"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3675,13 +3681,16 @@
       "id": "M22-02",
       "milestone": "M22",
       "requirement": "full system comparison",
-      "implementation": null,
+      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
+        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3714,13 +3723,16 @@
       "id": "M22-05",
       "milestone": "M22",
       "requirement": "deterministic baseline",
-      "implementation": null,
+      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
+        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3896,26 +3908,32 @@
       "id": "M22-19",
       "milestone": "M22",
       "requirement": "public report",
-      "implementation": null,
+      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
+        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M22-20",
       "milestone": "M22",
       "requirement": "technical methodology",
-      "implementation": null,
+      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
+        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {

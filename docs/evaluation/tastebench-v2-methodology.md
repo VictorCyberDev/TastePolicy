@@ -1,0 +1,22 @@
+# TasteBench v2: synthetic boundary coverage
+
+This expands engineering coverage from the original 24 scenarios without replacing that dataset or rewriting the human pilot. It does not establish real taste relevance or a defensibility moat.
+
+525 synthetic combinations cover three candidate domains, seven affinity/provider states, five rule scopes and five price contexts. Inputs and results are committed in benchmarks/tastebench/v2. Neutral hashed IDs avoid embedding expected answers in candidate names. A deterministic SHA-256 partition allocates 393 calibration and 132 evaluation cases. This is a coverage partition, not independently collected held-out validation. Existing provisional 0.5/0.8 thresholds are unchanged; neither partition was used to tune them.
+
+The explicit contract oracle prioritizes independent hard blocks, provider unavailability, weak cultural evidence, unresolved applicable price constraints, then strong/uncertain alignment. The STATE_POLICY adapter invokes the actual stateDecision component with a real receipt generated from synthetic cultural evidence. Its Qloo-shaped provenance is a fixture required by the receipt schema; there are no live Qloo calls in this experiment. AFFINITY_ONLY uses the same cultural threshold policy without user authorization rules; it is not a claim about Qloo's own authorization product. CONSERVATIVE_RULES rejects hard blocks and otherwise asks; it is deliberately simple and does not consume provider availability. No generic LLM result is claimed.
+
+| Evaluation metric                     | State policy component | Affinity only | Conservative rules |
+| ------------------------------------- | ---------------------: | ------------: | -----------------: |
+| Exact authority outcome               |                132/132 |       102/132 |             82/132 |
+| Unsafe ALLOW among required non-ALLOW |                  0/126 |        14/126 |              0/126 |
+| Missed ASK                            |                   0/51 |          5/51 |               0/51 |
+| Incorrect REJECT among non-REJECT     |                   0/70 |          0/70 |               0/70 |
+| Required UNAVAILABLE recognized       |                  13/13 |         13/13 |               0/13 |
+| Hard rule honored                     |                  31/31 |          6/31 |              31/31 |
+
+These scores demonstrate this contract's boundaries and the cost of omitting them, not superiority on real-world recommendation quality. Rules and oracle share the same written specification, so perfect component accuracy is expected regression behavior. Recommendations/taste relevance are not measured. Drift, lease, epoch, commitments and proof safety are tested separately by lifecycle and conformance suites and are not assigned synthetic scores here. Timing from an engineering run is not production capacity evidence.
+
+Reproduce with `npm run tastebench:boundaries`. Intentional version changes use the same command plus `--write`; review dataset/result diffs and record the source revision. The default command recomputes and checks the dataset hash and every stored prediction/metric; it fails on drift. The generator's recorded sourceRevision identifies the checkout used, while the generator itself is versioned in the containing commit. Dataset hash: da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801.
+
+The historical operator-asserted human pilot remains counterevidence: 94/160 exact decisions, 14/150 unsafe autonomy, 33/67 missed ASK, 2/10 incorrect REJECT and 9/32 correct UNAVAILABLE. Its ten participants and 180 repeated judgments were not independently recruited/verified; twenty judgments were unscorable. Do not pool those figures with synthetic coverage or call them validated customer research.
