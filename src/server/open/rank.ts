@@ -19,14 +19,17 @@ export function rankGallery(
   items: PlaceMediaItem[],
   max = 8,
 ): PlaceMediaItem[] {
-  const sorted = [...items].sort(
-    (a, b) =>
-      REL_RANK[a.relation] - REL_RANK[b.relation] ||
-      Math.floor((a.distanceMeters ?? 0) / 20) -
-        Math.floor((b.distanceMeters ?? 0) / 20) ||
-      (b.capturedAt ?? "").localeCompare(a.capturedAt ?? "") ||
-      (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0),
-  );
+  // 360° captures are explored in "Look around", not shown as flat pictures.
+  const sorted = items
+    .filter((i) => !i.panoramic)
+    .sort(
+      (a, b) =>
+        REL_RANK[a.relation] - REL_RANK[b.relation] ||
+        Math.floor((a.distanceMeters ?? 0) / 20) -
+          Math.floor((b.distanceMeters ?? 0) / 20) ||
+        (b.capturedAt ?? "").localeCompare(a.capturedAt ?? "") ||
+        (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0),
+    );
   const out: PlaceMediaItem[] = [];
   let area = 0;
   for (const it of sorted) {

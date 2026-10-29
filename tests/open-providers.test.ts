@@ -673,6 +673,13 @@ describe("gallery and sequence selection", () => {
     ).toBeLessThanOrEqual(3);
     expect(g.length).toBeLessThanOrEqual(8);
   });
+  it("keeps panoramic captures out of the flat gallery", () => {
+    const g = rankGallery([
+      mk({ providerId: "p", panoramic: true, mediaType: "panorama" }),
+      mk({ providerId: "q" }),
+    ]);
+    expect(g.map((i) => i.providerId)).toEqual(["q"]);
+  });
   it("builds an approach only from one real sequence with 3+ frames and real span", () => {
     const frames = Array.from({ length: 30 }, (_, n) =>
       mk({

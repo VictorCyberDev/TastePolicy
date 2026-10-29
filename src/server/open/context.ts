@@ -145,7 +145,7 @@ export async function resolveOpenPlace(
         p.search(
           {
             point: loc,
-            radiusMeters: 150,
+            radiusMeters: 250,
             limit: p.id === "kartaview" ? 100 : 60,
           },
           deps.fetcher,

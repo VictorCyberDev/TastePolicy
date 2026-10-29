@@ -18,11 +18,14 @@ export default function SequenceViewer({
 }) {
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  // Rendered only after a click, so the browser value is read once up front.
+  const [reduced] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-  useEffect(() => {
-    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
+
   useEffect(() => {
     if (!playing) return;
     timer.current = setInterval(() => {

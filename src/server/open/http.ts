@@ -88,7 +88,7 @@ let last = 0;
 let chain: Promise<unknown> = Promise.resolve();
 export function nominatimSlot<T>(
   task: () => Promise<T>,
-  gapMs = 1100,
+  gapMs = gap,
 ): Promise<T> {
   const run = chain.then(async () => {
     const wait = last + gapMs - Date.now();
