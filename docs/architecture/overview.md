@@ -1,50 +1,54 @@
-# Architecture overview
+# Current architecture and authority boundary
 
-The flow and module-status table below record the historical M1 checkpoint. Current milestone boundaries are documented in the canonical journey, README and [M6 Interoperable Preference Authority](../product/m6-interoperable-preference-authority.md); later implemented surfaces do not rewrite the original M1 provider boundary.
+TastePolicy is a production-hosted modular Next.js application at https://tastepolicy.vercel.app. This page describes implemented boundaries; the exact release/CI/deployment truth is in [the company ledger](../evaluation/company-build-m10-m26.md). Historical canonical architecture proposals and M1–M9 reports remain evidence of those checkpoints, not promises that every proposed feature is commissioned.
 
-Milestone 1 implements an experimental Qloo-backed cultural authorization slice on the Phase 0 modular monolith. Implementation is tested and **live Qloo acceptance passed** on the exact reviewed M1 head. The bounded event contract established real entity resolution, cross-domain discovery, candidate-specific evidence, unit affinity scale, explainability handling, deterministic repeat behavior, Cultural Receipts and an unmocked production-build browser flow. Thresholds remain experimental rather than human-calibrated. See the [historical live investigation](../evaluation/milestone-1-live-verification.md) and [final acceptance report](../evaluation/milestone-1-live-acceptance-2026-10-13.md).
+```mermaid
+flowchart TD
+    Doors["REST · remote MCP · A2A"] --> Auth["Scoped credential or MCP OAuth"]
+    Auth --> Decision["Shared authority services"]
+    Decision --> Qloo["Qloo cultural evidence"]
+    Qloo --> Decision
+    Decision <--> State["Neon: owned state, policy and audit"]
+    Decision --> Result["ALLOW · ASK · REJECT · UNAVAILABLE"]
+    Result --> Proof["Receipt · bounded lease · portable proof"]
+```
 
-## Implemented flow
+Qloo supplies resolved identities and cultural evidence. TastePolicy stores explicit reviewed signals, scoped constraints, contextual state, policy versions and captured decisions. Qloo affinity cannot override an applicable hard rule. An independent hard block can reject before a provider call; missing required evidence yields UNAVAILABLE rather than dislike or guessed permission. Provisional affinity thresholds are not human-calibrated assurance.
 
-Client UI submits five queries to /api/demo/resolve. The server-only Qloo adapter searches entities; the user explicitly chooses identities. /api/demo/discover re-verifies five IDs via Qloo /entities, requires multiple domains, then requests cross-domain Insights. /api/demo/evaluate independently verifies the candidate ID and sends a separate candidate-filtered Insights request. Normalized successful evidence feeds the deterministic policy; receipt construction records identity, inputs, provenance, score scale and thresholds. Failures are non-decisions.
+REST, MCP and A2A call the shared server services/contracts in src/lib/platform and src/server/platform. They do not contain independent permissive copies of the authorization engine. The TypeScript SDK is a bounded client, with a separate offline synthetic adapter and verifier kit. The SDK is packaged and consumer-tested, but npm publication is unproved. A2A protocol acceptance is separate from Google marketplace eligibility.
 
-Transport (qloo/client.ts) owns fixed-origin HTTP, key header, timeout/body bounds and safe error states. Adapter normalization owns provider schemas. Taste service owns five-distinct-ID, multi-domain, resolved-entity and separate-candidate invariants even for direct callers. Generic validation sits in src/lib/validation.ts. Policy normalization/thresholds/evaluate owns inspectable decisions. Receipts owns versioned machine-readable evidence, validates consistency and snapshots allowlisted nested inputs. UI only presents normalized server results, never raw HTML or provider credentials. Test doubles stay in tests; no production fallback exists.
+## Identity, access and tenants
 
-See [Qloo contract review](qloo-contract-review.md), [policy v1](../product/policy-v1.md), [final live acceptance](../evaluation/milestone-1-live-acceptance-2026-10-13.md) and the [Canonical Architecture v3](canonical-architecture-v3.md).
+Better Auth handles user accounts/sessions against the environment's dedicated PostgreSQL binding. Developer credentials are scoped, expiring and revocable; plaintext is issued once and hashes persist. Owner-sensitive account changes require recent sign-in and canonical same-origin validation. References identify records; they are not access grants. Cross-owner access requires a matching active scoped grant.
 
-## Module responsibilities and later expansion — M1 checkpoint
+The OAuth authorization server is for public MCP clients: PKCE S256, CIMD/DCR, explicit owner consent, audience-bound access tokens, rotating refresh tokens and family reuse detection/revocation. The issuer/resource and all public metadata use centralized canonical-origin configuration. Production and preview have separate databases, roles and secrets. See CUSTOM_DOMAIN_MIGRATION.md for changing the temporary Vercel origin.
 
-| Module                | Responsibility                                                                                |
-| --------------------- | --------------------------------------------------------------------------------------------- |
-| Qloo Adapter          | Cultural inference only; injected server-side adapter with normalized results/errors.         |
-| Taste State           | TastePolicy-owned longitudinal pseudonymous preference state.                                 |
-| ContextGraph          | Known, inferred, rejected, contextual and exploratory cultural relationships with provenance. |
-| Policy Engine         | Deterministic or explicitly defined, inspectable ALLOW / ASK / REJECT evaluation.             |
-| Cultural Receipts     | Auditable evidence explaining how an evaluation was reached.                                  |
-| Counterfactual Engine | Minimum change required to improve cultural alignment.                                        |
-| TasteTrajectory       | Cultural exploration/navigation.                                                              |
-| TasteBench            | Reproducible evaluation and benchmark system; no results exist yet.                           |
-| Agent Gateway         | Future API / SDK / MCP boundaries.                                                            |
+Workspaces/projects/environments/registered agents and immutable developer-key bindings are implemented. Workspaces currently have one owner. Environment namespaces do not provide physical database isolation or a fake-provider mode. Team membership, SAML/SCIM and enterprise RBAC are not implied. Tenant ownership checks, composite foreign keys and transaction locks are tested. Tables use RLS/PUBLIC revocation, but the application database owner bypasses RLS; RLS is not claimed as an independent per-request tenant enforcement layer.
 
-“Qloo understands culture.
-TastePolicy maintains preference state.
-The policy engine evaluates actions.
-The LLM may assist interpretation/orchestration but must not silently become the source of truth.”
+## Decision and continuation lifecycle
 
-## Dependency direction
+The evaluator validates subject access and a current state snapshot, performs bounded provider work outside its owner-lock transaction phase, then rechecks access/version before committing a decision. Identical permitted retries replay captured results without new provider work; crash-before-commit may still repeat provider work. Receipts preserve captured evidence and policy/state commitments rather than rewriting history.
 
-Presentation/HTTP entry points call orchestration, which depends on domain contracts and injected adapters. Domain types do not import framework, provider SDK or persistence models. Vendor payloads terminate at adapters. Missing services return explicit unavailable states, never fabricated success.
+Policy can lower the allowed subjective-action ceiling and require clarification or explicit owner confirmation. An ASK is never an implicit approval. Leases are bounded, revocable and tied to an exact candidate/context and authority epoch. Drift, checkpoint expiry, grant/policy changes and revocation can suspend or end authority. Recorded dashboard states/epochs are historical views; fresh use requires fresh verification.
 
-The larger canonical flow is agent gateway → evaluation orchestration → persistent Taste State/action context → Qloo cultural evidence → explicit policy + bounded stability analysis → ALLOW / ASK / REJECT / UNAVAILABLE → Cultural Authorization Receipt → Agent Continuation Contract. Milestone 1 implements only the stateless explicit-signal selection slice. Vercel is the hosting target; M2 adds a private PostgreSQL persistence adapter behind explicit repository interfaces. No remote database project is connected by this implementation. One deployable modular monolith keeps hackathon execution reproducible; no distributed infrastructure is needed. See [Canonical Architecture v3](canonical-architecture-v3.md).
+Portable proofs use explicit issuer trust, holder/audience/commitment checks and current status. Cryptographic validity, current authority and a relying party's execution authorization are different checks. No proof, receipt or ALLOW grants payment, booking, messaging, account changes, private-data disclosure or legal execution authority.
 
-## M2 persistent-state boundary
+## Product and operations
 
-The bounded state demo wraps the unchanged M1 evaluator and Cultural Receipt v1 inside a state-linked M2 envelope. Session capability binds one temporary subject; logical agents share it only within that authorization boundary. Atomic immutable snapshots, scoped feedback, contextual policy and captured replay live in src/server/state. ContextGraph is a deterministic typed projection with separate current-state and historical-decision views. See [M2 design](../decisions/0006-persistent-state-boundary.md) and [contracts/security](../product/m2-persistent-state.md). Neither the original CLI nor Stability-lite depends on persistence. M2.5 adds a separate interactive layer described below.
+The Boundary company shell covers public pages and the account control routes. Developer onboarding provides reviewed Qloo identities, a private Passport, scoped credential and owned application workspace. Rules, action ceilings, leases, captured decisions and timeline have authenticated control pages. The public Consumer Arena and judge route distinguish live Qloo paths, recorded evidence and unfinished external host commissioning.
 
-## Interactive authorization boundary (historical M2.5 checkpoint)
+Stripe TEST checkout/cancel/signed-webhook/invoice code is implemented with additive persistence. LIVE keys/entitlement changes are rejected. Provider account configuration and real test checkout acceptance are not yet commissioned. A pricing page and internal simulator are not live billing.
 
-`src/server/interactive` owns pure clarification planning, strict structured answers and bounded repair orchestration. Separate transaction-scoped repositories persist interactive audit records through migration 0002. It delegates candidate verification to the accepted evaluator and state policy, preserving original receipt truth. The browser requests each operation explicitly; replay is captured-only, and adopting a replacement requires a new normal evaluation. See [M2.5 contracts](../product/m2-5-interactive-authorization.md). M3 is not implemented.
+Application operational events contain only fixed surface/outcome enums, duration and timestamp. Provider hosting logs can separately contain ordinary request metadata; see the vendor register and retention limitations. An outside GitHub monitor checks public liveness/readiness/metadata. No delivered paging, durable metrics collector or contractual uptime/recovery SLA is claimed. A current-data isolated Neon clone/migration rehearsal is recorded; historical disaster recovery remains unproved.
 
-## Current future direction
+MCP has an interactive Authority Card resource and accessible text fallback. Real TastePolicy tool invocation in ChatGPT and Claude remains a separate external acceptance gate. An actual ChatGPT prompt-only benchmark does not close it. Official MCP Registry publication is active; OpenAI/Claude directory submission, approval and publication remain distinct unresolved states.
 
-[Canonical Architecture v3](canonical-architecture-v3.md) supersedes conflicting V2 future positioning/M6+ direction while preserving accepted M1–M5 truth. TastePolicy owns preference authority, not generic IAM, memory, payment, booking, tool or enterprise governance. TastePolicy Passport uses opaque subjectRef separate from internal profileId. Existing authentication/API/SDK/MCP/export/deletion wrap the same evaluator. WIN GATE is not implemented or completed; A2A is remaining M6G work after that gate, not current runtime. M7–M9 are future; M10 is not authorized. V2 and the checkpoint sections above remain historical evidence.
+## Diligence and evidence
+
+- [Vendor/Qloo data foundation](../company/qloo-commercial-and-data.md): written commercial/output rights remain pending.
+- [MCP annotation and UI audit](../company/mcp-tool-audit.md): read-only, destructive, open-world and idempotent behavior are explicit.
+- [Operations and procurement](../security/operations.md) and [observability scope](../security/operations-observability.md).
+- [Threat model](../security/threat-model.md), dated scan evidence, SBOM and dependency/IP ledger.
+- [TasteBench methodology](../evaluation/tastebench-v2-methodology.md): synthetic component/gateway coverage, prompt-only observation and original human-pilot caveats are separate.
+
+No certification, legal audit, external penetration test, exclusive Qloo partnership or verified paying traction follows from this architecture.

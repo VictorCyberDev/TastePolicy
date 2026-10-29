@@ -3819,24 +3819,27 @@
       "id": "M21-24",
       "milestone": "M21",
       "requirement": "MCP OAuth Qloo failures",
-      "implementation": null,
+      "implementation": "src/server/operations; docs/evaluation/operations-commissioning-2026-10-29.json; owned workspace counters",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Manual outside monitor run 40836587300: 5/5",
+        "Preview fixed-schema runtime events at exact 4c3271c; production observation and alert delivery pending"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M21-25",
       "milestone": "M21",
       "requirement": "latency DB health",
-      "implementation": "src/server/operations/metrics.ts; production-monitor.yml; docs/security/operations-observability.md",
+      "implementation": "src/server/operations; docs/evaluation/operations-commissioning-2026-10-29.json; owned workspace counters",
       "exact_sha": null,
       "evidence": [
-        "Local metrics security tests 3/3; full suite 859 passed/28 skipped",
-        "Outside production public probes 5/5; scheduled execution and production metric enablement uncommissioned"
+        "Manual outside monitor run 40836587300: 5/5",
+        "Preview fixed-schema runtime events at exact 4c3271c; production observation and alert delivery pending"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
@@ -3848,13 +3851,16 @@
       "id": "M21-26",
       "milestone": "M21",
       "requirement": "abnormal ASK rejection rates",
-      "implementation": null,
+      "implementation": "src/server/operations; docs/evaluation/operations-commissioning-2026-10-29.json; owned workspace counters",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Manual outside monitor run 40836587300: 5/5",
+        "Preview fixed-schema runtime events at exact 4c3271c; production observation and alert delivery pending"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
@@ -3890,11 +3896,11 @@
       "id": "M22-02",
       "milestone": "M22",
       "requirement": "full system comparison",
-      "implementation": "scripts/tastebench-boundaries.ts; benchmarks/tastebench/v2; docs/evaluation/tastebench-v2-methodology.md",
+      "implementation": "scripts/tastebench-gateway.ts; benchmarks/tastebench/v2/integrated-results.json",
       "exact_sha": null,
       "evidence": [
-        "525 synthetic component cases; dataset hash da214ea5758e3db15e3f95aa1168efa18483bdfeaa5617fd6e25d62dd5a3d801",
-        "Component coverage only; original human pilot preserved; no independent relevance or LLM result"
+        "Local synthetic integrated gateway: 132/132, receipt/replay 132/132, cross-owner 131/131",
+        "Real PostgreSQL reproduction in next exact-head CI remains required; no live Qloo relevance or assistant claim"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
@@ -3963,14 +3969,16 @@
       "id": "M22-07",
       "milestone": "M22",
       "requirement": "taste relevance metric",
-      "implementation": null,
+      "implementation": "docs/evaluation/tastebench-v2-methodology.md: separate relevance measurement boundary",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Current legitimate labels concern authority; synthetic affinity is not human relevance"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "No independently consented frozen owner/context taste-relevance labels available; no relevance result fabricated."
     },
     {
       "id": "M22-08",
@@ -4072,39 +4080,48 @@
       "id": "M22-14",
       "milestone": "M22",
       "requirement": "drift",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "conformance/{authority-semantics,attestation-vectors,commitment-vectors}-v1.json; lease/attestation tests",
+      "exact_sha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
+      "evidence": [
+        "Verify 40835327295; reference conformance 153/153",
+        "Separate local lease/commitment/attestation checks 25/25; drift vector L05 and 10 lease contract sequences"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-15",
       "milestone": "M22",
       "requirement": "lease safety",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "conformance/{authority-semantics,attestation-vectors,commitment-vectors}-v1.json; lease/attestation tests",
+      "exact_sha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
+      "evidence": [
+        "Verify 40835327295; reference conformance 153/153",
+        "Separate local lease/commitment/attestation checks 25/25; drift vector L05 and 10 lease contract sequences"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
       "id": "M22-16",
       "milestone": "M22",
       "requirement": "proof commitments",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "conformance/{authority-semantics,attestation-vectors,commitment-vectors}-v1.json; lease/attestation tests",
+      "exact_sha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
+      "evidence": [
+        "Verify 40835327295; reference conformance 153/153",
+        "Separate local lease/commitment/attestation checks 25/25; drift vector L05 and 10 lease contract sequences"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -4175,28 +4192,31 @@
       "id": "M22-21",
       "milestone": "M22",
       "requirement": "privacy safe production metrics",
-      "implementation": null,
+      "implementation": "src/server/operations; docs/evaluation/operations-commissioning-2026-10-29.json; owned workspace counters",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "Manual outside monitor run 40836587300: 5/5",
+        "Preview fixed-schema runtime events at exact 4c3271c; production observation and alert delivery pending"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "blocker": null
     },
     {
       "id": "M23-01",
       "milestone": "M23",
       "requirement": "repository license",
-      "implementation": "docs/company/licensing-and-ip.md; dependency-ip-ledger.json; CONTRIBUTING.md; existing media validation",
-      "exact_sha": null,
+      "implementation": "LICENSE; packages/sdk/LICENSE; SDK package manifest. Root metadata clarification in current continuation.",
+      "exact_sha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
       "evidence": [
-        "665 locked dependency license expressions inspected; no trademark clearance or counsel opinion claimed"
+        "Apache-2.0 repository and SDK; root package metadata explicit"
       ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "blocker": null
     },
     {
@@ -4276,14 +4296,16 @@
       "id": "M23-07",
       "milestone": "M23",
       "requirement": "name trademark conflicts",
-      "implementation": null,
+      "implementation": "docs/company/licensing-and-ip.md: 2026-10-29 first-pass indexed searches",
       "exact_sha": null,
-      "evidence": [],
+      "evidence": [
+        "No indexed results in exact-name/trademark and US/UK/EU official-domain searches"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
-      "blocker": null
+      "status": "IN_PROGRESS",
+      "blocker": "Direct class/jurisdiction registry clearance and counsel review not completed."
     },
     {
       "id": "M23-08",
@@ -4302,13 +4324,15 @@
       "id": "M23-09",
       "milestone": "M23",
       "requirement": "domain availability",
-      "implementation": null,
-      "exact_sha": null,
-      "evidence": [],
+      "implementation": "Read-only Vercel domain registry checks, 2026-10-29",
+      "exact_sha": "4c3271c16669eb326b36ffdd2989d60be06c06b7",
+      "evidence": [
+        "tastepolicy.com/.dev/.ai each available at lookup; no ownership/purchase/trademark claim"
+      ],
       "production_url": null,
       "registration_status": "NOT_STARTED",
       "submission_status": "NOT_STARTED",
-      "status": "NOT_STARTED",
+      "status": "PASS",
       "blocker": null
     },
     {
