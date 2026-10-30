@@ -221,8 +221,8 @@ export default function JudgePage() {
             </li>
             <li>
               If that critical fact is unknown, TastePolicy returns <b>ASK</b>
-              instead of guessing: &ldquo;This feels like you, but I need to
-              confirm the entrance.&rdquo;
+              instead of guessing: &ldquo;This feels like Margaret, but I need
+              to confirm the entrance.&rdquo;
             </li>
             <li>
               Answer the missing fact. The same evaluator checks the same

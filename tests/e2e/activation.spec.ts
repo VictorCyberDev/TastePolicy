@@ -235,3 +235,30 @@ test("a late account response never pulls someone back a step during onboarding"
     page.getByRole("heading", { name: /How far may an AI helper go/ }),
   ).toBeVisible();
 });
+
+test("pronouns: the personal page says you, the Margaret surfaces say Margaret", async ({
+  page,
+}) => {
+  const fake = fakeAccount({ signedIn: true, withPassport: true });
+  await mockExperience(page);
+  await mockAccount(page, fake);
+  await page.goto("/judge");
+  await expect(
+    page.getByText(
+      /This feels like Margaret, but I need to confirm the entrance/,
+    ),
+  ).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/This feels like you/);
+  await page.goto("/demo/margaret");
+  await expect(
+    page.getByText(/Margaret.s Tasteprint, drawn from the things she loves/),
+  ).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/things they love/);
+  await page.goto("/experience");
+  await expect(
+    page.getByText(/Your Tasteprint, drawn from the things you love/),
+  ).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(
+    /\b(her|she|Margaret)\b/i,
+  );
+});

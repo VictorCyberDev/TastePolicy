@@ -146,7 +146,9 @@ export default function AssistedChoice({
             <p className="tp-muted">
               {you
                 ? "Your Tasteprint, drawn from the things you love. Decoration only."
-                : `${persona.id === "margaret" ? "Margaret" : "This person"}\u2019s Tasteprint, drawn from the things they love. Decoration only.`}
+                : persona.id === "margaret"
+                  ? "Margaret\u2019s Tasteprint, drawn from the things she loves. Decoration only."
+                  : "This person\u2019s Tasteprint, drawn from the things they love. Decoration only."}
             </p>
           </div>
           <div className="tp-exp-card">
@@ -525,7 +527,7 @@ function DecisionArea({
         }
       >
         {outcome === "ASK" && factAsk
-          ? `This feels like ${persona.id === "you" ? "you" : "her"}, but I need to confirm a few things before your assistant shortlists it.`
+          ? `This feels like ${persona.id === "you" ? "you" : persona.id === "margaret" ? "Margaret" : "this person"}, but I need to confirm a few things before your assistant shortlists it.`
           : outcome === "ASK"
             ? `Your assistant wanted to ${ACTION_HUMAN[asked ?? "SUGGEST"].label.toLowerCase()} it, which is further than you allowed.`
             : outcome === "ALLOW"
