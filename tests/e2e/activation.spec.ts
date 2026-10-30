@@ -201,3 +201,35 @@ test("a visitor is asked to sign in on the personal experience; the example stay
     page.getByRole("heading", { name: "Meet Margaret." }),
   ).toBeVisible();
 });
+
+test("a late account response never pulls someone back a step during onboarding", async ({
+  page,
+}) => {
+  const fake = fakeAccount({ signedIn: true });
+  await mockExperience(page);
+  await mockAccount(page, fake);
+  // Later routes win: slow every read of the saved taste, then fall through.
+  await page.route("**/api/account/taste", async (route) => {
+    await new Promise((r) => setTimeout(r, 2500));
+    await route.fallback();
+  });
+  await page.goto("/onboarding");
+  await page.getByRole("button", { name: "Start" }).click();
+  const words = ["Alpha", "Bravo", "Charlie", "Delta", "Echo"];
+  for (let i = 0; i < 5; i++)
+    await page.getByLabel(`Favourite ${i + 1}`).fill(`${words[i]} words`);
+  await page.getByRole("button", { name: "Find them" }).click();
+  await page
+    .getByRole("checkbox", { name: /These are the five I mean/ })
+    .check();
+  await page.getByRole("button", { name: "Save my taste" }).click();
+  await page.getByRole("button", { name: "Save and continue" }).click();
+  await expect(
+    page.getByRole("heading", { name: /How far may an AI helper go/ }),
+  ).toBeVisible();
+  // Outlast the delayed response; the step must not change.
+  await page.waitForTimeout(4000);
+  await expect(
+    page.getByRole("heading", { name: /How far may an AI helper go/ }),
+  ).toBeVisible();
+});

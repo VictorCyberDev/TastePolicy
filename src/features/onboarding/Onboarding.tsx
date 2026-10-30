@@ -104,15 +104,16 @@ export default function Onboarding() {
           call<{ active: unknown | null }>("policy-get", { passportRef: ref }),
         ]);
         setAnchors(taste.anchors);
-        setStage(
-          policy.active
-            ? "done"
-            : taste.needs.requirements.length
-              ? "ceiling"
-              : "needs",
-        );
+        // Only a person who arrived mid-setup is moved; one already working
+        // through the steps is never pulled back by a late answer.
+        const next: Stage = policy.active
+          ? "done"
+          : taste.needs.requirements.length
+            ? "ceiling"
+            : "needs";
+        setStage((s) => (s === "welcome" ? next : s));
       } catch {
-        setStage("needs");
+        setStage((s) => (s === "welcome" ? "needs" : s));
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -228,6 +229,7 @@ export default function Onboarding() {
         },
         true,
       );
+      resumed.current = true;
       setPassportRef(made.passportRef);
       setAnchors(chosen.filter((c): c is QlooEntity => Boolean(c)));
       setStage("needs");
