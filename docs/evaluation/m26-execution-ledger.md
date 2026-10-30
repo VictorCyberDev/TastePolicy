@@ -39,13 +39,13 @@ Now:
 - **Identity mismatch to resolve before submission:** `distribution/openai/plugin.json` names the developer "Victor Nnajiofor"; the site footer and legal pages say "Victor Nnamdi". The portal's verified developer identity must match what is shown. This was not changed.
 - Distribution status: CONNECTED_NOT_SUBMITTED. A custom plugin was connected in an earlier session; nothing was submitted, approved or published, and no real ChatGPT tool invocation or review-case run has been observed.
 
-## Gate results (final source)
+## Gate results (superseded)
 
-Prettier, ESLint (0 errors; one pre-existing `<img>` warning), `tsc`, 953 unit tests (28 skipped as before), `next build`, full Chromium e2e 189/189, run after the last source change.
+The M26 gates (953 unit, 189/189 e2e) were superseded by the final-freeze gates below.
 
 ## Production acceptance (live Qloo, real database)
 
-Two synthetic accounts (desktop and mobile viewports), each deleted through the product's own "Delete my account" at the end. Production at `main` `399b46d` plus the copy fix below.
+Two synthetic accounts (desktop and mobile viewports), each deleted through the product's own "Delete my account" at the end. This section records the first acceptance runs, made while the fixes below were being deployed. The final, complete runs on the frozen deployment are in the next section.
 
 Observed: signup lands on `/onboarding`; live Qloo resolved the typed favourites (a favourite typed under the wrong kind correctly showed "No match found" instead of guessing); Passport created; needs, ceiling saved; `/experience` showed the person's own anchors and needs with a live Qloo recommendation, real open street imagery, and a real decision (ASK: entrance and walking time unknown); `/dashboard` persisted the needs across a reload; no Margaret text on any real-user page.
 
@@ -56,3 +56,31 @@ Defects found by production acceptance and fixed before it passed (each now has 
 3. "This feels like her" appeared on a real person's page. Fixed; the e2e now fails on third-person copy there.
 
 Left behind: one synthetic production account from the first failed acceptance attempt (created before the fix, never given a Passport, email `m26-acceptance-desktop-…@example.test`). It could not be signed into afterwards because its password was not kept. It holds no taste data.
+
+## Final freeze (supersedes every earlier "final" in this file)
+
+- Final source: `main` at `21cc2c4fe618d63382fd943a1f7704660fc9eda1`.
+- Final production: `dpl_2WEGQtuHywj7ecszGuP6NBMJghAn`, READY, `https://tastepolicy.vercel.app`. This ledger commit lives on branch `m26-real-user-activation` only, so production was not redeployed for documentation.
+- Last source change: Margaret-specific pronouns on `/judge` Act 3 ("This feels like Margaret, but I need to confirm the entrance") and on `/demo/margaret` ("Margaret's Tasteprint, drawn from the things she loves"). The personal `/experience` keeps second person. A new e2e (`pronouns: ...`) asserts all three pages.
+- Final gates after that change: Prettier clean; ESLint 0 errors (1 existing `<img>` warning); `tsc` clean; 75 test files passed and 7 skipped; 953 tests passed, 28 skipped; `next build` succeeded; full Chromium e2e 190 passed (includes axe checks).
+
+### Margaret live walkthrough (production, desktop and mobile, anonymous)
+
+`/demo/margaret` loaded with the corrected copy. Live Qloo resolved the anchors (the candidate evidence names Casablanca, Miles Davis, Eataly). Qloo discovered The Algonquin Hotel Times Square with candidate-specific evidence ("Qloo finds it close to Casablanca, Miles Davis, Eataly. A cultural match is a reason to look, not a reason to go."). The place and media layer loaded (OpenStreetMap facts; KartaView/Wikimedia imagery with attribution; See the journey / See the approach / Look around). First check: **ASK** (walking time unknown; OpenStreetMap already reports the entrance as accessible, so only the walk was asked). Margaret's answer (8 minutes) was recorded as her word; the same candidate re-evaluated to **ALLOW at SHORTLIST**. The simulated agent request to present it as the final choice gave **ASK** (action ceiling, "further than you allowed"). On the next candidate, Melody's Piano Bar, OpenStreetMap reports the entrance as not step-free: **REJECT** despite a strong cultural match. "Why this happened" separated Cultural evidence, Place facts, Place imagery, Your requirements, Authority and Final decision. No page errors on either viewport. The acceptance script's anchor-name capture was empty because of a selector; the anchor resolution is evidenced by the candidate evidence line.
+
+### Real user live cycle (production, one fresh throwaway account)
+
+Signup landed on `/onboarding`. Live Qloo resolved Miles Davis, Casablanca (1942), Severance (2022), Piranesi and Eataly. Onboarding saved needs (step-free entrance, short walk) and a Shortlist ceiling. Personal recommendation: Bar Centrale. First check: **ASK** (entrance and walking time unknown). Answers (entrance yes, 8 minutes) were recorded as the person's word; the same candidate re-evaluated to **ALLOW (shortlist)**. A request above the saved ceiling gave **ASK**. On the next candidate (One World Trade Center) the person stated that the entrance has steps: **REJECT** (a user-confirmed hard incompatibility, not provider data). The receipt separated evidence, place facts, imagery, requirements, authority and decision. No Margaret text and no third-person copy on personal pages. After a reload the dashboard still showed the needs and limit; after sign-out the dashboard asked to sign in and showed no personal data; after signing back in the taste, needs and limit were intact. The account was then deleted through the normal "Delete my account" flow.
+
+### Production health
+
+`/`, `/judge`, `/demo/margaret`, `/experience`, `/dashboard`, `/onboarding`, `/product` and `/api/ready` returned 200. `/api/ready` reported database, migrations, authentication, attestation, cultural provider, public origin and OAuth all up/current/configured. Runtime logs for the final deployment, filtered to error level during the acceptance flows, contained only the known `pg` SSL-mode warning and a `pg` "client already executing a query" deprecation warning (both written to stderr; no failed requests).
+
+### Known limitations
+
+- The earlier throwaway account from the first failed M26 acceptance attempt (no Passport, no taste data) remains in production.
+- Individual favourites cannot be edited in place; "Start over" deletes the Passport and re-runs onboarding.
+- The ceiling is changed through the existing rules page or by widening during a check; the dashboard links to it.
+- "What are you looking for?" selects place, destination or brand; free text is not interpreted.
+- Place facts depend on OpenStreetMap coverage; many places have no entrance data, which correctly produces ASK.
+- ChatGPT distribution remains CONNECTED_NOT_SUBMITTED. Open external checkpoints: verified developer identity (the plugin names "Victor Nnajiofor", the site "Victor Nnamdi"; not changed), portal domain-verification token, reviewer account, demo recording URL, portal scan and attestations, a real ChatGPT tool invocation, and submission, review and publication.
