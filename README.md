@@ -1,187 +1,242 @@
-> Release authority: [M10–M26 execution ledger](docs/evaluation/company-build-m10-m26.md). Canonical M6–M10 candidate: `m10-m26-company-build`; [tree/lineage audit](docs/evaluation/m11-release-reconciliation.md). Green CI and hosted preview acceptance do not establish production or real ChatGPT/Claude commissioning.
-
 # TastePolicy
 
 **AI that helps without replacing you.**
 
-TastePolicy is **personal agency infrastructure for AI**. It uses [Qloo](https://qloo.com) to understand what feels like _you_, then respects the needs and boundaries that decide what an AI may suggest, shortlist or choose.
+TastePolicy is **personal agency infrastructure for culturally intelligent AI**.
 
-> Margaret's mobility changed. Her taste didn't.
+[Qloo](https://qloo.com) tells an agent what culturally fits a person. TastePolicy answers the next question: **may the agent actually go this far with that choice, for this person, in this context, right now?**
 
-A recommender asks _"Will this person like it?"_ An accessibility tool asks _"Can this person access it?"_ TastePolicy asks: **will they genuinely like it, can it work for their real life, what evidence is known or unknown, and how far is the AI actually permitted to go?** Preference, evidence, requirements, permission and action stay separate.
+> **Margaret's mobility changed. Her taste didn't.**
 
-## Assisted Choice (the flagship demo)
+A recommender asks, _“Will this person like it?”_  
+Qloo gives grounded cultural evidence for that question.  
+TastePolicy adds real-world requirements, explicit user rules and an authority ceiling so a strong taste match does not silently become permission.
 
-Open **`/experience`** (no login). Margaret is 72, loves intimate live jazz, classic cinema and Italian dining, and now needs a step-free entrance and a short walk. The journey:
+## Start here
 
-1. Qloo resolves her five cultural anchors (you confirm each exact match) and discovers real places.
-2. A place appears image-first, with _why it feels like her_ and a _will it work today?_ checklist.
-3. Critical fact unknown (entrance) → **ASK** ("Needs your answer"). You answer; the same evaluator re-checks.
-4. **ALLOW**, but only as far as her limit (**SHORTLIST**).
-5. A simulated over-eager agent tries to _present it as the final choice_ → **ASK** again; only she can widen the limit.
-6. **Why this happened** shows each source apart: Qloo (cultural evidence), place provider (facts), her requirements, her rules, the evaluator.
+- **Judge walkthrough:** `/judge` — three short acts, no login.
+- **Assisted Choice:** `/experience` — the live Margaret scenario with real Qloo data.
+- **Product:** `/`
+- **Developer platform:** `/developers`
+- **Trust boundary:** `/trust`
+- **Live readiness:** `/status`
 
-A known violation (e.g. no step-free entrance) is **REJECT**; evidence that cannot be obtained is **UNAVAILABLE**. Two concise variants prove the model generalises: `/experience/sensory-aware` (`noise_level in [low, moderate]`) and `/experience/low-energy` (`walking_minutes <= 10`). Needs are modelled as functional rules, never diagnoses, and nothing is inferred about a person from taste.
+Production: <https://tastepolicy.vercel.app>
 
-### Requirements and facts (generic contract)
+## The core thesis
 
-A requirement is `{ key, operator, expected, importance, sourceRequirement }` (`hard` or `soft`). A candidate fact is `{ key, value, state: known|unknown|unavailable, evidence: VERIFIED|USER_CONFIRMED|INFERRED, source, sourceType, observedAt }`. Both travel in the existing evaluation `context` (additive; legacy callers are unchanged) and are committed in the context commitment, so a changed fact is drift.
+**Taste intelligence is not permission.**
 
-| Situation                                                       | Outcome                             |
-| --------------------------------------------------------------- | ----------------------------------- |
-| Known hard violation                                            | `REJECT` (final)                    |
-| Critical fact unknown, inferred, stale or conflicting           | `ASK`                               |
-| Required evidence the provider cannot supply / Qloo unavailable | `UNAVAILABLE`                       |
-| Requirements satisfied, strong fit, action within ceiling       | `ALLOW`                             |
-| Good choice but requested action above the ceiling              | `ASK` (`ACTION_CEILING`)            |
-| Soft requirement unmet or unknown                               | reported, never changes the outcome |
+The same candidate passes through three distinct layers:
 
-Qloo is **never** accepted as the source of a place fact. Code: `src/lib/requirements/`, `src/server/state/policy.ts`, tests in `tests/requirements.test.ts`.
+1. **Generic AI** can produce a plausible suggestion, but it does not have grounded cultural evidence.
+2. **Qloo** resolves cultural identities, discovers cross-domain candidates and provides candidate-specific affinity/explainability.
+3. **TastePolicy** keeps that cultural evidence separate from factual context, the person's requirements, their rules and the action the agent is requesting.
 
-### Place layer
+A candidate can be a strong cultural match and still produce **ASK** or **REJECT**. Affinity never overrides an explicit boundary.
 
-`src/server/places/` bridges a Qloo place to a factual place (Google Places API New + Routes API) with a deterministic identity score; ambiguous or weak matches attach nothing. Photos stream through a same-origin proxy (`/api/places/photo`) with attribution and `no-store`; the key never reaches the browser. Fallback order: provider photo → licensed Wikimedia Commons → authored Taste image, each labelled. Without `GOOGLE_MAPS_API_KEY`, photos, accessibility facts and walking time stay **unknown** (the experience asks) and no route is drawn.
+## Four explicit outcomes
 
-### Open place experience (M25, no Google required)
+| Situation | Outcome |
+| --- | --- |
+| Requirements satisfied and requested action is within the authority ceiling | `ALLOW` |
+| A critical fact is unknown, stale/conflicting, or the requested action exceeds the ceiling | `ASK` |
+| A known hard requirement or explicit rule is violated | `REJECT` |
+| Required evidence cannot be obtained | `UNAVAILABLE` |
 
-Candidates now come alive with open data: a branded **MapLibre + OpenFreeMap** journey map, real photographs labelled by how they relate to the place (photo of it / street view near it / around it), a real street **sequence** ("See the approach") and genuine **360°** captures ("Look around") from KartaView and Panoramax, explicit **OpenStreetMap** facts (absence stays unknown) and optional **openrouteservice** routing. Pictures are presentation only: they never satisfy a requirement. Providers, endpoints, terms and caching: [docs/architecture/open-place-providers.md](docs/architecture/open-place-providers.md). Optional keys: `HEIGIT_API_KEY`, `MAPILLARY_ACCESS_TOKEN`.
+Missing evidence is never silently converted into permission. Provider failure is never reported as dislike.
 
-### Visual system
+## How Qloo is used
 
-_Taste is expressive. Authority is precise._ Tokens and components live in `src/components/brand/` (Taste Spectrum, Tasteprint, Boundary Ribbon, Culture Tiles, Need Chips, Place Canvas, Authority Ladder, Decision Seal, Journey Line). The human product is deliberately light; motion is semantic and respects `prefers-reduced-motion`; status is never colour-only.
+TastePolicy does **not** recreate Qloo's taste graph and does not substitute generic LLM guesses for Qloo evidence.
 
-### Routes
+The current Qloo integration uses:
 
-`/` story · `/experience` Assisted Choice · `/judge` three-act walkthrough + technical evidence · `/dashboard` Personal Agency Home (example mode when signed out) · `/account/*` your taste, rules, leases, history, decision details · `/product` · `/developers` and `/developers/workspace` (credentials, projects, agents, billing) · `/arena/consumer` engineering route (kept) · `/demo` `/verify` `/integrations` `/docs` `/trust` `/security` `/status` `/privacy` `/terms`.
+- `GET /search` to resolve cultural anchors;
+- `GET /entities` to verify the identities being used;
+- `GET /v2/insights` for cross-domain discovery;
+- `GET /v2/insights` again for candidate-specific affinity/explainability.
 
-### For judges
+The division of responsibility is deliberate:
 
-Start at `/judge` (or go straight to `/experience`): no login. Live Qloo needs `QLOO_API_KEY`; provider failures are shown, never faked. See `docs/submission/m24-submission.md`.
+| Qloo | TastePolicy |
+| --- | --- |
+| Cultural identities and relationships | Requirements and factual context |
+| Cross-domain candidate discovery | Explicit user rules |
+| Candidate affinity/explainability | Authority ceiling |
+| “What fits?” | “May the agent go this far with it?” |
 
-## Technical foundation
+Without Qloo, TastePolicy intentionally does not pretend a generic model guess is equivalent cultural evidence.
 
-**The subjective authority layer for AI agents.** _Qloo gives agents taste. TastePolicy gives that taste authority boundaries._
+## Assisted Choice
 
-An agent can technically recommend a hotel, a record or a brand. TastePolicy answers the question that comes next: _should this agent make this subjective choice for this person, in this context, right now?_ The answer is one of **ALLOW, ASK, REJECT or UNAVAILABLE**, with the rule that decided it, a Cultural Receipt, and a bounded permission that ends when the facts change.
+The flagship judge story follows **Margaret**, 72, who still loves intimate live jazz, classic cinema and Italian dining but now needs a step-free entrance, a short walk and a quieter setting.
 
-**ALLOW is preference authority only.** It never grants payment, booking, purchase, messaging, account, legal or any execution authority. Memory is not permission, Qloo affinity is not authorization, a recommendation is not authorization, UNAVAILABLE is not REJECT, and verifying a proof is not authorizing an action.
+The public flow:
 
-## Qloo and TastePolicy
+1. Qloo resolves her five cultural anchors to real entities.
+2. Qloo discovers real places from those cross-domain signals.
+3. TastePolicy presents the cultural match separately from real-world facts.
+4. If a critical requirement such as the entrance is unknown, the answer is **ASK**, not a guess.
+5. After the missing fact is answered, the same deterministic evaluator runs again.
+6. A qualifying choice can become **ALLOW**, but only up to Margaret's saved limit: **SHORTLIST**.
+7. If the agent tries to present that option as the final choice, the authority ceiling forces **ASK** again.
+8. **Why this happened** keeps Qloo evidence, place facts, requirements, rules and the final decision separately attributable.
 
-|              | Qloo                                                           | TastePolicy                                                                                  |
-| ------------ | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Provides     | Cultural evidence: affinities between entities, across domains | Authority over what an agent may do with a taste-based choice                                |
-| Answers      | "How well does this fit?"                                      | "May this agent go this far with it, for this person, now?"                                  |
-| Failure mode | Provider unavailable                                           | UNAVAILABLE: no judgement was possible. It is **not** a rejection and never a negative taste |
+A known hard violation becomes **REJECT**. If the required evidence cannot be obtained, the result is **UNAVAILABLE**.
 
-## How it fits together
+Two concise variants demonstrate the same contract beyond Margaret:
 
-```
-Qloo cultural evidence
-  → subject-owned preference state (immutable versions)
-  → context + explicit constraints
-  → one deterministic evaluator ─ ALLOW / ASK / REJECT / UNAVAILABLE ─ Cultural Receipt
-  → owner policy (rules, action ladder, sensitive choices, temporary permissions)
-  → bounded lease bound to commitments of the choice and situation
-  → drift suspends it; a fresh evaluation is required to resume (new epoch)
-  → signed, selectively disclosed proof another agent can verify
-  → doors: REST · TypeScript SDK · remote MCP · A2A · OAuth account linking
-```
+- `/experience/sensory-aware`
+- `/experience/low-energy`
 
-There is exactly one policy evaluator. M6–M9 wrap and extend the accepted M1–M5 evaluator; they do not replace it.
+Needs are represented as functional rules such as `walking_minutes <= 10` or noise-level constraints, never as diagnoses inferred from cultural taste.
 
-## The subjective-action ladder
+## Real place experience
 
-How far an agent goes with a choice that fits your taste, from least to most:
+TastePolicy's current open place layer uses:
 
-| Rung                  | Meaning                               |
-| --------------------- | ------------------------------------- |
-| `SUGGEST`             | mention it as one idea                |
-| `RANK`                | order several options                 |
-| `SHORTLIST`           | narrow to a few                       |
-| `ADD_TO_DRAFT`        | put it in a plan you can still change |
-| `PRESENT_AS_SELECTED` | show it as the choice made for you    |
+- **MapLibre + OpenFreeMap** for the branded journey map;
+- **OpenStreetMap** for explicit place facts where available;
+- **KartaView** and **Panoramax** for real street imagery, sequences and 360° coverage where available;
+- optional **openrouteservice/HeiGIT** routing;
+- licensed Wikimedia or authored Taste imagery as fallback.
 
-The owner sets the furthest rung an agent may take **without asking**, globally, per kind of choice and per agent. A request beyond it turns an ALLOW into an ASK the owner can answer once. Hard blocks, saved limits, UNAVAILABLE and group vetoes are never changed by the ladder. Legacy clients keep their behaviour: `recommend` = SHORTLIST, `add_to_draft` = ADD_TO_DRAFT, and presenting something as selected always asks until the owner opts in. See [ADR 0024](docs/decisions/0024-subjective-action-ladder.md).
+Media is presentation, not authority evidence. A nearby street image is labelled as nearby rather than falsely presented as the exact venue. Missing accessibility or route facts remain unknown.
 
-## Decisions, Passport, policies, leases, proofs
+A Google Places adapter also exists as an optional factual provider path, but the public open-place experience does not depend on Google being configured.
 
-- **Decisions.** Deterministic, with a captured Cultural Receipt. ASK is typed: an _authority confirmation_ (your own rule asks first) can wait for your answer; a _clarification_ (a fact is missing, such as a price) cannot be approved, it needs a new evaluation.
-- **Passport.** Your private state behind opaque references; scoped grants; hashed credentials; account sessions.
-- **Policies.** Versioned, simulated before publishing, with freshness per evidence class, per-agent and per-kind rules, extra care for sensitive kinds of choice, temporary permissions and counterfactual explanations. Widening needs a recent sign-in.
-- **Leases.** Short, event-sourced permissions for one exact choice. They pause when your information, your rules, a share, a temporary permission, or the choice or situation itself changes, **as far as TastePolicy is told** (agents present the current candidate and context on verify and checkpoint; a change nobody presents cannot be seen). See [ADR 0025](docs/decisions/0025-authority-commitments.md).
-- **Proofs.** Signed SD-JWT proofs with selective disclosure, holder-key binding, replay protection, a Token Status List and per-audience authority epochs. When authority ends, that epoch's proofs are invalid for good; resuming starts a new epoch and old proofs never return. A verifier that passes its own choice and situation learns whether the proof is about _them_.
-- **Timeline.** `/account/timeline` shows every question, rule change, permission and shared proof in order.
+## One deterministic authority contract
 
-## Use it
-
-REST (credential scopes: `PASSPORT_READ`, `TASTE_EVALUATE`, `RECEIPT_READ`):
-
-```sh
-curl -sS https://YOUR_ORIGIN/api/v1/evaluate \
-  -H "authorization: Bearer $TASTEPOLICY_KEY" -H "content-type: application/json" \
-  -d '{"idempotencyKey":"trip-2026-001","passportRef":"tp_…","requestedAction":"ADD_TO_DRAFT",
-       "proposal":{"agentId":"my-agent","expectedStateVersion":1,
-         "candidate":{"id":"…","name":"Hotel Lisboa","type":"destination"},
-         "context":{"key":"trip","domain":"destination","price":{"amount":120,"currency":"USD"}}}}'
-```
-
-TypeScript SDK (server-side, in this repository; not published to npm):
+A requirement is represented separately from a candidate fact.
 
 ```ts
-const tp = new TastePolicyClient({ baseUrl, credential });
-const r = await tp.evaluate({
-  passportRef,
-  idempotencyKey,
-  requestedAction: "SHORTLIST",
-  proposal,
-});
-if (r.decision === "ALLOW") {
-  const lease = await tp.lease({
-    idempotencyKey,
-    evaluationRef: r.evaluationRef,
-  });
-  // before relying on it, present the choice as it is now:
-  await tp.leaseVerify(lease.leaseRef, { context: currentContext });
+Requirement = {
+  key,
+  operator,
+  expected,
+  importance,
+  sourceRequirement,
+}
+
+CandidateFact = {
+  key,
+  value,
+  state: "known" | "unknown" | "unavailable",
+  evidence,
+  source,
+  sourceType,
+  observedAt,
 }
 ```
 
-- **Remote MCP** at `/api/mcp` (Streamable HTTP). Tool descriptions say when to call: _before you select, rank, recommend, shortlist, add to a draft, present as selected, or otherwise continue a subjective preference-sensitive choice for a person_.
-- **A2A 1.0** Agent Card at `/.well-known/agent-card.json`, JSON-RPC at `/api/a2a`; opt-in authority-lifecycle extension for leases, proofs and handoff ([ADR 0026](docs/decisions/0026-a2a-authority-lifecycle-extension.md)).
-- **OAuth 2.1** for hosted assistants (authorization code + PKCE S256, client ID metadata or dynamic registration, rotating refresh tokens, MCP-only audience). See [ADR 0022](docs/decisions/0022-oauth-account-linking.md).
-- **OpenAPI** at `/api/v1/openapi`. **Verifier** at `/verify` and `POST /api/attest/verify` (no credential). Issuer metadata at `/.well-known/tastepolicy-issuer`; third-party issuers are inspected and explicitly trusted, never auto-trusted ([ADR 0027](docs/decisions/0027-federation-compatible-issuers.md)).
+Qloo is never accepted as the source of a place-accessibility fact. Cultural evidence, factual evidence and authority remain separate.
 
-## Security and privacy
+## Subjective-action ladder
 
-Credentials and tokens are stored hashed; OAuth tokens are audience-bound and 15 minutes long; provider calls never run under a database transaction or lock; policy widening requires a recent sign-in; rate limits are shared through PostgreSQL where they must hold across instances ([ADR 0028](docs/decisions/0028-admission-control.md)). Agents learn the answer, a short reason and how far they may go; receipts show the choice, the cultural evidence behind the match and the deciding rule; proofs by default disclose no taste, name or account reference. Threat model and review record: [docs/security/threat-model.md](docs/security/threat-model.md), [supply chain](docs/security/supply-chain.md).
+TastePolicy distinguishes a good recommendation from how far the agent may act on it:
+
+| Rung | Meaning |
+| --- | --- |
+| `SUGGEST` | mention it as an idea |
+| `RANK` | order options |
+| `SHORTLIST` | narrow to a few |
+| `ADD_TO_DRAFT` | place it into a draft plan |
+| `PRESENT_AS_SELECTED` | present it as the chosen option |
+
+The person sets the furthest rung the AI may reach without asking. A request above that ceiling converts an otherwise valid recommendation into **ASK**.
+
+## Deeper authority infrastructure
+
+The simple human experience sits on one shared authority model with:
+
+- versioned Passport/state;
+- versioned rules and action ceilings;
+- Cultural Receipts;
+- bounded leases tied to candidate/context commitments;
+- drift checks and revocation;
+- signed, selectively disclosed proofs;
+- timeline/history;
+- REST;
+- TypeScript SDK;
+- remote MCP;
+- A2A;
+- OAuth 2.1 / PKCE.
+
+These surfaces extend the same evaluator rather than introducing separate policy engines.
+
+## Safety boundary
+
+**ALLOW is preference-choice authority only.**
+
+It never grants:
+
+- payment or purchase authority;
+- booking authority;
+- messaging authority;
+- account changes;
+- private-data disclosure;
+- legal authority.
+
+**Memory is not permission. Affinity is not authorization. A recommendation is not authorization. Verifying a proof is not authorization.**
 
 ## Local development
 
-Node.js 24 and npm. `npm ci && cp .env.example .env.local && npm run dev`. Without credentials the app runs and reports unavailable states; it never invents Qloo results. Set `QLOO_API_KEY` (server-only), `QLOO_API_BASE_URL` and `QLOO_AFFINITY_SCALE` to use Qloo ([setup](docs/architecture/qloo-contract-review.md)). Optional `GOOGLE_MAPS_API_KEY` (server-only; Places + Routes) enables real place photos, accessibility facts and walking time. Persistence needs `DATABASE_URL`; account features need `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`; proofs need `TASTEPOLICY_PUBLIC_ORIGIN` and `TASTEPOLICY_ATTESTATION_KEY`. Apply the schema with `npm run db:migrate:all` (ledgered, idempotent; [ADR 0030](docs/decisions/0030-migration-ledger.md)). See `.env.example`.
+Requirements: Node.js 24 and npm.
 
-## Tests, conformance, load
-
-```sh
-npm run verify               # format, lint, typecheck, unit tests, build
-npm run test:e2e             # Playwright incl. axe accessibility checks
-npm run conformance:compatible   # tastepolicy-compatible-v1 (110 checks)
-npm run tastebench:validate      # evaluation methodology fixtures
-TASTEPOLICY_TEST_DATABASE_URL=postgres://… npm test   # adds real-PostgreSQL suites
-npm run load:local           # controlled contention probe (not a capacity claim)
+```bash
+npm ci
+cp .env.example .env.local
+npm run dev
 ```
 
-## Live deployment
+Core environment variables:
 
-Evidence is labelled by kind in [docs/evaluation/r6-hosted-acceptance.md](docs/evaluation/r6-hosted-acceptance.md): LIVE, HOSTED, CONTROLLED, SYNTHETIC, LOCAL, CI, NOT EXECUTED, BLOCKED. Nothing in this README claims a vendor assistant (ChatGPT, Claude, Gemini) works with TastePolicy; the product pages list what is available, what is on the roadmap and what is not implemented.
+- `QLOO_API_KEY`
+- `QLOO_API_BASE_URL`
+- `QLOO_AFFINITY_SCALE`
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `TASTEPOLICY_PUBLIC_ORIGIN`
+- `TASTEPOLICY_ATTESTATION_KEY`
+
+Optional place providers/routing are documented in `docs/architecture/open-place-providers.md` and `.env.example`.
+
+Apply database migrations with:
+
+```bash
+npm run db:migrate:all
+```
+
+## Verification
+
+```bash
+npm run verify
+npm run test:e2e
+npm run conformance:compatible
+npm run tastebench:validate
+```
+
+Real-PostgreSQL suites can also run with `TASTEPOLICY_TEST_DATABASE_URL` configured.
+
+Evidence is labelled by kind — LIVE, HOSTED, CONTROLLED, SYNTHETIC, LOCAL, CI, NOT EXECUTED or BLOCKED — so tests and planned integrations are not presented as production facts.
+
+See:
+
+- `docs/evaluation/`
+- `docs/evaluation/m24-execution-ledger.md`
+- `docs/evaluation/m25-execution-ledger.md`
+- `docs/architecture/qloo-contract-review.md`
+- `docs/architecture/open-place-providers.md`
 
 ## Current limitations
 
-- Commitment-based drift covers what an agent tells TastePolicy; it cannot observe the outside world.
-- One organization ceiling per deployment, set by the operator; no multi-organization model, SSO/SCIM or admin console.
-- Sensitive choices are declared by the owner per kind of choice; content is not classified.
-- The authenticated MCP/A2A request budget is per instance.
-- Federation is explicit trust only: no registry, no revocation propagation between issuers.
-- Hosted acceptance with real Qloo and vendor connectors is documented in the R6 record; see its status.
-- TasteBench thresholds are experimental and not population-calibrated.
+- TastePolicy can only detect external drift that an agent or provider presents back to it.
+- Open place/accessibility coverage varies by location; missing facts remain unknown.
+- Vendor-assistant commissioning status is tracked separately and is not implied by protocol support.
+- TasteBench results are engineering/evaluation evidence, not population-level preference or safety claims.
 
-History of earlier milestones and acceptance records: [docs/history](docs/history/readme-through-m9-pre-reconciliation.md), [docs/evaluation](docs/evaluation/README.md). Licence: Apache-2.0. Contributions: [CONTRIBUTING.md](CONTRIBUTING.md).
+## License
+
+Apache-2.0. See `LICENSE`.
