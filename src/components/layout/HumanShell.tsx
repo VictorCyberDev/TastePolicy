@@ -4,7 +4,7 @@ import "./human-shell.css";
 
 export const PRIMARY_NAV = [
   { href: "/product", label: "Product" },
-  { href: "/experience", label: "Use cases" },
+  { href: "/demo/margaret", label: "Examples" },
   { href: "/developers", label: "Developers" },
   { href: "/trust", label: "Trust" },
 ] as const;

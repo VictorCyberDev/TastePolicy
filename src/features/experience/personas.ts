@@ -11,7 +11,7 @@ export type AnswerSpec =
   | { type: "choice"; options: { value: string; label: string }[] };
 
 export interface Persona {
-  id: "margaret" | "sensory-aware" | "low-energy";
+  id: "margaret" | "sensory-aware" | "low-energy" | "you";
   path: string;
   name: string;
   tagline: string;
@@ -30,7 +30,7 @@ const user = { sourceRequirement: "USER" as const };
 
 export const MARGARET: Persona = {
   id: "margaret",
-  path: "/experience",
+  path: "/demo/margaret",
   name: "Margaret",
   tagline: "Margaret's mobility changed. Her taste didn't.",
   story:

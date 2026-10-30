@@ -65,7 +65,11 @@ export default function Page() {
             ))}
           </ol>
           <p>
-            <Link className="tp-btn" data-variant="spectrum" href="/experience">
+            <Link
+              className="tp-btn"
+              data-variant="spectrum"
+              href="/demo/margaret"
+            >
               See it with Margaret
             </Link>
           </p>

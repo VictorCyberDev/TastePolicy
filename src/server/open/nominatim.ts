@@ -159,3 +159,43 @@ export async function geocodeCandidate(
     },
   };
 }
+
+export interface AreaChoice {
+  label: string;
+  lat: number;
+  lng: number;
+}
+// A typed neighbourhood or city, for "where do you start from". The person
+// types it and chooses the match; nothing is ever read from their device.
+export async function searchAreas(
+  query: string,
+  fetcher?: typeof fetch,
+): Promise<ProviderOutcome<AreaChoice[]>> {
+  const q = query.trim().slice(0, 120);
+  const url = `https://nominatim.openstreetmap.org/search?${new URLSearchParams(
+    { q, format: "jsonv2", limit: "5" },
+  )}`;
+  const rows = await cached<Row[]>(
+    `nominatim-area:${q.toLowerCase()}`,
+    6 * 3_600_000,
+    () =>
+      nominatimSlot(() =>
+        getJson<Row[]>(url, { allowHosts: HOSTS, timeoutMs: 6000, fetcher }),
+      ),
+  );
+  if (rows.status !== "available") return rows;
+  if (!Array.isArray(rows.data))
+    return { status: "unavailable", reason: "invalid_response" };
+  const out: AreaChoice[] = [];
+  for (const row of rows.data) {
+    const lat = Number(row.lat),
+      lng = Number(row.lon);
+    if (!validPoint({ lat, lng }) || !row.display_name) continue;
+    out.push({
+      label: row.display_name.slice(0, 120),
+      lat: Math.round(lat * 1e4) / 1e4,
+      lng: Math.round(lng * 1e4) / 1e4,
+    });
+  }
+  return { status: "available", data: out };
+}

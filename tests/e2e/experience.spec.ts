@@ -6,7 +6,7 @@ import { labelSynthetic } from "./synthetic-label";
 const expect = baseExpect.configure({ timeout: 20000 });
 test.setTimeout(120000);
 
-async function toPlace(page: Page, path = "/experience") {
+async function toPlace(page: Page, path = "/demo/margaret") {
   await page.goto(path, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Find (places|somewhere)/ }).click();
   await page.getByRole("checkbox").check();
@@ -189,7 +189,7 @@ test("mobile: no horizontal overflow and actions stay reachable", async ({
   expect(box!.x + box!.width).toBeLessThanOrEqual(375);
 });
 
-test("dashboard shows a clearly labelled example when signed out, with no invented activity", async ({
+test("dashboard never shows an example person to a signed-out visitor", async ({
   page,
 }) => {
   await page.route("**/api/account/**", (r) =>
@@ -200,15 +200,9 @@ test("dashboard shows a clearly labelled example when signed out, with no invent
   );
   await page.goto("/dashboard", { waitUntil: "networkidle" });
   await expect(
-    page.getByText(/You're looking at an example: Margaret/),
+    page.getByRole("heading", { name: "Sign in to open your home." }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Needs your answer" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "How far AI may go" }),
-  ).toBeVisible();
-  await expect(page.getByText(/Your decisions appear here/)).toBeVisible();
+  await expect(page.locator("body")).not.toContainText(/Margaret/);
   const overflow = await page.evaluate(
     () =>
       document.documentElement.scrollWidth -
@@ -222,7 +216,7 @@ test("axe: no serious or critical violations on the human product pages", async 
 }) => {
   const AxeBuilder = (await import("@axe-core/playwright")).default;
   await mockExperience(page);
-  for (const path of ["/", "/experience", "/judge", "/product"]) {
+  for (const path of ["/", "/demo/margaret", "/judge", "/product"]) {
     await page.goto(path, { waitUntil: "networkidle" });
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -240,7 +234,7 @@ test("reduced motion: ribbon and seal animations are disabled", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await mockExperience(page);
-  await page.goto("/experience", { waitUntil: "networkidle" });
+  await page.goto("/demo/margaret", { waitUntil: "networkidle" });
   const animated = await page.evaluate(() =>
     [...document.querySelectorAll(".rb-flow, .rb-scan")].map(
       (e) => getComputedStyle(e).animationName,

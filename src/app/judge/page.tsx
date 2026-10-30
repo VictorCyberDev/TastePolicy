@@ -176,7 +176,11 @@ export default function JudgePage() {
             Everything in the three acts works anonymously.
           </p>
           <p>
-            <Link className="tp-btn" data-variant="spectrum" href="/experience">
+            <Link
+              className="tp-btn"
+              data-variant="spectrum"
+              href="/demo/margaret"
+            >
               Start the live walkthrough
             </Link>
           </p>

@@ -1,4 +1,5 @@
 import { attestRepository } from "@/server/platform/attest-repository";
+import { needsRepository } from "@/server/platform/needs-repository";
 import { leaseRepository } from "@/server/platform/lease-repository";
 import { policyRepository } from "@/server/platform/policy-repository";
 import { oauthRepository } from "@/server/platform/oauth-repository";
@@ -30,6 +31,7 @@ function repositories(c: PoolClient): Repositories {
     policy: policyRepository(c),
     leases: leaseRepository(c),
     attest: attestRepository(c),
+    needs: needsRepository(c),
     oauth: oauthRepository(c),
     trajectories: trajectoryRepository(c),
     states: {

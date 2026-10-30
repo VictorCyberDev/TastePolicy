@@ -1,6 +1,6 @@
 import "server-only";
 import { getAuthentication } from "./auth";
-import { AttestationService } from "./attest-service";
+import { ActivationService } from "./activation-service";
 import { OAuthService, OAuthError } from "./oauth-service";
 import { publicOrigin } from "./origin";
 import { configuredOrigin } from "@/lib/config/origin";
@@ -86,7 +86,7 @@ export async function handlePlatform(
     )
       platformFail("INVALID_INPUT");
     if (!store) platformFail("NOT_CONFIGURED");
-    const service = new AttestationService(store);
+    const service = new ActivationService(store);
     const p =
       mode === "v1"
         ? await service.credentialPrincipal(bearer!.replace(/^Bearer /, ""))
@@ -161,6 +161,10 @@ export async function handlePlatform(
       else if (op === "policy-explain")
         data = await service.policyExplain(p, body);
       else if (op === "passport") data = await service.read(p, body);
+      else if (op === "taste") data = await service.taste(p, body);
+      else if (op === "needs-set") data = await service.needsSet(p, body);
+      else if (op === "choose")
+        data = await service.choose(p, body, factory, requestId);
       else if (op === "receipt" || op === "status")
         data = await service.receipt(p, body, op === "status");
       else if (op === "connected-agents" || op === "disconnect-agent") {

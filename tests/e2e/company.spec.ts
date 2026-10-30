@@ -203,7 +203,7 @@ test("company navigation uses the client router without runtime errors", async (
     ["Primary", "Product", "/product"],
     ["Primary", "Developers", "/developers"],
     ["Company", "Trust", "/trust"],
-    ["Company", "Use cases", "/experience"],
+    ["Company", "Examples", "/demo/margaret"],
   ]) {
     await page
       .getByRole("navigation", { name: nav, exact: true })

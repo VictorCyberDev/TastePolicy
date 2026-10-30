@@ -11,7 +11,7 @@ const sizes = [
 ] as const;
 const pages: [string, string][] = [
   ["/", "AI that helps without replacing you."],
-  ["/experience", "Meet Margaret."],
+  ["/demo/margaret", "Meet Margaret."],
   ["/experience/sensory-aware", "Sensory-aware night out"],
   ["/experience/low-energy", "Low-energy day"],
   ["/judge", "Margaret's mobility changed. Her taste didn't."],

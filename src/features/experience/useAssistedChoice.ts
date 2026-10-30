@@ -15,7 +15,22 @@ import type {
 import type { CandidateFact, FactValue } from "@/lib/requirements/types";
 import type { SubjectiveAction } from "@/lib/policy/types";
 import type { OpenPlaceContext as PlaceContext } from "@/server/open/context";
+import { DEFAULT_POLICY } from "@/lib/policy/types";
+import type { TargetType } from "@/types/domain";
 import type { Persona } from "./personas";
+
+// A signed-in person's own Passport. When present, nothing here uses the
+// anonymous demo state: checks run against their saved taste and ceiling.
+export interface PersonalLink {
+  call: <T>(
+    op: string,
+    body?: Record<string, unknown>,
+    mutation?: boolean,
+  ) => Promise<T>;
+  passportRef: string;
+  stateVersion: number;
+  anchors: QlooEntity[];
+}
 
 export type Step = "meet" | "anchors" | "discover";
 
@@ -49,7 +64,7 @@ const MESSAGES: Record<string, string> = {
 
 // Orchestration only. Every decision comes from the existing server services:
 // Qloo for taste, /api/places for place facts, /api/state for the evaluator.
-export function useAssistedChoice(persona: Persona) {
+export function useAssistedChoice(persona: Persona, personal?: PersonalLink) {
   const [step, setStep] = useState<Step>("meet");
   const [resolutions, setResolutions] = useState<
     ProviderResult<EntityResolution>[]
@@ -71,14 +86,16 @@ export function useAssistedChoice(persona: Persona) {
   const state = useRef<StateVersion | null>(null);
   const keys = useRef(new Map<string, string>());
 
-  const anchors = selected
-    .map((id, i) => {
-      const r = resolutions[i];
-      return r?.status === "available"
-        ? r.data.matches.find((m) => m.id === id)
-        : undefined;
-    })
-    .filter((e): e is QlooEntity => Boolean(e));
+  const anchors = personal
+    ? personal.anchors
+    : selected
+        .map((id, i) => {
+          const r = resolutions[i];
+          return r?.status === "available"
+            ? r.data.matches.find((m) => m.id === id)
+            : undefined;
+        })
+        .filter((e): e is QlooEntity => Boolean(e));
   const candidate = candidates?.candidates[index]?.entity ?? null;
   const evidence = candidates?.candidates[index] ?? null;
 
@@ -197,11 +214,11 @@ export function useAssistedChoice(persona: Persona) {
     [call, persona.origin],
   );
 
-  const discover = () =>
+  const discover = (kind: TargetType = "place") =>
     run("Asking Qloo where this taste lives…", async () => {
       const found = await call<InferenceResult>("/api/demo/discover", {
-        signalIds: selected,
-        targetType: "place",
+        signalIds: personal ? personal.anchors.map((a) => a.id) : selected,
+        targetType: kind,
       });
       state.current = null;
       setCandidates(found);
@@ -236,6 +253,29 @@ export function useAssistedChoice(persona: Persona) {
   ) =>
     candidate
       ? run("TastePolicy is checking the boundary…", async () => {
+          if (personal) {
+            const next = await personal.call<{ evaluation: StateEvaluation }>(
+              "choose",
+              {
+                passportRef: personal.passportRef,
+                requestedAction: requested,
+                proposal: {
+                  agentId: "Concierge",
+                  expectedStateVersion: personal.stateVersion,
+                  candidate,
+                  context: {
+                    key: persona.contextKey,
+                    domain: candidate.type,
+                    requirements: persona.requirements,
+                    facts: factsFor(candidate, opts.extra),
+                  },
+                },
+              },
+              true,
+            );
+            setEvaluation(next.evaluation);
+            return;
+          }
           const s = await ensureState();
           const next = await call<StateEvaluation>("/api/state/evaluate", {
             agentId: "Concierge",
@@ -279,7 +319,39 @@ export function useAssistedChoice(persona: Persona) {
     return check("SHORTLIST", { extra: [fact] });
   };
 
-  const widen = (to: SubjectiveAction) => {
+  // For a signed-in person the ceiling is their saved rule, so widening it is
+  // a real, recorded change (and may ask them to sign in again first).
+  const widen = async (to: SubjectiveAction) => {
+    if (personal) {
+      await run("Saving your new limit…", async () => {
+        const cur = await personal.call<{
+          active: {
+            version: number;
+            document: typeof DEFAULT_POLICY;
+          } | null;
+        }>("policy-get", { passportRef: personal.passportRef });
+        const doc = cur.active?.document ?? DEFAULT_POLICY;
+        await personal.call(
+          "policy-publish",
+          {
+            passportRef: personal.passportRef,
+            expectedVersion: cur.active?.version ?? 0,
+            document: {
+              ...doc,
+              actions: {
+                byDomain: {},
+                byAgent: {},
+                ...doc.actions,
+                default: to,
+              },
+            },
+          },
+          true,
+        );
+        setCeiling(to);
+      });
+      return check(to);
+    }
     setCeiling(to);
     return check(to, { ceilingOverride: to });
   };

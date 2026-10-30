@@ -66,7 +66,7 @@ describe("Phase 0 foundation", () => {
     ).toBeVisible();
     expect(
       screen.getAllByRole("link", { name: /See Margaret's choice/ })[0],
-    ).toHaveAttribute("href", "/experience");
+    ).toHaveAttribute("href", "/demo/margaret");
     expect(
       screen.getByText(/Live ChatGPT and Claude commissioning is pending/),
     ).toBeVisible();

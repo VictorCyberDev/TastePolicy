@@ -11,5 +11,6 @@
   "0010_status_list_guard.sql": "070181d7dfc262791d0adee514b3324cab43ea1543c8c701f9149ac91bb6a80c",
   "0011_proof_disclosure.sql": "0156974276cb26bccd8c963acc6799b525f830f4ee73d207477e0006f5cb2523",
   "0012_developer_workspaces.sql": "cc0b2c34f8ffb27936a749a8acd0dff140103afe79611e9ed9cd80b1b2b23aaa",
-  "0013_billing_test_provider.sql": "57de3c0e3c2572d92d34052ea804710446160ce355bbd5effb2a547a0a10c463"
+  "0013_billing_test_provider.sql": "57de3c0e3c2572d92d34052ea804710446160ce355bbd5effb2a547a0a10c463",
+  "0014_passport_needs.sql": "e1d7fbfef0f1a2190a261a43bcc1016c5a57e50b3edc8d384aa3fedf34b7066b"
 }

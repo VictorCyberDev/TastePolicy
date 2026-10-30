@@ -37,7 +37,23 @@ export default function AuthEntry({ signup }: { signup: boolean }) {
             );
             return;
           }
-          router.replace("/dashboard");
+          // A new account always starts at onboarding. A returning account goes
+          // home, unless it never finished creating its Passport.
+          let next = "/onboarding";
+          if (!signup) {
+            const me = await fetch("/api/account/inspect", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: "{}",
+            })
+              .then((x) => x.json())
+              .catch(() => null);
+            next =
+              me?.status === "available" && me.data?.passport
+                ? "/dashboard"
+                : "/onboarding";
+          }
+          router.replace(next);
           router.refresh();
         } catch {
           setNotice(

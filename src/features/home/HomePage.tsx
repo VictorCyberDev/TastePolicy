@@ -30,7 +30,7 @@ export default function HomePage() {
               <Link
                 className="tp-btn"
                 data-variant="spectrum"
-                href="/experience"
+                href="/demo/margaret"
               >
                 See Margaret&apos;s choice
               </Link>
@@ -194,7 +194,7 @@ export default function HomePage() {
               <Link
                 className="tp-btn"
                 data-variant="spectrum"
-                href="/experience"
+                href="/demo/margaret"
               >
                 Watch it happen with real Qloo data
               </Link>
@@ -286,7 +286,11 @@ export default function HomePage() {
         <section className="tp-final" aria-labelledby="final-h">
           <h2 id="final-h">Let your AI help. Keep being you.</h2>
           <div className="tp-actions tp-center">
-            <Link className="tp-btn" data-variant="spectrum" href="/experience">
+            <Link
+              className="tp-btn"
+              data-variant="spectrum"
+              href="/demo/margaret"
+            >
               See Margaret&apos;s choice
             </Link>
             <Link className="tp-btn" data-variant="ghost" href="/dashboard">

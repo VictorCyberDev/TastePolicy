@@ -38,9 +38,9 @@ import {
 } from "@/lib/human/copy";
 import { SUBJECTIVE_ACTIONS, type SubjectiveAction } from "@/lib/policy/types";
 import type { StateEvaluation } from "@/lib/state/types";
-import type { QlooEntity } from "@/types/domain";
+import type { QlooEntity, TargetType } from "@/types/domain";
 import type { OpenPlaceContext as PlaceContext } from "@/server/open/context";
-import { useAssistedChoice } from "./useAssistedChoice";
+import { useAssistedChoice, type PersonalLink } from "./useAssistedChoice";
 import { PERSONAS, type AnswerSpec, type Persona } from "./personas";
 
 const STATUS: Record<string, NeedStatus> = {
@@ -55,8 +55,16 @@ function finalOutcome(e: StateEvaluation): Outcome {
   return (e.authority?.outcome ?? e.decision.outcome) as Outcome;
 }
 
-export default function AssistedChoice({ persona }: { persona: Persona }) {
-  const h = useAssistedChoice(persona);
+export default function AssistedChoice({
+  persona,
+  personal,
+}: {
+  persona: Persona;
+  personal?: PersonalLink;
+}) {
+  const h = useAssistedChoice(persona, personal);
+  const [kind, setKind] = useState<TargetType>("place");
+  const you = persona.id === "you";
   const heading = useRef<HTMLHeadingElement>(null);
   const first = useRef(true);
   const e = h.evaluation;
@@ -90,20 +98,24 @@ export default function AssistedChoice({ persona }: { persona: Persona }) {
           TastePolicy<span aria-hidden="true">.</span>
         </Link>
         <nav aria-label="Experiences">
-          {PERSONAS.map((p) => (
-            <Link
-              key={p.id}
-              href={p.path}
-              aria-current={p.id === persona.id ? "page" : undefined}
-            >
-              {p.id === "margaret"
-                ? "Margaret"
-                : p.id === "sensory-aware"
-                  ? "Sensory-aware"
-                  : "Low-energy"}
-            </Link>
-          ))}
-          <Link href="/judge">Judge walkthrough</Link>
+          {you ? (
+            <Link href="/dashboard">My home</Link>
+          ) : (
+            PERSONAS.map((p) => (
+              <Link
+                key={p.id}
+                href={p.path}
+                aria-current={p.id === persona.id ? "page" : undefined}
+              >
+                {p.id === "margaret"
+                  ? "Margaret"
+                  : p.id === "sensory-aware"
+                    ? "Sensory-aware"
+                    : "Low-energy"}
+              </Link>
+            ))
+          )}
+          {!you && <Link href="/judge">Judge walkthrough</Link>}
         </nav>
       </header>
 
@@ -114,11 +126,17 @@ export default function AssistedChoice({ persona }: { persona: Persona }) {
           <div className="tp-exp-meet-copy">
             <p className="tp-eyebrow">Assisted choice</p>
             <h1 id="meet-h" tabIndex={-1} ref={heading}>
-              {persona.id === "margaret" ? "Meet Margaret." : persona.name}
+              {persona.id === "margaret"
+                ? "Meet Margaret."
+                : you
+                  ? "Find somewhere that feels like you."
+                  : persona.name}
             </h1>
             <p className="tp-exp-tagline">{persona.tagline}</p>
-            <p>{persona.story}</p>
-            <blockquote>&ldquo;{persona.quote}&rdquo;</blockquote>
+            {persona.story && <p>{persona.story}</p>}
+            {persona.quote && (
+              <blockquote>&ldquo;{persona.quote}&rdquo;</blockquote>
+            )}
           </div>
           <div className="tp-exp-meet-print">
             <Tasteprint
@@ -126,12 +144,13 @@ export default function AssistedChoice({ persona }: { persona: Persona }) {
               size={176}
             />
             <p className="tp-muted">
-              {persona.id === "margaret" ? "Margaret" : "This person"}&apos;s
-              Tasteprint, drawn from the things they love. Decoration only.
+              {you
+                ? "Your Tasteprint, drawn from the things you love. Decoration only."
+                : `${persona.id === "margaret" ? "Margaret" : "This person"}\u2019s Tasteprint, drawn from the things they love. Decoration only.`}
             </p>
           </div>
           <div className="tp-exp-card">
-            <h2>What she loves</h2>
+            <h2>{you ? "What you love" : "What she loves"}</h2>
             <CultureTiles
               items={persona.anchors.map((a) => ({
                 name: a.query,
@@ -161,10 +180,23 @@ export default function AssistedChoice({ persona }: { persona: Persona }) {
               className="tp-btn"
               data-variant="spectrum"
               disabled={!!h.busy}
-              onClick={() => void h.begin()}
+              onClick={() => void (you ? h.discover(kind) : h.begin())}
             >
               {persona.cta}
             </button>
+            {you && (
+              <label className="tp-exp-kind">
+                What are you looking for?
+                <select
+                  value={kind}
+                  onChange={(ev) => setKind(ev.target.value as TargetType)}
+                >
+                  <option value="place">A place to go</option>
+                  <option value="destination">A destination to visit</option>
+                  <option value="brand">A brand or shop</option>
+                </select>
+              </label>
+            )}
             <p className="tp-muted">
               Qloo reads real cultural relationships. Nothing is faked: if a
               service can&apos;t answer, you&apos;ll see that.
@@ -314,7 +346,9 @@ function PlaceStage({
     >
       <p className="tp-eyebrow">
         {outcome
-          ? "Step 3 · TastePolicy protects her agency"
+          ? persona.id === "you"
+            ? "Step 2 · TastePolicy protects your agency"
+            : "Step 3 · TastePolicy protects her agency"
           : "Step 2 · A place that feels like her"}
       </p>
       <h2
@@ -406,7 +440,9 @@ function PlaceStage({
               disabled={!!h.busy || ctx === "loading"}
               onClick={() => void h.check()}
             >
-              Check it against her needs
+              {persona.id === "you"
+                ? "Check it against what matters to you"
+                : "Check it against her needs"}
             </button>
             <button
               className="tp-btn"
@@ -491,7 +527,7 @@ function DecisionArea({
           : outcome === "ASK"
             ? `Your assistant wanted to ${ACTION_HUMAN[asked ?? "SUGGEST"].label.toLowerCase()} it, which is further than you allowed.`
             : outcome === "ALLOW"
-              ? `It fits her taste and what works today. Your assistant may go as far as ${ACTION_HUMAN[(a?.ceiling ?? "SUGGEST") as SubjectiveAction].label.toLowerCase()}, and no further.`
+              ? `It fits ${persona.id === "you" ? "your" : "her"} taste and what works today. Your assistant may go as far as ${ACTION_HUMAN[(a?.ceiling ?? "SUGGEST") as SubjectiveAction].label.toLowerCase()}, and no further.`
               : outcome === "REJECT"
                 ? `${c.name} breaks something you told us you need. A strong cultural match can't override that.`
                 : OUTCOME_HUMAN.UNAVAILABLE.line}
@@ -521,7 +557,7 @@ function DecisionArea({
 
       {a && !factAsk && (
         <div className="tp-exp-ladder tp-authority" data-surface="authority">
-          <h3>How far her AI may go</h3>
+          <h3>How far {persona.id === "you" ? "your" : "her"} AI may go</h3>
           <AuthorityLadder ceiling={h.ceiling} requested={asked} />
           {outcome === "ASK" && a.basis === "ACTION_CEILING" && (
             <div className="tp-exp-actions">

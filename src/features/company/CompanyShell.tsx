@@ -31,7 +31,7 @@ export default function CompanyShell({
         </Link>
         <nav aria-label="Company">
           <Link href="/product">Product</Link>
-          <Link href="/experience">Use cases</Link>
+          <Link href="/demo/margaret">Examples</Link>
           <Link href="/developers">Developers</Link>
           <Link href="/trust">Trust</Link>
         </nav>

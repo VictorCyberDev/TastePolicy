@@ -17,7 +17,7 @@ async function toPlace(
 ) {
   await stubOpenNetwork(page);
   const api = await mockExperience(page, { ...opts, context });
-  await page.goto("/experience", { waitUntil: "networkidle" });
+  await page.goto("/demo/margaret", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Find places/ }).click();
   await page.getByRole("checkbox").check();
   await page
@@ -198,7 +198,7 @@ test("map failure degrades to text and a fallback line; the decision flow still 
   const api = await mockExperience(page, {
     context: openContext({ route: routeFixture, routeUnavailable: undefined }),
   });
-  await page.goto("/experience", { waitUntil: "networkidle" });
+  await page.goto("/demo/margaret", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Find places/ }).click();
   await page.getByRole("checkbox").check();
   await page

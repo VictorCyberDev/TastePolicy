@@ -65,6 +65,10 @@ const COMPOSITION = new Set([
   "src/features/experience/personas.ts",
   "src/features/experience/useAssistedChoice.ts",
   "src/features/home/PersonalAgencyHome.tsx",
+  // M26: real-user activation composes the account API and the ladder.
+  "src/features/experience/PersonalExperience.tsx",
+  "src/features/onboarding/Onboarding.tsx",
+  "src/server/platform/activation-service.ts",
   "src/lib/human/copy.ts",
   "src/server/state/session-authority.ts",
   "src/server/state/repositories.ts",
