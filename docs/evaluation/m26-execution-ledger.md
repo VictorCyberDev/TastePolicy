@@ -38,3 +38,21 @@ Now:
 - Package checked against the current official submission and package docs. Conforming: `$schema`, `name`, `version`, listing field lengths, four HTTPS URLs, five positive and three negative cases, OAuth with `cimd`, no secrets, no hooks or `apps`. Not yet satisfiable here: `review.demo_recording_url` (needs a real recording), domain verification token, reviewer account, portal scan, attestations.
 - **Identity mismatch to resolve before submission:** `distribution/openai/plugin.json` names the developer "Victor Nnajiofor"; the site footer and legal pages say "Victor Nnamdi". The portal's verified developer identity must match what is shown. This was not changed.
 - Distribution status: CONNECTED_NOT_SUBMITTED. A custom plugin was connected in an earlier session; nothing was submitted, approved or published, and no real ChatGPT tool invocation or review-case run has been observed.
+
+## Gate results (final source)
+
+Prettier, ESLint (0 errors; one pre-existing `<img>` warning), `tsc`, 953 unit tests (28 skipped as before), `next build`, full Chromium e2e 189/189, run after the last source change.
+
+## Production acceptance (live Qloo, real database)
+
+Two synthetic accounts (desktop and mobile viewports), each deleted through the product's own "Delete my account" at the end. Production at `main` `399b46d` plus the copy fix below.
+
+Observed: signup lands on `/onboarding`; live Qloo resolved the typed favourites (a favourite typed under the wrong kind correctly showed "No match found" instead of guessing); Passport created; needs, ceiling saved; `/experience` showed the person's own anchors and needs with a live Qloo recommendation, real open street imagery, and a real decision (ASK: entrance and walking time unknown); `/dashboard` persisted the needs across a reload; no Margaret text on any real-user page.
+
+Defects found by production acceptance and fixed before it passed (each now has a regression test):
+
+1. `needs-set` rejected the `idempotencyKey` the browser attaches to every mutation (HTTP 400). The PGlite test had omitted the key and the browser stand-in did not validate keys. Fixed; the stand-in now rejects unknown keys and a test drives the whole first-run journey through the real HTTP handler with the browser's bodies.
+2. A late account response could pull someone back a step during onboarding. Fixed and tested with a delayed response.
+3. "This feels like her" appeared on a real person's page. Fixed; the e2e now fails on third-person copy there.
+
+Left behind: one synthetic production account from the first failed acceptance attempt (created before the fix, never given a Passport, email `m26-acceptance-desktop-…@example.test`). It could not be signed into afterwards because its password was not kept. It holds no taste data.

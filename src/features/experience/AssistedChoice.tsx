@@ -349,7 +349,9 @@ function PlaceStage({
           ? persona.id === "you"
             ? "Step 2 · TastePolicy protects your agency"
             : "Step 3 · TastePolicy protects her agency"
-          : "Step 2 · A place that feels like her"}
+          : persona.id === "you"
+            ? "Step 1 · A place that feels like you"
+            : "Step 2 · A place that feels like her"}
       </p>
       <h2
         id="place-h"
@@ -523,7 +525,7 @@ function DecisionArea({
         }
       >
         {outcome === "ASK" && factAsk
-          ? "This feels like her, but I need to confirm a few things before your assistant shortlists it."
+          ? `This feels like ${persona.id === "you" ? "you" : "her"}, but I need to confirm a few things before your assistant shortlists it.`
           : outcome === "ASK"
             ? `Your assistant wanted to ${ACTION_HUMAN[asked ?? "SUGGEST"].label.toLowerCase()} it, which is further than you allowed.`
             : outcome === "ALLOW"

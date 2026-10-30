@@ -89,6 +89,8 @@ test("P0: a brand-new person signs up, sets up their taste, and uses their own d
   await expect(
     page.getByText(/Go ahead|Needs your answer|Not this one/).first(),
   ).toBeVisible();
+  // The person's own page speaks to them, never about an example person.
+  await expect(page.locator("main")).not.toContainText(/\b(her|she)\b/i);
   const choose = fake.calls.filter((c) => c.op === "choose").at(-1)!;
   expect(choose.body.passportRef).toBe("tpp_synthetic_new");
   const ctx = (
