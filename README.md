@@ -15,7 +15,8 @@ TastePolicy adds real-world requirements, explicit user rules and an authority c
 ## Start here
 
 - **Judge walkthrough:** `/judge` — three short acts, no login.
-- **Assisted Choice:** `/experience` — the live Margaret scenario with real Qloo data.
+- **Your own experience:** sign up, then `/onboarding` saves your taste, what matters and how far AI may go; `/experience` and `/dashboard` use only your saved data.
+- **Assisted Choice example:** `/demo/margaret` — the labelled live Margaret scenario with real Qloo data.
 - **Product:** `/`
 - **Developer platform:** `/developers`
 - **Trust boundary:** `/trust`
@@ -37,12 +38,12 @@ A candidate can be a strong cultural match and still produce **ASK** or **REJECT
 
 ## Four explicit outcomes
 
-| Situation | Outcome |
-| --- | --- |
-| Requirements satisfied and requested action is within the authority ceiling | `ALLOW` |
-| A critical fact is unknown, stale/conflicting, or the requested action exceeds the ceiling | `ASK` |
-| A known hard requirement or explicit rule is violated | `REJECT` |
-| Required evidence cannot be obtained | `UNAVAILABLE` |
+| Situation                                                                                  | Outcome       |
+| ------------------------------------------------------------------------------------------ | ------------- |
+| Requirements satisfied and requested action is within the authority ceiling                | `ALLOW`       |
+| A critical fact is unknown, stale/conflicting, or the requested action exceeds the ceiling | `ASK`         |
+| A known hard requirement or explicit rule is violated                                      | `REJECT`      |
+| Required evidence cannot be obtained                                                       | `UNAVAILABLE` |
 
 Missing evidence is never silently converted into permission. Provider failure is never reported as dislike.
 
@@ -59,12 +60,12 @@ The current Qloo integration uses:
 
 The division of responsibility is deliberate:
 
-| Qloo | TastePolicy |
-| --- | --- |
-| Cultural identities and relationships | Requirements and factual context |
-| Cross-domain candidate discovery | Explicit user rules |
-| Candidate affinity/explainability | Authority ceiling |
-| “What fits?” | “May the agent go this far with it?” |
+| Qloo                                  | TastePolicy                          |
+| ------------------------------------- | ------------------------------------ |
+| Cultural identities and relationships | Requirements and factual context     |
+| Cross-domain candidate discovery      | Explicit user rules                  |
+| Candidate affinity/explainability     | Authority ceiling                    |
+| “What fits?”                          | “May the agent go this far with it?” |
 
 Without Qloo, TastePolicy intentionally does not pretend a generic model guess is equivalent cultural evidence.
 
@@ -117,7 +118,7 @@ Requirement = {
   expected,
   importance,
   sourceRequirement,
-}
+};
 
 CandidateFact = {
   key,
@@ -127,7 +128,7 @@ CandidateFact = {
   source,
   sourceType,
   observedAt,
-}
+};
 ```
 
 Qloo is never accepted as the source of a place-accessibility fact. Cultural evidence, factual evidence and authority remain separate.
@@ -136,12 +137,12 @@ Qloo is never accepted as the source of a place-accessibility fact. Cultural evi
 
 TastePolicy distinguishes a good recommendation from how far the agent may act on it:
 
-| Rung | Meaning |
-| --- | --- |
-| `SUGGEST` | mention it as an idea |
-| `RANK` | order options |
-| `SHORTLIST` | narrow to a few |
-| `ADD_TO_DRAFT` | place it into a draft plan |
+| Rung                  | Meaning                         |
+| --------------------- | ------------------------------- |
+| `SUGGEST`             | mention it as an idea           |
+| `RANK`                | order options                   |
+| `SHORTLIST`           | narrow to a few                 |
+| `ADD_TO_DRAFT`        | place it into a draft plan      |
 | `PRESENT_AS_SELECTED` | present it as the chosen option |
 
 The person sets the furthest rung the AI may reach without asking. A request above that ceiling converts an otherwise valid recommendation into **ASK**.

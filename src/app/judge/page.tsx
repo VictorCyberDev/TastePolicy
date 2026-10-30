@@ -24,7 +24,8 @@ function TechnicalEvidence() {
           TastePolicy resolves cultural anchors through Qloo, verifies the
           identities being used, discovers cross-domain candidates and requests
           candidate-specific affinity and explainability. It does not recreate
-          Qloo&apos;s graph or substitute generic LLM guesses for cultural evidence.
+          Qloo&apos;s graph or substitute generic LLM guesses for cultural
+          evidence.
         </p>
         <p>
           <Link href="/demo/margaret">Open the Assisted Choice experience</Link>
@@ -38,8 +39,8 @@ function TechnicalEvidence() {
         <p>
           Known hard violation → <b>REJECT</b>. Critical fact missing →{" "}
           <b>ASK</b>. Required evidence unavailable → <b>UNAVAILABLE</b>.
-          Requirements satisfied and the requested action within the person&apos;s
-          ceiling → <b>ALLOW</b>.
+          Requirements satisfied and the requested action within the
+          person&apos;s ceiling → <b>ALLOW</b>.
         </p>
         <p>
           Qloo evidence, place facts, requirements, rules and the final decision
@@ -85,10 +86,10 @@ function TechnicalEvidence() {
       <section>
         <h2>The execution boundary stays intact</h2>
         <p>
-          ALLOW grants preference-choice authority only. It never grants payment,
-          booking, messaging, account changes, private-data disclosure or legal
-          authority. Recommendation is not authorization, and verifying a proof
-          does not make a separate execution permissible.
+          ALLOW grants preference-choice authority only. It never grants
+          payment, booking, messaging, account changes, private-data disclosure
+          or legal authority. Recommendation is not authorization, and verifying
+          a proof does not make a separate execution permissible.
         </p>
       </section>
     </div>
@@ -110,7 +111,11 @@ export default function JudgePage() {
             the difference with real Qloo data.
           </p>
           <div className="tp-actions">
-            <Link className="tp-btn" data-variant="spectrum" href="/demo/margaret">
+            <Link
+              className="tp-btn"
+              data-variant="spectrum"
+              href="/demo/margaret"
+            >
               Start the live walkthrough
             </Link>
             <a
@@ -170,11 +175,11 @@ export default function JudgePage() {
           <p className="tp-eyebrow">Act 2 · Cultural intelligence</p>
           <h2 id="act2">Watch Qloo understand what fits her</h2>
           <p>
-            Qloo resolves Margaret&apos;s five cultural anchors to real entities,
-            discovers cross-domain places from those signals and provides
-            candidate-specific cultural evidence. TastePolicy keeps that evidence
-            separate from accessibility, walking time, noise, price and every
-            other real-world requirement.
+            Qloo resolves Margaret&apos;s five cultural anchors to real
+            entities, discovers cross-domain places from those signals and
+            provides candidate-specific cultural evidence. TastePolicy keeps
+            that evidence separate from accessibility, walking time, noise,
+            price and every other real-world requirement.
           </p>
           <div className="tp-trio tp-compare">
             <article>
@@ -200,8 +205,9 @@ export default function JudgePage() {
             </article>
           </div>
           <p className="tp-muted">
-            Place photos, maps, street sequences and 360° media are presentation.
-            They never become factual evidence merely because they look relevant.
+            Place photos, maps, street sequences and 360° media are
+            presentation. They never become factual evidence merely because they
+            look relevant.
           </p>
         </section>
 
@@ -215,8 +221,8 @@ export default function JudgePage() {
             </li>
             <li>
               If that critical fact is unknown, TastePolicy returns <b>ASK</b>
-              instead of guessing: &ldquo;This feels like you, but I need to confirm
-              the entrance.&rdquo;
+              instead of guessing: &ldquo;This feels like you, but I need to
+              confirm the entrance.&rdquo;
             </li>
             <li>
               Answer the missing fact. The same evaluator checks the same
@@ -232,8 +238,9 @@ export default function JudgePage() {
               authority ceiling forces <b>ASK</b> again.
             </li>
             <li>
-              &ldquo;Why this happened&rdquo; separates Qloo evidence, place facts,
-              Margaret&apos;s requirements, her rules and the final decision.
+              &ldquo;Why this happened&rdquo; separates Qloo evidence, place
+              facts, Margaret&apos;s requirements, her rules and the final
+              decision.
             </li>
           </ol>
           <div className="tp-seals">
@@ -241,9 +248,9 @@ export default function JudgePage() {
             <DecisionSeal outcome="ALLOW" />
           </div>
           <p className="tp-muted">
-            A known hard violation becomes REJECT. If required evidence cannot be
-            obtained, the result is UNAVAILABLE. Two concise variants show the
-            same contract beyond Margaret:{" "}
+            A known hard violation becomes REJECT. If required evidence cannot
+            be obtained, the result is UNAVAILABLE. Two concise variants show
+            the same contract beyond Margaret:{" "}
             <Link href="/experience/sensory-aware">sensory-aware</Link> and{" "}
             <Link href="/experience/low-energy">low-energy</Link>.
           </p>
@@ -254,10 +261,16 @@ export default function JudgePage() {
           <h2 id="thesis-h">Taste intelligence is not permission.</h2>
           <p className="tp-band-lead">
             Qloo answers <b>what fits this person?</b> TastePolicy answers{" "}
-            <b>may this agent go this far with that fit, for this person, now?</b>
+            <b>
+              may this agent go this far with that fit, for this person, now?
+            </b>
           </p>
           <p>
-            <Link className="tp-btn" data-variant="spectrum" href="/demo/margaret">
+            <Link
+              className="tp-btn"
+              data-variant="spectrum"
+              href="/demo/margaret"
+            >
               Try the live experience
             </Link>
           </p>
