@@ -70,6 +70,20 @@ it("needs persist per Passport and are private to the owner", async () => {
       .needs.requirements,
   ).toEqual([]);
 });
+it("accepts the idempotency key every browser mutation carries, and saving twice is harmless", async () => {
+  const w = await world();
+  const body = {
+    idempotencyKey: "needs-key-1",
+    passportRef: w.ref,
+    requirements: needs.requirements,
+    origin: null,
+  };
+  await svc.needsSet(w.a.principal, body);
+  await svc.needsSet(w.a.principal, body);
+  const t = (await svc.taste(w.a.principal, { passportRef: w.ref })) as any;
+  expect(t.needs.requirements).toHaveLength(1);
+  expect(t.needs.origin).toBeNull();
+});
 it("rejects malformed needs", async () => {
   const w = await world();
   for (const bad of [
@@ -107,4 +121,104 @@ it("choose returns the explained evaluation for the person's own Passport and ce
   expect(r.evaluation.authority.escalationRequired).toBe(true);
   expect(r.evaluation.authority.outcome).toBe("ASK");
   expect(r.response.evaluationRef).toMatch(/\S/);
+});
+
+// The exact browser journey over the real HTTP handler: the same bodies, with
+// the idempotency keys the client attaches to every mutation.
+it("the whole first-run journey works through the account HTTP handler", async () => {
+  const { handlePlatform } = await import("@/server/platform/http");
+  const a = await account(d),
+    q = subjectProvider();
+  const post = async (
+    op: string,
+    body: Record<string, unknown> = {},
+    mutation = false,
+  ) => {
+    const r = await handlePlatform(
+      new Request(`https://tastepolicy.test/api/account/${op}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          origin: "https://tastepolicy.test",
+        },
+        body: JSON.stringify({
+          ...body,
+          ...(mutation ? { idempotencyKey: crypto.randomUUID() } : {}),
+        }),
+      }),
+      op,
+      "account",
+      d.store,
+      () => q.q,
+      async () => a.principal,
+    );
+    const json = (await r.json()) as any;
+    expect({ op, status: r.status, code: json.code }).toEqual({
+      op,
+      status: 200,
+      code: undefined,
+    });
+    return json.data as any;
+  };
+  expect((await post("inspect")).passport).toBeNull();
+  const made = await post(
+    "create",
+    {
+      displayLabel: "My taste",
+      signalIds: init().signalIds,
+      identitiesReviewed: true,
+    },
+    true,
+  );
+  const ref = made.passportRef as string;
+  await post(
+    "needs-set",
+    { passportRef: ref, requirements: needs.requirements, origin: null },
+    true,
+  );
+  await post(
+    "needs-set",
+    {
+      passportRef: ref,
+      requirements: needs.requirements,
+      origin: needs.origin,
+    },
+    true,
+  );
+  const cur = await post("policy-get", { passportRef: ref });
+  expect(cur.active).toBeNull();
+  await post(
+    "policy-publish",
+    {
+      passportRef: ref,
+      expectedVersion: 0,
+      document: {
+        ...DEFAULT_POLICY,
+        actions: { default: "SHORTLIST", byDomain: {}, byAgent: {} },
+      },
+    },
+    true,
+  );
+  const taste = await post("taste", { passportRef: ref });
+  expect(taste.anchors).toHaveLength(5);
+  expect(taste.needs.origin.label).toBe("Brooklyn, New York");
+  const chosen = await post(
+    "choose",
+    {
+      passportRef: ref,
+      requestedAction: "SHORTLIST",
+      proposal: proposal(taste.stateVersion),
+    },
+    true,
+  );
+  expect(chosen.evaluation.authority.ceiling).toBe("SHORTLIST");
+  await post("export", { passportRef: ref }, true);
+  await post("lease-list", { passportRef: ref });
+  await post("timeline", { passportRef: ref });
+  await post(
+    "delete-passport",
+    { passportRef: ref, confirmation: "DELETE PASSPORT" },
+    true,
+  );
+  expect((await post("inspect")).passport).toBeNull();
 });

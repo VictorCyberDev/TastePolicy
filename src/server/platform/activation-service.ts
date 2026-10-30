@@ -79,7 +79,12 @@ export class ActivationService extends AttestationService {
     });
   }
   async needsSet(p: Principal, raw: unknown) {
-    const v = object(raw, ["passportRef", "requirements", "origin"]),
+    const v = object(raw, [
+        "idempotencyKey",
+        "passportRef",
+        "requirements",
+        "origin",
+      ]),
       ref = reference(v.passportRef),
       requirements = parseRequirements(v.requirements);
     if (!requirements) return fail("INVALID_INPUT");

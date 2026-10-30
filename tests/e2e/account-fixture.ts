@@ -114,6 +114,18 @@ export async function mockAccount(page: Page, fake: FakeAccount) {
         needs: p.needs,
       });
     if (op === "needs-set") {
+      // As strict as the server: only these keys are accepted.
+      const extra = Object.keys(body).filter(
+        (k) =>
+          !["idempotencyKey", "passportRef", "requirements", "origin"].includes(
+            k,
+          ),
+      );
+      if (extra.length || typeof body.idempotencyKey !== "string")
+        return route.fulfill({
+          status: 400,
+          json: { status: "error", code: "INVALID_INPUT" },
+        });
       p.needs = {
         requirements: body.requirements as Requirement[],
         origin: (body.origin ?? null) as NonNullable<
